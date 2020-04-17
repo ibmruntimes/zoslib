@@ -1138,6 +1138,10 @@ class __init {
         *forkcurr = 0;
       }
     }
+    char* tenv = getenv("_EDC_SIG_DFLT");
+    if (!tenv || !*tenv) {
+      setenv("_EDC_SIG_DFLT","1",1);
+    }
     _th = std::get_terminate();
     std::set_terminate(abort);
   }
@@ -1687,7 +1691,7 @@ extern "C" int __file_needs_conversion_init(const char* name, int fd) {
       int ccsid;
       int am;
       unsigned len = strlen_ae((unsigned char*)buf, &ccsid, cnt, &am);
-      if (ccsid == 1047) {
+      if (ccsid == 1047 && len == cnt) {
         if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
           const char* filename = "(null)";
           if (name) {
