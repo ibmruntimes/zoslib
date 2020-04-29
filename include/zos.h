@@ -8,6 +8,9 @@
 //
 #include <_Nascii.h>
 #include <stdarg.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #define __ZOS_CC
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +51,7 @@ extern void __xfer_env(void);
 extern int __chgfdccsid(int fd, unsigned short ccsid);
 extern int __getfdccsid(int fd);
 extern int __setfdccsid(int fd, int t_ccsid);
+extern void __cleanupipc(int others);
 extern unsigned long long __registerProduct(const char *major_version,
                                      const char *product_owner,
                                      const char *feature_name,
@@ -82,6 +86,7 @@ extern int conv_utf16_utf8(char*, size_t, const char*, size_t);
 extern int __console_printf(const char* fmt, ...);
 extern int __indebug(void);
 extern void __setdebug(int);
+extern void __set_autocvt_on_untagged_fd_stream(int fd, unsigned short ccsid, unsigned char txtflag);
 extern int __getargcv(int *argc, char ***argv, pid_t pid);
 extern char** __getargv(void);
 extern int __getargc(void);
@@ -200,58 +205,29 @@ class __zinit {
   int shmid;
   std::terminate_handler _th;
   int __forked;
+  static __zinit* instance;
 
  public:
   __zinit(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
-          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") 
-          : forkmax(0), shmid(0), __forked(0) {
-    // initialization
-    mode = __ae_thread_swapmode(__AE_ASCII_MODE);
-    cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
-    if (_CVTSTATE_OFF == cvstate) {
-      __ae_autoconvert_state(_CVTSTATE_ON);
-    }
-    char* cu = __getenv_a(IPC_CLEANUP_ENVAR);
-    if (cu && !memcmp(cu, "1", 2)) {
-      cleanupipc(1);
-    }
-    char* dbg = __getenv_a(DEBUG_ENVAR);
-    if (dbg && !memcmp(dbg, "1", 2)) {
-      __debug_mode = 1;
-    }
-    char* tl = __getenv_a(RUNTIME_LIMIT_ENVAR);
-    if (tl) {
-      int sec = __atoi_a(tl);
-      if (sec > 0) {
-        __settimelimit(sec);
-      }
-    }
-    char* fm = __getenv_a(FORKMAX_ENVAR);
-    if (fm) {
-      int v = __atoi_a(fm);
-      if (v > 0) {
-        forkmax = v;
-        char path[1024];
-        if (0 == getcwd(path, sizeof(path))) strcpy(path, "./");
-        key_t key = ftok(path, 9021);
-        shmid = shmget(key, 1024, 0666 | IPC_CREAT);
-        forkcurr = (int*)shmat(shmid, (void*)0, 0);
-        *forkcurr = 0;
-      }
-    }
-    char* tenv = getenv("_EDC_SIG_DFLT");
-    if (!tenv || !*tenv) {
-      setenv("_EDC_SIG_DFLT","1",1);
-    }
-    _th = std::get_terminate();
-    std::set_terminate(abort);
-  }
-  int forked(int newvalue) {
-    int old = __forked;
-    __forked = newvalue;
-    return old;
-  }
+          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX");
+
+  static __zinit* init(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
+          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") {
+       instance = new __zinit(IPC_CLEANUP_ENVAR, DEBUG_ENVAR, RUNTIME_LIMIT_ENVAR, FORKMAX_ENVAR);
+   }
+
+   static __zinit* getInstance() {
+       return instance;
+   }
+
+   int forked(int newvalue) {
+       int old = __forked;
+       __forked = newvalue;
+       return old;
+   }
+
   int get_forkmax(void) { return forkmax; }
+
   int inc_forkcount(void) {
     if (0 == forkmax || 0 == shmid) return 0;
     int original;
@@ -284,6 +260,7 @@ class __zinit {
     return new_value;
   }
   int shmid_value(void) { return shmid; }
+
   ~__zinit() {
     if (_CVTSTATE_OFF == cvstate) {
       __ae_autoconvert_state(cvstate);
@@ -294,48 +271,23 @@ class __zinit {
       shmdt(forkcurr);
       shmctl(shmid, IPC_RMID, 0);
     }
-    cleanupipc(0);
+    __cleanupipc(0);
   }
   void __abort() { _th(); }
+
+};
+
+struct __init_zoslib {
+  __init_zoslib(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
+          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") {
+       __zinit::init(IPC_CLEANUP_ENVAR, DEBUG_ENVAR, RUNTIME_LIMIT_ENVAR, FORKMAX_ENVAR);
+   }
 };
 
 class __setlibpath {
 
 public:
-  __setlibpath() {
-    std::vector<char> argv(512, 0);
-    std::vector<char> parent(512, 0);
-    W_PSPROC buf;
-    int token = 0;
-    pid_t mypid = getpid();
-    memset(&buf, 0, sizeof(buf));
-    buf.ps_pathlen = argv.size();
-    buf.ps_pathptr = &argv[0];
-    while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
-      if (buf.ps_pid == mypid) {
-        /* Found our process. */
-
-        /* Resolve path to find true location of executable. */
-        if (realpath(&argv[0], &parent[0]) == NULL)
-          break;
-
-        /* Get parent directory. */
-        dirname(&parent[0]);
-
-        /* Get parent's parent directory. */
-        std::vector<char> parent2(parent.begin(), parent.end());
-        dirname(&parent2[0]);
-
-        /* Append new paths to libpath. */
-        std::ostringstream libpath;
-        libpath << getenv("LIBPATH");
-        libpath << ":" << &parent[0] << "/lib.target/";
-        libpath << ":" << &parent2[0] << "/lib/";
-        setenv("LIBPATH", libpath.str().c_str(), 1);
-        break;
-      }
-    }
-  }
+  __setlibpath();
 };
 
 

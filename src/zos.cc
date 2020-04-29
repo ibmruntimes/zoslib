@@ -34,6 +34,9 @@
 #include <unordered_map>
 #include <vector>
 #include <sys/mman.h>
+#include <sys/ps.h>
+#include <libgen.h>
+#include <sstream>
 
 #include "zos.h"
 static int __debug_mode = 0;
@@ -1056,7 +1059,7 @@ class __csConverter {
   }
 };
 
-static void cleanupipc(int others) {
+void __cleanupipc(int others) {
   IPCQPROC buf;
   int rc;
   int uid = getuid();
@@ -1298,7 +1301,7 @@ extern "C" int __cond_timed_wait(unsigned int secs,
 
 extern "C" void abort(void) {
   __display_backtrace(STDERR_FILENO);
-  __a.__abort();
+  __zinit::getInstance()->__abort();
   exit(-1);  // never reach here, suppress clang warning
 }
 
@@ -1311,8 +1314,8 @@ extern "C" int kill(int pid, int sig) {
 }
 // overriding LE's fork when linked statically
 extern "C" int __fork(void) {
-  int cnt = __a.inc_forkcount();
-  int max = __a.get_forkmax();
+  int cnt = __zinit::getInstance()->inc_forkcount();
+  int max = __zinit::getInstance()->get_forkmax();
   if (cnt > max) {
     dprintf(2,
             "fork(): current count %d is greater than "
@@ -1332,7 +1335,7 @@ extern "C" int __fork(void) {
 #else
   int pid = fork();
   if (pid == 0) {
-    __a.forked(1);
+    __zinit::getInstance()->forked(1);
   }
   return pid;
 #endif
@@ -1606,10 +1609,25 @@ extern "C" int __file_needs_conversion_init(const char* name, int fd) {
   }          // seekable files
   return 0;  // not seekable
 }
+
 extern "C" unsigned long __mach_absolute_time(void) {
   unsigned long long value, sec, nsec;
   __stckf(&value);
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
+}
+
+extern "C" void __set_autocvt_on_untagged_fd_stream(int fd, unsigned short ccsid, unsigned char txtflag) {
+  struct file_tag tag;
+
+  tag.ft_ccsid = ccsid;
+  tag.ft_txtflag = txtflag;
+
+  struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
+
+  if (!isatty(fd) && 0 == __getfdccsid(fd)) {
+    fcntl(fd, F_CONTROL_CVT, &req);
+    fcntl(fd, F_SETTAG, &tag);
+  }
 }
 
 //------------------------------------------accounting for memory allocation
@@ -3664,3 +3682,88 @@ extern "C" void* roanon_mmap(void* _, size_t len, int prot, int flags, const cha
   }
   return memory;
 }
+
+__zinit::__zinit(const char* IPC_CLEANUP_ENVAR, const char* DEBUG_ENVAR, 
+          const char* RUNTIME_LIMIT_ENVAR, const char* FORKMAX_ENVAR) 
+          : forkmax(0), shmid(0), __forked(0) 
+{
+    // initialization
+    mode = __ae_thread_swapmode(__AE_ASCII_MODE);
+    cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
+    if (_CVTSTATE_OFF == cvstate) {
+      __ae_autoconvert_state(_CVTSTATE_ON);
+    }
+    char* cu = __getenv_a(IPC_CLEANUP_ENVAR);
+    if (cu && !memcmp(cu, "1", 2)) {
+      __cleanupipc(1);
+    }
+    char* dbg = __getenv_a(DEBUG_ENVAR);
+    if (dbg && !memcmp(dbg, "1", 2)) {
+      __debug_mode = 1;
+    }
+    char* tl = __getenv_a(RUNTIME_LIMIT_ENVAR);
+    if (tl) {
+      int sec = __atoi_a(tl);
+      if (sec > 0) {
+        __settimelimit(sec);
+      }
+    }
+
+    char* fm = __getenv_a(FORKMAX_ENVAR);
+    if (fm) {
+      int v = __atoi_a(fm);
+      if (v > 0) {
+        forkmax = v;
+        char path[1024];
+        if (0 == getcwd(path, sizeof(path))) strcpy(path, "./");
+        key_t key = ftok(path, 9021);
+        shmid = shmget(key, 1024, 0666 | IPC_CREAT);
+        forkcurr = (int*)shmat(shmid, (void*)0, 0);
+        *forkcurr = 0;
+      }
+    }
+
+    char* tenv = getenv("_EDC_SIG_DFLT");
+    if (!tenv || !*tenv) {
+      setenv("_EDC_SIG_DFLT","1",1);
+    }
+    _th = std::get_terminate();
+    std::set_terminate(abort);
+}
+
+__zinit* __zinit::instance = 0;
+
+__setlibpath::__setlibpath() {
+    std::vector<char> argv(512, 0);
+    std::vector<char> parent(512, 0);
+    W_PSPROC buf;
+    int token = 0;
+    pid_t mypid = getpid();
+    memset(&buf, 0, sizeof(buf));
+    buf.ps_pathlen = argv.size();
+    buf.ps_pathptr = &argv[0];
+    while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+      if (buf.ps_pid == mypid) {
+        /* Found our process. */
+
+        /* Resolve path to find true location of executable. */
+        if (realpath(&argv[0], &parent[0]) == NULL)
+          break;
+
+        /* Get parent directory. */
+        dirname(&parent[0]);
+
+        /* Get parent's parent directory. */
+        std::vector<char> parent2(parent.begin(), parent.end());
+        dirname(&parent2[0]);
+
+        /* Append new paths to libpath. */
+        std::ostringstream libpath;
+        libpath << getenv("LIBPATH");
+        libpath << ":" << &parent[0] << "/lib.target/";
+        libpath << ":" << &parent2[0] << "/lib/";
+        setenv("LIBPATH", libpath.str().c_str(), 1);
+        break;
+      }
+    }
+  }
