@@ -1,5 +1,6 @@
 # zoslib
-Version: v1.0.0
+Version: v0.1.0
+
 z/OS library
 
 # To build
