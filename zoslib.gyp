@@ -25,7 +25,7 @@
       'include_dirs': ['.', 'include'],
       'sources': [
         'src/zos.cc',
-        'src/semaphore-zos.cc',
+        'src/zos-semaphore.cc',
       ],
     }
   ],

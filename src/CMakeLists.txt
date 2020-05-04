@@ -1,3 +1,3 @@
 add_library(zoslib STATIC
-  semaphore-zos.cc
+  zos-semaphore.cc
   zos.cc)

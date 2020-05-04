@@ -1,4 +1,4 @@
-#include "semaphore-zos.h"
+#include "zos-semaphore.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
