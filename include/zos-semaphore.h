@@ -5,7 +5,6 @@
 #include <inttypes.h>
 #include <pthread.h>
 #include <sys/sem.h>
-#include <vector>
 
 #if __WORDSIZE == 64
 # define __SIZEOF_SEM_T 32
