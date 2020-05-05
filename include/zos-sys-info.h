@@ -11,7 +11,7 @@ typedef struct ZOSCCT {
 // System Resources Manager Control Table (RMCT).
 typedef struct ZOSRMCT {
   uint8_t name[4];
-  ZOSCCT* __ptr32 cct;
+  struct ZOSCCT* __ptr32 cct;
 } ZOSRMCT_t;
 
 
@@ -25,9 +25,9 @@ typedef struct ZOSRCE {
 // Communications Vector Table (CVT).
 typedef struct ZOSCVT {
   uint8_t filler[604];
-  ZOSRMCT* __ptr32 rmct;
+  struct ZOSRMCT* __ptr32 rmct;
   uint8_t filler1[560];
-  ZOSRCE* __ptr32 rce;
+  struct ZOSRCE* __ptr32 rce;
   uint8_t filler2[92];
   uint8_t cvtoslvl[16];
 } ZOSCVT_t;
@@ -37,7 +37,7 @@ typedef struct ZOSCVT {
 // Maps storage starting at location 0.
 typedef struct ZOSPSA {
   uint8_t filler[16];  // Ignore 16 bytes before CVT pointer.
-  ZOSCVT* __ptr32 cvt;
+  struct ZOSCVT* __ptr32 cvt;
 } ZOSPSA_t;
 
 #endif  // ZOS_SYS_INFO_H_
