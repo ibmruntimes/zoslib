@@ -4,6 +4,11 @@
 CMakeCache.txt
 CMakeFiles
 Makefile
+install_manifest.txt
 lib/
 *.cmake
+
+# Build artifacts
 *.a
+install/
+
