@@ -6,5 +6,5 @@ z/OS library
 # To build
 ```bash
 cmake .
-make
+make -j install
 ```
