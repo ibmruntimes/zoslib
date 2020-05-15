@@ -21,7 +21,7 @@ typedef unsigned long size_t;
 #endif
 
 #define MAJOR_VERSION 0
-#define MINOR_VERSION 1
+#define MINOR_VERSION 2
 #define PATCH_VERSION 0
 
 struct timespec;
