@@ -3767,3 +3767,13 @@ __setlibpath::__setlibpath() {
       }
     }
   }
+
+extern "C" void init_zoslib(const char* IPC_CLEANUP_ENVAR,
+                            const char* DEBUG_ENVAR,
+                            const char* RUNTIME_LIMIT_ENVAR,
+                            const char* FORKMAX_ENVAR) {
+  __init_zoslib __nodezoslib(IPC_CLEANUP_ENVAR,
+                             DEBUG_ENVAR,
+                             RUNTIME_LIMIT_ENVAR,
+                             FORKMAX_ENVAR);
+}

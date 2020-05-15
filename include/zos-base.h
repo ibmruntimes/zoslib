@@ -144,6 +144,11 @@ extern int __sem_wait(__sem_t *s0);
 extern int __sem_getvalue(__sem_t *s0, int *sval);
 extern int __sem_destroy(__sem_t *s0);
 
+extern void init_zoslib(const char* IPC_CLEANUP_ENVAR,
+                        const char* DEBUG_ENVAR,
+                        const char* RUNTIME_LIMIT_ENVAR,
+                        const char* FORKMAX_ENVAR);
+
 #ifdef __cplusplus
 }
 #endif
@@ -296,6 +301,6 @@ public:
 };
 
 
-#endif
+#endif // __cplusplus
 
 #endif //__ZOS_BASE_H_
