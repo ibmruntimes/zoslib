@@ -224,6 +224,7 @@ class __zinit {
   static __zinit* init(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
           const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") {
        instance = new __zinit(IPC_CLEANUP_ENVAR, DEBUG_ENVAR, RUNTIME_LIMIT_ENVAR, FORKMAX_ENVAR);
+       return instance;
    }
 
    static __zinit* getInstance() {
