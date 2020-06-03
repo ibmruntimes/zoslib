@@ -26,6 +26,7 @@
       'sources': [
         'src/zos.cc',
         'src/zos-semaphore.cc',
+        'src/celquopt.s'
       ],
     }
   ],
