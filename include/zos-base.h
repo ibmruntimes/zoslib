@@ -54,6 +54,7 @@ extern void __xfer_env(void);
 extern int __chgfdccsid(int fd, unsigned short ccsid);
 extern int __getfdccsid(int fd);
 extern int __setfdccsid(int fd, int t_ccsid);
+extern const char* getIFAUsageErrorString(unsigned long rc);
 extern void __cleanupipc(int others);
 extern unsigned long long __registerProduct(const char *major_version,
                                      const char *product_owner,

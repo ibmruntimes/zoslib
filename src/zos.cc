@@ -3191,20 +3191,41 @@ typedef struct IFAARGS {
 const char *MODULE_REGISTER_USAGE = "IFAUSAGE";
 #pragma convert(pop)
 
+const char* IFAUsageErrorStrings[] = {
+/*RC=0*/ NULL,
+/*RC=1*/ "SMF or Usage Not Active",
+/*RC=2*/ "SMF or Usage Not Active",
+/*RC=3*/ NULL,
+/*RC=4*/ "Another product has already registered under the TASK domain."
+         " IFAUSAGE will record the data for each product.",
+/*RC=5, RC=6, RC=7*/ NULL, NULL, NULL,
+/*RC=8*/ "IFAUSAGE could not process more than two problem state program"
+         " invocations of REQUEST=REGISTER for the TASK domain.",
+/*RC=9, RC=10, RC=11*/ NULL, NULL, NULL,
+/*RC=12*/ "You specified a token on the PRTOKEN parameter that the system"
+          " cannot identify.",
+/*RC=13, RC=14, RC=15*/ NULL, NULL, NULL,
+/*RC=16*/ "IFAUSAGE cannot complete processing because SMF usage processing"
+          " is not available on the system."
+};
+
+const char* getIFAUsageErrorString(unsigned long rc) {
+  if (rc >= (sizeof(IFAUsageErrorStrings)/sizeof(IFAUsageErrorStrings[0])))
+    return NULL;
+  return IFAUsageErrorStrings[rc];
+}
+
 unsigned long long __registerProduct(const char *major_version,
                                      const char *product_owner,
                                      const char *feature_name,
                                      const char *product_name,
                                      const char *pid) {
-
   // Check if SMF/Usage is Active first
   char *xx = ((char *__ptr32 *__ptr32 *)0)[4][49];
   if (0 == xx) {
-    fprintf(stderr, "WARNING: SMF or Usage Not Active\n");
     return 1;
   }
   if (0 == (*xx & 0x04)) {
-    fprintf(stderr, "WARNING: SMF or Usage Not Active\n");
     return 2;
   }
 
