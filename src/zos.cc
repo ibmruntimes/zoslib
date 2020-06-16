@@ -1059,32 +1059,68 @@ class __csConverter {
   }
 };
 
+int get_ipcs_overview(IPCQPROC* info) {
+  return __getipc(0, info, sizeof(IPCQPROC), IPCQOVER);
+}
+
 void __cleanupipc(int others) {
   IPCQPROC buf;
   int rc;
   int uid = getuid();
   int pid = getpid();
   int stop = -1;
-  rc = __getipc(0, &buf, sizeof(buf), IPCQMSG);
-  while (rc != -1 && stop != buf.msg.ipcqmid) {
+
+  // Get the number of message queues and shared memory to 
+  // prevent infinite loop
+  if (get_ipcs_overview(&buf) == -1)
+    return;
+
+  int count_message_queue = buf.overview.ipcqomsgprivate;
+  int count_shared_memory = buf.overview.ipcqoshmkeyed;
+
+  rc = __getipc(0, &buf, sizeof(IPCQPROC), IPCQMSG);
+
+  // Since __getipc has undocumented behaviour, add several checks
+  // to prevent infinite looping
+  // Experimentation shows that return val of 0 denotes that there 
+  // are no further IPCS records
+  // Check both rc != 0 (undocumented) and rc != -1 (documented)
+  // and check if count <= number of message queues
+  int count = 0;
+  while (rc != 0 && rc != -1 && stop != buf.msg.ipcqmid &&
+        count <= count_message_queue) {
     if (stop == -1) stop = buf.msg.ipcqmid;
     if (buf.msg.ipcqpcp.uid == uid) {
       if (buf.msg.ipcqkey == 0) {
-        if (buf.msg.ipcqlrpid == pid) {
-          msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
-        } else if (others && kill(buf.msg.ipcqlrpid, 0) == -1 &&
-                   kill(buf.msg.ipcqlspid, 0) == -1) {
-          msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
+        // kill processes of others
+        if (others && buf.msg.ipcqlrpid != pid && 
+            buf.msg.ipcqlspid != pid &&
+            buf.msg.ipcqlrpid > 0 && 
+            buf.msg.ipcqlspid > 0) {
+          kill(buf.msg.ipcqlrpid, 0);
+          kill(buf.msg.ipcqlspid, 0);
         }
+        // remove message queues under id
+        msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
       }
     }
     rc = __getipc(rc, &buf, sizeof(buf), IPCQMSG);
   }
   if (others) {
     stop = -1;
+    // Since __getipc has undocumented behaviour, add several checks
+    // to prevent infinite looping
+    // Experimentation shows that return val of 0 denotes that there 
+    // are no further IPCS records
+    // Check both rc != 0 (undocumented) and rc != -1 (documented)
+    // and check if count <= number of shared memory
     rc = __getipc(0, &buf, sizeof(buf), IPCQSHM);
-    while (rc != -1 && stop != buf.shm.ipcqmid) {
-      if (stop == -1) stop = buf.shm.ipcqmid;
+    count = 0;
+    while (rc != 0 && rc != -1 && stop != buf.shm.ipcqmid &&
+          count <= count_shared_memory) {
+      if (stop == -1) {
+        stop = buf.shm.ipcqmid;
+      }
       if (buf.shm.ipcqpcp.uid == uid) {
         if (buf.shm.ipcqcpid == pid) {
           shmctl(buf.shm.ipcqmid, IPC_RMID, 0);
@@ -1096,6 +1132,7 @@ void __cleanupipc(int others) {
     }
   }
 }
+
 static __csConverter utf16_to_8(1208, 1200);
 static __csConverter utf8_to_16(1200, 1208);
 
