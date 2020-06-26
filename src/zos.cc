@@ -1092,16 +1092,12 @@ void __cleanupipc(int others) {
     if (stop == -1) stop = buf.msg.ipcqmid;
     if (buf.msg.ipcqpcp.uid == uid) {
       if (buf.msg.ipcqkey == 0) {
-        // kill processes of others
-        if (others && buf.msg.ipcqlrpid != pid && 
-            buf.msg.ipcqlspid != pid &&
-            buf.msg.ipcqlrpid > 0 && 
-            buf.msg.ipcqlspid > 0) {
-          kill(buf.msg.ipcqlrpid, 0);
-          kill(buf.msg.ipcqlspid, 0);
+        if (buf.msg.ipcqlrpid == pid) {
+          msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
+        } else if (others && kill(buf.msg.ipcqlrpid, 0) == -1 &&
+                   kill(buf.msg.ipcqlspid, 0) == -1) {
+          msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
         }
-        // remove message queues under id
-        msgctl(buf.msg.ipcqmid, IPC_RMID, 0);
       }
     }
     rc = __getipc(rc, &buf, sizeof(buf), IPCQMSG);
@@ -3230,8 +3226,8 @@ const char *MODULE_REGISTER_USAGE = "IFAUSAGE";
 
 const char* IFAUsageErrorStrings[] = {
 /*RC=0*/ NULL,
-/*RC=1*/ "SMF or Usage Not Active",
-/*RC=2*/ "SMF or Usage Not Active",
+/*RC=1*/ "SYSTEM MANAGEMENT FACILITIES (SMF) is not present on the system."
+/*RC=2*/ "SYSTEM MANAGEMENT FACILITIES (SMF) Usage Collection Services is not active.",
 /*RC=3*/ NULL,
 /*RC=4*/ "Another product has already registered under the TASK domain."
          " IFAUSAGE will record the data for each product.",
@@ -3257,7 +3253,7 @@ unsigned long long __registerProduct(const char *major_version,
                                      const char *feature_name,
                                      const char *product_name,
                                      const char *pid) {
-  // Check if SMF/Usage is Active first
+  // Check if SMF is Active first
   char *xx = ((char *__ptr32 *__ptr32 *)0)[4][49];
   if (0 == xx) {
     return 1;
