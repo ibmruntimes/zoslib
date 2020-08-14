@@ -3781,6 +3781,12 @@ __zinit::__zinit(const char* IPC_CLEANUP_ENVAR, const char* DEBUG_ENVAR,
     if (!tenv || !*tenv) {
       setenv("_EDC_SIG_DFLT","1",1);
     }
+
+    tenv = getenv("_EDC_SUSV3");
+    if (!tenv || !*tenv) {
+      setenv("_EDC_SUSV3", "1", 1);
+    }
+
     _th = std::get_terminate();
     std::set_terminate(abort);
 }
