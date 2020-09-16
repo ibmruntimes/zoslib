@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/time.h>
+#include <time.h>
 #define __ZOS_CC
 #ifdef __cplusplus
 extern "C" {
@@ -150,6 +152,7 @@ extern void init_zoslib(const char* IPC_CLEANUP_ENVAR,
                         const char* DEBUG_ENVAR,
                         const char* RUNTIME_LIMIT_ENVAR,
                         const char* FORKMAX_ENVAR);
+extern int __lutimes(const char *filename, const struct timeval tv[2]);
 
 #ifdef __cplusplus
 }
@@ -161,6 +164,14 @@ extern void init_zoslib(const char* IPC_CLEANUP_ENVAR,
     int len = strlen(src) + 1;                                                 \
     char* tgt = (char*)alloca(len);                                            \
     (char*)_convert_e2a(tgt, src, len);                                        \
+  })
+
+#define _str_a2e(_str)                                                         \
+  ({                                                                           \
+    const char* src = (const char*)(_str);                                     \
+    int len = strlen(src) + 1;                                                 \
+    char* tgt = (char*)alloca(len);                                            \
+    (char*)_convert_a2e(tgt, src, len);                                        \
   })
 
 #define AEWRAP(_rc, _x)                                                        \
