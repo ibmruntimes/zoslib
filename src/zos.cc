@@ -3839,6 +3839,36 @@ extern "C" void init_zoslib(const char* IPC_CLEANUP_ENVAR,
 }
 
 
+extern "C" int nanosleep(const struct timespec* req, struct timespec* rem) {
+  unsigned secrem;
+  unsigned nanorem;
+  int rv;
+  int err;
+
+  rv = __cond_timed_wait((unsigned int)req->tv_sec,
+                         (unsigned int)req->tv_nsec,
+                         (unsigned int)(CW_CONDVAR | CW_INTRPT),
+                         &secrem,
+                         &nanorem);
+  err = errno;
+
+  if (rem != NULL && (rv == 0 || err == EINTR)) {
+    rem->tv_nsec = nanorem;
+    rem->tv_sec = secrem;
+  }
+
+  /* Don't clobber errno unless __cond_timed_wait() errored.
+   * Don't leak EAGAIN, that just means the timeout expired.
+   */
+  if (rv == -1 && err == EAGAIN) {
+    errno = 0;
+    rv = 0;
+  }
+
+  return rv;
+}
+
+
 typedef struct __bpxyatt {
   char att_id[4]; /* Eye-catcher="ATT " */
   short att_version; /* Version of this structure=3 */

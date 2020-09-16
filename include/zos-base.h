@@ -152,6 +152,7 @@ extern void init_zoslib(const char* IPC_CLEANUP_ENVAR,
                         const char* DEBUG_ENVAR,
                         const char* RUNTIME_LIMIT_ENVAR,
                         const char* FORKMAX_ENVAR);
+extern int nanosleep(const struct timespec* req, struct timespec* rem);
 extern int __lutimes(const char *filename, const struct timeval tv[2]);
 
 #ifdef __cplusplus
