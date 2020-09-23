@@ -1587,7 +1587,17 @@ static enum notagread get_no_tag_read_behaviour(void) {
   }
   return __NO_TAG_READ_DEFAULT;  // default 
 }
-static int no_tag_read_behaviour = get_no_tag_read_behaviour();
+
+static int get_no_tag_ignore_ccsid1047(void) {
+  char* ntr = __getenv_a("__UNTAGGED_READ_MODE_CCSID1047");
+  if (ntr && !strcmp(ntr, "NO")) {
+    return 1;
+  }
+  return 0; // default, consider conversion for txtflag 0 && ccsid 1047
+}
+
+static enum notagread no_tag_read_behaviour = get_no_tag_read_behaviour();
+static int no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047();
 
 extern "C" void __fd_close(int fd) {
   fdcache.unset_attribute(fd);
@@ -1604,6 +1614,13 @@ extern "C" int __file_needs_conversion_init(const char* name, int fd) {
   char buf[4096];
   off_t off;
   int cnt;
+  if (no_tag_ignore_ccsid1047) {
+    struct stat st;
+    if (fstat(fd, &st) == 0
+    && st.st_tag.ft_txtflag == 0 && st.st_tag.ft_ccsid == 1047) {
+      return 0;
+    }
+  }
   if (no_tag_read_behaviour == __NO_TAG_READ_STRICT) return 0;
   if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
     fdcache.set_attribute(fd, 0x0000000000020000UL);
@@ -1614,7 +1631,7 @@ extern "C" int __file_needs_conversion_init(const char* name, int fd) {
     cnt = read(fd, buf, 4096);
     off = lseek(fd, 0, SEEK_SET);
     if (off != 0) {
-      // introduce an error, because of the offset is no longer valide
+      // introduce an error, because of the offset is no longer valid
       close(fd);
       return 0;
     }
