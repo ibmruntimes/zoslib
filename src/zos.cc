@@ -2562,15 +2562,23 @@ void Usleep(unsigned int msec) {
   }
 }
 
-static unsigned int atomic_inc(volatile unsigned int *loc) {
+static unsigned int atomic_helper(volatile unsigned int *loc, int val) {
   volatile unsigned int tmp = *loc;
   volatile unsigned int org;
-  org = __zsync_val_compare_and_swap32(loc, tmp, tmp + 1);
+  org = __zsync_val_compare_and_swap32(loc, tmp, tmp + val);
   while (org != tmp) {
     tmp = *loc;
-    org = __zsync_val_compare_and_swap32(loc, tmp, tmp + 1);
+    org = __zsync_val_compare_and_swap32(loc, tmp, tmp + val);
   }
   return org;
+}
+
+unsigned int atomic_dec(volatile unsigned int *loc) {
+  return atomic_helper(loc, -1);
+}
+
+unsigned int atomic_inc(volatile unsigned int *loc) {
+  return atomic_helper(loc, 1);
 }
 
 static int we_expired(const struct timespec *t0) {

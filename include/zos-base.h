@@ -67,6 +67,8 @@ extern size_t __e2a_l(char* bufptr, size_t szLen);
 extern size_t __a2e_l(char* bufptr, size_t szLen);
 extern size_t __e2a_s(char* string);
 extern size_t __a2e_s(char* string);
+extern unsigned int atomic_dec(volatile unsigned int *loc);
+extern unsigned int atomic_inc(volatile unsigned int *loc);
 extern int gettid();
 extern int dprintf(int fd, const char*, ...);
 extern int vdprintf(int fd, const char*, va_list ap);
