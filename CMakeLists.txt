@@ -5,6 +5,10 @@ include_directories(BEFORE include)
 
 add_subdirectory(src)
 
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
 endif()
