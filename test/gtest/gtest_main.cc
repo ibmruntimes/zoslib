@@ -28,7 +28,23 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <cstdio>
+#include "zos.h"
+
 #include "gtest/gtest.h"
+
+class Environment : public testing::Environment {
+private:
+  __init_zoslib __zoslib;
+
+public:
+  ~Environment() override {}
+
+  // Override this to define how to set up the environment.
+  void SetUp() override {}
+
+  // Override this to define how to tear down the environment.
+  void TearDown() override {}
+};
 
 #ifdef ARDUINO
 void setup() {
@@ -42,6 +58,7 @@ void loop() { RUN_ALL_TESTS(); }
 GTEST_API_ int main(int argc, char **argv) {
   printf("Running main() from %s\n", __FILE__);
   testing::InitGoogleTest(&argc, argv);
+  testing::AddGlobalTestEnvironment(new Environment());
   return RUN_ALL_TESTS();
 }
 #endif
