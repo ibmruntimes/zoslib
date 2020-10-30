@@ -26,6 +26,11 @@ typedef unsigned long size_t;
 #define MINOR_VERSION 2
 #define PATCH_VERSION 0
 
+#define IPC_CLEANUP_ENVAR_DEFAULT "__IPC_CLEANUP"
+#define DEBUG_ENVAR_DEFAULT "__RUNDEBUG";
+#define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT";
+#define FORKMAX_ENVAR_DEFAULT "__FORKMAX";
+
 struct timespec;
 
 typedef enum {
@@ -150,15 +155,34 @@ extern int __sem_wait(__sem_t *s0);
 extern int __sem_getvalue(__sem_t *s0, int *sval);
 extern int __sem_destroy(__sem_t *s0);
 
-extern void init_zoslib(const char* IPC_CLEANUP_ENVAR,
-                        const char* DEBUG_ENVAR,
-                        const char* RUNTIME_LIMIT_ENVAR,
-                        const char* FORKMAX_ENVAR);
+#ifdef __cplusplus
+typedef struct zoslib_config {
+  const char* IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
+  const char* DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
+  const char* RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
+  const char* FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
+} zoslib_config_t;
+extern void init_zoslib(const zoslib_config_t config = {});
+#else
+typedef struct zoslib_config {
+  const char* IPC_CLEANUP_ENVAR;
+  const char* DEBUG_ENVAR;
+  const char* RUNTIME_LIMIT_ENVAR;
+  const char* FORKMAX_ENVAR;
+} zoslib_config_t;
+extern void init_zoslib(const zoslib_config_t config);
+#endif // __cplusplus
+extern void init_zoslib_config(zoslib_config_t *const config);
+
 extern int nanosleep(const struct timespec* req, struct timespec* rem);
 extern int __lutimes(const char *filename, const struct timeval tv[2]);
 
 #ifdef __cplusplus
 }
+#endif
+
+#ifdef __cplusplus
+void init_zoslib_config(zoslib_config_t &config);
 #endif
 
 #define _str_e2a(_str)                                                         \
@@ -234,12 +258,10 @@ class __zinit {
   static __zinit* instance;
 
  public:
-  __zinit(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
-          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX");
+  __zinit(const zoslib_config_t &config);
 
-  static __zinit* init(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
-          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") {
-       instance = new __zinit(IPC_CLEANUP_ENVAR, DEBUG_ENVAR, RUNTIME_LIMIT_ENVAR, FORKMAX_ENVAR);
+  static __zinit* init(const zoslib_config_t &config) {
+       instance = new __zinit(config);
        return instance;
    }
 
@@ -305,10 +327,9 @@ class __zinit {
 };
 
 struct __init_zoslib {
-  __init_zoslib(const char* IPC_CLEANUP_ENVAR = "__IPC_CLEANUP", const char* DEBUG_ENVAR = "__RUNDEBUG", 
-          const char* RUNTIME_LIMIT_ENVAR = "__RUNTIMELIMIT", const char* FORKMAX_ENVAR = "__FORKMAX") {
-       __zinit::init(IPC_CLEANUP_ENVAR, DEBUG_ENVAR, RUNTIME_LIMIT_ENVAR, FORKMAX_ENVAR);
-   }
+  __init_zoslib(const zoslib_config_t &config = {}) {
+    __zinit::init(config);
+  }
 };
 
 class __setlibpath {

@@ -3762,9 +3762,8 @@ extern "C" void* roanon_mmap(void* _, size_t len, int prot, int flags, const cha
   return memory;
 }
 
-__zinit::__zinit(const char* IPC_CLEANUP_ENVAR, const char* DEBUG_ENVAR, 
-          const char* RUNTIME_LIMIT_ENVAR, const char* FORKMAX_ENVAR) 
-          : forkmax(0), shmid(0), __forked(0) 
+__zinit::__zinit(const zoslib_config_t &config)
+          : forkmax(0), shmid(0), __forked(0)
 {
     // initialization
     mode = __ae_thread_swapmode(__AE_ASCII_MODE);
@@ -3772,15 +3771,15 @@ __zinit::__zinit(const char* IPC_CLEANUP_ENVAR, const char* DEBUG_ENVAR,
     if (_CVTSTATE_OFF == cvstate) {
       __ae_autoconvert_state(_CVTSTATE_ON);
     }
-    char* cu = __getenv_a(IPC_CLEANUP_ENVAR);
+    char* cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
     if (cu && !memcmp(cu, "1", 2)) {
       __cleanupipc(1);
     }
-    char* dbg = __getenv_a(DEBUG_ENVAR);
+    char* dbg = __getenv_a(config.DEBUG_ENVAR);
     if (dbg && !memcmp(dbg, "1", 2)) {
       __debug_mode = 1;
     }
-    char* tl = __getenv_a(RUNTIME_LIMIT_ENVAR);
+    char* tl = __getenv_a(config.RUNTIME_LIMIT_ENVAR);
     if (tl) {
       int sec = __atoi_a(tl);
       if (sec > 0) {
@@ -3788,7 +3787,7 @@ __zinit::__zinit(const char* IPC_CLEANUP_ENVAR, const char* DEBUG_ENVAR,
       }
     }
 
-    char* fm = __getenv_a(FORKMAX_ENVAR);
+    char* fm = __getenv_a(config.FORKMAX_ENVAR);
     if (fm) {
       int v = __atoi_a(fm);
       if (v > 0) {
@@ -3853,14 +3852,20 @@ __setlibpath::__setlibpath() {
     }
   }
 
-extern "C" void init_zoslib(const char* IPC_CLEANUP_ENVAR,
-                            const char* DEBUG_ENVAR,
-                            const char* RUNTIME_LIMIT_ENVAR,
-                            const char* FORKMAX_ENVAR) {
-  __init_zoslib __nodezoslib(IPC_CLEANUP_ENVAR,
-                             DEBUG_ENVAR,
-                             RUNTIME_LIMIT_ENVAR,
-                             FORKMAX_ENVAR);
+
+void init_zoslib_config(zoslib_config_t &config) {
+  init_zoslib_config(&config);
+}
+
+extern "C" void init_zoslib_config(zoslib_config_t *const config) {
+  config->IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
+  config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
+  config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
+  config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
+}
+
+extern "C" void init_zoslib(const zoslib_config_t config) {
+  __init_zoslib __nodezoslib(config);
 }
 
 
