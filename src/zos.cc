@@ -1697,27 +1697,13 @@ static int mem_account(void) {
   return res;
 }
 
-static int gettcbtoken(char* out, int type) {
-  typedef struct token_parm {
-    char token[16];
-    char* __ptr32 ascb;
-    char type;
-    char reserved[3];
-  } token_parm_t;
-  token_parm_t* tt = (token_parm_t*)__malloc31(sizeof(token_parm_t));
-  memset(tt, 0, sizeof(token_parm_t));
-  tt->type = type;
-  long workreg;
-  __asm(" LLGF %0,16(0,0) \n"
-        " L %0,772(%0,0) \n"
-        " L %0,212(%0,0) \n"
-        " PC 0(%0) \n"
-        : "=NR:r15"(workreg)  // also return code
-        : "NR:r1"(tt)
-        :);
-  memcpy(out, (char*)tt, 16);
-  free(tt);
-  return workreg;
+static void getxttoken(char* out) {
+  void* p;
+  asm("  l %0,1208 \n"
+      "  llgtr %0,%0 \n"
+      "  lg %0,x'130'(%0)\n"
+      : "+r"(p)::);
+  memcpy(out,(char*)p+0x14,16);
 }
 
 struct iarv64parm {
@@ -1874,10 +1860,10 @@ static void* __iarv64_alloc(int segs, const char* token) {
   parm.keyused_ttoken = 1;
   memcpy(&parm.xttoken, token, 16);
   rc = __iarv64(&parm, &reason);
-  if (mem_account())
+  if (mem_account()) {
     dprintf(2,
-            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%lx, "
-            "reason=%lx\n",
+            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
+            "reason=%llx\n",
             getpid(),
             (int)(pthread_self().__ & 0x7fffffff),
             parm.xorigin,
@@ -1885,6 +1871,7 @@ static void* __iarv64_alloc(int segs, const char* token) {
             (unsigned long)(segs * 1024 * 1024),
             rc,
             reason);
+  }
   if (rc == 0) {
     return parm.xorigin;
   }
@@ -1915,10 +1902,10 @@ static void* __iarv64_alloc_inorigin(int segs,
   parm.xmemobjstart = inorigin;
   memcpy(&parm.xttoken, token, 16);
   rc = __iarv64(&parm, &reason);
-  if (mem_account())
+  if (mem_account()) {
     dprintf(2,
-            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%lx, "
-            "reason=%lx\n",
+            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
+            "reason=%llx\n",
             getpid(),
             (int)(pthread_self().__ & 0x7fffffff),
             parm.xorigin,
@@ -1926,13 +1913,14 @@ static void* __iarv64_alloc_inorigin(int segs,
             (unsigned long)(segs * 1024 * 1024),
             rc,
             reason);
+  }
   if (rc == 0) {
     return parm.xorigin;
   }
   return 0;
 }
 
-#define __USE_IARV64 1
+#define __USE_IARV64 0
 static int __iarv64_free(void* ptr, const char* token) {
   long long rc, reason;
   void* org = ptr;
@@ -1946,13 +1934,14 @@ static int __iarv64_free(void* ptr, const char* token) {
   parm.keyused_ttoken = 1;
   memcpy(&parm.xttoken, token, 16);
   rc = __iarv64(&parm, &reason);
-  if (mem_account())
+  if (mem_account()) {
     dprintf(2,
             "__iarv64_free pid %d tid %d ptr=%p rc=%lld\n",
             getpid(),
             (int)(pthread_self().__ & 0x7fffffff),
             org,
             rc);
+  }
   return rc;
 }
 
@@ -1964,6 +1953,16 @@ static void* __mo_alloc(int segs) {
   moparm.__moplrequestsize = segs;
   moparm.__moplgetstorflags = __MOPL_PAGEFRAMESIZE_PAGEABLE1MEG;
   int rc = __moservices(__MO_GETSTOR, sizeof(moparm), &moparm, &p);
+  if (mem_account()) {
+    fprintf(stderr,
+            "__moservices-alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%d, iarv64_rc=%d\n",
+            getpid(),
+            (int)(pthread_self().__ & 0x7fffffff),
+            p,
+            (unsigned long)(segs * 1024 * 1024),
+            (unsigned long)(segs * 1024 * 1024),
+            rc, moparm.__mopl_iarv64_rc);
+  }
   if (rc == 0 && moparm.__mopl_iarv64_rc == 0) {
     return p;
   }
@@ -1973,6 +1972,10 @@ static void* __mo_alloc(int segs) {
 
 static int __mo_free(void* ptr) {
   int rc = __moservices(__MO_DETACH, 0, NULL, &ptr);
+  if (mem_account()) {
+    fprintf(stderr, "__moservices-free: pid %d tid %d ptr=%p rc=%d\n", getpid(),
+            (int)(pthread_self().__ & 0x7fffffff), ptr, rc);
+  }
   if (rc) {
     perror("__moservices DETACH");
   }
@@ -2002,14 +2005,14 @@ typedef std::unordered_map<key_type, value_type, __hash_func>::const_iterator
 class __Cache {
   std::unordered_map<key_type, value_type, __hash_func> cache;
   std::mutex access_lock;
-  char tcbtoken[16];
+  char xttoken[16];
   unsigned short asid;
   int oktouse;
 
  public:
   __Cache() {
-#if defined(__USE_IARV64)
-    gettcbtoken(tcbtoken, 3);
+#if __USE_IARV64
+    getxttoken(xttoken);
     asid = ((unsigned short*)(*(char* __ptr32*)(0x224)))[18];
 #endif
     oktouse =
@@ -2020,29 +2023,32 @@ class __Cache {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     cache[k] = v;
-    if (mem_account()) dprintf(2, "ADDED: @%lx size %lu\n", k, v);
+    if (mem_account()) {
+      dprintf(2, "ADDED: @%lx size %lu\n", k, v);
+    }
   }
   // normal case:  bool elligible() { return oktouse; }
   bool elligible() { return true; }  // always true for now
-#if defined(__USE_IARV64)
+#if __USE_IARV64
   void* alloc_seg(int segs) {
     std::lock_guard<std::mutex> guard(access_lock);
-    void* p = __iarv64_alloc(segs, tcbtoken);
+    void* p = __iarv64_alloc(segs, xttoken);
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = segs * 1024 * 1024;
-      if (mem_account())
+      if (mem_account()) {
         dprintf(2,
                 "ADDED:@%lx size %lu RMODE64\n",
                 k,
                 (size_t)(segs * 1024 * 1024));
+      }
     }
     return p;
   }
   int free_seg(void* ptr) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
-    int rc = __iarv64_free(ptr, tcbtoken);
+    int rc = __iarv64_free(ptr, xttoken);
     if (rc == 0) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
@@ -2058,11 +2064,12 @@ class __Cache {
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = segs * 1024 * 1024;
-      if (mem_account())
+      if (mem_account()) {
         dprintf(2,
-                "ADDED:@%lx size %lu RMODE64\n",
+                "MO_ADDED:@%lx size %lu RMODE64\n",
                 k,
                 (size_t)(segs * 1024 * 1024));
+      }
     }
     return p;
   }
@@ -2102,10 +2109,11 @@ class __Cache {
   }
   void show(void) {
     std::lock_guard<std::mutex> guard(access_lock);
-    if (mem_account())
+    if (mem_account()) {
       for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
         dprintf(2, "LIST: @%lx size %lu\n", it->first, it->second);
       }
+    }
   }
   void freeptr(const void* ptr) {
     unsigned long k = (unsigned long)ptr;
@@ -2216,8 +2224,9 @@ static int anon_munmap_inner(void* addr, size_t len, bool is_above_bar) {
 extern "C" void* anon_mmap(void* _, size_t len) {
   void* ret = anon_mmap_inner(_, len);
   if (ret == MAP_FAILED) {
-    if (mem_account())
+    if (mem_account()) {
       dprintf(2, "Error: anon_mmap request size %zu failed\n", len);
+    }
     return ret;
   }
   return ret;
@@ -2225,22 +2234,25 @@ extern "C" void* anon_mmap(void* _, size_t len) {
 
 extern "C" int anon_munmap(void* addr, size_t len) {
   if (alloc_info.is_exist_ptr(addr)) {
-    if (mem_account())
+    if (mem_account()) {
       dprintf(
           2, "Address found, attempt to free @%p size %d\n", addr, (int)len);
+    }
     int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
     if (rc != 0) {
-      if (mem_account())
+      if (mem_account()) {
         dprintf(2, "Error: anon_munmap @%p size %zu failed\n", addr, len);
+      }
       return rc;
     }
     return 0;
   } else {
-    if (mem_account())
+    if (mem_account()) {
       dprintf(2,
               "Error: attempt to free %p size %d (not allocated)\n",
               addr,
               (int)len);
+    }
     return 0;
   }
 }
