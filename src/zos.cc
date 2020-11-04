@@ -2037,10 +2037,8 @@ class __Cache {
       unsigned long k = (unsigned long)p;
       cache[k] = segs * 1024 * 1024;
       if (mem_account()) {
-        dprintf(2,
-                "ADDED:@%lx size %lu RMODE64\n",
-                k,
-                (size_t)(segs * 1024 * 1024));
+        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n",
+                k, (size_t)(segs * 1024 * 1024));
       }
     }
     return p;
@@ -2052,7 +2050,11 @@ class __Cache {
     if (rc == 0) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
+        size_t s = c->second;
         cache.erase(c);
+        if (mem_account()) {
+          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
+        }
       }
     }
     return rc;
@@ -2066,9 +2068,8 @@ class __Cache {
       cache[k] = segs * 1024 * 1024;
       if (mem_account()) {
         dprintf(2,
-                "MO_ADDED:@%lx size %lu RMODE64\n",
-                k,
-                (size_t)(segs * 1024 * 1024));
+                "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n",
+                k, (size_t)(segs * 1024 * 1024));
       }
     }
     return p;
@@ -2080,7 +2081,11 @@ class __Cache {
     if (rc == 0) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
+        size_t s = c->second;
         cache.erase(c);
+        if (mem_account()) {
+          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
+        }
       }
     }
     return rc;
