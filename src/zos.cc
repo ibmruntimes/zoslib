@@ -1920,7 +1920,7 @@ static void* __iarv64_alloc_inorigin(int segs,
   return 0;
 }
 
-#define __USE_IARV64 0
+#define __USE_IARV64 1 // 0=moservices, 1=iarv64
 static int __iarv64_free(void* ptr, const char* token) {
   long long rc, reason;
   void* org = ptr;
