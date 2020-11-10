@@ -5,10 +5,6 @@ include_directories(BEFORE include)
 
 add_subdirectory(src)
 
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif()
-
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
 endif()
@@ -58,6 +54,10 @@ target_compile_definitions(zoslib PRIVATE ${zoslib_defines})
 target_compile_options(zoslib PRIVATE ${zoslib_cflags})
 
 export(TARGETS zoslib FILE lib/cmake/zoslib/addzoslib.cmake)
+
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
 
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX "." CACHE PATH "install path" FORCE)
