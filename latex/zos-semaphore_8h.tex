@@ -1,0 +1,87 @@
+\hypertarget{zos-semaphore_8h}{}\doxysection{include/zos-\/semaphore.h File Reference}
+\label{zos-semaphore_8h}\index{include/zos-\/semaphore.h@{include/zos-\/semaphore.h}}
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$inttypes.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$sys/sem.\+h$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structsem__t}{sem\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a57db768aa087f9542a39faf667924c50}{\+\_\+\+\_\+\+S\+I\+Z\+E\+O\+F\+\_\+\+S\+E\+M\+\_\+T}}~16
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}{S\+E\+M\+\_\+\+F\+A\+I\+L\+ED}}~((\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$)0)
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}{sem\+\_\+init}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid, int pshared, unsigned int value)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}{sem\+\_\+destroy}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}{sem\+\_\+wait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}{sem\+\_\+trywait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}{sem\+\_\+post}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}{sem\+\_\+timedwait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid, const struct timespec $\ast$timeout)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{zos-semaphore_8h_a57db768aa087f9542a39faf667924c50}\label{zos-semaphore_8h_a57db768aa087f9542a39faf667924c50}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_SIZEOF\_SEM\_T@{\_\_SIZEOF\_SEM\_T}}
+\index{\_\_SIZEOF\_SEM\_T@{\_\_SIZEOF\_SEM\_T}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_SIZEOF\_SEM\_T}{\_\_SIZEOF\_SEM\_T}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+S\+I\+Z\+E\+O\+F\+\_\+\+S\+E\+M\+\_\+T~16}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}\label{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!SEM\_FAILED@{SEM\_FAILED}}
+\index{SEM\_FAILED@{SEM\_FAILED}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{SEM\_FAILED}{SEM\_FAILED}}
+{\footnotesize\ttfamily \#define S\+E\+M\+\_\+\+F\+A\+I\+L\+ED~((\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$)0)}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}\label{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_destroy@{sem\_destroy}}
+\index{sem\_destroy@{sem\_destroy}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_destroy()}{sem\_destroy()}}
+{\footnotesize\ttfamily int sem\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}\label{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_init@{sem\_init}}
+\index{sem\_init@{sem\_init}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_init()}{sem\_init()}}
+{\footnotesize\ttfamily int sem\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid,  }\item[{int}]{pshared,  }\item[{unsigned int}]{value }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}\label{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_post@{sem\_post}}
+\index{sem\_post@{sem\_post}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_post()}{sem\_post()}}
+{\footnotesize\ttfamily int sem\+\_\+post (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}\label{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_timedwait@{sem\_timedwait}}
+\index{sem\_timedwait@{sem\_timedwait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_timedwait()}{sem\_timedwait()}}
+{\footnotesize\ttfamily int sem\+\_\+timedwait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid,  }\item[{const struct timespec $\ast$}]{timeout }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}\label{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_trywait@{sem\_trywait}}
+\index{sem\_trywait@{sem\_trywait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_trywait()}{sem\_trywait()}}
+{\footnotesize\ttfamily int sem\+\_\+trywait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}\label{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_wait@{sem\_wait}}
+\index{sem\_wait@{sem\_wait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_wait()}{sem\_wait()}}
+{\footnotesize\ttfamily int sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+

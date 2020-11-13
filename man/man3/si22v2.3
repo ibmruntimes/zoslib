@@ -1,0 +1,118 @@
+.TH "si22v2" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+si22v2
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <csrsic\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fB_filler1\fP [32]"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2cpcnumber\fP: 16"
+.br
+.ti -1c
+.RI "unsigned char \fB_filler2\fP"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   unsigned int \fB_si22v2lcpudedicated\fP: 1"
+.br
+.ti -1c
+.RI "   unsigned int \fB_si22v2lcpushared\fP: 1"
+.br
+.ti -1c
+.RI "   unsigned int \fB_si22v2lcpuulimit\fP: 1"
+.br
+.ti -1c
+.RI "   unsigned int \fB_filler3\fP: 5"
+.br
+.ti -1c
+.RI "} \fBsi22v2lcpuc\fP"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2totallcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2configuredlcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2standbylcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2reservedlcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned char \fBsi22v2cpcname\fP [8]"
+.br
+.ti -1c
+.RI "unsigned char \fBsi22v2cpccapabilityaf\fP [4]"
+.br
+.ti -1c
+.RI "unsigned char \fBsi22v2lparorigin\fP [8]"
+.br
+.ti -1c
+.RI "unsigned char \fB_filler4\fP [8]"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2dedicatedlcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned int \fBsi22v2sharedlcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned char \fB_filler5\fP [4020]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "unsigned char si22v2::_filler1[32]"
+
+.SS "unsigned char si22v2::_filler2"
+
+.SS "unsigned int si22v2::_filler3"
+
+.SS "unsigned char si22v2::_filler4[8]"
+
+.SS "unsigned char si22v2::_filler5[4020]"
+
+.SS "unsigned int si22v2::_si22v2lcpudedicated"
+
+.SS "unsigned int si22v2::_si22v2lcpushared"
+
+.SS "unsigned int si22v2::_si22v2lcpuulimit"
+
+.SS "unsigned int si22v2::si22v2configuredlcpucount"
+
+.SS "unsigned char si22v2::si22v2cpccapabilityaf[4]"
+
+.SS "unsigned char si22v2::si22v2cpcname[8]"
+
+.SS "unsigned int si22v2::si22v2cpcnumber"
+
+.SS "unsigned int si22v2::si22v2dedicatedlcpucount"
+
+.SS "struct { \&.\&.\&. }  si22v2::si22v2lcpuc"
+
+.SS "unsigned char si22v2::si22v2lparorigin[8]"
+
+.SS "unsigned int si22v2::si22v2reservedlcpucount"
+
+.SS "unsigned int si22v2::si22v2sharedlcpucount"
+
+.SS "unsigned int si22v2::si22v2standbylcpucount"
+
+.SS "unsigned int si22v2::si22v2totallcpucount"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

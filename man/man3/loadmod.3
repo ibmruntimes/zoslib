@@ -1,0 +1,68 @@
+.TH "loadmod" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+loadmod
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "char \fBmodname\fP [8]"
+.br
+.ti -1c
+.RI "unsigned \fBload_r1\fP"
+.br
+.ti -1c
+.RI "unsigned \fBload_r15\fP"
+.br
+.ti -1c
+.RI "\fBthunk24_t\fP * \fBthptr\fP"
+.br
+.ti -1c
+.RI "void * \fBreg15\fP"
+.br
+.ti -1c
+.RI "void * \fBreg1\fP"
+.br
+.ti -1c
+.RI "void * \fBreg13\fP"
+.br
+.ti -1c
+.RI "unsigned int \fBdsa\fP [18]"
+.br
+.ti -1c
+.RI "unsigned int \fBupperhalf\fP [15]"
+.br
+.ti -1c
+.RI "char * \fB_1\fP [32]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "char* loadmod::_1[32]"
+
+.SS "unsigned int loadmod::dsa[18]"
+
+.SS "unsigned loadmod::load_r1"
+
+.SS "unsigned loadmod::load_r15"
+
+.SS "char loadmod::modname[8]"
+
+.SS "void* loadmod::reg1"
+
+.SS "void* loadmod::reg13"
+
+.SS "void* loadmod::reg15"
+
+.SS "\fBthunk24_t\fP* loadmod::thptr"
+
+.SS "unsigned int loadmod::upperhalf[15]"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

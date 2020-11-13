@@ -1,0 +1,106 @@
+.TH "CSRSI_CVT" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CSRSI_CVT
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <csrsic\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvt_filler1\fP [116]"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   int \fBCSRSI_cvtdcb_rsvd1\fP: 4"
+.br
+.ti -1c
+.RI "   int \fBCSRSI_cvtosext\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBCSRSI_cvtdcb_rsvd2\fP: 3"
+.br
+.ti -1c
+.RI "} \fBCSRSI_cvtdcb\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvt_filler2\fP [427]"
+.br
+.ti -1c
+.RI "struct \fBCSRSI_CSRT\fP * \fBCSRSI_cvtcsrt\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvt_filler3\fP [716]"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvtoslv0\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvtoslv1\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvtoslv2\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvtoslv3\fP"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   int \fBCSRSI_cvtcsrsi\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBCSRSI_cvtoslv1_rsvd1\fP: 7"
+.br
+.ti -1c
+.RI "} \fBCSRSI_cvtoslv4\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBCSRSI_cvt_filler4\fP [11]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "unsigned char CSRSI_CVT::CSRSI_cvt_filler1[116]"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvt_filler2[427]"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvt_filler3[716]"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvt_filler4[11]"
+
+.SS "int CSRSI_CVT::CSRSI_cvtcsrsi"
+
+.SS "struct \fBCSRSI_CSRT\fP* CSRSI_CVT::CSRSI_cvtcsrt"
+
+.SS "struct { \&.\&.\&. }  CSRSI_CVT::CSRSI_cvtdcb"
+
+.SS "int CSRSI_CVT::CSRSI_cvtdcb_rsvd1"
+
+.SS "int CSRSI_CVT::CSRSI_cvtdcb_rsvd2"
+
+.SS "int CSRSI_CVT::CSRSI_cvtosext"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvtoslv0"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvtoslv1"
+
+.SS "int CSRSI_CVT::CSRSI_cvtoslv1_rsvd1"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvtoslv2"
+
+.SS "unsigned char CSRSI_CVT::CSRSI_cvtoslv3"
+
+.SS "struct { \&.\&.\&. }  CSRSI_CVT::CSRSI_cvtoslv4"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

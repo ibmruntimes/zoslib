@@ -1,9 +1,18 @@
+///////////////////////////////////////////////////////////////////////////////
+// Licensed Materials - Property of IBM
+// ZOSLIB
+// (C) Copyright IBM Corp. 2020. All Rights Reserved.
+// US Government Users Restricted Rights - Use, duplication
+// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+///////////////////////////////////////////////////////////////////////////////
+
 #include "zos-semaphore.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <sys/modes.h>
+#include <time.h>
 
 void assignSemInitializeError() {
   switch (errno) {
@@ -35,7 +44,6 @@ void assignSemDestroyError() {
   }
 }
 
-
 void assignSemgetError() {
   switch (errno) {
   case EACCES:
@@ -52,7 +60,6 @@ void assignSemgetError() {
     break;
   }
 }
-
 
 void assignSemopErrorCode() {
   switch (errno) {
@@ -84,54 +91,51 @@ void assignSemopErrorCode() {
   }
 }
 
-
 // On success returns 0. On error returns -1 and errno is set.
 int sem_init(sem_t *sem, int pshared, unsigned int value) {
   int err;
   if (sem == NULL)
-      return ENOMEM;
+    return ENOMEM;
 
   if ((err = pthread_mutex_init(&sem->mutex, NULL)) != 0) {
-     errno = err;   
-     return -1;
+    errno = err;
+    return -1;
   }
-  
+
   if ((err = pthread_cond_init(&sem->cond, NULL)) != 0) {
-     if (pthread_mutex_destroy(&sem->mutex)) 
-         abort();
-     errno = err;
-     return - 1;
+    if (pthread_mutex_destroy(&sem->mutex))
+      abort();
+    errno = err;
+    return -1;
   }
   sem->value = value;
   return 0;
 }
 
-
 /* sem_destroy -- destroys the semaphore using semctl() */
 int sem_destroy(sem_t *sem) {
   if (pthread_cond_destroy(&sem->cond))
-      abort();
+    abort();
   if (pthread_mutex_destroy(&sem->mutex))
-      abort();
-  return 0; 
+    abort();
+  return 0;
 }
 
 /* sem_wait -- it gets a lock on semaphore and implemented using semop() */
 int sem_wait(sem_t *sem) {
   if (pthread_mutex_lock(&sem->mutex))
-      abort();
+    abort();
 
   while (sem->value == 0)
-      if (pthread_cond_wait(&sem->cond, &sem->mutex))
-          abort();
+    if (pthread_cond_wait(&sem->cond, &sem->mutex))
+      abort();
   sem->value--;
 
   if (pthread_mutex_unlock(&sem->mutex))
-      abort();
+    abort();
 
   return 0;
 }
-
 
 /* sem_timedwait -- it waits for a specific time-period to get a lock on
  * semaphore. Implemented using __semop_timed() */
@@ -139,41 +143,38 @@ int sem_timedwait(sem_t *sem, const struct timespec *ts) {
   int err;
 
   if (pthread_mutex_lock(&sem->mutex))
-      abort();
+    abort();
 
   err = pthread_cond_timedwait(&sem->cond, &sem->mutex, ts);
-  if ( err != 0 && err != ETIMEDOUT) 
-      abort();
+  if (err != 0 && err != ETIMEDOUT)
+    abort();
 
   if (err == 0)
-      sem->value--;
+    sem->value--;
 
   if (pthread_mutex_unlock(&sem->mutex))
-      abort();
+    abort();
 
   if (err != 0) {
-     errno = err;
-     return -1;
+    errno = err;
+    return -1;
   }
   return 0;
 }
 
-
 /* sem_post -- it releases lock on semaphore using semop */
 int sem_post(sem_t *sem) {
-  
   if (pthread_mutex_lock(&sem->mutex))
-      abort();
-  
+    abort();
+
   sem->value++;
 
   if (sem->value == 1)
-      if (pthread_cond_signal(&sem->cond))
-          abort();
+    if (pthread_cond_signal(&sem->cond))
+      abort();
 
   if (pthread_mutex_unlock(&sem->mutex))
-      abort();
-  
+    abort();
+
   return 0;
 }
-

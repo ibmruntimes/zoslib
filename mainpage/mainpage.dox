@@ -1,0 +1,26 @@
+/**
+\mainpage
+\htmlinclude manifest.html
+
+\section ZOSLIB
+
+ZOSLIB is a z/OS C/C++ library.  It is an extended implementation of the z/OS LE C Runtime Library.  
+
+ZOSLIB implements the following:
+
+- A subset of POSIX APIs that are not available in the LE C Runtime Library
+- EBCDIC <-> ASCII conversion C APIs
+- APIs for improved diagnostic reporting
+- and more!
+
+\section codeapi Code API
+
+The API documentation for ZOSLIB is provided within the library's headers.
+
+These are the main headers for ZOSLIB:
+- @ref include/zos.h
+- @ref include/zos-base.h
+- @ref include/zos-semaphore.h
+- @ref include/zos-sys-info.h
+
+*/

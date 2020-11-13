@@ -1,0 +1,89 @@
+.TH "EDOI" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+EDOI
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   int \fBEdoiRegistered\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBEdoiStatusNotDefined\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBEdoiStatusEnabled\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBEdoiNotAllFeaturesReturned\fP: 1"
+.br
+.ti -1c
+.RI "   int \fBRsvd0\fP: 4"
+.br
+.ti -1c
+.RI "} \fBEdoiFlags\fP"
+.br
+.ti -1c
+.RI "char \fBRsvd1\fP [3]"
+.br
+.ti -1c
+.RI "int \fBEdoiNeededFeaturesLen\fP"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   \fBIfaedProdVers\fP \fBEdoiProdVers\fP"
+.br
+.ti -1c
+.RI "   \fBIfaedProdRel\fP \fBEdoiProdRel\fP"
+.br
+.ti -1c
+.RI "   \fBIfaedProdMod\fP \fBEdoiProdMod\fP"
+.br
+.ti -1c
+.RI "} \fBEdoiProdVersRelMod\fP"
+.br
+.ti -1c
+.RI "char \fBRsvd\fP [2]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "struct { \&.\&.\&. }  EDOI::EdoiFlags"
+
+.SS "int EDOI::EdoiNeededFeaturesLen"
+
+.SS "int EDOI::EdoiNotAllFeaturesReturned"
+
+.SS "\fBIfaedProdMod\fP EDOI::EdoiProdMod"
+
+.SS "\fBIfaedProdRel\fP EDOI::EdoiProdRel"
+
+.SS "\fBIfaedProdVers\fP EDOI::EdoiProdVers"
+
+.SS "struct { \&.\&.\&. }  EDOI::EdoiProdVersRelMod"
+
+.SS "int EDOI::EdoiRegistered"
+
+.SS "int EDOI::EdoiStatusEnabled"
+
+.SS "int EDOI::EdoiStatusNotDefined"
+
+.SS "char EDOI::Rsvd[2]"
+
+.SS "int EDOI::Rsvd0"
+
+.SS "char EDOI::Rsvd1[3]"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

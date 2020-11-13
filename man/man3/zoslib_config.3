@@ -1,0 +1,43 @@
+.TH "zoslib_config" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+zoslib_config
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <zos\-base\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "const char * \fBIPC_CLEANUP_ENVAR\fP"
+.br
+.ti -1c
+.RI "const char * \fBDEBUG_ENVAR\fP"
+.br
+.ti -1c
+.RI "const char * \fBRUNTIME_LIMIT_ENVAR\fP"
+.br
+.ti -1c
+.RI "const char * \fBFORKMAX_ENVAR\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Configuration for zoslib library 
+.SH "Member Data Documentation"
+.PP 
+.SS "const char* zoslib_config::DEBUG_ENVAR"
+string to indicate the envar to be used to toggle debug mode 
+.SS "const char* zoslib_config::FORKMAX_ENVAR"
+string to indicate the envar to be to toggle max number of forks 
+.SS "const char* zoslib_config::IPC_CLEANUP_ENVAR"
+string to indicate the envar to be used to toggle IPC cleanup 
+.SS "const char* zoslib_config::RUNTIME_LIMIT_ENVAR"
+string to indicate the envar to be to toggle runtime limit 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

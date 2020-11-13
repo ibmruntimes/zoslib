@@ -1,0 +1,45 @@
+.TH "__sem" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+__sem
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <zos\-base\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "volatile unsigned int \fBvalue\fP"
+.br
+.ti -1c
+.RI "volatile unsigned int \fBid\fP"
+.br
+.ti -1c
+.RI "volatile unsigned int \fBwaitcnt\fP"
+.br
+.ti -1c
+.RI "pthread_mutex_t \fBmutex\fP"
+.br
+.ti -1c
+.RI "pthread_cond_t \fBcond\fP"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "pthread_cond_t __sem::cond"
+
+.SS "volatile unsigned int __sem::id"
+
+.SS "pthread_mutex_t __sem::mutex"
+
+.SS "volatile unsigned int __sem::value"
+
+.SS "volatile unsigned int __sem::waitcnt"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

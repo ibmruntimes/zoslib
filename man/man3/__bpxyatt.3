@@ -1,0 +1,323 @@
+.TH "__bpxyatt" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+__bpxyatt
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "char \fBatt_id\fP [4]"
+.br
+.ti -1c
+.RI "short \fBatt_version\fP"
+.br
+.ti -1c
+.RI "char \fBatt_res01\fP [2]"
+.br
+.ti -1c
+.RI "int \fBatt_modechg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_ownerchg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_setgen\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_trunc\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_atimechg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_atimetod\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_mtimechg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_mtimetod\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_maaudit\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_muaudit\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_ctimechg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_ctimetod\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_reftimechg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_reftimetod\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_filefmtchg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_res04\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_res05\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_charsetidchg\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_lp64times\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_seclabelchg\fP: 1"
+.br
+.ti -1c
+.RI "char \fBatt_setflags4\fP"
+.br
+.ti -1c
+.RI "int \fBatt_mode\fP"
+.br
+.ti -1c
+.RI "int \fBatt_uid\fP"
+.br
+.ti -1c
+.RI "int \fBatt_gid\fP"
+.br
+.ti -1c
+.RI "int \fBatt_opaquemask\fP: 24"
+.br
+.ti -1c
+.RI "int \fBatt_visblmaskres\fP: 2"
+.br
+.ti -1c
+.RI "int \fBatt_nodelfilesmask\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_sharelibmask\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_noshareasmask\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_apfauthmask\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_progctlmask\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_visblmskrmain\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_opaque\fP: 24"
+.br
+.ti -1c
+.RI "int \fBatt_visibleres\fP: 2"
+.br
+.ti -1c
+.RI "int \fBatt_nodelfiles\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_sharelib\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_noshareas\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_apfauth\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_progctl\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_visblrmain\fP: 1"
+.br
+.ti -1c
+.RI "int \fBatt_size_h\fP"
+.br
+.ti -1c
+.RI "int \fBatt_size_l\fP"
+.br
+.ti -1c
+.RI "int \fBatt_atime\fP"
+.br
+.ti -1c
+.RI "int \fBatt_mtime\fP"
+.br
+.ti -1c
+.RI "int \fBatt_auditoraudit\fP"
+.br
+.ti -1c
+.RI "int \fBatt_useraudit\fP"
+.br
+.ti -1c
+.RI "int \fBatt_ctime\fP"
+.br
+.ti -1c
+.RI "int \fBatt_reftime\fP"
+.br
+.ti -1c
+.RI "char \fBatt_filefmt\fP"
+.br
+.ti -1c
+.RI "char \fBatt_res02\fP [3]"
+.br
+.ti -1c
+.RI "int \fBatt_filetag\fP"
+.br
+.ti -1c
+.RI "char \fBatt_res03\fP [8]"
+.br
+.ti -1c
+.RI "long \fBatt_atime64\fP"
+.br
+.ti -1c
+.RI "long \fBatt_mtime64\fP"
+.br
+.ti -1c
+.RI "long \fBatt_ctime64\fP"
+.br
+.ti -1c
+.RI "long \fBatt_reftime64\fP"
+.br
+.ti -1c
+.RI "char \fBatt_seclabel\fP [8]"
+.br
+.ti -1c
+.RI "char \fBatt_ver3res02\fP [8]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "int __bpxyatt::att_apfauth"
+
+.SS "int __bpxyatt::att_apfauthmask"
+
+.SS "int __bpxyatt::att_atime"
+
+.SS "long __bpxyatt::att_atime64"
+
+.SS "int __bpxyatt::att_atimechg"
+
+.SS "int __bpxyatt::att_atimetod"
+
+.SS "int __bpxyatt::att_auditoraudit"
+
+.SS "int __bpxyatt::att_charsetidchg"
+
+.SS "int __bpxyatt::att_ctime"
+
+.SS "long __bpxyatt::att_ctime64"
+
+.SS "int __bpxyatt::att_ctimechg"
+
+.SS "int __bpxyatt::att_ctimetod"
+
+.SS "char __bpxyatt::att_filefmt"
+
+.SS "int __bpxyatt::att_filefmtchg"
+
+.SS "int __bpxyatt::att_filetag"
+
+.SS "int __bpxyatt::att_gid"
+
+.SS "char __bpxyatt::att_id[4]"
+
+.SS "int __bpxyatt::att_lp64times"
+
+.SS "int __bpxyatt::att_maaudit"
+
+.SS "int __bpxyatt::att_mode"
+
+.SS "int __bpxyatt::att_modechg"
+
+.SS "int __bpxyatt::att_mtime"
+
+.SS "long __bpxyatt::att_mtime64"
+
+.SS "int __bpxyatt::att_mtimechg"
+
+.SS "int __bpxyatt::att_mtimetod"
+
+.SS "int __bpxyatt::att_muaudit"
+
+.SS "int __bpxyatt::att_nodelfiles"
+
+.SS "int __bpxyatt::att_nodelfilesmask"
+
+.SS "int __bpxyatt::att_noshareas"
+
+.SS "int __bpxyatt::att_noshareasmask"
+
+.SS "int __bpxyatt::att_opaque"
+
+.SS "int __bpxyatt::att_opaquemask"
+
+.SS "int __bpxyatt::att_ownerchg"
+
+.SS "int __bpxyatt::att_progctl"
+
+.SS "int __bpxyatt::att_progctlmask"
+
+.SS "int __bpxyatt::att_reftime"
+
+.SS "long __bpxyatt::att_reftime64"
+
+.SS "int __bpxyatt::att_reftimechg"
+
+.SS "int __bpxyatt::att_reftimetod"
+
+.SS "char __bpxyatt::att_res01[2]"
+
+.SS "char __bpxyatt::att_res02[3]"
+
+.SS "char __bpxyatt::att_res03[8]"
+
+.SS "int __bpxyatt::att_res04"
+
+.SS "int __bpxyatt::att_res05"
+
+.SS "char __bpxyatt::att_seclabel[8]"
+
+.SS "int __bpxyatt::att_seclabelchg"
+
+.SS "char __bpxyatt::att_setflags4"
+
+.SS "int __bpxyatt::att_setgen"
+
+.SS "int __bpxyatt::att_sharelib"
+
+.SS "int __bpxyatt::att_sharelibmask"
+
+.SS "int __bpxyatt::att_size_h"
+
+.SS "int __bpxyatt::att_size_l"
+
+.SS "int __bpxyatt::att_trunc"
+
+.SS "int __bpxyatt::att_uid"
+
+.SS "int __bpxyatt::att_useraudit"
+
+.SS "char __bpxyatt::att_ver3res02[8]"
+
+.SS "short __bpxyatt::att_version"
+
+.SS "int __bpxyatt::att_visblmaskres"
+
+.SS "int __bpxyatt::att_visblmskrmain"
+
+.SS "int __bpxyatt::att_visblrmain"
+
+.SS "int __bpxyatt::att_visibleres"
+ATTVISIBLE = 1 byte 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

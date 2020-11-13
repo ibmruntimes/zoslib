@@ -1,0 +1,554 @@
+.TH "iarv64parm" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+iarv64parm
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "unsigned char xversion \fB__attribute__\fP ((__aligned__(16)))"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBxrequest\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxmotknsource_system\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxmotkncreator_system\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxmatch_motoken\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxflags0_rsvd1\fP: 5"
+.br
+.ti -1c
+.RI "unsigned char \fBxkey\fP"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_key\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_usertkn\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_ttoken\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_convertstart\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_guardsize64\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_convertsize64\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_motkn\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_ownerjobname\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxcond_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxfprot_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxcontrol_auth\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxguardloc_high\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxchangeaccess_global\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_1meg\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_max\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_all\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxmatch_usertoken\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxaffinity_system\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxuse2gto32g_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxowner_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxv64select_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxsvcdumprgn_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxv64shared_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxsvcdumprgn_all\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxlong_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxclear_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxview_readonly\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxview_sharedwrite\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxview_hidden\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxconvert_toguard\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxconvert_fromguard\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxkeepreal_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned long long \fBxsegments\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBxttoken\fP [16]"
+.br
+.ti -1c
+.RI "unsigned long long \fBxusertkn\fP"
+.br
+.ti -1c
+.RI "void * \fBxorigin\fP"
+.br
+.ti -1c
+.RI "void * \fBxranglist\fP"
+.br
+.ti -1c
+.RI "void * \fBxmemobjstart\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxguardsize\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxconvertsize\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxaletvalue\fP"
+.br
+.ti -1c
+.RI "int \fBxnumrange\fP"
+.br
+.ti -1c
+.RI "void *__ptr32 \fBxv64listptr\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxv64listlength\fP"
+.br
+.ti -1c
+.RI "unsigned long long \fBxconvertstart\fP"
+.br
+.ti -1c
+.RI "unsigned long long \fBxconvertsize64\fP"
+.br
+.ti -1c
+.RI "unsigned long long \fBxguardsize64\fP"
+.br
+.ti -1c
+.RI "char \fBxusertoken\fP [8]"
+.br
+.ti -1c
+.RI "unsigned char \fBxdumppriority\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxdumpprotocol_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxorder_dumppriority\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxtype_pageable\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxtype_dref\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxownercom_home\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxownercom_primary\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxownercom_system\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxownercom_byasid\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxv64common_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxmemlimit_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxdetachfixed_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxdoauthchecks_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxlocalsysarea_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxamountsize_4k\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxamountsize_1meg\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxmemlimit_cond\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_dump\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_optionvalue\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_svcdumprgn\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxattribute_defs\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxattribute_ownergone\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxattribute_notownergone\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxtrackinfo_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxunlocked_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned char \fBxdump\fP"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_pageable1meg\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_dref1meg\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxsadmp_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxsadmp_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxuse2gto64g_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxdiscardpages_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxexecutable_yes\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxexecutable_no\fP: 1"
+.br
+.ti -1c
+.RI "unsigned short \fBxownerasid\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBxoptionvalue\fP"
+.br
+.ti -1c
+.RI "unsigned char \fBxrsv0001\fP [8]"
+.br
+.ti -1c
+.RI "unsigned char \fBxownerjobname\fP [8]"
+.br
+.ti -1c
+.RI "unsigned char \fBxrsv0004\fP [7]"
+.br
+.ti -1c
+.RI "void * \fBxdmapagetable\fP"
+.br
+.ti -1c
+.RI "unsigned long long \fBxunits\fP"
+.br
+.ti -1c
+.RI "unsigned \fBkeyused_units\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxunitsize_1m\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxunitsize_2g\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_1m\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxpageframesize_2g\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxtype_fixed\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBxflags9_rsvd1\fP: 2"
+.br
+.ti -1c
+.RI "unsigned \fBxkeyused_inorigin\fP: 1"
+.br
+.ti -1c
+.RI "unsigned \fBx_rsv0005\fP: 7"
+.br
+.ti -1c
+.RI "unsigned char \fBxrsv0006\fP [6]"
+.br
+.in -1c
+.SH "Member Function Documentation"
+.PP 
+.SS "unsigned char xversion iarv64parm::__attribute__ ((__aligned__(16)))"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "unsigned iarv64parm::keyused_convertsize64"
+
+.SS "unsigned iarv64parm::keyused_convertstart"
+
+.SS "unsigned iarv64parm::keyused_dump"
+
+.SS "unsigned iarv64parm::keyused_guardsize64"
+
+.SS "unsigned iarv64parm::keyused_key"
+
+.SS "unsigned iarv64parm::keyused_motkn"
+
+.SS "unsigned iarv64parm::keyused_optionvalue"
+
+.SS "unsigned iarv64parm::keyused_ownerjobname"
+
+.SS "unsigned iarv64parm::keyused_svcdumprgn"
+
+.SS "unsigned iarv64parm::keyused_ttoken"
+
+.SS "unsigned iarv64parm::keyused_units"
+
+.SS "unsigned iarv64parm::keyused_usertkn"
+
+.SS "unsigned iarv64parm::x_rsv0005"
+
+.SS "unsigned iarv64parm::xaffinity_system"
+
+.SS "unsigned iarv64parm::xaletvalue"
+
+.SS "unsigned iarv64parm::xamountsize_1meg"
+
+.SS "unsigned iarv64parm::xamountsize_4k"
+
+.SS "unsigned iarv64parm::xattribute_defs"
+
+.SS "unsigned iarv64parm::xattribute_notownergone"
+
+.SS "unsigned iarv64parm::xattribute_ownergone"
+
+.SS "unsigned iarv64parm::xchangeaccess_global"
+
+.SS "unsigned iarv64parm::xclear_no"
+
+.SS "unsigned iarv64parm::xcond_yes"
+
+.SS "unsigned iarv64parm::xcontrol_auth"
+
+.SS "unsigned iarv64parm::xconvert_fromguard"
+
+.SS "unsigned iarv64parm::xconvert_toguard"
+
+.SS "unsigned iarv64parm::xconvertsize"
+
+.SS "unsigned long long iarv64parm::xconvertsize64"
+
+.SS "unsigned long long iarv64parm::xconvertstart"
+
+.SS "unsigned iarv64parm::xdetachfixed_yes"
+
+.SS "unsigned iarv64parm::xdiscardpages_yes"
+
+.SS "void* iarv64parm::xdmapagetable"
+
+.SS "unsigned iarv64parm::xdoauthchecks_yes"
+
+.SS "unsigned char iarv64parm::xdump"
+
+.SS "unsigned char iarv64parm::xdumppriority"
+
+.SS "unsigned iarv64parm::xdumpprotocol_yes"
+
+.SS "unsigned iarv64parm::xexecutable_no"
+
+.SS "unsigned iarv64parm::xexecutable_yes"
+
+.SS "unsigned iarv64parm::xflags0_rsvd1"
+
+.SS "unsigned iarv64parm::xflags9_rsvd1"
+
+.SS "unsigned iarv64parm::xfprot_no"
+
+.SS "unsigned iarv64parm::xguardloc_high"
+
+.SS "unsigned iarv64parm::xguardsize"
+
+.SS "unsigned long long iarv64parm::xguardsize64"
+
+.SS "unsigned iarv64parm::xkeepreal_no"
+
+.SS "unsigned char iarv64parm::xkey"
+
+.SS "unsigned iarv64parm::xkeyused_inorigin"
+
+.SS "unsigned iarv64parm::xlocalsysarea_yes"
+
+.SS "unsigned iarv64parm::xlong_no"
+
+.SS "unsigned iarv64parm::xmatch_motoken"
+
+.SS "unsigned iarv64parm::xmatch_usertoken"
+
+.SS "unsigned iarv64parm::xmemlimit_cond"
+
+.SS "unsigned iarv64parm::xmemlimit_no"
+
+.SS "void* iarv64parm::xmemobjstart"
+
+.SS "unsigned iarv64parm::xmotkncreator_system"
+
+.SS "unsigned iarv64parm::xmotknsource_system"
+
+.SS "int iarv64parm::xnumrange"
+
+.SS "unsigned char iarv64parm::xoptionvalue"
+
+.SS "unsigned iarv64parm::xorder_dumppriority"
+
+.SS "void* iarv64parm::xorigin"
+
+.SS "unsigned iarv64parm::xowner_no"
+
+.SS "unsigned short iarv64parm::xownerasid"
+
+.SS "unsigned iarv64parm::xownercom_byasid"
+
+.SS "unsigned iarv64parm::xownercom_home"
+
+.SS "unsigned iarv64parm::xownercom_primary"
+
+.SS "unsigned iarv64parm::xownercom_system"
+
+.SS "unsigned char iarv64parm::xownerjobname[8]"
+
+.SS "unsigned iarv64parm::xpageframesize_1m"
+
+.SS "unsigned iarv64parm::xpageframesize_1meg"
+
+.SS "unsigned iarv64parm::xpageframesize_2g"
+
+.SS "unsigned iarv64parm::xpageframesize_all"
+
+.SS "unsigned iarv64parm::xpageframesize_dref1meg"
+
+.SS "unsigned iarv64parm::xpageframesize_max"
+
+.SS "unsigned iarv64parm::xpageframesize_pageable1meg"
+
+.SS "void* iarv64parm::xranglist"
+
+.SS "unsigned char iarv64parm::xrequest"
+
+.SS "unsigned char iarv64parm::xrsv0001[8]"
+
+.SS "unsigned char iarv64parm::xrsv0004[7]"
+
+.SS "unsigned char iarv64parm::xrsv0006[6]"
+
+.SS "unsigned iarv64parm::xsadmp_no"
+
+.SS "unsigned iarv64parm::xsadmp_yes"
+
+.SS "unsigned long long iarv64parm::xsegments"
+
+.SS "unsigned iarv64parm::xsvcdumprgn_all"
+
+.SS "unsigned iarv64parm::xsvcdumprgn_no"
+
+.SS "unsigned iarv64parm::xtrackinfo_yes"
+
+.SS "unsigned char iarv64parm::xttoken[16]"
+
+.SS "unsigned iarv64parm::xtype_dref"
+
+.SS "unsigned iarv64parm::xtype_fixed"
+
+.SS "unsigned iarv64parm::xtype_pageable"
+
+.SS "unsigned long long iarv64parm::xunits"
+
+.SS "unsigned iarv64parm::xunitsize_1m"
+
+.SS "unsigned iarv64parm::xunitsize_2g"
+
+.SS "unsigned iarv64parm::xunlocked_yes"
+
+.SS "unsigned iarv64parm::xuse2gto32g_yes"
+
+.SS "unsigned iarv64parm::xuse2gto64g_yes"
+
+.SS "unsigned long long iarv64parm::xusertkn"
+
+.SS "char iarv64parm::xusertoken[8]"
+
+.SS "unsigned iarv64parm::xv64common_no"
+
+.SS "unsigned iarv64parm::xv64listlength"
+
+.SS "void* __ptr32 iarv64parm::xv64listptr"
+
+.SS "unsigned iarv64parm::xv64select_no"
+
+.SS "unsigned iarv64parm::xv64shared_no"
+
+.SS "unsigned iarv64parm::xview_hidden"
+
+.SS "unsigned iarv64parm::xview_readonly"
+
+.SS "unsigned iarv64parm::xview_sharedwrite"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

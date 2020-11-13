@@ -1,0 +1,242 @@
+.TH "include/csrsic.h" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/csrsic.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBCSRSI_CSRT\fP"
+.br
+.ti -1c
+.RI "struct \fBCSRSI_CVT\fP"
+.br
+.ti -1c
+.RI "struct \fBCSRSI_PSA\fP"
+.br
+.ti -1c
+.RI "struct \fBsi11v1\fP"
+.br
+.ti -1c
+.RI "struct \fBsi22v1\fP"
+.br
+.ti -1c
+.RI "struct \fBsi22v1alt\fP"
+.br
+.ti -1c
+.RI "struct \fBsi22v2\fP"
+.br
+.ti -1c
+.RI "struct \fBsi22v3db\fP"
+.br
+.ti -1c
+.RI "struct \fBsi22v3\fP"
+.br
+.ti -1c
+.RI "struct \fBsi00\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv1\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv1v2\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv1v2v3\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv1v3\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv2\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv2v3\fP"
+.br
+.ti -1c
+.RI "struct \fBsiv3\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBcsrsi\fP   \fBCSRSI\fP"
+.br
+.ti -1c
+.RI "#define \fBcsrsi_byaddr\fP(Request,  Flen,  Fptr,  Rcptr)"
+.br
+.ti -1c
+.RI "#define \fBsi11v1cpcmodel\fP   si11v1cpcmodelcapident"
+.br
+.ti -1c
+.RI "#define \fBsi22v1mpcpucapaf\fP   si22v1mpcpucapafs\&._si22v1mpcpucapaf"
+.br
+.ti -1c
+.RI "#define \fBsi22v1altmpcpucapaf\fP   si22v1altmpcpucapafs\&._si22v1altmpcpucapaf"
+.br
+.ti -1c
+.RI "#define \fBsi22v2lcpudedicated\fP   si22v2lcpuc\&._si22v2lcpudedicated"
+.br
+.ti -1c
+.RI "#define \fBsi22v2lcpushared\fP   si22v2lcpuc\&._si22v2lcpushared"
+.br
+.ti -1c
+.RI "#define \fBsi22v2lcpuulimit\fP   si22v2lcpuc\&._si22v2lcpuulimit"
+.br
+.ti -1c
+.RI "#define \fBsi22v3dbcount\fP   si22v3dbcountfield\&._si22v3dbcount"
+.br
+.ti -1c
+.RI "#define \fBsi00validsi11v1\fP   si00validityflags\&._si00validsi11v1"
+.br
+.ti -1c
+.RI "#define \fBsi00validsi22v1\fP   si00validityflags\&._si00validsi22v1"
+.br
+.ti -1c
+.RI "#define \fBsi00validsi22v2\fP   si00validityflags\&._si00validsi22v2"
+.br
+.ti -1c
+.RI "#define \fBsi00validsi22v3\fP   si00validityflags\&._si00validsi22v3"
+.br
+.ti -1c
+.RI "#define \fBSI00CPCVARIETY_V1CPC_MACHINE\fP   1"
+.br
+.ti -1c
+.RI "#define \fBSI00CPCVARIETY_V2CPC_LPAR\fP   2"
+.br
+.ti -1c
+.RI "#define \fBSI00CPCVARIETY_V3CPC_VM\fP   3"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_REQUEST_V1CPC_MACHINE\fP   1"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_REQUEST_V2CPC_LPAR\fP   2"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_REQUEST_V3CPC_VM\fP   4"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_SUCCESS\fP   0"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_STSINOTAVAILABLE\fP   4"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_SERVICENOTAVAILABLE\fP   8"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_BADREQUEST\fP   12"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_BADINFOAREALEN\fP   16"
+.br
+.ti -1c
+.RI "#define \fBCSRSI_BADLOCK\fP   20"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef int \fBCSRSIRequest\fP"
+.br
+.ti -1c
+.RI "typedef int \fBCSRSIInfoAreaLen\fP"
+.br
+.ti -1c
+.RI "typedef int \fBCSRSIReturnCode\fP"
+.br
+.ti -1c
+.RI "typedef void \fBCSRSI_calltype\fP(\fBCSRSIRequest\fP __REQUEST, \fBCSRSIInfoAreaLen\fP __INFOAREALEN, void *__INFOAREA, \fBCSRSIReturnCode\fP *__RC)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "\fBCSRSI_calltype\fP \fBCSRSI\fP"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define csrsi   \fBCSRSI\fP"
+
+.SS "#define CSRSI_BADINFOAREALEN   16"
+
+.SS "#define CSRSI_BADLOCK   20"
+
+.SS "#define CSRSI_BADREQUEST   12"
+
+.SS "#define csrsi_byaddr(Request, Flen, Fptr, Rcptr)"
+\fBValue:\fP
+.PP
+.nf
+{                                                                 \
+ ((struct CSRSI_PSA*) 0) ->                                         \
+                   CSRSI_cvt->CSRSI_cvtcsrt->CSRSI_addr             \
+           (Request,Flen,Fptr,Rcptr);                               \
+};
+.fi
+.SS "#define CSRSI_REQUEST_V1CPC_MACHINE   1"
+
+.SS "#define CSRSI_REQUEST_V2CPC_LPAR   2"
+
+.SS "#define CSRSI_REQUEST_V3CPC_VM   4"
+
+.SS "#define CSRSI_SERVICENOTAVAILABLE   8"
+
+.SS "#define CSRSI_STSINOTAVAILABLE   4"
+
+.SS "#define CSRSI_SUCCESS   0"
+
+.SS "#define SI00CPCVARIETY_V1CPC_MACHINE   1"
+
+.SS "#define SI00CPCVARIETY_V2CPC_LPAR   2"
+
+.SS "#define SI00CPCVARIETY_V3CPC_VM   3"
+
+.SS "#define si00validsi11v1   si00validityflags\&._si00validsi11v1"
+
+.SS "#define si00validsi22v1   si00validityflags\&._si00validsi22v1"
+
+.SS "#define si00validsi22v2   si00validityflags\&._si00validsi22v2"
+
+.SS "#define si00validsi22v3   si00validityflags\&._si00validsi22v3"
+
+.SS "#define si11v1cpcmodel   si11v1cpcmodelcapident"
+
+.SS "#define si22v1altmpcpucapaf   si22v1altmpcpucapafs\&._si22v1altmpcpucapaf"
+
+.SS "#define si22v1mpcpucapaf   si22v1mpcpucapafs\&._si22v1mpcpucapaf"
+
+.SS "#define si22v2lcpudedicated   si22v2lcpuc\&._si22v2lcpudedicated"
+
+.SS "#define si22v2lcpushared   si22v2lcpuc\&._si22v2lcpushared"
+
+.SS "#define si22v2lcpuulimit   si22v2lcpuc\&._si22v2lcpuulimit"
+
+.SS "#define si22v3dbcount   si22v3dbcountfield\&._si22v3dbcount"
+
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef void CSRSI_calltype(\fBCSRSIRequest\fP __REQUEST, \fBCSRSIInfoAreaLen\fP __INFOAREALEN, void *__INFOAREA, \fBCSRSIReturnCode\fP *__RC)"
+
+.SS "typedef int \fBCSRSIInfoAreaLen\fP"
+
+.SS "typedef int \fBCSRSIRequest\fP"
+
+.SS "typedef int \fBCSRSIReturnCode\fP"
+
+.SH "Variable Documentation"
+.PP 
+.SS "\fBCSRSI_calltype\fP CSRSI\fC [extern]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

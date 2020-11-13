@@ -1,0 +1,45 @@
+.TH "__csConverter" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+__csConverter
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__csConverter\fP (int fr_ccsid, int to_ccsid)"
+.br
+.ti -1c
+.RI "int \fBis_valid\fP (void)"
+.br
+.ti -1c
+.RI "\fB~__csConverter\fP (void)"
+.br
+.ti -1c
+.RI "\fBsize_t\fP \fBiconv\fP (char **inbuf, \fBsize_t\fP *inbytesleft, char **outbuf, \fBsize_t\fP *outbytesleft)"
+.br
+.ti -1c
+.RI "int \fBconv\fP (char *out, \fBsize_t\fP outsize, const char *in, \fBsize_t\fP insize)"
+.br
+.in -1c
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "__csConverter::__csConverter (int fr_ccsid, int to_ccsid)\fC [inline]\fP"
+
+.SS "__csConverter::~__csConverter (void)\fC [inline]\fP"
+
+.SH "Member Function Documentation"
+.PP 
+.SS "int __csConverter::conv (char * out, \fBsize_t\fP outsize, const char * in, \fBsize_t\fP insize)\fC [inline]\fP"
+
+.SS "\fBsize_t\fP __csConverter::iconv (char ** inbuf, \fBsize_t\fP * inbytesleft, char ** outbuf, \fBsize_t\fP * outbytesleft)\fC [inline]\fP"
+
+.SS "int __csConverter::is_valid (void)\fC [inline]\fP"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

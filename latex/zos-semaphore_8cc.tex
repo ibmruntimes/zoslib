@@ -1,0 +1,86 @@
+\hypertarget{zos-semaphore_8cc}{}\doxysection{src/zos-\/semaphore.cc File Reference}
+\label{zos-semaphore_8cc}\index{src/zos-\/semaphore.cc@{src/zos-\/semaphore.cc}}
+{\ttfamily \#include \char`\"{}zos-\/semaphore.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$sys/modes.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{zos-semaphore_8cc_a84e16a2a8387f9d4b9d2fc2e55a19d2b}{assign\+Sem\+Initialize\+Error}} ()
+\item 
+void \mbox{\hyperlink{zos-semaphore_8cc_a62fd3258850921286ea4c79545cb066d}{assign\+Sem\+Destroy\+Error}} ()
+\item 
+void \mbox{\hyperlink{zos-semaphore_8cc_acc9424de862c2ca951f26a3ae99e9b42}{assign\+Semget\+Error}} ()
+\item 
+void \mbox{\hyperlink{zos-semaphore_8cc_a6332df567b6c0f441fdd6c350c68b7cc}{assign\+Semop\+Error\+Code}} ()
+\item 
+int \mbox{\hyperlink{zos-semaphore_8cc_a532509bd8a6499f8193253192fb83a3d}{sem\+\_\+init}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$sem, int pshared, unsigned int value)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8cc_a6bc9a7dd941a9b5e319715b767af5682}{sem\+\_\+destroy}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$sem)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8cc_aad70020dca2241a2b78e272ca033271b}{sem\+\_\+wait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$sem)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8cc_a42bba77b6e81aa8432f7a532087d51a8}{sem\+\_\+timedwait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$sem, const struct timespec $\ast$ts)
+\item 
+int \mbox{\hyperlink{zos-semaphore_8cc_a015dce85cab8477c679cc47968958247}{sem\+\_\+post}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$sem)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{zos-semaphore_8cc_a62fd3258850921286ea4c79545cb066d}\label{zos-semaphore_8cc_a62fd3258850921286ea4c79545cb066d}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!assignSemDestroyError@{assignSemDestroyError}}
+\index{assignSemDestroyError@{assignSemDestroyError}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{assignSemDestroyError()}{assignSemDestroyError()}}
+{\footnotesize\ttfamily void assign\+Sem\+Destroy\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_acc9424de862c2ca951f26a3ae99e9b42}\label{zos-semaphore_8cc_acc9424de862c2ca951f26a3ae99e9b42}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!assignSemgetError@{assignSemgetError}}
+\index{assignSemgetError@{assignSemgetError}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{assignSemgetError()}{assignSemgetError()}}
+{\footnotesize\ttfamily void assign\+Semget\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a84e16a2a8387f9d4b9d2fc2e55a19d2b}\label{zos-semaphore_8cc_a84e16a2a8387f9d4b9d2fc2e55a19d2b}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!assignSemInitializeError@{assignSemInitializeError}}
+\index{assignSemInitializeError@{assignSemInitializeError}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{assignSemInitializeError()}{assignSemInitializeError()}}
+{\footnotesize\ttfamily void assign\+Sem\+Initialize\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a6332df567b6c0f441fdd6c350c68b7cc}\label{zos-semaphore_8cc_a6332df567b6c0f441fdd6c350c68b7cc}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!assignSemopErrorCode@{assignSemopErrorCode}}
+\index{assignSemopErrorCode@{assignSemopErrorCode}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{assignSemopErrorCode()}{assignSemopErrorCode()}}
+{\footnotesize\ttfamily void assign\+Semop\+Error\+Code (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a6bc9a7dd941a9b5e319715b767af5682}\label{zos-semaphore_8cc_a6bc9a7dd941a9b5e319715b767af5682}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!sem\_destroy@{sem\_destroy}}
+\index{sem\_destroy@{sem\_destroy}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{sem\_destroy()}{sem\_destroy()}}
+{\footnotesize\ttfamily int sem\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{sem }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a532509bd8a6499f8193253192fb83a3d}\label{zos-semaphore_8cc_a532509bd8a6499f8193253192fb83a3d}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!sem\_init@{sem\_init}}
+\index{sem\_init@{sem\_init}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{sem\_init()}{sem\_init()}}
+{\footnotesize\ttfamily int sem\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{sem,  }\item[{int}]{pshared,  }\item[{unsigned int}]{value }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a015dce85cab8477c679cc47968958247}\label{zos-semaphore_8cc_a015dce85cab8477c679cc47968958247}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!sem\_post@{sem\_post}}
+\index{sem\_post@{sem\_post}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{sem\_post()}{sem\_post()}}
+{\footnotesize\ttfamily int sem\+\_\+post (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{sem }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_a42bba77b6e81aa8432f7a532087d51a8}\label{zos-semaphore_8cc_a42bba77b6e81aa8432f7a532087d51a8}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!sem\_timedwait@{sem\_timedwait}}
+\index{sem\_timedwait@{sem\_timedwait}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{sem\_timedwait()}{sem\_timedwait()}}
+{\footnotesize\ttfamily int sem\+\_\+timedwait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{sem,  }\item[{const struct timespec $\ast$}]{ts }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8cc_aad70020dca2241a2b78e272ca033271b}\label{zos-semaphore_8cc_aad70020dca2241a2b78e272ca033271b}} 
+\index{zos-\/semaphore.cc@{zos-\/semaphore.cc}!sem\_wait@{sem\_wait}}
+\index{sem\_wait@{sem\_wait}!zos-\/semaphore.cc@{zos-\/semaphore.cc}}
+\doxysubsubsection{\texorpdfstring{sem\_wait()}{sem\_wait()}}
+{\footnotesize\ttfamily int sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{sem }\end{DoxyParamCaption})}
+

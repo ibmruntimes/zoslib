@@ -1,7 +1,17 @@
+###############################################################################
+# Licensed Materials - Property of IBM
+# ZOSLIB
+# (C) Copyright IBM Corp. 2020. All Rights Reserved.
+# US Government Users Restricted Rights - Use, duplication
+# or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+###############################################################################
+
 project(libzoslib CXX C ASM)
 cmake_minimum_required(VERSION 3.5)
 
 include_directories(BEFORE include)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory(src)
 

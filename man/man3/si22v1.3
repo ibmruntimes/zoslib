@@ -1,0 +1,88 @@
+.TH "si22v1" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+si22v1
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <csrsic\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1format\fP: 8"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP: 8"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1accoffset\fP: 16"
+.br
+.ti -1c
+.RI "unsigned char \fB_filler1\fP [24]"
+.br
+.ti -1c
+.RI "unsigned char \fBsi22v1secondarycpucapability\fP [4]"
+.br
+.ti -1c
+.RI "unsigned char \fBsi22v1cpucapability\fP [4]"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1totalcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1configuredcpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1standbycpucount\fP: 16"
+.br
+.ti -1c
+.RI "unsigned \fBint\fP \fBsi22v1reservedcpucount\fP: 16"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "   unsigned char \fB_si22v1mpcpucapaf\fP [2]"
+.br
+.ti -1c
+.RI "   unsigned char \fB_filler2\fP [4050]"
+.br
+.ti -1c
+.RI "} \fBsi22v1mpcpucapafs\fP"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "unsigned char si22v1::_filler1[24]"
+
+.SS "unsigned char si22v1::_filler2[4050]"
+
+.SS "unsigned char si22v1::_si22v1mpcpucapaf[2]"
+
+.SS "unsigned si22v1::int"
+
+.SS "unsigned \fBint\fP si22v1::si22v1accoffset"
+
+.SS "unsigned \fBint\fP si22v1::si22v1configuredcpucount"
+
+.SS "unsigned char si22v1::si22v1cpucapability[4]"
+
+.SS "unsigned \fBint\fP si22v1::si22v1format"
+
+.SS "struct { \&.\&.\&. }  si22v1::si22v1mpcpucapafs"
+
+.SS "unsigned \fBint\fP si22v1::si22v1reservedcpucount"
+
+.SS "unsigned char si22v1::si22v1secondarycpucapability[4]"
+
+.SS "unsigned \fBint\fP si22v1::si22v1standbycpucount"
+
+.SS "unsigned \fBint\fP si22v1::si22v1totalcpucount"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

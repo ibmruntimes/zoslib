@@ -1,0 +1,75 @@
+.TH "src/zos-semaphore.cc" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-semaphore.cc
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-semaphore\&.h'\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <sys/modes\&.h>\fP
+.br
+\fC#include <time\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBassignSemInitializeError\fP ()"
+.br
+.ti -1c
+.RI "void \fBassignSemDestroyError\fP ()"
+.br
+.ti -1c
+.RI "void \fBassignSemgetError\fP ()"
+.br
+.ti -1c
+.RI "void \fBassignSemopErrorCode\fP ()"
+.br
+.ti -1c
+.RI "int \fBsem_init\fP (\fBsem_t\fP *sem, int pshared, unsigned int value)"
+.br
+.ti -1c
+.RI "int \fBsem_destroy\fP (\fBsem_t\fP *sem)"
+.br
+.ti -1c
+.RI "int \fBsem_wait\fP (\fBsem_t\fP *sem)"
+.br
+.ti -1c
+.RI "int \fBsem_timedwait\fP (\fBsem_t\fP *sem, const struct timespec *ts)"
+.br
+.ti -1c
+.RI "int \fBsem_post\fP (\fBsem_t\fP *sem)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void assignSemDestroyError ()"
+
+.SS "void assignSemgetError ()"
+
+.SS "void assignSemInitializeError ()"
+
+.SS "void assignSemopErrorCode ()"
+
+.SS "int sem_destroy (\fBsem_t\fP * sem)"
+
+.SS "int sem_init (\fBsem_t\fP * sem, int pshared, unsigned int value)"
+
+.SS "int sem_post (\fBsem_t\fP * sem)"
+
+.SS "int sem_timedwait (\fBsem_t\fP * sem, const struct timespec * ts)"
+
+.SS "int sem_wait (\fBsem_t\fP * sem)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

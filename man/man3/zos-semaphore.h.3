@@ -1,0 +1,79 @@
+.TH "include/zos-semaphore.h" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/zos-semaphore.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <inttypes\&.h>\fP
+.br
+\fC#include <pthread\&.h>\fP
+.br
+\fC#include <sys/sem\&.h>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBsem_t\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__SIZEOF_SEM_T\fP   16"
+.br
+.ti -1c
+.RI "#define \fBSEM_FAILED\fP   ((\fBsem_t\fP *)0)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBsem_init\fP (\fBsem_t\fP *semid, int pshared, unsigned int value)"
+.br
+.ti -1c
+.RI "int \fBsem_destroy\fP (\fBsem_t\fP *semid)"
+.br
+.ti -1c
+.RI "int \fBsem_wait\fP (\fBsem_t\fP *semid)"
+.br
+.ti -1c
+.RI "int \fBsem_trywait\fP (\fBsem_t\fP *semid)"
+.br
+.ti -1c
+.RI "int \fBsem_post\fP (\fBsem_t\fP *semid)"
+.br
+.ti -1c
+.RI "int \fBsem_timedwait\fP (\fBsem_t\fP *semid, const struct timespec *timeout)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __SIZEOF_SEM_T   16"
+
+.SS "#define SEM_FAILED   ((\fBsem_t\fP *)0)"
+
+.SH "Function Documentation"
+.PP 
+.SS "int sem_destroy (\fBsem_t\fP * semid)"
+
+.SS "int sem_init (\fBsem_t\fP * semid, int pshared, unsigned int value)"
+
+.SS "int sem_post (\fBsem_t\fP * semid)"
+
+.SS "int sem_timedwait (\fBsem_t\fP * semid, const struct timespec * timeout)"
+
+.SS "int sem_trywait (\fBsem_t\fP * semid)"
+
+.SS "int sem_wait (\fBsem_t\fP * semid)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.
