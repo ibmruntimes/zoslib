@@ -1628,9 +1628,10 @@ extern "C" unsigned long __mach_absolute_time(void) {
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
 }
 
-extern "C" void __set_autocvt_on_untagged_fd_stream(int fd,
+extern "C" void __set_autocvt_on_fd_stream(int fd,
                                                     unsigned short ccsid,
-                                                    unsigned char txtflag) {
+                                                    unsigned char txtflag,
+                                                    int on_untagged_only) {
   struct file_tag tag;
 
   tag.ft_ccsid = ccsid;
@@ -1638,7 +1639,7 @@ extern "C" void __set_autocvt_on_untagged_fd_stream(int fd,
 
   struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
 
-  if (!isatty(fd) && 0 == __getfdccsid(fd)) {
+  if (!on_untagged_only || (!isatty(fd) && 0 == __getfdccsid(fd))) {
     fcntl(fd, F_CONTROL_CVT, &req);
     fcntl(fd, F_SETTAG, &tag);
   }

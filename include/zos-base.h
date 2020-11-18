@@ -290,9 +290,11 @@ extern void __setdebug(int);
  * \param [in] fd - file descriptor.
  * \param [in] ccsid - CCSID to auto convert to.
  * \param [in] txtflag - Indicates if ccsid is text.
+ * \param [in] on_untagged_only - applies only to untagged
  */
-extern void __set_autocvt_on_untagged_fd_stream(int fd, unsigned short ccsid,
-                                                unsigned char txtflag);
+extern void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
+                                                unsigned char txtflag,
+                                                int on_untagged_only);
 /**
  * Get program argument list of a given process id
  * \param [out] argc - pointer to store count of the arguments
