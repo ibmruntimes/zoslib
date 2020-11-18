@@ -293,8 +293,8 @@ extern void __setdebug(int);
  * \param [in] on_untagged_only - applies only to untagged
  */
 extern void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
-                                                unsigned char txtflag,
-                                                int on_untagged_only);
+                                       unsigned char txtflag,
+                                       int on_untagged_only);
 /**
  * Get program argument list of a given process id
  * \param [out] argc - pointer to store count of the arguments

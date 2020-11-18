@@ -1628,10 +1628,9 @@ extern "C" unsigned long __mach_absolute_time(void) {
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
 }
 
-extern "C" void __set_autocvt_on_fd_stream(int fd,
-                                                    unsigned short ccsid,
-                                                    unsigned char txtflag,
-                                                    int on_untagged_only) {
+extern "C" void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
+                                           unsigned char txtflag,
+                                           int on_untagged_only) {
   struct file_tag tag;
 
   tag.ft_ccsid = ccsid;
