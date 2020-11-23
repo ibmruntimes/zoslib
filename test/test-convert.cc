@@ -41,6 +41,17 @@ TEST(E2ATest, E2AL) {
   }
 }
 
+TEST(E2ATest, E2AS) {
+  for (int i = 0; i < ARRAY_SIZE(ebcdic); i++) {
+    const size_t len = strlen(ebcdic[i]) + 1;
+    char *const buffer = new char[len];
+    strncpy(buffer, ebcdic[i], len);
+    __e2a_s(buffer);
+    EXPECT_STREQ(ascii[i], buffer);
+    delete[] buffer;
+  }
+}
+
 TEST(A2ETest, ConvertA2E) {
   for (int i = 0; i < ARRAY_SIZE(ascii); i++) {
     const size_t len = strlen(ascii[i]) + 1;
@@ -57,6 +68,17 @@ TEST(A2ETest, A2EL) {
     char *const buffer = new char[len];
     strncpy(buffer, ascii[i], len);
     __a2e_l(buffer, len);
+    EXPECT_STREQ(ebcdic[i], buffer);
+    delete[] buffer;
+  }
+}
+
+TEST(A2ETest, A2ES) {
+  for (int i = 0; i < ARRAY_SIZE(ascii); i++) {
+    const size_t len = strlen(ascii[i]) + 1;
+    char *const buffer = new char[len];
+    strncpy(buffer, ascii[i], len);
+    __a2e_s(buffer);
     EXPECT_STREQ(ebcdic[i], buffer);
     delete[] buffer;
   }
