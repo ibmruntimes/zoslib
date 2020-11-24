@@ -3644,7 +3644,7 @@ __zinit::__zinit(const zoslib_config_t &config)
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
   if (_CVTSTATE_OFF == cvstate) {
-    __ae_autoconvert_state(_CVTSTATE_ON);
+    __ae_autoconvert_state(_CVTSTATE_ALL);
   }
   char *cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
   if (cu && !memcmp(cu, "1", 2)) {
