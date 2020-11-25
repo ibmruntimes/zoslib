@@ -45,8 +45,6 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-list(APPEND zoslib_cflags -Wc,DLL)
-
 list(APPEND zoslib_cflags
   -q64
   -qascii
