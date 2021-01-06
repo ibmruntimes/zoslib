@@ -31,6 +31,10 @@
 #include "zos.h"
 
 #include "gtest/gtest.h"
+#include "test-args.h"
+
+int expected_argc;
+char **expected_argv;
 
 class Environment : public testing::Environment {
 private:
@@ -57,6 +61,8 @@ void loop() { RUN_ALL_TESTS(); }
 
 GTEST_API_ int main(int argc, char **argv) {
   printf("Running main() from %s\n", __FILE__);
+  expected_argc = argc;
+  expected_argv = argv;
   testing::InitGoogleTest(&argc, argv);
   testing::AddGlobalTestEnvironment(new Environment());
   return RUN_ALL_TESTS();

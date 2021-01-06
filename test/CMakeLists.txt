@@ -1,5 +1,5 @@
-set(gtest_sources gtest/gtest_main.cc gtest/gtest-all.cc)
-file(GLOB zoslib_test_sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+set(gtest_sources gtest_main.cc gtest/gtest-all.cc)
+file(GLOB zoslib_test_sources "${CMAKE_CURRENT_SOURCE_DIR}/test-*.cc")
 
 add_executable(cctest ${gtest_sources} ${zoslib_test_sources})
 
