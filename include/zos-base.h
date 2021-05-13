@@ -591,6 +591,25 @@ void init_zoslib_config(zoslib_config_t &config);
 #ifdef __cplusplus
 #include <exception>
 
+inline bool operator==(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ == _b.__;
+}
+inline bool operator!=(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ != _b.__;
+}
+inline bool operator<=(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ <= _b.__;
+}
+inline bool operator>=(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ >= _b.__;
+}
+inline bool operator<(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ < _b.__;
+}
+inline bool operator>(const pthread_t &_a, const pthread_t &_b) {
+  return _a.__ > _b.__;
+}
+
 class __auto_ascii {
   int ascii_mode;
 
