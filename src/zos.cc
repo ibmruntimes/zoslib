@@ -773,7 +773,7 @@ extern "C" char **backtrace_symbols(void *const *buffer, int size) {
   return result;
 }
 
-static void rbracket_entry_name(char* entry_name, int size) {
+static void rbracket_entry_name(char *entry_name, int size) {
   // if entry_name has a different number of ( and ), then add a ) (r=right)
   // at the end; used for the backtrace
   if (!strchr(entry_name, '('))
@@ -790,12 +790,12 @@ static void rbracket_entry_name(char* entry_name, int size) {
   }
   if (lcnt == rcnt)
     return;
-  if (entry_name[len-1] == ')')
+  if (entry_name[len - 1] == ')')
     return;
   if (!strcmp(entry_name + len - 3, "...")) {
     assert(len <= size);
     if (len == size)
-      entry_name[len-1] = ')';
+      entry_name[len - 1] = ')';
     else {
       entry_name[len++] = ')';
       entry_name[len] = 0;
@@ -864,75 +864,46 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (tbck_parms.__tf_call_instruction) {
         if (pu_name[0]) {
           if (fd == -1)
-            cnt = __snprintf_a(stringpool,
-                               buff_end - stringpool,
-                               " %d: 0x%p %s+0x%lx [%s:%s]",
-                               i+1,
-                               return_addr,
+            cnt = __snprintf_a(stringpool, buff_end - stringpool,
+                               " %d: 0x%p %s+0x%lx [%s:%s]", i + 1, return_addr,
                                entry_name,
-                               (char*)tbck_parms.__tf_call_instruction -
-                                   (char*)tbck_parms.__tf_entry_addr,
-                               pu_name,
-                               stmt_id);
+                               (char *)tbck_parms.__tf_call_instruction -
+                                   (char *)tbck_parms.__tf_entry_addr,
+                               pu_name, stmt_id);
           else
-            dprintf(fd,
-                    " %d: 0x%p %s+0x%lx [%s:%s]\n",
-                    i+1,
-                    return_addr,
+            dprintf(fd, " %d: 0x%p %s+0x%lx [%s:%s]\n", i + 1, return_addr,
                     entry_name,
-                    (char*)tbck_parms.__tf_call_instruction -
-                        (char*)tbck_parms.__tf_entry_addr,
-                    pu_name,
-                    stmt_id);
+                    (char *)tbck_parms.__tf_call_instruction -
+                        (char *)tbck_parms.__tf_entry_addr,
+                    pu_name, stmt_id);
 
         } else {
           if (fd == -1)
-            cnt = __snprintf_a(stringpool,
-                               buff_end - stringpool,
-                               " %d: 0x%p %s+0x%lx",
-                               i+1,
-                               return_addr,
+            cnt = __snprintf_a(stringpool, buff_end - stringpool,
+                               " %d: 0x%p %s+0x%lx", i + 1, return_addr,
                                entry_name,
-                               (char*)tbck_parms.__tf_call_instruction -
-                                   (char*)tbck_parms.__tf_entry_addr);
+                               (char *)tbck_parms.__tf_call_instruction -
+                                   (char *)tbck_parms.__tf_entry_addr);
           else
-            dprintf(fd,
-                    " %d: 0x%p %s+0x%lx\n",
-                    i+1,
-                    return_addr,
-                    entry_name,
-                    (char*)tbck_parms.__tf_call_instruction -
-                        (char*)tbck_parms.__tf_entry_addr);
+            dprintf(fd, " %d: 0x%p %s+0x%lx\n", i + 1, return_addr, entry_name,
+                    (char *)tbck_parms.__tf_call_instruction -
+                        (char *)tbck_parms.__tf_entry_addr);
         }
       } else {
         if (pu_name[0]) {
           if (fd == -1)
-            cnt = __snprintf_a(stringpool,
-                               buff_end - stringpool,
-                               " %d: 0x%p %s [%s:%s]",
-                               i+1,
-                               return_addr,
-                               entry_name,
-                               pu_name,
-                               stmt_id);
+            cnt = __snprintf_a(stringpool, buff_end - stringpool,
+                               " %d: 0x%p %s [%s:%s]", i + 1, return_addr,
+                               entry_name, pu_name, stmt_id);
           else
-            dprintf(fd,
-                    " %d 0x%p %s [%s:%s]\n",
-                    i+1,
-                    return_addr,
-                    entry_name,
-                    pu_name,
-                    stmt_id);
+            dprintf(fd, " %d 0x%p %s [%s:%s]\n", i + 1, return_addr, entry_name,
+                    pu_name, stmt_id);
         } else {
           if (fd == -1)
-            cnt = __snprintf_a(stringpool,
-                               buff_end - stringpool,
-                               " %d: 0x%p %s",
-                               i+1,
-                               return_addr,
-                               entry_name);
+            cnt = __snprintf_a(stringpool, buff_end - stringpool,
+                               " %d: 0x%p %s", i + 1, return_addr, entry_name);
           else
-            dprintf(fd, " %d: 0x%p %s\n", i+1, return_addr, entry_name);
+            dprintf(fd, " %d: 0x%p %s\n", i + 1, return_addr, entry_name);
         }
       }
       if (fd == -1) {

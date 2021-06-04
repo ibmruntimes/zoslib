@@ -225,8 +225,8 @@ Functions</h2></td></tr>
 <tr class="separator:a6d6262268568ca267a869ea8a09f636d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cea5c0e624b0131aba94ab6d0df91a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-base_8h.html#a2cea5c0e624b0131aba94ab6d0df91a9">__setdebug</a> (int)</td></tr>
 <tr class="separator:a2cea5c0e624b0131aba94ab6d0df91a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07e071244c9067fe61d1ad441d56a529"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-base_8h.html#a07e071244c9067fe61d1ad441d56a529">__set_autocvt_on_untagged_fd_stream</a> (int fd, unsigned short ccsid, unsigned char txtflag)</td></tr>
-<tr class="separator:a07e071244c9067fe61d1ad441d56a529"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a471dc9324e1d385a16614bc1c2171d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-base_8h.html#a471dc9324e1d385a16614bc1c2171d45">__set_autocvt_on_fd_stream</a> (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)</td></tr>
+<tr class="separator:a471dc9324e1d385a16614bc1c2171d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae84be62539ccfe5bde4bcbe507b7e2e9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-base_8h.html#ae84be62539ccfe5bde4bcbe507b7e2e9">__getargcv</a> (int *argc, char ***argv, pid_t pid)</td></tr>
 <tr class="separator:ae84be62539ccfe5bde4bcbe507b7e2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae290ebf3e301799ce9b7ce12c13ada34"><td class="memItemLeft" align="right" valign="top">char **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-base_8h.html#ae290ebf3e301799ce9b7ce12c13ada34">__getargv</a> (void)</td></tr>
@@ -1818,14 +1818,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a07e071244c9067fe61d1ad441d56a529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07e071244c9067fe61d1ad441d56a529">&#9670;&nbsp;</a></span>__set_autocvt_on_untagged_fd_stream()</h2>
+<a id="a471dc9324e1d385a16614bc1c2171d45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a471dc9324e1d385a16614bc1c2171d45">&#9670;&nbsp;</a></span>__set_autocvt_on_fd_stream()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void __set_autocvt_on_untagged_fd_stream </td>
+          <td class="memname">void __set_autocvt_on_fd_stream </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>fd</em>, </td>
@@ -1840,7 +1840,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char&#160;</td>
-          <td class="paramname"><em>txtflag</em>&#160;</td>
+          <td class="paramname"><em>txtflag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>on_untagged_only</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1854,6 +1860,7 @@ Variables</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fd</td><td>- file descriptor. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ccsid</td><td>- CCSID to auto convert to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">txtflag</td><td>- Indicates if ccsid is text. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">on_untagged_only</td><td>- applies only to untagged </td></tr>
   </table>
   </dd>
 </dl>

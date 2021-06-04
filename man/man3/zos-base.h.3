@@ -1,4 +1,4 @@
-.TH "include/zos-base.h" 3 "Wed Nov 11 2020" "zoslib" \" -*- nroff -*-
+.TH "include/zos-base.h" 3 "Thu Jun 10 2021" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -218,7 +218,7 @@ include/zos-base.h
 .RI "void \fB__setdebug\fP (int)"
 .br
 .ti -1c
-.RI "void \fB__set_autocvt_on_untagged_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag)"
+.RI "void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
 .br
 .ti -1c
 .RI "int \fB__getargcv\fP (int *argc, char ***argv, pid_t pid)"
@@ -843,7 +843,7 @@ returns 0 if successful, non-zero if unsuccessful\&.
 
 .SS "int __sem_wait (\fB__sem_t\fP * s0)"
 
-.SS "void __set_autocvt_on_untagged_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag)"
+.SS "void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
 Sets file descriptor to auto convert\&. 
 .PP
 \fBParameters\fP
@@ -853,6 +853,8 @@ Sets file descriptor to auto convert\&.
 \fIccsid\fP - CCSID to auto convert to\&. 
 .br
 \fItxtflag\fP - Indicates if ccsid is text\&. 
+.br
+\fIon_untagged_only\fP - applies only to untagged 
 .RE
 .PP
 

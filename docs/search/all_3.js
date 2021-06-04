@@ -25,7 +25,7 @@ var searchData=
   ['crcpp_213',['crcpp',['../struct_i_f_a_e_d_s_t_a__parms.html#a295d03b4300ae2c9f531b705af47b723',1,'IFAEDSTA_parms']]],
   ['cs_214',['CS',['../zos_8cc.html#afc142f9df9111f9c380cb333bbc3a166',1,'zos.cc']]],
   ['csg_215',['CSG',['../zos_8cc.html#a43f4122f7ec8bf89b907cb979526f6f2',1,'zos.cc']]],
-  ['csrsi_216',['CSRSI',['../csrsic_8h.html#aec320b9a8d95cabc6ddcecaf584ad8b9',1,'CSRSI():&#160;csrsic.h'],['../csrsic_8h.html#a67373670c74417d1f4df0164d96ddc97',1,'csrsi():&#160;csrsic.h']]],
+  ['csrsi_216',['csrsi',['../csrsic_8h.html#a67373670c74417d1f4df0164d96ddc97',1,'csrsi():&#160;csrsic.h'],['../csrsic_8h.html#aec320b9a8d95cabc6ddcecaf584ad8b9',1,'CSRSI():&#160;csrsic.h']]],
   ['csrsi_5faddr_217',['CSRSI_addr',['../struct_c_s_r_s_i___c_s_r_t.html#a6f97a4ca5e26c6f4601db74daba96615',1,'CSRSI_CSRT']]],
   ['csrsi_5fbadinfoarealen_218',['CSRSI_BADINFOAREALEN',['../csrsic_8h.html#a464712805c63ab1b5b85f96d5c7afa35',1,'csrsic.h']]],
   ['csrsi_5fbadlock_219',['CSRSI_BADLOCK',['../csrsic_8h.html#a7104f25acd73e55ed53903841463b77b',1,'csrsic.h']]],
