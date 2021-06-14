@@ -13,7 +13,7 @@
 #define _OPEN_SYS_FILE_EXT 1
 #define _OPEN_MSGQ_EXT 1
 #define __ZOS_CC
-#include "zos.h"
+#include "zos-base.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
