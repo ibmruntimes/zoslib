@@ -318,6 +318,16 @@ extern char **__getargv(void);
 extern int __getargc(void);
 
 /**
+ * Get the executable path of a given process id
+ * \param [out] path - pointer to the destination array to copy the
+ *  null-terminated path to
+ * \param [in] pathlen - length of the given array
+ * \param [in] pid - process id to obtain the executable path for
+ * \return On success, returns 0, or -1 on error.
+ */
+extern int __getexepath(char *path, int pathlen, pid_t pid);
+
+/**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry

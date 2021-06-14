@@ -1523,6 +1523,33 @@ extern "C" int __getargc(void) {
   return -1;
 }
 
+extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
+  int argc;
+  char **argv = nullptr;
+  char *stptr;
+
+  if (pid == getpid())
+    stptr = __getargv()[0]; // a static, so don't free
+  else {
+    if (int rc = __getargcv(&argc, &argv, pid))
+      return rc;
+    stptr = argv[0];
+  }
+  assert(stptr);
+  int len = strlen(stptr);
+  if (len >= pathlen) {
+    if (argv)
+      free(argv);
+    errno = EBUFLEN;
+    return -1;
+  }
+  memcpy(path, stptr, len);
+  path[len] = 0;
+  if (argv)
+    free(argv);
+  return 0;
+}
+
 struct IntHash {
   size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
 };
