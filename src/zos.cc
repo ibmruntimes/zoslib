@@ -1550,6 +1550,30 @@ extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
   return 0;
 }
 
+extern "C" int __get_num_online_cpus(void) {
+  // The following offsets are from the MVS Data Areas Volumes 1 & 3:
+  // Volume 1: https://www-01.ibm.com/servers/resourcelink/svc00100.nsf/pages/
+  //           zosv2r3ga320935/$file/iead100_v2r3.pdf
+  // Volume 3: https://www-01.ibm.com/servers/resourcelink/svc00100.nsf/pages/
+  //           zosv2r3ga320938/$file/iead300_v2r3.pdf
+  //
+  // In Vol 1, CSD_NUMBER_ONLINE_CPUS is at decimal offset 212 in CSD Mapping
+  // (also Vol 1), which is pointed to by CVTCSD.
+  //
+  // CVTCSD is at decimal offset 660 in CVT Mapping (Vol 1), which is pointed
+  // to by FLCCVT field of the PSA data area.
+  //
+  // FLCCVT is at decimal offset 16 in PSA Mapping (Vol 3), and PSA is at
+  // address 0.
+  //
+  // So, with the 32-bit pointer casts, CSD_NUMBER_ONLINE_CPUS is at
+  // 0[16/4][660/4][212/4] which is 0[4][165][53].
+  //
+  // Note: z/OS is always upward compatible, so these offsets won't change.
+
+  return (((int * __ptr32 * __ptr32 * __ptr32)0)[4][165])[53];
+}
+
 struct IntHash {
   size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
 };

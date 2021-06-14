@@ -328,6 +328,12 @@ extern int __getargc(void);
 extern int __getexepath(char *path, int pathlen, pid_t pid);
 
 /**
+ * Get the number of online CPUs
+ * \return returns the number of online CPUs
+ */
+extern int __get_num_online_cpus(void);
+
+/**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry
