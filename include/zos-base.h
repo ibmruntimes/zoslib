@@ -334,6 +334,12 @@ extern int __getexepath(char *path, int pathlen, pid_t pid);
 extern int __get_num_online_cpus(void);
 
 /**
+ * Get the number of frames currently available to the system
+ * \return returns the number of available frames
+ */
+int __get_num_frames(void);
+
+/**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry
@@ -648,6 +654,9 @@ template <typename T> class __tlssim {
 
 public:
   __tlssim(const T &initvalue) : v(initvalue) {
+    anchor = __tlsvaranchor_create(sizeof(T));
+  }
+  __tlssim() {
     anchor = __tlsvaranchor_create(sizeof(T));
   }
   ~__tlssim() { __tlsvaranchor_destroy(anchor); }
