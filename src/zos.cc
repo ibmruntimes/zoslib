@@ -50,6 +50,7 @@
 #include <unordered_map>
 #include <vector>
 
+static int ccsid_guess_buf_size = 4096;
 static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
@@ -161,6 +162,213 @@ static inline unsigned strlen_ae(const unsigned char *str, int *code_page,
   return a_len;
 }
 
+static inline unsigned strlen_e(const unsigned char *str, unsigned size) {
+  static const unsigned char _tab_e[256] __attribute__((aligned(8))) = {
+      1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+      0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+  };
+
+  unsigned long bytes = size;
+  unsigned long code_out = 0;
+  const unsigned char *start = str;
+
+  __asm(" trte %1,%3,b'0000'\n"
+        " jo *-4\n"
+        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
+        : "NR:r1"(_tab_e)
+        : "r1", "r2", "r3");
+
+  return str - start;
+}
+
+static int utf8scan(const unsigned char *str, unsigned size, char *errmsg, size_t sz) {
+  static int byte0_next_state[256] = {
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,
+    2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,
+    3,  -1, -1, -1, -1, -1, -1, -1, -1};
+
+  unsigned char onebyte;
+  int bytes;
+  int state = 0;
+  unsigned int value;
+  unsigned char d[4];
+  size_t offset = 0;
+  int linenum = 1;
+  onebyte = str[offset]; 
+  while (onebyte && offset < size) {
+    switch (state) {
+    case 0:
+      state = byte0_next_state[onebyte];
+      if (-1 == state) {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, byte 0x%02X malformed, not one of 0xxxxxxx, "
+                 "110xxxxx, 1110xxxx, 11110xxx\n",
+                 offset, linenum, onebyte);
+        return -1;
+      }
+      if (state == 0) {
+        if (onebyte == 0x0a)
+          ++linenum;
+        break;
+      } else {
+        d[0] = onebyte;
+      }
+      break;
+    case 1:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[1] = onebyte;
+        value = (0x1c & d[0] << 6) | (((0x03 & d[0]) << 6) | (0x3f & d[1]));
+        if (value < 0x80 || value > 0x7ff) {
+          snprintf(errmsg, sz,
+                   "Invalid unicode sequence at file offset %lu around line "
+                   "%d, 2-byte sequence 0x%02X%02X value U+%04X invalid, range "
+                   "out of U+0080 and U+07FF\n",
+                   offset, linenum, d[0], d[1], value);
+          return -1;
+        }
+        state = 0;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 2-byte sequence 0x%02X%02X 2nd byte malformed, not "
+                 "110xxxxx-10xxxxxx\n",
+                 offset, linenum, d[0], onebyte);
+        return -1;
+      }
+      break;
+
+    case 2:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[1] = onebyte;
+        state = 22;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 3-byte sequence 0x%02X%02Xxx 2nd byte malformed, not "
+                 "1110xxxx-10xxxxxx-xxxxxxxx\n",
+                 offset, linenum, d[0], onebyte);
+        return -1;
+      }
+      break;
+
+    case 3:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[1] = onebyte;
+        state = 33;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 4-byte sequence 0x%02X%02Xxxxx 2nd byte malformed, not "
+                 "11110xxx-10xxxxxx-xxxxxxxx-xxxxxxxx\n",
+                 offset, linenum, d[0], onebyte);
+        return -1;
+      }
+      break;
+
+    case 33:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[2] = onebyte;
+        state = 333;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 4-byte sequence 0x%02X%02X%02Xxx 3rd byte malformed, not "
+                 "11110xxx-10xxxxxx-10xxxxxxx-xxxxxxxx\n",
+                 offset, linenum, d[0], d[1], onebyte);
+        return -1;
+      }
+      break;
+
+    case 22:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[2] = onebyte;
+        value =
+            ((0x000f & d[0]) << 12) | ((0x003f & d[1]) << 6) | (0x3f & d[2]);
+        if (value < 0x0800 || value > 0x0ffff) {
+          snprintf(errmsg, sz,
+                   "Invalid unicode sequence at file offset %lu around line "
+                   "%d, 3-byte sequence 0x%02X%02X%02X value U+%04X "
+                   "invalid, range "
+                   "out of U+0800 and U+FFFF\n",
+                   offset, linenum, d[0], d[1], d[2], value);
+          return -1;
+        }
+        state = 0;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 3-byte sequence 0x%02X%02X%02X 3rd byte malformed, not "
+                 "11110xxx-10xxxxxx-10xxxxxxx\n",
+                 offset, linenum, d[0], d[1], onebyte);
+        return -1;
+      }
+      break;
+    case 333:
+      if ((onebyte & 0xc0) == 0x80) {
+        d[3] = onebyte;
+        value = ((0x0007 & d[0]) << 18) | ((0x003f & d[1]) << 12) |
+                ((0x003f & d[2]) << 6) | (0x3f & d[3]);
+        if (value < 0x010000 || value > 0x010ffff) {
+          snprintf(errmsg, sz,
+                   "Invalid unicode sequence at file offset %lu around line "
+                   "%d, 4-byte sequence 0x%02X%02X%02X%02X value U+%05X "
+                   "invalid, range "
+                   "out of U+10000 and U+10FFFF\n",
+                   offset, linenum, d[0], d[1], d[2], d[3], value);
+          return -1;
+        }
+        state = 0;
+      } else {
+        snprintf(errmsg, sz,
+                 "Invalid unicode sequence at file offset %lu around line "
+                 "%d, 4-byte sequence 0x%02X%02X%02X%02Xx 4th byte "
+                 "malformed, not "
+                 "11110xxx-10xxxxxx-10xxxxxxx-10xxxxxx\n",
+                 offset, linenum, d[0], d[1], d[2], onebyte);
+        return -1;
+      }
+      break;
+    default:
+      snprintf(errmsg, sz,
+               "Invalid unicode sequence at file offset %lu around line "
+               "%d, parser in unknown state %d, byte read 0x%02X\n",
+               offset, linenum, state, onebyte);
+      return -1;
+    }
+    ++offset;
+    onebyte = str[offset]; 
+  }
+  if (state != 0) {
+    snprintf(errmsg, sz,
+             "Excepted End of File detected at file offset %lu around line "
+             "%d, parser in state %d, byte read 0x%02X\n",
+             offset, linenum, state, onebyte);
+    return -1;
+  }
+  return 0;
+}
+
 static const unsigned char __ibm1047_iso88591[256]
     __attribute__((aligned(8))) = {
         0x00, 0x01, 0x02, 0x03, 0x9c, 0x09, 0x86, 0x7f, 0x97, 0x8d, 0x8e, 0x0b,
@@ -221,6 +429,7 @@ extern "C" void *_convert_e2a(void *dst, const void *src, size_t size) {
   }
   return __convert_one_to_one(__ibm1047_iso88591, dst, size, src);
 }
+
 extern "C" void *_convert_a2e(void *dst, const void *src, size_t size) {
   int ccsid;
   int am;
@@ -231,6 +440,60 @@ extern "C" void *_convert_a2e(void *dst, const void *src, size_t size) {
   }
   return __convert_one_to_one(__iso88591_ibm1047, dst, size, src);
 }
+
+extern "C" int __guess_ue(const void* src, size_t size,
+                          char *errmsg, size_t er_size) {
+  const int ERR_MG_SIZE = 1024;
+  char utf8msg[ERR_MG_SIZE];
+  char ebcdicmsg[ERR_MG_SIZE];
+
+  if (utf8scan((unsigned char *)src, size, utf8msg, sizeof(utf8msg)) == 0)
+    return 819;
+
+  unsigned e_size = strlen_e((unsigned char *)src, size); 
+  if (e_size == size) return 1047;
+
+  if (errmsg) {
+    snprintf(ebcdicmsg, sizeof(ebcdicmsg),
+             "Character that does not belong to codepage 1047 was found");
+
+    snprintf(errmsg, er_size, "unicode: %s, ebcdic-1047: %s", utf8msg, ebcdicmsg);
+  }
+  return 65535;
+}
+
+extern "C" int __guess_fd_ue(int fd, char *errmsg, size_t er_size,
+                             int is_new_fd) {
+  if (!is_new_fd && lseek(fd, 0, SEEK_SET) < 0) {
+    perror("guess_ue:lseek"); 
+    return -1;
+  }
+
+  char *buffer;
+  int ccsid;
+
+  // Only guess first CCSID_GUESS_BUF_SIZE_ENVAR byte of data at most
+  if (ccsid_guess_buf_size <= 4096) {
+    buffer = (char *)alloca(ccsid_guess_buf_size);
+  } else {
+    buffer = (char *)malloc(ccsid_guess_buf_size);
+  }
+  ssize_t bytes = read(fd, buffer, ccsid_guess_buf_size);
+  if (bytes < 0) {
+    perror("guess_ue:read");
+    ccsid = -1;
+    goto quit;
+  }
+  buffer[bytes] = '\0';
+  
+  ccsid = __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
+quit:
+  if (ccsid_guess_buf_size > 4096)
+    free(buffer);
+
+  return ccsid;
+}
+
 extern "C" int __guess_ae(const void *src, size_t size) {
   int ccsid;
   int am;
@@ -3734,6 +3997,11 @@ __zinit::__zinit(const zoslib_config_t &config)
       __settimelimit(sec);
     }
   }
+  char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR);
+  if (cgbs) {
+    int gs = __atoi_a(cgbs);
+    if (gs > 0) ccsid_guess_buf_size = gs; 
+  }
 
   char *fm = __getenv_a(config.FORKMAX_ENVAR);
   if (fm) {
@@ -3810,6 +4078,7 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
+  config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {

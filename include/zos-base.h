@@ -38,6 +38,7 @@ typedef unsigned long size_t;
 #define DEBUG_ENVAR_DEFAULT "__RUNDEBUG"
 #define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT"
 #define FORKMAX_ENVAR_DEFAULT "__FORKMAX"
+#define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 
 struct timespec;
 
@@ -258,10 +259,29 @@ extern int strncasecmp_ignorecp(const char *a, const char *b, size_t n);
  */
 extern int strcasecmp_ignorecp(const char *a, const char *b);
 /**
+ * Guess if string is UTF8 (ASCII) or EBCDIC based
+ * on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file
+ * associated with the given fd. CCSID_GUESS_BUF_SIZE_ENVAR
+ * is default at 4KB.
+ * \param [in] fd - open file descriptor to guess.
+ * \return guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise
+ *  65535 for BINARY and, if not NULL, errmsg will contain details).
+ */
+extern int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd);
+/**
+ * Guess if string is UTF8 (ASCII) or EBCDIC.
+ * \param [in] src - character string.
+ * \param [in] size - number of bytes to analyze.
+ * \return guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise
+ *  65535 for BINARY and, if not NULL, errmsg will contain details).
+ */
+extern int __guess_ue(const void *src, size_t size,
+                     char *errmsg, size_t er_size);
+/**
  * Guess if string is ASCII or EBCDIC.
  * \param [in] src - character string.
  * \param [in] size - number of bytes to analyze.
- * \return returns guessed CCSID.
+ * \return guessed CCSID.
  */
 extern int __guess_ae(const void *src, size_t size);
 /**
@@ -520,6 +540,10 @@ typedef struct zoslib_config {
    * string to indicate the envar to be to toggle max number of forks
    */
   const char *FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
+  /**
+   * string to indicate the envar to be to toggle ccsid guess buf size in bytes 
+   */
+  const char *CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
 } zoslib_config_t;
 /**
  * Initialize zoslib library
@@ -547,6 +571,10 @@ typedef struct zoslib_config {
    * string to indicate the envar to be to toggle max number of forks
    */
   const char *FORKMAX_ENVAR;
+  /**
+   * string to indicate the envar to be to toggle ccsid guess buf size in bytes 
+   */
+  const char *CCSID_GUESS_BUF_SIZE_ENVAR;
 } zoslib_config_t;
 /**
  * Initialize zoslib library
