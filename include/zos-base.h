@@ -23,6 +23,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #define __ZOS_CC
 
@@ -39,6 +40,8 @@ typedef unsigned long size_t;
 #define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT"
 #define FORKMAX_ENVAR_DEFAULT "__FORKMAX"
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
+#define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
+#define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 
 struct timespec;
 
@@ -495,6 +498,13 @@ extern void __tcp_clear_to_close(int socket, unsigned int secs);
  * \return On success, returns 0, or -1 on error.
  */
 extern int get_ipcs_overview(IPCQPROC *info);
+/**
+ * Prints zoslib help information to specified FILE pointer
+ * \param [in] FILE pointer to write to
+ * \param [in] title header, specify NULL for default
+ * \return On success, returns 0, or < 0 on error.
+ */
+extern int __print_zoslib_help(FILE* fp, const char* title);
 
 typedef struct __cpu_relax_workarea {
   void *sfaddr;
@@ -533,18 +543,27 @@ typedef struct zoslib_config {
    */
   const char *DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be to toggle runtime limit
+   * string to indicate the envar to be used to toggle runtime limit
    */
   const char *RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be to toggle max number of forks
+   * string to indicate the envar to be used to toggle max number of forks
    */
   const char *FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be to toggle ccsid guess buf size in bytes 
+   * string to indicate the envar to be used to toggle ccsid guess buf size in bytes 
    */
   const char *CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
+  /**
+   * string to indicate the envar to be used to toggle the untagged read mode
+   */
+  const char *UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
+  /**
+   * string to indicate the envar to be used to toggle the untagged 1047 read mode
+   */
+  const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
 } zoslib_config_t;
+
 /**
  * Initialize zoslib library
  * \param [in] config struct to configure zoslib.
@@ -564,17 +583,25 @@ typedef struct zoslib_config {
    */
   const char *DEBUG_ENVAR;
   /**
-   * string to indicate the envar to be to toggle runtime limit
+   * string to indicate the envar to be used to toggle runtime limit
    */
   const char *RUNTIME_LIMIT_ENVAR;
   /**
-   * string to indicate the envar to be to toggle max number of forks
+   * string to indicate the envar to be used to toggle max number of forks
    */
   const char *FORKMAX_ENVAR;
   /**
-   * string to indicate the envar to be to toggle ccsid guess buf size in bytes 
+   * string to indicate the envar to be used to toggle ccsid guess buf size in bytes 
    */
   const char *CCSID_GUESS_BUF_SIZE_ENVAR;
+  /**
+   * string to indicate the envar to be used to toggle the untagged read mode
+   */
+  const char *UNTAGGED_READ_MODE_ENVAR;
+  /**
+   * string to indicate the envar to be used to toggle the untagged 1047 read mode
+   */
+  const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR;
 } zoslib_config_t;
 /**
  * Initialize zoslib library
@@ -603,6 +630,13 @@ extern int nanosleep(const struct timespec *req, struct timespec *rem);
  * \param [in] tv two structs used to specify the new times
  */
 extern int __lutimes(const char *filename, const struct timeval tv[2]);
+/**
+ * Updates the zoslib global variables associated with the zoslib environment variables
+ * \param [in] envar environment variable to update, specify NULL to update all
+ * \return On success, returns 0, or < 0 on error.
+ */
+void __update_envar_settings(const char* envar);
+
 
 #ifdef __cplusplus
 }
@@ -640,6 +674,8 @@ void init_zoslib_config(zoslib_config_t &config);
 
 #ifdef __cplusplus
 #include <exception>
+#include <map>
+#include <string>
 
 inline bool operator==(const pthread_t &_a, const pthread_t &_b) {
   return _a.__ == _b.__;
@@ -691,18 +727,36 @@ public:
   T *access(void) { return static_cast<T *>(__tlsPtrFromAnchor(anchor, &v)); }
 };
 
+struct zoslibEnvar {
+  std::string envarName;
+  std::string envarValue;
+
+  zoslibEnvar(std::string name, std::string value) :
+    envarName(name), envarValue(value) { }
+
+  bool operator < (const zoslibEnvar& t) const {
+    return std::tie(envarName, envarValue) < std::tie(t.envarName, t.envarValue);
+  }
+};
+
 class __zinit {
   int mode;
   int cvstate;
-  int forkmax;
-  int *forkcurr;
-  int shmid;
   std::terminate_handler _th;
   int __forked;
   static __zinit *instance;
 
 public:
+  int forkmax;
+  int *forkcurr;
+  int shmid;
+  zoslib_config_t config;
+  std::map<zoslibEnvar, std::string> envarHelpMap;
+
+public:
   __zinit(const zoslib_config_t &config);
+
+  bool isValidZOSLIBEnvar(std::string envar);
 
   static __zinit *init(const zoslib_config_t &config) {
     instance = new __zinit(config);

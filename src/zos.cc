@@ -54,6 +54,7 @@ static int ccsid_guess_buf_size = 4096;
 static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
+static pthread_t _timer_tid;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -1434,6 +1435,7 @@ unsigned long __clock(void) {
   __stckf(&value);
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
 }
+
 static void *_timer(void *parm) {
   timer_parm_t *tp = (timer_parm_t *)parm;
   unsigned long t0 = __clock();
@@ -1450,7 +1452,6 @@ static void *_timer(void *parm) {
 }
 
 extern void __settimelimit(int secs) {
-  pthread_t tid;
   pthread_attr_t attr;
   int rc;
   timer_parm_t *tp = (timer_parm_t *)malloc(sizeof(timer_parm_t));
@@ -1458,10 +1459,10 @@ extern void __settimelimit(int secs) {
   tp->tid = pthread_self();
   rc = pthread_attr_init(&attr);
   if (rc) {
-    perror("timer:pthread_create");
+    perror("timer:pthread_attr_init");
     return;
   }
-  rc = pthread_create(&tid, &attr, _timer, tp);
+  rc = pthread_create(&_timer_tid, &attr, _timer, tp);
   if (rc) {
     perror("timer:pthread_create");
     return;
@@ -1601,6 +1602,7 @@ extern "C" int kill(int pid, int sig) {
     errno = rc;
   return rv;
 }
+
 // overriding LE's fork when linked statically
 extern "C" int __fork(void) {
   int cnt = __zinit::getInstance()->inc_forkcount();
@@ -1871,8 +1873,8 @@ enum notagread {
   __NO_TAG_READ_STRICT = 3
 } notagread;
 
-static enum notagread get_no_tag_read_behaviour(void) {
-  char *ntr = __getenv_a("__UNTAGGED_READ_MODE");
+static enum notagread get_no_tag_read_behaviour(const char* envar) {
+  char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "AUTO")) {
     return __NO_TAG_READ_DEFAULT;
   } else if (ntr && !strcmp(ntr, "WARN")) {
@@ -1885,16 +1887,16 @@ static enum notagread get_no_tag_read_behaviour(void) {
   return __NO_TAG_READ_DEFAULT; // default
 }
 
-static int get_no_tag_ignore_ccsid1047(void) {
-  char *ntr = __getenv_a("__UNTAGGED_READ_MODE_CCSID1047");
+static int get_no_tag_ignore_ccsid1047(const char* envar) {
+  char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "NO")) {
     return 1;
   }
   return 0; // default, consider conversion for txtflag 0 && ccsid 1047
 }
 
-static enum notagread no_tag_read_behaviour = get_no_tag_read_behaviour();
-static int no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047();
+static enum notagread no_tag_read_behaviour;
+static int no_tag_ignore_ccsid1047;
 
 extern "C" void __fd_close(int fd) { fdcache.unset_attribute(fd); }
 extern "C" int __file_needs_conversion(int fd) {
@@ -3974,49 +3976,179 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
   return memory;
 }
 
+int __print_zoslib_help(FILE* fp, const char* title) {
+  __zinit* zinit_ptr = __zinit::getInstance();
+
+  if (!zinit_ptr)
+    return -1;
+
+  if (fp == NULL)
+    return -2;
+
+  if (!title)
+    fprintf(fp, "%s\n", "ZOSLIB Environment Variables");
+  else
+    fprintf(fp, "%s\n", title);
+
+  for (auto envarMap : zinit_ptr->envarHelpMap) {
+    std::stringstream ss;
+    ss << envarMap.first.envarName;
+
+    if (envarMap.first.envarValue != "")
+      ss << "=" << envarMap.first.envarValue;
+  
+    fprintf(fp, "%-34s %s\n", ss.str().c_str(), envarMap.second.c_str());
+  }    
+
+  return 0;
+}
+
+void __update_envar_settings(const char* envar) {
+  __zinit* zinit_ptr = __zinit::getInstance();
+  if (!zinit_ptr)
+    return;
+
+  // Exit early if envar is not a ZOSLIB envar
+  if (envar && !zinit_ptr->isValidZOSLIBEnvar(envar)) {
+    if (__debug_mode)
+      dprintf(2, "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n", envar);
+    return;
+  }
+
+  bool force_update_all = envar == NULL;
+
+  zoslib_config_t &config = zinit_ptr->config;
+
+  if (force_update_all || strcmp(envar, config.IPC_CLEANUP_ENVAR) == 0) {
+    char *cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
+    if (cu && !memcmp(cu, "1", 2)) {
+      __cleanupipc(1);
+    }
+  }
+
+  if (force_update_all || strcmp(envar, config.DEBUG_ENVAR) == 0) {
+    char *dbg = __getenv_a(config.DEBUG_ENVAR);
+    if (!dbg) {
+      __debug_mode = 0;
+    } else if (!memcmp(dbg, "1", 2)) {
+      __debug_mode = 1;
+    }
+  }
+
+  if (force_update_all || strcmp(envar, config.RUNTIME_LIMIT_ENVAR) == 0) {
+    char *tl = __getenv_a(config.RUNTIME_LIMIT_ENVAR);
+    if (!tl) {
+      // Kill timer thread 
+      pthread_join(_timer_tid, NULL);
+    } else {
+      int sec = __atoi_a(tl);
+      if (sec > 0) {
+        __settimelimit(sec);
+      }
+    }
+  }
+
+  if (force_update_all || strcmp(envar, config.CCSID_GUESS_BUF_SIZE_ENVAR) == 0) {
+    char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR); 
+    if (!cgbs) { 
+      ccsid_guess_buf_size = 4096;
+    }
+    else {
+      int gs = __atoi_a(cgbs);  
+      if (gs > 0) ccsid_guess_buf_size = gs;  
+    }
+  }
+
+  if (force_update_all || strcmp(envar, config.FORKMAX_ENVAR) == 0) {
+    char *fm = __getenv_a(config.FORKMAX_ENVAR);
+    if (!fm) {
+      if (0 != zinit_ptr->forkmax && 0 != zinit_ptr->shmid) {
+        zinit_ptr->forkmax = 0;
+        shmdt(zinit_ptr->forkcurr);
+        shmctl(zinit_ptr->shmid, IPC_RMID, 0);
+      } 
+    } else {
+      int v = __atoi_a(fm);
+      if (v > 0) {
+        zinit_ptr->forkmax = v;
+        char path[1024];
+        if (0 == getcwd(path, sizeof(path)))
+          strcpy(path, "./");
+        key_t key = ftok(path, 9021);
+        zinit_ptr->shmid = shmget(key, 1024, 0666 | IPC_CREAT);
+        zinit_ptr->forkcurr = (int *)shmat(zinit_ptr->shmid, (void *)0, 0);
+        *(zinit_ptr->forkcurr) = 0;
+      }
+    }
+  }
+
+  if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_ENVAR) == 0) {
+    no_tag_read_behaviour = get_no_tag_read_behaviour(config.UNTAGGED_READ_MODE_ENVAR);
+  }
+
+  if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_CCSID1047_ENVAR) == 0) {
+    no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
+  }
+}
+
+bool __zinit::isValidZOSLIBEnvar(std::string envar) {
+  return std::find_if(envarHelpMap.begin(),
+                      envarHelpMap.end(),
+                      [&envar](std::pair<zoslibEnvar, std::string> const& item)
+                      {
+                         return (envar == item.first.envarName);
+                      }) != envarHelpMap.end();
+}
+
 __zinit::__zinit(const zoslib_config_t &config)
     : forkmax(0), shmid(0), __forked(0) {
   // initialization
+  memcpy(&this->config, &config, sizeof(config));
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
   if (_CVTSTATE_OFF == cvstate) {
     __ae_autoconvert_state(_CVTSTATE_ON);
   }
-  char *cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
-  if (cu && !memcmp(cu, "1", 2)) {
-    __cleanupipc(1);
-  }
-  char *dbg = __getenv_a(config.DEBUG_ENVAR);
-  if (dbg && !memcmp(dbg, "1", 2)) {
-    __debug_mode = 1;
-  }
-  char *tl = __getenv_a(config.RUNTIME_LIMIT_ENVAR);
-  if (tl) {
-    int sec = __atoi_a(tl);
-    if (sec > 0) {
-      __settimelimit(sec);
-    }
-  }
-  char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR);
-  if (cgbs) {
-    int gs = __atoi_a(cgbs);
-    if (gs > 0) ccsid_guess_buf_size = gs; 
-  }
 
-  char *fm = __getenv_a(config.FORKMAX_ENVAR);
-  if (fm) {
-    int v = __atoi_a(fm);
-    if (v > 0) {
-      forkmax = v;
-      char path[1024];
-      if (0 == getcwd(path, sizeof(path)))
-        strcpy(path, "./");
-      key_t key = ftok(path, 9021);
-      shmid = shmget(key, 1024, 0666 | IPC_CREAT);
-      forkcurr = (int *)shmat(shmid, (void *)0, 0);
-      *forkcurr = 0;
-    }
-  }
+  // Populate ZOSLIB Envars and help text
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("NO")),
+      "changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("AUTO")),
+      "(default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of data"
+      "will be read and checked, if it is found to be in CCSID 1047, data is converted from CCSID 1047 to CCSID 819"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("STRICT")),
+      "for no explicit conversion of data"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("V6")),
+      "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data from CCSID 1047 to CCSID 819"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("WARN")),
+      "for same behavior as \"AUTO\" but issue a warning if conversion occurs"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.CCSID_GUESS_BUF_SIZE_ENVAR, std::string("")),
+      "Number of bytes to scan for CCSID guess heuristics (default: 4096)"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
+      "set to indicate max number of forks"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.IPC_CLEANUP_ENVAR, std::string("")),
+      "set to toggle IPC cleanup"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
+      "set to toggle debug ZOSLIB mode"));
+
+  __update_envar_settings(NULL);
 
   char *tenv = getenv("_EDC_SIG_DFLT");
   if (!tenv || !*tenv) {
@@ -4079,6 +4211,8 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
+  config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
+  config->UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {
