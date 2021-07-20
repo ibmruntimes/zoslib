@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/__getipc.h>
 #include <sys/mman.h>
 #include <sys/msg.h>
 #include <sys/ps.h>
