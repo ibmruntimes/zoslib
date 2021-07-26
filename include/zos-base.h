@@ -61,7 +61,7 @@ typedef struct __sem {
   pthread_cond_t cond;
 } ____sem_t;
 
-typedef struct Semaphore {
+typedef struct {
   ____sem_t *_s;
 } __sem_t;
 
