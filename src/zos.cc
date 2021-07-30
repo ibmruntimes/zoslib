@@ -1985,6 +1985,7 @@ extern "C" void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
 // begin
 
 static const int kMegaByte = 1024 * 1024;
+static const int kGigaByte = 1024 * 1024 * 1024;
 
 static int mem_account(void) {
   static int res = -1;
@@ -2426,6 +2427,13 @@ static void *anon_mmap_inner(void *addr, size_t len) {
   int retcode;
   if (alloc_info.elligible() && len % kMegaByte == 0) {
     size_t request_size = len / kMegaByte;
+    void *p = alloc_info.alloc_seg(request_size);
+    if (p)
+      return p;
+    else
+      return MAP_FAILED;
+  } else if (alloc_info.elligible() && len > 2UL * kGigaByte) {
+    size_t request_size = RoundUp(len, kMegaByte) / kMegaByte;
     void *p = alloc_info.alloc_seg(request_size);
     if (p)
       return p;
@@ -3950,7 +3958,7 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
     perror("fstat");
     return nullptr;
   }
-  static const int pgsize = getpagesize();
+  static const int pgsize = sysconf(_SC_PAGESIZE);
   size_t size = RoundUp(len, pgsize);
 
   void *memory = anon_mmap(_, size);
