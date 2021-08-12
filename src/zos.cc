@@ -4109,8 +4109,10 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 
 __zinit::__zinit(const zoslib_config_t &config)
     : forkmax(0), shmid(0), __forked(0) {
-  // initialization
   memcpy(&this->config, &config, sizeof(config));
+}
+
+void __zinit::initialize() {
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
   if (_CVTSTATE_OFF == cvstate) {

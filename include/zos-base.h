@@ -761,8 +761,11 @@ public:
 
   static __zinit *init(const zoslib_config_t &config) {
     instance = new __zinit(config);
+    instance->initialize();
     return instance;
   }
+
+  void initialize(void);
 
   static __zinit *getInstance() { return instance; }
 
