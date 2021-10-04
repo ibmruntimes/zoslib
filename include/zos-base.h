@@ -44,6 +44,16 @@ typedef unsigned long size_t;
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 
+typedef enum {
+  ZOSLVL_V1R13 = 0,
+  ZOSLVL_V2R1,
+  ZOSLVL_V2R2,
+  ZOSLVL_V2R3,
+  ZOSLVL_V2R4,
+  ZOSLVL_V2R5,
+  ZOSLVL_UNKNOWN,
+} oslvl_t;
+
 struct timespec;
 
 typedef enum {
@@ -362,6 +372,18 @@ extern int __get_num_online_cpus(void);
  * \return returns the number of available frames
  */
 int __get_num_frames(void);
+
+/**
+ * Get the OS level
+ * \return the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order)
+ */
+oslvl_t __get_os_level(void);
+
+/**
+ * Check if current OS is at or above a given level
+ * \return true if the current OS level is at or above the given level, and false otherwise
+ */
+bool __is_os_level_at_or_above(oslvl_t level);
 
 /**
  * Get next dlcb entry
