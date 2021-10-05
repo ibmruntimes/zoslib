@@ -28,6 +28,19 @@
 #include <time.h>
 #include <unistd.h>
 
+#if (__EDC_TARGET < 0x42050000)
+int (*futimes)(int fd, const struct timeval tv[2]);
+int (*lutimes)(const char *filename, const struct timeval tv[2]);
+
+typedef enum {
+  CLOCK_REALTIME,
+  CLOCK_MONOTONIC,
+  CLOCK_HIGHRES,
+  CLOCK_THREAD_CPUTIME_ID
+} clockid_t;
+int (*clock_gettime)(clockid_t, struct timespec *);
+#endif
+
 #define __ZOS_CC
 
 #include "zos-macros.h"
@@ -58,12 +71,6 @@ typedef enum {
 
 struct timespec;
 
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
 
 extern const char *__zoslib_version;
 
@@ -87,7 +94,7 @@ extern "C" {
  * \param [out] tp structure to store the current time to.
  * \return return 0 for success, or -1 for failure.
  */
-__Z_EXPORT int clock_gettime(clockid_t clk_id, struct timespec *tp);
+__Z_EXPORT int __clock_gettime(clockid_t clk_id, struct timespec *tp);
 
 /**
  * Get the environ.
@@ -616,6 +623,12 @@ __Z_EXPORT int __lutimes(const char *filename, const struct timeval tv[2]);
 __Z_EXPORT int __update_envar_settings(const char *envar);
 
 /**
+ * Gets the LE libvec base address
+ * \return libvec base address
+ */
+unsigned long __get_libvec_base(void);
+
+/**
  * Changes the names of one or more of the environment variables zoslib uses
  * \param [in] zoslib_confit_t structure that defines the new environment
  * variable name(s) \return 0 for success, or -1 for failure
@@ -720,6 +733,7 @@ public:
   int initialize(const zoslib_config_t &config);
   bool isValidZOSLIBEnvar(std::string envar);
   int setEnvarHelpMap(void);
+  void populateLEFunctionPointers(void);
 
   int forked(int newvalue) {
     int old = __forked;

@@ -1739,7 +1739,7 @@ extern "C" void __tb(void) {
   }
 }
 
-extern "C" int clock_gettime(clockid_t clk_id, struct timespec *tp) {
+extern "C" int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
   unsigned long long value;
   __stckf(&value);
   tp->tv_sec = (value / 4096000000UL) - 2208988800UL;
@@ -2566,6 +2566,13 @@ int *__get_stack_start() {
   return nullptr;
 }
 
+unsigned long __get_libvec_base() {
+  int psalaa = ((int* __ptr32)(1208))[0];
+  unsigned long lca64 = *(unsigned long*)(psalaa + 88);
+  unsigned long caa64 = *(unsigned long*)(lca64 + 8);
+  return *(unsigned long*)(caa64 + 1016);
+}
+
 bool __zinit::isValidZOSLIBEnvar(std::string envar) {
   return std::find_if(
              envarHelpMap.begin(), envarHelpMap.end(),
@@ -2661,7 +2668,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   tenv = getenv("_EDC_SUSV3");
   if (!tenv || !*tenv) {
     setenv("_EDC_SUSV3", "1", 1);
-  }
+  }i
+
+  populateLEFunctionPointers();
 
   _th = std::get_terminate();
   std::set_terminate(abort);
@@ -2738,6 +2747,24 @@ int __zinit::setEnvarHelpMap() {
 
   return __update_envar_settings(NULL);
 }
+
+void __zinit::populateLEFunctionPointers() {
+#if (__EDC_TARGET < 0x42050000)
+  // LE vector table offset calculated by:
+  // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
+  if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
+    clock_gettime = (typeof(clock_gettime))((unsigned long*)__get_libvec_base() + (0xDAD<<1));
+    futimes = (typeof(futimes))((unsigned long*)__get_libvec_base() + (0xDE2<<1));
+    lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE5<<1));
+  }
+  else {
+    clock_gettime = __clock_gettime;
+    lutimes = __lutimes;
+  }
+#endif
+}
+
+__zinit *__zinit::instance = 0;
 
 void init_zoslib_config(zoslib_config_t &config) {
   init_zoslib_config(&config);
