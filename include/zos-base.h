@@ -25,6 +25,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define __ZOS_CC
 
