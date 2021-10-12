@@ -28,19 +28,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#if (__EDC_TARGET < 0x42050000)
-int (*futimes)(int fd, const struct timeval tv[2]);
-int (*lutimes)(const char *filename, const struct timeval tv[2]);
-
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
-int (*clock_gettime)(clockid_t, struct timespec *);
-#endif
-
 #define __ZOS_CC
 
 #include "zos-macros.h"
@@ -70,6 +57,19 @@ typedef enum {
 } notagread_t;
 
 struct timespec;
+
+#if (__EDC_TARGET < 0x42050000)
+extern int (*futimes)(int fd, const struct timeval tv[2]);
+extern int (*lutimes)(const char *filename, const struct timeval tv[2]);
+
+typedef enum {
+  CLOCK_REALTIME,
+  CLOCK_MONOTONIC,
+  CLOCK_HIGHRES,
+  CLOCK_THREAD_CPUTIME_ID
+} clockid_t;
+extern int (*clock_gettime)(clockid_t, struct timespec *);
+#endif
 
 
 extern const char *__zoslib_version;

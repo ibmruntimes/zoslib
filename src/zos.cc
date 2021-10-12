@@ -92,6 +92,7 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
+
 static int shmid_value(void);
 
 #ifndef max
@@ -1739,7 +1740,7 @@ extern "C" void __tb(void) {
   }
 }
 
-extern "C" int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
+static int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
   unsigned long long value;
   __stckf(&value);
   tp->tv_sec = (value / 4096000000UL) - 2208988800UL;
