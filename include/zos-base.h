@@ -71,7 +71,6 @@ typedef enum {
 extern int (*clock_gettime)(clockid_t, struct timespec *);
 #endif
 
-
 extern const char *__zoslib_version;
 
 typedef struct __stack_info {
@@ -86,6 +85,36 @@ typedef struct __stack_info {
 #ifdef __cplusplus
 #include <bitset>
 extern "C" {
+
+#if (__EDC_TARGET < 0x42050000)
+typedef enum {
+  CLOCK_REALTIME,
+  CLOCK_MONOTONIC,
+  CLOCK_HIGHRES,
+  CLOCK_THREAD_CPUTIME_ID
+} clockid_t;
+
+/**
+ * Retrieves the time of the specified clock id
+ * \param [in] clk_id clock id.
+ * \param [out] tp structure to store the current time to.  
+ * \return return 0 for success, or -1 for failure.
+ */
+extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
+/**
+ * Changes the access and modification times of a file
+ * \param [in] fd file descriptor to modify
+ * \param [in] tv timeval structure containing new time
+ * \return return 0 for success, or -1 for failure.
+ */
+extern int (*futimes)(int fd, const struct timeval tv[2]);
+/**
+ * Changes the access and modification times of a file
+ * \param [in] filename file path to modify
+ * \param [in] tv timeval structure containing new time
+ * \return return 0 for success, or -1 for failure.
+ */
+extern int (*lutimes)(const char *filename, const struct timeval tv[2]);
 #endif
 
 /**
