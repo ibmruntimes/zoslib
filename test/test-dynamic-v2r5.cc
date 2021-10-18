@@ -40,9 +40,6 @@ TEST_F(DynamicV2R5Temp, lutimes) {
 }
 
 TEST_F(DynamicV2R5Temp, futimes) {
-  if (!__is_os_level_at_or_above(ZOSLVL_V2R5)) 
-    GTEST_SKIP();
-
   struct timeval t[]= { { 0, 0 } , { 0, 0 } };
   EXPECT_EQ(futimes(fileno(temp_fp), t), 0);
   struct stat buff;

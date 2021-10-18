@@ -2760,6 +2760,7 @@ void __zinit::populateLEFunctionPointers() {
   }
   else {
     clock_gettime = __clock_gettime;
+    futimes = __futimes;
     lutimes = __lutimes;
   }
 #endif
