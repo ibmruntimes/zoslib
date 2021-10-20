@@ -78,6 +78,15 @@ typedef struct {
 
 extern const char *__zoslib_version;
 
+typedef struct __stack_info {
+  void *prev_dsa;
+  void *entry_point;
+  char entry_name[256];
+  int* return_addr;
+  int* entry_addr;
+  int* stack_addr;
+} __stack_info;
+
 /**
  * Convert from EBCDIC to ASCII.
  * \param [out] dst Destination string (must be pre-allocated).
@@ -375,6 +384,12 @@ extern int __get_num_online_cpus(void);
 int __get_num_frames(void);
 
 /**
+ * Get the stack start address for the current thread
+ * \return returns the stack start address
+ */
+extern int *__get_stack_start();
+
+/**
  * Get the OS level
  * \return the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order)
  */
@@ -385,6 +400,13 @@ oslvl_t __get_os_level(void);
  * \return true if the current OS level is at or above the given level, and false otherwise
  */
 bool __is_os_level_at_or_above(oslvl_t level);
+
+ /* Iterate to next stack dsa based on current dsa
+ * \param [in] dsaptr - current dsa entry
+ * \param [out] si - stack information of next dsa
+ * \return returns the next dsa entry in the chain or 0 if not found
+ */
+extern void *__iterate_stack_and_get(void *dsaptr, __stack_info *si);
 
 /**
  * Get next dlcb entry

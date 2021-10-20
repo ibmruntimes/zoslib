@@ -15,6 +15,7 @@
 #define __ZOS_CC
 #include "zos-base.h"
 #include "zos-sys-info.h"
+#include "edcwccwi.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
@@ -57,11 +58,21 @@ static const uint8_t __ZOSLVL_V2R3  = 0x10;
 static const uint8_t __ZOSLVL_V2R4  = 0x08;
 static const uint8_t __ZOSLVL_V2R5  = 0x04;
 
+#pragma linkage(_gtca,builtin)
+#pragma linkage(_gdsa,builtin)
+
+#ifndef dsa
+  #define dsa() ( (unsigned long*)_gdsa() )
+#endif
+
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+
 static int ccsid_guess_buf_size = 4096;
 static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
+static int* __main_thread_stack_top_address = 0;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -4132,6 +4143,162 @@ void __update_envar_settings(const char* envar) {
   }
 }
 
+void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
+  /* Eyecatcher .C.E.E.1 */
+  static const char XPLINK_EYECATCHER[] = {0x00, 0xC3, 0x00, 0xC5,
+                                           0x00, 0xC5, 0x00, 0xF1};
+
+  // Level 4 (version 3) layout
+  static const char PPA1_EYECATCHER[] = {0x02, 0xCE};
+
+  typedef struct routine_layout {
+    const char XPLINK_LAYOUT_EYECATCHER[8];
+    int ppa1_offset;
+    int layout_flags;
+  } routine_layout;
+
+  typedef struct ppa1_layout {
+    const char PPA1_LAYOUT_EYECATCHER[2];
+    short int gpr_mask;
+    int ppa2_offset;
+    char flag1;
+    char flag2;
+    char flag3;
+    char flag4;
+    int misc_fields;
+    int code_lth;
+  } ppa1_layout;
+
+  typedef struct dsa_layout {
+    char misc[2048];
+    long int savearea_backchain;
+    long int savearea_environment;
+    long int savearea_entry;
+    long int savearea_return;
+  } dsa_layout;
+
+  int dsa_format = __EDCWCCWI_DOWN;
+  int prev_fmt;
+  int *prev_fmt_p = &prev_fmt;
+  void **ph_callee_dsa_p = NULL;
+  int ph_callee_dsa_fmt;
+  void *new_dsaptr = NULL;
+  short int epname_length;
+  void *entry_ptr;
+  int *ppa1off_ptr;
+  int ppa1_offset;
+  char FLAG3;
+  char FLAG4;
+  int offset_lth;
+
+  ppa1_layout *ppa1_ptr;
+  routine_layout *layout_ptr;
+  
+  {
+    std::mutex access_lock;
+    std::lock_guard<std::mutex> lock(access_lock);
+    errno = 0;
+    new_dsaptr = __dsa_prev(dsaptr, __EDCWCCWI_PHYSICAL, dsa_format, NULL, NULL, prev_fmt_p,
+                            ph_callee_dsa_p, &ph_callee_dsa_fmt);
+
+    if (errno == EINVAL || errno == ESRCH || errno == EACCES ||
+        new_dsaptr == NULL)
+      return 0;
+  }
+
+  dsa_format = prev_fmt;
+  entry_ptr = __ep_find(new_dsaptr, dsa_format, NULL);
+
+  if (entry_ptr == 0)
+    return 0;
+
+  si->prev_dsa = new_dsaptr;
+  si->entry_point = (void *)entry_ptr;
+  si->return_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_return;
+  si->entry_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_entry;
+  si->stack_addr =
+      (int *)((dsa_layout *)new_dsaptr)->savearea_backchain - 2048;
+  layout_ptr =
+      (routine_layout *)((unsigned long)entry_ptr - sizeof(routine_layout));
+  ppa1_ptr =
+      (ppa1_layout *)((unsigned long)layout_ptr + layout_ptr->ppa1_offset);
+
+  if (memcmp(&XPLINK_EYECATCHER, &layout_ptr->XPLINK_LAYOUT_EYECATCHER,
+              8) != 0) {
+    strcpy(si->entry_name,
+            "**Module not traced, not a XPLINK routine layout**");
+    return new_dsaptr;
+  }
+  /* PPA1: Entry Point Block for XPLINK (Version 3)
+      is the only block we are currently checking.
+  */
+  if (memcmp(&PPA1_EYECATCHER, &ppa1_ptr->PPA1_LAYOUT_EYECATCHER, 2) != 0) {
+    strcpy(si->entry_name,
+            "**Module not traced, PPA1 format not currently traced**");
+    return new_dsaptr;
+  }
+
+  /* Calculate the offset from the beginning of PPA1 to the name length
+    * field */
+  if (!(ppa1_ptr->flag4 & 0x01)) {
+    strcpy(si->entry_name,
+            "**Module not traced, name field not included in PPA1**");
+    return new_dsaptr;
+  }
+  memcpy(&FLAG3, &ppa1_ptr->flag3, 1);
+  offset_lth = sizeof(ppa1_layout); /* Length of fixed mandatory fields */
+  if (FLAG3 & 0x80) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x40) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x20) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x10) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x08) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x04) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x02) {
+    offset_lth = offset_lth + 4;
+  }
+  if (FLAG3 & 0x01) {
+    offset_lth = offset_lth + 8;
+  }
+
+  memcpy(&epname_length, (void *)((long)ppa1_ptr + offset_lth), 2);
+  epname_length = MIN(epname_length, sizeof(si->entry_name));
+  si->entry_name[epname_length] = 0;
+  strncpy((char *)si->entry_name,
+          (char *)((long)ppa1_ptr + offset_lth + sizeof(epname_length)),
+          epname_length);
+  __e2a_l(si->entry_name, epname_length);
+  return new_dsaptr;
+}
+
+int *__get_stack_start() {
+  if (gettid() == 1 && __main_thread_stack_top_address != 0)
+    return __main_thread_stack_top_address;
+
+  __stack_info si;
+  void *cur_dsa = dsa();
+
+  while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
+    cur_dsa = si.prev_dsa;
+
+    if ((gettid() == 1 && strcmp(si.entry_name, "CELQINIT") == 0) ||
+        strcmp(si.entry_name, "CELQPCMM") == 0)
+      return si.stack_addr;
+  }
+  return nullptr;
+}
+
 bool __zinit::isValidZOSLIBEnvar(std::string envar) {
   return std::find_if(envarHelpMap.begin(),
                       envarHelpMap.end(),
@@ -4152,6 +4319,8 @@ void __zinit::initialize() {
   if (_CVTSTATE_OFF == cvstate) {
     __ae_autoconvert_state(_CVTSTATE_ON);
   }
+
+  __main_thread_stack_top_address = __get_stack_start();
 
   // Populate ZOSLIB Envars and help text
   envarHelpMap.insert(std::make_pair(
