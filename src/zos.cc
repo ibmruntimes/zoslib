@@ -1873,6 +1873,14 @@ bool __is_os_level_at_or_above(oslvl_t level) {
   return (__get_os_level() >= level);
 }
 
+bool __is_stfle_available() {
+  // PSA decimal offset 200 from address 0 is STFLE in
+  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-psa-mapping
+  // and bit 7 (0x01) specifies if STFLE instruction is available in:
+  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping
+  return (((unsigned char*)200)[0] & 0x01);
+}
+
 struct IntHash {
   size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
 };

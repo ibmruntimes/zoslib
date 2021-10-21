@@ -409,6 +409,12 @@ bool __is_os_level_at_or_above(oslvl_t level);
 extern void *__iterate_stack_and_get(void *dsaptr, __stack_info *si);
 
 /**
+ * Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available
+ * \return true if the STFLE instruction is available
+ */
+bool __is_stfle_available();
+
+/**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry
