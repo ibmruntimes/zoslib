@@ -2197,6 +2197,13 @@ unsigned long getipttoken(void) {
 }
 
 static void *__iarv64_alloc(int segs, const char *token) {
+  if (segs == 0) {
+    // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
+    if (mem_account())
+      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set to ENOMEM");
+    errno = ENOMEM; // mimic behaviour of malloc(0)
+    return 0;
+  }
   long long rc, reason;
   struct iarv64parm parm __attribute__((__aligned__(16)));
   memset(&parm, 0, sizeof(parm));
@@ -2231,6 +2238,13 @@ static void *__iarv64_alloc(int segs, const char *token) {
 
 static void *__iarv64_alloc_inorigin(int segs, const char *token,
                                      void *inorigin) {
+  if (segs == 0) {
+    // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
+    if (mem_account())
+      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set to ENOMEM");
+    errno = ENOMEM; // mimic behaviour of malloc(0)
+    return 0;
+  }
   long long rc, reason;
   struct iarv64parm parm __attribute__((__aligned__(16)));
   memset(&parm, 0, sizeof(parm));
