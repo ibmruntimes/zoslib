@@ -1458,7 +1458,7 @@ static void *_timer(void *parm) {
   timer_parm_t *tp = (timer_parm_t *)parm;
   unsigned long t0 = __clock();
   unsigned long t1 = t0;
-  while ((t1 - t0) < ((tp->secs) * 1000000000)) {
+  while ((t1 - t0) < ((tp->secs) * 1000000000UL)) {
     sleep(tp->secs);
     t1 = __clock();
   }
@@ -4077,16 +4077,16 @@ int __print_zoslib_help(FILE* fp, const char* title) {
   return 0;
 }
 
-void __update_envar_settings(const char* envar) {
+int __update_envar_settings(const char* envar) {
   __zinit* zinit_ptr = __zinit::getInstance();
   if (!zinit_ptr)
-    return;
+    return -1;
 
   // Exit early if envar is not a ZOSLIB envar
   if (envar && !zinit_ptr->isValidZOSLIBEnvar(envar)) {
     if (__debug_mode)
       dprintf(2, "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n", envar);
-    return;
+    return -1;
   }
 
   bool force_update_all = envar == NULL;
@@ -4163,6 +4163,18 @@ void __update_envar_settings(const char* envar) {
   if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_CCSID1047_ENVAR) == 0) {
     no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
+  return 0;
+}
+
+extern "C" int __update_envar_names(zoslib_config_t* const config) {
+  __zinit* zinit_ptr = __zinit::getInstance();
+  if (!zinit_ptr)
+    return -1;
+
+  zoslib_config_t &cur_config = zinit_ptr->config;
+  memcpy(&cur_config, config, sizeof(*config));
+
+  return zinit_ptr->setEnvarHelpMap();
 }
 
 void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
@@ -4335,7 +4347,7 @@ __zinit::__zinit(const zoslib_config_t &config)
   memcpy(&this->config, &config, sizeof(config));
 }
 
-void __zinit::initialize() {
+int __zinit::initialize() {
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
   if (_CVTSTATE_OFF == cvstate) {
@@ -4344,7 +4356,29 @@ void __zinit::initialize() {
 
   __main_thread_stack_top_address = __get_stack_start();
 
+  if (setEnvarHelpMap() != 0)
+    return -1;
+
+  char *tenv = getenv("_EDC_SIG_DFLT");
+  if (!tenv || !*tenv) {
+    setenv("_EDC_SIG_DFLT", "1", 1);
+  }
+
+  tenv = getenv("_EDC_SUSV3");
+  if (!tenv || !*tenv) {
+    setenv("_EDC_SUSV3", "1", 1);
+  }
+
+  _th = std::get_terminate();
+  std::set_terminate(abort);
+  return 0;
+}
+
+int __zinit::setEnvarHelpMap() {
   // Populate ZOSLIB Envars and help text
+
+  envarHelpMap.clear();
+
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("NO")),
       "changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off"));
@@ -4368,7 +4402,7 @@ void __zinit::initialize() {
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.CCSID_GUESS_BUF_SIZE_ENVAR, std::string("")),
-      "Number of bytes to scan for CCSID guess heuristics (default: 4096)"));
+      "number of bytes to scan for CCSID guess heuristics (default: 4096)"));
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
@@ -4382,20 +4416,11 @@ void __zinit::initialize() {
       zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
       "set to toggle debug ZOSLIB mode"));
 
-  __update_envar_settings(NULL);
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.RUNTIME_LIMIT_ENVAR, std::string("")),
+      "number of seconds to run before zoslib raises a SIGABRT signal to terminate"));
 
-  char *tenv = getenv("_EDC_SIG_DFLT");
-  if (!tenv || !*tenv) {
-    setenv("_EDC_SIG_DFLT", "1", 1);
-  }
-
-  tenv = getenv("_EDC_SUSV3");
-  if (!tenv || !*tenv) {
-    setenv("_EDC_SUSV3", "1", 1);
-  }
-
-  _th = std::get_terminate();
-  std::set_terminate(abort);
+  return __update_envar_settings(NULL);
 }
 
 __zinit *__zinit::instance = 0;

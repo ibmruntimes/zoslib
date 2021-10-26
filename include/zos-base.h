@@ -685,10 +685,15 @@ extern int __lutimes(const char *filename, const struct timeval tv[2]);
 /**
  * Updates the zoslib global variables associated with the zoslib environment variables
  * \param [in] envar environment variable to update, specify NULL to update all
- * \return On success, returns 0, or < 0 on error.
+ * \return 0 for success, or -1 for failure
  */
-void __update_envar_settings(const char* envar);
-
+int __update_envar_settings(const char* envar);
+/**
+ * Changes the names of one or more of the environment variables zoslib uses
+ * \param [in] zoslib_confit_t structure that defines the new environment variable name(s)
+ * \return 0 for success, or -1 for failure
+ */
+int __update_envar_names(zoslib_config_t* const config);
 
 #ifdef __cplusplus
 }
@@ -816,7 +821,8 @@ public:
     return instance;
   }
 
-  void initialize(void);
+  int initialize(void);
+  int setEnvarHelpMap(void);
 
   static __zinit *getInstance() { return instance; }
 
