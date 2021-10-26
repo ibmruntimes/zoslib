@@ -53,10 +53,12 @@ list(APPEND zoslib_cflags
   -qlongname
   -qlibansi
   -qfloat=IEEE
-  -qtune=10
-  -qarch=10
+  -qtune=11
+  -qarch=11
   -qasm
   -qasmlib=sys1.maclib:sys1.modgen)
+
+set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
 
 target_compile_definitions(zoslib PRIVATE ${zoslib_defines})
 target_compile_options(zoslib PRIVATE ${zoslib_cflags})
