@@ -890,11 +890,6 @@ struct __init_zoslib {
   __init_zoslib(const zoslib_config_t &config = {}) { __zinit::init(config); }
 };
 
-class __setlibpath {
-public:
-  __setlibpath();
-};
-
 #endif // __cplusplus
 
 #endif //__ZOS_BASE_H_
