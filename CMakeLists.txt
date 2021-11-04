@@ -53,8 +53,8 @@ list(APPEND zoslib_cflags
   -qlongname
   -qlibansi
   -qfloat=IEEE
-  -qtune=11
-  -qarch=11
+  -qtune=10
+  -qarch=10
   -qasm
   -qasmlib=sys1.maclib:sys1.modgen)
 
