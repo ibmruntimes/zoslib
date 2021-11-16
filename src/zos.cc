@@ -14,7 +14,6 @@
 #define _OPEN_MSGQ_EXT 1
 #define __ZOS_CC
 #include "zos-base.h"
-#include "zos-sys-info.h"
 #include "edcwccwi.h"
 
 #include <_Ccsid.h>
@@ -43,20 +42,13 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include <exception>
 #include <mutex>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
-
-// Byte 6 of CVTOSLVL (https://www.ibm.com/docs/en/zos/2.4.0?topic=information-cvt-mapping)
-static const uint8_t __ZOSLVL_V2R1  = 0x80;
-static const uint8_t __ZOSLVL_V2R2  = 0x40;
-static const uint8_t __ZOSLVL_V1R13 = 0x20;
-static const uint8_t __ZOSLVL_V2R3  = 0x10;
-static const uint8_t __ZOSLVL_V2R4  = 0x08;
-static const uint8_t __ZOSLVL_V2R5  = 0x04;
 
 #pragma linkage(_gtca,builtin)
 #pragma linkage(_gdsa,builtin)
@@ -67,7 +59,6 @@ static const uint8_t __ZOSLVL_V2R5  = 0x04;
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 
-static int ccsid_guess_buf_size = 4096;
 static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
@@ -84,7 +75,7 @@ const char *__zoslib_version = BUILD_VERSION;
 const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
-extern void __settimelimit(int secs);
+extern "C" void __set_ccsid_guess_buf_size(int nbytes);
 static int shmid_value(void);
 
 #ifndef max
@@ -102,422 +93,6 @@ template <typename T> static inline T RoundDown(T x, intptr_t m) {
 // Return the smallest multiple of m which is >= x.
 template <typename T> static inline T RoundUp(T x, intptr_t m) {
   return RoundDown<T>(static_cast<T>(x + m - 1), m);
-}
-
-static inline void *__convert_one_to_one(const void *table, void *dst,
-                                         size_t size, const void *src) {
-  void *rst = dst;
-  __asm(" troo 2,%2,b'0001' \n jo *-4 \n"
-        : "+NR:r3"(size), "+NR:r2"(dst), "+r"(src)
-        : "NR:r1"(table)
-        : "r0", "r1", "r2", "r3");
-  return rst;
-}
-static inline unsigned strlen_ae(const unsigned char *str, int *code_page,
-                                 int max_len, int *ambiguous) {
-  static int last_ccsid = 819;
-  static const unsigned char _tab_a[256] __attribute__((aligned(8))) = {
-      1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  };
-  static const unsigned char _tab_e[256] __attribute__((aligned(8))) = {
-      1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-  };
-  unsigned long bytes;
-  unsigned long code_out;
-  const unsigned char *start;
-
-  bytes = max_len;
-  code_out = 0;
-  start = str;
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_a)
-        : "r1", "r2", "r3");
-  unsigned a_len = str - start;
-
-  bytes = max_len;
-  code_out = 0;
-  str = start;
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_e)
-        : "r1", "r2", "r3");
-  unsigned e_len = str - start;
-  if (a_len > e_len) {
-    *code_page = 819;
-    last_ccsid = 819;
-    *ambiguous = 0;
-    return a_len;
-  } else if (e_len > a_len) {
-    *code_page = 1047;
-    last_ccsid = 1047;
-    *ambiguous = 0;
-    return e_len;
-  }
-  *code_page = last_ccsid;
-  *ambiguous = 1;
-  return a_len;
-}
-
-static inline unsigned strlen_e(const unsigned char *str, unsigned size) {
-  static const unsigned char _tab_e[256] __attribute__((aligned(8))) = {
-      1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-  };
-
-  unsigned long bytes = size;
-  unsigned long code_out = 0;
-  const unsigned char *start = str;
-
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_e)
-        : "r1", "r2", "r3");
-
-  return str - start;
-}
-
-static int utf8scan(const unsigned char *str, unsigned size, char *errmsg, size_t sz) {
-  static int byte0_next_state[256] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,
-    2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,
-    3,  -1, -1, -1, -1, -1, -1, -1, -1};
-
-  unsigned char onebyte;
-  int bytes;
-  int state = 0;
-  unsigned int value;
-  unsigned char d[4];
-  size_t offset = 0;
-  int linenum = 1;
-  onebyte = str[offset]; 
-  while (onebyte && offset < size) {
-    switch (state) {
-    case 0:
-      state = byte0_next_state[onebyte];
-      if (-1 == state) {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, byte 0x%02X malformed, not one of 0xxxxxxx, "
-                 "110xxxxx, 1110xxxx, 11110xxx\n",
-                 offset, linenum, onebyte);
-        return -1;
-      }
-      if (state == 0) {
-        if (onebyte == 0x0a)
-          ++linenum;
-        break;
-      } else {
-        d[0] = onebyte;
-      }
-      break;
-    case 1:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[1] = onebyte;
-        value = (0x1c & d[0] << 6) | (((0x03 & d[0]) << 6) | (0x3f & d[1]));
-        if (value < 0x80 || value > 0x7ff) {
-          snprintf(errmsg, sz,
-                   "Invalid unicode sequence at file offset %lu around line "
-                   "%d, 2-byte sequence 0x%02X%02X value U+%04X invalid, range "
-                   "out of U+0080 and U+07FF\n",
-                   offset, linenum, d[0], d[1], value);
-          return -1;
-        }
-        state = 0;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 2-byte sequence 0x%02X%02X 2nd byte malformed, not "
-                 "110xxxxx-10xxxxxx\n",
-                 offset, linenum, d[0], onebyte);
-        return -1;
-      }
-      break;
-
-    case 2:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[1] = onebyte;
-        state = 22;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 3-byte sequence 0x%02X%02Xxx 2nd byte malformed, not "
-                 "1110xxxx-10xxxxxx-xxxxxxxx\n",
-                 offset, linenum, d[0], onebyte);
-        return -1;
-      }
-      break;
-
-    case 3:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[1] = onebyte;
-        state = 33;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 4-byte sequence 0x%02X%02Xxxxx 2nd byte malformed, not "
-                 "11110xxx-10xxxxxx-xxxxxxxx-xxxxxxxx\n",
-                 offset, linenum, d[0], onebyte);
-        return -1;
-      }
-      break;
-
-    case 33:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[2] = onebyte;
-        state = 333;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 4-byte sequence 0x%02X%02X%02Xxx 3rd byte malformed, not "
-                 "11110xxx-10xxxxxx-10xxxxxxx-xxxxxxxx\n",
-                 offset, linenum, d[0], d[1], onebyte);
-        return -1;
-      }
-      break;
-
-    case 22:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[2] = onebyte;
-        value =
-            ((0x000f & d[0]) << 12) | ((0x003f & d[1]) << 6) | (0x3f & d[2]);
-        if (value < 0x0800 || value > 0x0ffff) {
-          snprintf(errmsg, sz,
-                   "Invalid unicode sequence at file offset %lu around line "
-                   "%d, 3-byte sequence 0x%02X%02X%02X value U+%04X "
-                   "invalid, range "
-                   "out of U+0800 and U+FFFF\n",
-                   offset, linenum, d[0], d[1], d[2], value);
-          return -1;
-        }
-        state = 0;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 3-byte sequence 0x%02X%02X%02X 3rd byte malformed, not "
-                 "11110xxx-10xxxxxx-10xxxxxxx\n",
-                 offset, linenum, d[0], d[1], onebyte);
-        return -1;
-      }
-      break;
-    case 333:
-      if ((onebyte & 0xc0) == 0x80) {
-        d[3] = onebyte;
-        value = ((0x0007 & d[0]) << 18) | ((0x003f & d[1]) << 12) |
-                ((0x003f & d[2]) << 6) | (0x3f & d[3]);
-        if (value < 0x010000 || value > 0x010ffff) {
-          snprintf(errmsg, sz,
-                   "Invalid unicode sequence at file offset %lu around line "
-                   "%d, 4-byte sequence 0x%02X%02X%02X%02X value U+%05X "
-                   "invalid, range "
-                   "out of U+10000 and U+10FFFF\n",
-                   offset, linenum, d[0], d[1], d[2], d[3], value);
-          return -1;
-        }
-        state = 0;
-      } else {
-        snprintf(errmsg, sz,
-                 "Invalid unicode sequence at file offset %lu around line "
-                 "%d, 4-byte sequence 0x%02X%02X%02X%02Xx 4th byte "
-                 "malformed, not "
-                 "11110xxx-10xxxxxx-10xxxxxxx-10xxxxxx\n",
-                 offset, linenum, d[0], d[1], d[2], onebyte);
-        return -1;
-      }
-      break;
-    default:
-      snprintf(errmsg, sz,
-               "Invalid unicode sequence at file offset %lu around line "
-               "%d, parser in unknown state %d, byte read 0x%02X\n",
-               offset, linenum, state, onebyte);
-      return -1;
-    }
-    ++offset;
-    onebyte = str[offset]; 
-  }
-  if (state != 0) {
-    snprintf(errmsg, sz,
-             "Excepted End of File detected at file offset %lu around line "
-             "%d, parser in state %d, byte read 0x%02X\n",
-             offset, linenum, state, onebyte);
-    return -1;
-  }
-  return 0;
-}
-
-static const unsigned char __ibm1047_iso88591[256]
-    __attribute__((aligned(8))) = {
-        0x00, 0x01, 0x02, 0x03, 0x9c, 0x09, 0x86, 0x7f, 0x97, 0x8d, 0x8e, 0x0b,
-        0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x9d, 0x0a, 0x08, 0x87,
-        0x18, 0x19, 0x92, 0x8f, 0x1c, 0x1d, 0x1e, 0x1f, 0x80, 0x81, 0x82, 0x83,
-        0x84, 0x85, 0x17, 0x1b, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x05, 0x06, 0x07,
-        0x90, 0x91, 0x16, 0x93, 0x94, 0x95, 0x96, 0x04, 0x98, 0x99, 0x9a, 0x9b,
-        0x14, 0x15, 0x9e, 0x1a, 0x20, 0xa0, 0xe2, 0xe4, 0xe0, 0xe1, 0xe3, 0xe5,
-        0xe7, 0xf1, 0xa2, 0x2e, 0x3c, 0x28, 0x2b, 0x7c, 0x26, 0xe9, 0xea, 0xeb,
-        0xe8, 0xed, 0xee, 0xef, 0xec, 0xdf, 0x21, 0x24, 0x2a, 0x29, 0x3b, 0x5e,
-        0x2d, 0x2f, 0xc2, 0xc4, 0xc0, 0xc1, 0xc3, 0xc5, 0xc7, 0xd1, 0xa6, 0x2c,
-        0x25, 0x5f, 0x3e, 0x3f, 0xf8, 0xc9, 0xca, 0xcb, 0xc8, 0xcd, 0xce, 0xcf,
-        0xcc, 0x60, 0x3a, 0x23, 0x40, 0x27, 0x3d, 0x22, 0xd8, 0x61, 0x62, 0x63,
-        0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0xab, 0xbb, 0xf0, 0xfd, 0xfe, 0xb1,
-        0xb0, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0xaa, 0xba,
-        0xe6, 0xb8, 0xc6, 0xa4, 0xb5, 0x7e, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
-        0x79, 0x7a, 0xa1, 0xbf, 0xd0, 0x5b, 0xde, 0xae, 0xac, 0xa3, 0xa5, 0xb7,
-        0xa9, 0xa7, 0xb6, 0xbc, 0xbd, 0xbe, 0xdd, 0xa8, 0xaf, 0x5d, 0xb4, 0xd7,
-        0x7b, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0xad, 0xf4,
-        0xf6, 0xf2, 0xf3, 0xf5, 0x7d, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
-        0x51, 0x52, 0xb9, 0xfb, 0xfc, 0xf9, 0xfa, 0xff, 0x5c, 0xf7, 0x53, 0x54,
-        0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0xb2, 0xd4, 0xd6, 0xd2, 0xd3, 0xd5,
-        0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0xb3, 0xdb,
-        0xdc, 0xd9, 0xda, 0x9f};
-
-static const unsigned char __iso88591_ibm1047[256]
-    __attribute__((aligned(8))) = {
-        0x00, 0x01, 0x02, 0x03, 0x37, 0x2d, 0x2e, 0x2f, 0x16, 0x05, 0x15, 0x0b,
-        0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x3c, 0x3d, 0x32, 0x26,
-        0x18, 0x19, 0x3f, 0x27, 0x1c, 0x1d, 0x1e, 0x1f, 0x40, 0x5a, 0x7f, 0x7b,
-        0x5b, 0x6c, 0x50, 0x7d, 0x4d, 0x5d, 0x5c, 0x4e, 0x6b, 0x60, 0x4b, 0x61,
-        0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0x7a, 0x5e,
-        0x4c, 0x7e, 0x6e, 0x6f, 0x7c, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7,
-        0xc8, 0xc9, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xe2,
-        0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xad, 0xe0, 0xbd, 0x5f, 0x6d,
-        0x79, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x91, 0x92,
-        0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6,
-        0xa7, 0xa8, 0xa9, 0xc0, 0x4f, 0xd0, 0xa1, 0x07, 0x20, 0x21, 0x22, 0x23,
-        0x24, 0x25, 0x06, 0x17, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x09, 0x0a, 0x1b,
-        0x30, 0x31, 0x1a, 0x33, 0x34, 0x35, 0x36, 0x08, 0x38, 0x39, 0x3a, 0x3b,
-        0x04, 0x14, 0x3e, 0xff, 0x41, 0xaa, 0x4a, 0xb1, 0x9f, 0xb2, 0x6a, 0xb5,
-        0xbb, 0xb4, 0x9a, 0x8a, 0xb0, 0xca, 0xaf, 0xbc, 0x90, 0x8f, 0xea, 0xfa,
-        0xbe, 0xa0, 0xb6, 0xb3, 0x9d, 0xda, 0x9b, 0x8b, 0xb7, 0xb8, 0xb9, 0xab,
-        0x64, 0x65, 0x62, 0x66, 0x63, 0x67, 0x9e, 0x68, 0x74, 0x71, 0x72, 0x73,
-        0x78, 0x75, 0x76, 0x77, 0xac, 0x69, 0xed, 0xee, 0xeb, 0xef, 0xec, 0xbf,
-        0x80, 0xfd, 0xfe, 0xfb, 0xfc, 0xba, 0xae, 0x59, 0x44, 0x45, 0x42, 0x46,
-        0x43, 0x47, 0x9c, 0x48, 0x54, 0x51, 0x52, 0x53, 0x58, 0x55, 0x56, 0x57,
-        0x8c, 0x49, 0xcd, 0xce, 0xcb, 0xcf, 0xcc, 0xe1, 0x70, 0xdd, 0xde, 0xdb,
-        0xdc, 0x8d, 0x8e, 0xdf};
-
-extern "C" void *_convert_e2a(void *dst, const void *src, size_t size) {
-  int ccsid;
-  int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
-  if (ccsid == 819) {
-    memcpy(dst, src, size);
-    return dst;
-  }
-  return __convert_one_to_one(__ibm1047_iso88591, dst, size, src);
-}
-
-extern "C" void *_convert_a2e(void *dst, const void *src, size_t size) {
-  int ccsid;
-  int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
-  if (ccsid == 1047) {
-    memcpy(dst, src, size);
-    return dst;
-  }
-  return __convert_one_to_one(__iso88591_ibm1047, dst, size, src);
-}
-
-extern "C" int __guess_ue(const void* src, size_t size,
-                          char *errmsg, size_t er_size) {
-  const int ERR_MG_SIZE = 1024;
-  char utf8msg[ERR_MG_SIZE];
-  char ebcdicmsg[ERR_MG_SIZE];
-
-  if (utf8scan((unsigned char *)src, size, utf8msg, sizeof(utf8msg)) == 0)
-    return 819;
-
-  unsigned e_size = strlen_e((unsigned char *)src, size); 
-  if (e_size == size) return 1047;
-
-  if (errmsg) {
-    snprintf(ebcdicmsg, sizeof(ebcdicmsg),
-             "Character that does not belong to codepage 1047 was found");
-
-    snprintf(errmsg, er_size, "unicode: %s, ebcdic-1047: %s", utf8msg, ebcdicmsg);
-  }
-  return 65535;
-}
-
-extern "C" int __guess_fd_ue(int fd, char *errmsg, size_t er_size,
-                             int is_new_fd) {
-  if (!is_new_fd && lseek(fd, 0, SEEK_SET) < 0) {
-    perror("guess_ue:lseek"); 
-    return -1;
-  }
-
-  char *buffer;
-  int ccsid;
-
-  // Only guess first CCSID_GUESS_BUF_SIZE_ENVAR byte of data at most
-  if (ccsid_guess_buf_size <= 4096) {
-    buffer = (char *)alloca(ccsid_guess_buf_size);
-  } else {
-    buffer = (char *)malloc(ccsid_guess_buf_size);
-  }
-  ssize_t bytes = read(fd, buffer, ccsid_guess_buf_size);
-  if (bytes < 0) {
-    perror("guess_ue:read");
-    ccsid = -1;
-    goto quit;
-  }
-  buffer[bytes] = '\0';
-  
-  ccsid = __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
-quit:
-  if (ccsid_guess_buf_size > 4096)
-    free(buffer);
-
-  return ccsid;
-}
-
-extern "C" int __guess_ae(const void *src, size_t size) {
-  int ccsid;
-  int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
-  return ccsid;
 }
 
 extern char **environ; // this would be the ebcdic one
@@ -605,380 +180,12 @@ extern "C" void __xfer_env(void) {
   }
 }
 
-extern "C" int __chgfdccsid(int fd, unsigned short ccsid) {
-  attrib_t attr;
-  memset(&attr, 0, sizeof(attr));
-  attr.att_filetagchg = 1;
-  attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
-    attr.att_filetag.ft_txtflag = 1;
-  }
-  return __fchattr(fd, &attr, sizeof(attr));
-}
-
-extern "C" int __setfdccsid(int fd, int t_ccsid) {
-  attrib_t attr;
-  memset(&attr, 0, sizeof(attr));
-  attr.att_filetagchg = 1;
-  attr.att_filetag.ft_txtflag = (t_ccsid >> 16);
-  attr.att_filetag.ft_ccsid = (t_ccsid & 0x0ffff);
-  return __fchattr(fd, &attr, sizeof(attr));
-}
-
-extern "C" int __getfdccsid(int fd) {
-  struct stat st;
-  int rc;
-  rc = fstat(fd, &st);
-  if (rc != 0)
-    return -1;
-  unsigned short ccsid = st.st_tag.ft_ccsid;
-  if (st.st_tag.ft_txtflag) {
-    return 65536 + ccsid;
-  }
-  return ccsid;
-}
-
 static void ledump(const char *title) {
   __auto_ascii _a;
   __cdump_a((char *)title);
 }
-#if DEBUG_ONLY
-extern "C" size_t __e2a_l(char *bufptr, size_t szLen) {
-  int ccsid;
-  int am;
-  if (0 == bufptr) {
-    errno = EINVAL;
-    return -1;
-  }
-  unsigned len = strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
-
-  if (ccsid == 819) {
-    if (__debug_mode && !am) {
-      /*
-      __dump_title(2, bufptr, szLen, 16,
-                   "Attempt convert from ASCII to ASCII \n");
-      ledump((char *)"Attempt convert from ASCII to ASCII");
-      */
-      return szLen;
-    }
-    // return szLen; restore to convert
-  }
-
-  __convert_one_to_one(__ibm1047_iso88591, bufptr, szLen, bufptr);
-  return szLen;
-}
-extern "C" size_t __a2e_l(char *bufptr, size_t szLen) {
-  int ccsid;
-  int am;
-  if (0 == bufptr) {
-    errno = EINVAL;
-    return -1;
-  }
-  unsigned len = strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
-
-  if (ccsid == 1047) {
-    if (__debug_mode && !am) {
-      /*
-     __dump_title(2, bufptr, szLen, 16,
-                  "Attempt convert from EBCDIC to EBCDIC\n");
-     ledump((char *)"Attempt convert from EBCDIC to EBCDIC");
-     */
-      return szLen;
-    }
-    // return szLen; restore to convert
-  }
-  __convert_one_to_one(__iso88591_ibm1047, bufptr, szLen, bufptr);
-  return szLen;
-}
-extern "C" size_t __e2a_s(char *string) {
-  if (0 == string) {
-    errno = EINVAL;
-    return -1;
-  }
-  return __e2a_l(string, strlen(string));
-}
-extern "C" size_t __a2e_s(char *string) {
-  if (0 == string) {
-    errno = EINVAL;
-    return -1;
-  }
-  return __a2e_l(string, strlen(string));
-}
-#endif
-
-static void __console(const void *p_in, int len_i) {
-  const unsigned char *p = (const unsigned char *)p_in;
-  int len = len_i;
-  while (len > 0 && p[len - 1] == 0x15) {
-    --len;
-  }
-  typedef struct wtob {
-    unsigned short sz;
-    unsigned short flags;
-    unsigned char msgarea[130];
-  } wtob_t;
-  wtob_t *m = (wtob_t *)__malloc31(134);
-  while (len > 126) {
-    m->sz = 130;
-    m->flags = 0x8000;
-    memcpy(m->msgarea, p, 126);
-    memcpy(m->msgarea + 126, "\x20\x00\x00\x20", 4);
-    __asm(" la  0,0 \n"
-          " lr  1,%0 \n"
-          " svc 35 \n"
-          :
-          : "r"(m)
-          : "r0", "r1", "r15");
-    p += 126;
-    len -= 126;
-  }
-  if (len > 0) {
-    m->sz = len + 4;
-    m->flags = 0x8000;
-    memcpy(m->msgarea, p, len);
-    memcpy(m->msgarea + len, "\x20\x00\x00\x20", 4);
-    __asm(" la  0,0 \n"
-          " lr  1,%0 \n"
-          " svc 35 \n"
-          :
-          : "r"(m)
-          : "r0", "r1", "r15");
-  }
-  free(m);
-}
-extern "C" int __console_printf(const char *fmt, ...) {
-  va_list ap;
-  char *buf;
-  int len;
-  va_start(ap, fmt);
-  va_list ap1;
-  va_list ap2;
-  va_copy(ap1, ap);
-  va_copy(ap2, ap);
-  int bytes;
-  int ccsid;
-  int am;
-  strlen_ae((const unsigned char *)fmt, &ccsid, strlen(fmt) + 1, &am);
-  int mode;
-  if (ccsid == 819) {
-    mode = __ae_thread_swapmode(__AE_ASCII_MODE);
-    bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
-    __a2e_l(buf, len);
-  } else {
-    mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
-    bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
-  }
-  va_end(ap2);
-  va_end(ap1);
-  va_end(ap);
-  if (len <= 0)
-    goto quit;
-  __console(buf, len);
-quit:
-  __ae_thread_swapmode(mode);
-  return len;
-}
 
 extern "C" int gettid() { return (int)(pthread_self().__ & 0x7fffffff); }
-
-extern "C" int vdprintf(int fd, const char *fmt, va_list ap) {
-  int ccsid;
-  int am;
-  strlen_ae((const unsigned char *)fmt, &ccsid, strlen(fmt) + 1, &am);
-  int mode;
-  int len;
-  int bytes;
-  char *buf;
-  va_list ap1;
-  va_list ap2;
-  va_copy(ap1, ap);
-  va_copy(ap2, ap);
-  if (ccsid == 819) {
-    mode = __ae_thread_swapmode(__AE_ASCII_MODE);
-    bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
-  } else {
-    mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
-    bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
-  }
-  if (len == -1)
-    goto quit;
-  len = write(fd, buf, len);
-quit:
-  __ae_thread_swapmode(mode);
-  return len;
-}
-extern "C" int dprintf(int fd, const char *fmt, ...) {
-  va_list ap;
-  char *buf;
-  int len;
-  va_start(ap, fmt);
-  va_list ap1;
-  va_list ap2;
-  va_copy(ap1, ap);
-  va_copy(ap2, ap);
-  int bytes;
-  int ccsid;
-  int am;
-  strlen_ae((const unsigned char *)fmt, &ccsid, strlen(fmt) + 1, &am);
-  int mode;
-  if (ccsid == 819) {
-    mode = __ae_thread_swapmode(__AE_ASCII_MODE);
-    bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
-  } else {
-    mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
-    bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
-    len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
-  }
-  va_end(ap2);
-  va_end(ap1);
-  va_end(ap);
-  if (len == -1)
-    goto quit;
-  len = write(fd, buf, len);
-quit:
-  __ae_thread_swapmode(mode);
-  return len;
-}
-
-extern void __dump_title(int fd, const void *addr, size_t len, size_t bw,
-                         const char *format, ...);
-
-extern void __dump(int fd, const void *addr, size_t len, size_t bw) {
-  __dump_title(fd, addr, len, bw, 0);
-}
-
-extern void __dump_title(int fd, const void *addr, size_t len, size_t bw,
-                         const char *format, ...) {
-  static const unsigned char *atbl = (unsigned char *)"................"
-                                                      "................"
-                                                      " !\"#$%&'()*+,-./"
-                                                      "0123456789:;<=>?"
-                                                      "@ABCDEFGHIJKLMNO"
-                                                      "PQRSTUVWXYZ[\\]^_"
-                                                      "`abcdefghijklmno"
-                                                      "pqrstuvwxyz{|}~."
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      "................";
-  static const unsigned char *etbl = (unsigned char *)"................"
-                                                      "................"
-                                                      "................"
-                                                      "................"
-                                                      " ...........<(+|"
-                                                      "&.........!$*);^"
-                                                      "-/.........,%_>?"
-                                                      ".........`:#@'=\""
-                                                      ".abcdefghi......"
-                                                      ".jklmnopqr......"
-                                                      ".~stuvwxyz...[.."
-                                                      ".............].."
-                                                      "{ABCDEFGHI......"
-                                                      "}JKLMNOPQR......"
-                                                      "\\.STUVWXYZ......"
-                                                      "0123456789......";
-  const unsigned char *p = (const unsigned char *)addr;
-  if (format) {
-    va_list ap;
-    va_start(ap, format);
-    vdprintf(fd, format, ap);
-    va_end(ap);
-  } else {
-    dprintf(fd, "Dump: \"Address: Content in Hexdecimal, ASCII, EBCDIC\"\n");
-  }
-  if (bw < 16 && bw > 64) {
-    bw = 16;
-  }
-  unsigned char line[2048];
-  const unsigned char *buffer;
-  long offset = 0;
-  long sz = 0;
-  long b = 0;
-  long i, j;
-  int c;
-  __auto_ascii _a;
-  while (len > 0) {
-    sz = (len > (bw - 1)) ? bw : len;
-    buffer = p + offset;
-    b = 0;
-    b += __snprintf_a((char *)line + b, 2048 - b, "%*p:", 16, buffer);
-    for (i = 0; i < sz; ++i) {
-      if ((i & 3) == 0)
-        line[b++] = ' ';
-      c = buffer[i];
-      line[b++] = "0123456789abcdef"[(0xf0 & c) >> 4];
-      line[b++] = "0123456789abcdef"[(0x0f & c)];
-    }
-    for (; i < bw; ++i) {
-      if ((i & 3) == 0)
-        line[b++] = ' ';
-      line[b++] = ' ';
-      line[b++] = ' ';
-    }
-    line[b++] = ' ';
-    line[b++] = '|';
-    for (i = 0; i < sz; ++i) {
-      c = buffer[i];
-      if (c == -1) {
-        line[b++] = '*';
-      } else {
-        line[b++] = atbl[c];
-      }
-    }
-    for (; i < bw; ++i) {
-      line[b++] = ' ';
-    }
-    line[b++] = '|';
-    line[b++] = ' ';
-    line[b++] = '|';
-    for (i = 0; i < sz; ++i) {
-      c = buffer[i];
-      if (c == -1) {
-        line[b++] = '*';
-      } else {
-        line[b++] = etbl[c];
-      }
-    }
-    for (; i < bw; ++i) {
-      line[b++] = ' ';
-    }
-    line[b++] = '|';
-    line[b++] = 0;
-    dprintf(fd, "%-.*s\n", b, line);
-    offset += sz;
-    len -= sz;
-  }
-}
-
-__auto_ascii::__auto_ascii(void) {
-  ascii_mode = __isASCII();
-  if (ascii_mode == 0)
-    __ae_thread_swapmode(__AE_ASCII_MODE);
-}
-__auto_ascii::~__auto_ascii(void) {
-  if (ascii_mode == 0)
-    __ae_thread_swapmode(__AE_EBCDIC_MODE);
-}
-__conv_off::__conv_off(void) {
-  convert_state = __ae_autoconvert_state(_CVTSTATE_QUERY);
-  __ae_autoconvert_state(_CVTSTATE_OFF);
-}
-__conv_off::~__conv_off(void) { __ae_autoconvert_state(convert_state); }
 
 static void init_tf_parms_t(__tf_parms_t *parm, char *pu_name_buf, size_t len1,
                             char *entry_name_buf, size_t len2,
@@ -1089,7 +296,7 @@ static void rbracket_entry_name(char *entry_name, int size) {
 void backtrace_symbols_w(void *const *buffer, int size, int fd,
                          char ***return_string) {
   int sz;
-  char *return_buff;
+  char *return_buff = 0;
   char **table;
   char *stringpool;
   char *buff_end;
@@ -1099,7 +306,6 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
   char stmt_id[256];
   char *return_addr;
   _FEEDBACK fc;
-  int rc = 0;
   int i;
   int cnt;
   int inst;
@@ -1310,56 +516,6 @@ int strncasecmp_ignorecp(const char *a, const char *b, size_t n) {
   return strcmp(a_new, b_new);
 }
 
-class __csConverter {
-  int fr_id;
-  int to_id;
-  char fr_name[_CSNAME_LEN_MAX + 1];
-  char to_name[_CSNAME_LEN_MAX + 1];
-  iconv_t cv;
-  int valid;
-
-public:
-  __csConverter(int fr_ccsid, int to_ccsid) : fr_id(fr_ccsid), to_id(to_ccsid) {
-    valid = 0;
-    if (0 != __toCSName(fr_id, fr_name)) {
-      return;
-    }
-    if (0 != __toCSName(to_id, to_name)) {
-      return;
-    }
-    if (fr_id != -1 && to_id != -1) {
-      cv = iconv_open(fr_name, to_name);
-      if (cv != (iconv_t)-1) {
-        valid = 1;
-      }
-    }
-  }
-  int is_valid(void) { return valid; }
-  ~__csConverter(void) {
-    if (valid)
-      iconv_close(cv);
-  }
-  size_t iconv(char **inbuf, size_t *inbytesleft, char **outbuf,
-               size_t *outbytesleft) {
-    return ::iconv(cv, inbuf, inbytesleft, outbuf, outbytesleft);
-  }
-  int conv(char *out, size_t outsize, const char *in, size_t insize) {
-    size_t o_len = outsize;
-    size_t i_len = insize;
-    char *p = (char *)in;
-    char *q = out;
-    if (i_len == 0)
-      return 0;
-    int converted = ::iconv(cv, &p, &i_len, &q, &o_len);
-    if (converted == -1)
-      return -1;
-    if (i_len == 0) {
-      return outsize - o_len;
-    }
-    return -1;
-  }
-};
-
 int get_ipcs_overview(IPCQPROC *info) {
   return __getipc(0, info, sizeof(IPCQPROC), IPCQOVER);
 }
@@ -1431,25 +587,13 @@ void __cleanupipc(int others) {
   }
 }
 
-static __csConverter utf16_to_8(1208, 1200);
-static __csConverter utf8_to_16(1200, 1208);
-
-extern "C" int conv_utf8_utf16(char *out, size_t outsize, const char *in,
-                               size_t insize) {
-  return utf8_to_16.conv(out, outsize, in, insize);
-}
-extern "C" int conv_utf16_utf8(char *out, size_t outsize, const char *in,
-                               size_t insize) {
-  return utf16_to_8.conv(out, outsize, in, insize);
-}
-
 typedef struct timer_parm {
   int secs;
   pthread_t tid;
 } timer_parm_t;
 
 unsigned long __clock(void) {
-  unsigned long long value, sec, nsec;
+  unsigned long long value;
   __stckf(&value);
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
 }
@@ -1514,102 +658,21 @@ extern "C" void *__dlcb_entry_addr(void *dlcb) {
   return addr;
 }
 
-static int return_abspath(char *out, int size, const char *path_file) {
-  char buffer[1025];
-  char *res = 0;
-  if (path_file[0] != '/')
-    res = __realpath_a(path_file, buffer);
-  return __snprintf_a(out, size, "%s", res ? buffer : path_file);
+extern "C" void abort(void) {
+  __display_backtrace(STDERR_FILENO);
+  __zinit::getInstance()->__abort();
+  exit(-1); // never reach here, suppress clang warning
 }
 
-extern "C" int __find_file_in_path(char *out, int size, const char *envvar,
-                                   const char *file) {
-  char *start = (char *)envvar;
-  char path[1025];
-  char real_path[1025];
-  char path_file[1025];
-  char *p = path;
-  int len = 0;
-  struct stat st;
-  while (*start && (p < (path + 1024))) {
-    if (*start == ':') {
-      p = path;
-      ++start;
-      if (len > 0) {
-        for (; len > 0 && path[len - 1] == '/'; --len)
-          ;
-        __snprintf_a(path_file, 1025, "%-.*s/%s", len, path, file);
-        if (0 == __stat_a(path_file, &st)) {
-          return return_abspath(out, size, path_file);
-        }
-        len = 0;
-      }
-    } else {
-      ++len;
-      *p++ = *start++;
-    }
-  }
-  if (len > 0) {
-    for (; len > 0 && path[len - 1] == '/'; --len)
-      ;
-    __snprintf_a(path_file, 1025, "%-.*s/%s", len, path, file);
-    if (0 == __stat_a(path_file, &st)) {
-      return return_abspath(out, size, path_file);
-    }
-  }
-  return 0;
-}
-//
-// Call setup information:
-// https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.bpxb100/bpx2cr_Example.htm
-//
-// List of offsets for USS apis:
-// https://www.ibm.com/support/knowledgecenter/SSLTBW_2.3.0/com.ibm.zos.v2r3.bpxb100/bpx2cr_List_of_offsets.htm
-//
-
-static char *__ptr32 *__ptr32 __base(void) {
-  static char *__ptr32 *__ptr32 res = 0;
-  if (res == 0) {
-    res = ((char *__ptr32 *__ptr32 *__ptr32 *__ptr32 *)0)[4][136][6];
-  }
-  return res;
-}
-static void __bpx4kil(int pid, int signal, void *signal_options,
-                      int *return_value, int *return_code, int *reason_code) {
-  void *reg15 = __base()[308 / 4]; // BPX4KIL offset is 308
-  void *argv[] = {&pid,         &signal,     signal_options,
-                  return_value, return_code, reason_code}; // os style parm list
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-}
-static void __bpx4frk(int *pid, int *return_code, int *reason_code) {
-  void *reg15 = __base()[240 / 4];                // BPX4FRK offset is 240
-  void *argv[] = {pid, return_code, reason_code}; // os style parm list
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-}
-static void __bpx4ctw(unsigned int *secs, unsigned int *nsecs,
-                      unsigned int *event_list, unsigned int *secs_rem,
-                      unsigned int *nsecs_rem, int *return_value,
-                      int *return_code, int *reason_code) {
-  void *reg15 = __base()[492 / 4]; // BPX4CTW offset is 492
-  void *argv[] = {secs,         nsecs,       event_list, secs_rem, nsecs_rem,
-                  return_value, return_code, reason_code}; // os style parm list
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-}
-extern "C" int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
-                                 unsigned int event_list,
-                                 unsigned int *secs_rem,
-                                 unsigned int *nsecs_rem) {
+int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
+                      unsigned int event_list,
+                      unsigned int *secs_rem,
+                      unsigned int *nsecs_rem) {
   int rv, rc, rn;
   __bpx4ctw(&secs, &nsecs, &event_list, secs_rem, nsecs_rem, &rv, &rc, &rn);
   if (rv != 0)
     errno = rc;
   return rv;
-}
-
-extern "C" void abort(void) {
-  __display_backtrace(STDERR_FILENO);
-  __zinit::getInstance()->__abort();
-  exit(-1); // never reach here, suppress clang warning
 }
 
 // overriding LE's kill when linked statically
@@ -1652,19 +715,6 @@ extern "C" int __fork(void) {
 // Thread entry constants for __getthent():
 #define PGTH_CURRENT 1
 #define PGTHACOMMANDLONG 1
-
-static void __bpx4gth(int *input_length, void **input_address,
-                      int *output_length, void **output_address,
-                      int *return_value, int *return_code, int *reason_code) {
-  // BPX4GTH (__getthent) offset is 1056, as specified in:
-  // https://www.ibm.com/docs/en/zos/2.4.0?topic=scocs-list-offsets
-  void *reg15 = __base()[1056 / 4];
-
-  void *argv[] = {input_length, input_address, output_length, output_address,
-                  return_value, return_code,   reason_code};
-
-  __asm volatile(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0");
-}
 
 extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
   // Gets the argv/argc using the thread entry information in the address space.
@@ -1834,53 +884,6 @@ extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
   return 0;
 }
 
-extern "C" int __get_num_online_cpus(void) {
-  ZOSCVT* __ptr32 cvt = ((ZOSPSA*)0)->cvt;
-  ZOSRMCT* __ptr32 rmct = cvt->rmct;
-  ZOSCCT* __ptr32 cct = rmct->cct;
-  return static_cast<int>(cct->cpuCount);
-}
-
-extern "C" int __get_num_frames(void) {
-  ZOSCVT * __ptr32 cvt = ((ZOSPSA*)0)->cvt;
-  ZOSRCE * __ptr32 rce = cvt->rce;
-  return static_cast<int>(rce->pool);
-}
-
-extern "C" oslvl_t __get_os_level(void) {
-  static oslvl_t oslvl = ZOSLVL_UNKNOWN;
-  if (oslvl != ZOSLVL_UNKNOWN)
-    return oslvl;
-  ZOSCVT* __ptr32 cvt = ((ZOSPSA*)0)->cvt;
-  uint8_t lvl = cvt->cvtoslvl[6];
-
-  // Note: lvl has to be checked in this order, because the bits in byte 6 are
-  // set for the current level and all those before it. There is also the
-  // exception for V1R13, which if its bit is set, also has the bits for V2R2
-  // and V2R1 set.
-  if (lvl & __ZOSLVL_V2R5) return (oslvl = ZOSLVL_V2R5);
-  if (lvl & __ZOSLVL_V2R4) return (oslvl = ZOSLVL_V2R4);
-  if (lvl & __ZOSLVL_V2R3) return (oslvl = ZOSLVL_V2R3);
-  if (lvl & __ZOSLVL_V2R2) return (oslvl = ZOSLVL_V2R2);
-  if (lvl & __ZOSLVL_V2R1) return (oslvl = ZOSLVL_V2R1);
-  if (lvl & __ZOSLVL_V1R13) return (oslvl = ZOSLVL_V1R13);
-  fprintf(stderr,"Unknown OS level %x\n", lvl);
-  assert(0);
-  return ZOSLVL_UNKNOWN; // so compiler doesn't complain
-}
-
-bool __is_os_level_at_or_above(oslvl_t level) {
-  return (__get_os_level() >= level);
-}
-
-bool __is_stfle_available() {
-  // PSA decimal offset 200 from address 0 is STFLE in
-  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-psa-mapping
-  // and bit 7 (0x01) specifies if STFLE instruction is available in:
-  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping
-  return (((unsigned char*)200)[0] & 0x01);
-}
-
 struct IntHash {
   size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
 };
@@ -1916,16 +919,10 @@ public:
   }
 };
 
-fdAttributeCache fdcache;
+static notagread_t no_tag_read_behaviour;
+static int no_tag_ignore_ccsid1047;
 
-enum notagread {
-  __NO_TAG_READ_DEFAULT = 0,
-  __NO_TAG_READ_DEFAULT_WITHWARNING = 1,
-  __NO_TAG_READ_V6 = 2,
-  __NO_TAG_READ_STRICT = 3
-} notagread;
-
-static enum notagread get_no_tag_read_behaviour(const char* envar) {
+static notagread_t get_no_tag_read_behaviour(const char* envar) {
   char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "AUTO")) {
     return __NO_TAG_READ_DEFAULT;
@@ -1939,6 +936,10 @@ static enum notagread get_no_tag_read_behaviour(const char* envar) {
   return __NO_TAG_READ_DEFAULT; // default
 }
 
+extern "C" notagread_t __get_no_tag_read_behaviour() {
+  return no_tag_read_behaviour;
+}
+
 static int get_no_tag_ignore_ccsid1047(const char* envar) {
   char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "NO")) {
@@ -1947,91 +948,14 @@ static int get_no_tag_ignore_ccsid1047(const char* envar) {
   return 0; // default, consider conversion for txtflag 0 && ccsid 1047
 }
 
-static enum notagread no_tag_read_behaviour;
-static int no_tag_ignore_ccsid1047;
-
-extern "C" void __fd_close(int fd) { fdcache.unset_attribute(fd); }
-extern "C" int __file_needs_conversion(int fd) {
-  if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
-    return 0;
-  unsigned long attr = fdcache.get_attribute(fd);
-  if (attr == 0x0000000000020000UL) {
-    return 1;
-  }
-  return 0;
-}
-extern "C" int __file_needs_conversion_init(const char *name, int fd) {
-  char buf[4096];
-  off_t off;
-  int cnt;
-  if (no_tag_ignore_ccsid1047) {
-    struct stat st;
-    if (fstat(fd, &st) == 0 && st.st_tag.ft_txtflag == 0 &&
-        st.st_tag.ft_ccsid == 1047) {
-      return 0;
-    }
-  }
-  if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
-    return 0;
-  if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
-    fdcache.set_attribute(fd, 0x0000000000020000UL);
-    return 1;
-  }
-  if (lseek(fd, 1, SEEK_SET) == 1 && lseek(fd, 0, SEEK_SET) == 0) {
-    // seekable file (real file)
-    cnt = read(fd, buf, 4096);
-    off = lseek(fd, 0, SEEK_SET);
-    if (off != 0) {
-      // introduce an error, because of the offset is no longer valid
-      close(fd);
-      return 0;
-    }
-    if (cnt > 8) {
-      int ccsid;
-      int am;
-      unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
-      if (ccsid == 1047 && len == cnt) {
-        if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
-          const char *filename = "(null)";
-          if (name) {
-            int len = strlen(name);
-            filename =
-                (const char *)_convert_e2a(alloca(len + 1), name, len + 1);
-          }
-          dprintf(2,
-                  "Warning: File \"%s\" is untagged and seems to "
-                  "contain EBCDIC "
-                  "characters\n",
-                  filename);
-        }
-        fdcache.set_attribute(fd, 0x0000000000020000UL);
-        return 1;
-      }
-    }       // seekable files
-  }         // seekable files
-  return 0; // not seekable
+extern "C" int __get_no_tag_ignore_ccsid1047() {
+  return no_tag_ignore_ccsid1047;
 }
 
 extern "C" unsigned long __mach_absolute_time(void) {
-  unsigned long long value, sec, nsec;
+  unsigned long long value;
   __stckf(&value);
   return ((value / 512UL) * 125UL) - 2208988800000000000UL;
-}
-
-extern "C" void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
-                                           unsigned char txtflag,
-                                           int on_untagged_only) {
-  struct file_tag tag;
-
-  tag.ft_ccsid = ccsid;
-  tag.ft_txtflag = txtflag;
-
-  struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
-
-  if (!on_untagged_only || (!isatty(fd) && 0 == __getfdccsid(fd))) {
-    fcntl(fd, F_CONTROL_CVT, &req);
-    fcntl(fd, F_SETTAG, &tag);
-  }
 }
 
 //------------------------------------------accounting for memory allocation
@@ -2700,82 +1624,6 @@ done:
   return (-1);
 }
 //------------------------------------------accounting for memory allocation end
-//--tls simulation begin
-extern "C" {
-static void _cleanup(void *p) {
-  pthread_key_t key = *((pthread_key_t *)p);
-  free(p);
-  pthread_setspecific(key, 0);
-}
-
-static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
-                           const void *initvalue) {
-  unsigned int initv = 0;
-  unsigned int expv;
-  unsigned int newv = 1;
-  expv = 0;
-  newv = 1;
-  __asm(" cs  %0,%2,%1 \n" : "+r"(expv), "+m"(*o) : "r"(newv) :);
-  initv = expv;
-  if (initv == 2) {
-    // proceed
-  } else if (initv == 0) {
-    // create
-    pthread_key_create(k, _cleanup);
-    expv = 1;
-    newv = 2;
-    __asm(" cs  %0,%2,%1 \n" : "+r"(expv), "+m"(*o) : "r"(newv) :);
-    initv = expv;
-  } else {
-    // wait and poll for completion
-    while (initv != 2) {
-      expv = 0;
-      newv = 1;
-      __asm(" la 15,0\n"
-            " svc 137\n"
-            " cs  %0,%2,%1 \n"
-            : "+r"(expv), "+m"(*o)
-            : "r"(newv)
-            : "r15", "r6");
-      initv = expv;
-    }
-  }
-  void *p = pthread_getspecific(*k);
-  if (!p) {
-    // first call in thread allocate
-    p = malloc(sz + sizeof(pthread_key_t));
-    memcpy(p, k, sizeof(pthread_key_t));
-    pthread_setspecific(*k, p);
-    memcpy((char *)p + sizeof(pthread_key_t), initvalue, sz);
-  }
-  return (char *)p + sizeof(pthread_key_t);
-}
-static void *__tlsPtr(pthread_key_t *key) { return pthread_getspecific(*key); }
-static void __tlsDelete(pthread_key_t *key) { pthread_key_delete(*key); }
-
-struct __tlsanchor {
-  pthread_once_t once;
-  pthread_key_t key;
-  size_t sz;
-};
-extern struct __tlsanchor *__tlsvaranchor_create(size_t sz) {
-  struct __tlsanchor *a =
-      (struct __tlsanchor *)calloc(1, sizeof(struct __tlsanchor));
-  a->once = PTHREAD_ONCE_INIT;
-  a->sz = sz;
-  return a;
-}
-extern void __tlsvaranchor_destroy(struct __tlsanchor *anchor) {
-  pthread_key_delete(anchor->key);
-  free(anchor);
-}
-
-extern void *__tlsPtrFromAnchor(struct __tlsanchor *anchor,
-                                const void *initvalue) {
-  return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue);
-}
-}
-//--tls simulation end
 
 // --- start __atomic_store
 #define CSG(_op1, _op2, _op3)                                                  \
@@ -3077,7 +1925,6 @@ static int __sem_timedwait_share(____sem_t *s,
   volatile unsigned int v;
   volatile unsigned int o;
   unsigned int cnt = 0;
-  int rc;
   if (s->id != getpid()) {
     return returnStatus(EINVAL, 0);
   }
@@ -3258,6 +2105,7 @@ static void _slow(int size, void *output) {
     out[i] = t;
   }
 }
+
 extern "C" int getentropy(void *output, size_t size) {
   char *out = (char *)output;
 #ifdef _LP64
@@ -3358,6 +2206,10 @@ extern "C" void __tcp_clear_to_close(int socket, unsigned int secs) {
   shutdown(socket, SHUT_WR);
   int rc =
       setsockopt(socket, SOL_SOCKET, SO_LINGER, (const char *)&lg, sizeof lg);
+  if (rc != 0) {
+    perror("setsockopt");
+    return;
+  }
   char buffer[4096];
   int s;
   s = read(socket, buffer, 4096);
@@ -3406,6 +2258,7 @@ extern void __unloadmod(void *mod) {
     free(m->thptr);
   free(m);
 }
+
 extern void *__loadmod(const char *name) {
   loadmod_t *m = (loadmod_t *)__malloc31(sizeof(loadmod_t));
   if (!m)
@@ -3707,303 +2560,6 @@ unsigned long long __registerProduct(const char *major_version,
   return ifausage_rc;
 }
 
-#if TRACE_ON // for debugging use
-class Fdtype {
-  char buffer[64];
-
-public:
-  Fdtype(int fd) {
-    struct stat st;
-    int rc = fstat(fd, &st);
-    if (-1 == rc) {
-      snprintf(buffer, 64, "fstat %d failed errno is %d", fd, errno);
-      return;
-    }
-    if (S_ISBLK(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISBLK");
-    } else if (S_ISDIR(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISDIR");
-    } else if (S_ISCHR(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISCHR");
-    } else if (S_ISFIFO(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISFIFO");
-    } else if (S_ISREG(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISREG");
-    } else if (S_ISLNK(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISLNK");
-    } else if (S_ISSOCK(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISSOCK");
-    } else if (S_ISVMEXTL(st.st_mode)) {
-      snprintf(buffer, 64, "fd %d is %s", fd, "S_ISVMEXTL");
-    } else {
-      snprintf(buffer, 64, "fd %d st_mode is x%08x", fd, st.st_mode);
-    }
-  }
-  const char *toString(void) { return buffer; }
-};
-
-extern "C" void __fdinfo(int fd) {
-  struct stat st;
-  int rc;
-
-  char buf[1024];
-  struct tm tm;
-
-  rc = fstat(fd, &st);
-  if (-1 == rc) {
-    __console_printf("fd %d invalid, errno=%d", fd, errno);
-    return;
-  }
-  if (S_ISBLK(st.st_mode)) {
-    __console_printf("fd %d IS_BLK", fd);
-  } else if (S_ISDIR(st.st_mode)) {
-    __console_printf("fd %d IS_DIR", fd);
-  } else if (S_ISCHR(st.st_mode)) {
-    __console_printf("fd %d IS_CHR", fd);
-  } else if (S_ISFIFO(st.st_mode)) {
-    __console_printf("fd %d IS_FIFO", fd);
-  } else if (S_ISREG(st.st_mode)) {
-    __console_printf("fd %d IS_REG", fd);
-  } else if (S_ISLNK(st.st_mode)) {
-    __console_printf("fd %d IS_LNK", fd);
-  } else if (S_ISSOCK(st.st_mode)) {
-    __console_printf("fd %d IS_SOCK", fd);
-  } else if (S_ISVMEXTL(st.st_mode)) {
-    __console_printf("fd %d IS_VMEXTL", fd);
-  }
-  __console_printf("fd %d perm %04x\n", fd, 0xffff & st.st_mode);
-  __console_printf("fd %d ino %d", fd, st.st_ino);
-  __console_printf("fd %d dev %d", fd, st.st_dev);
-  __console_printf("fd %d rdev %d", fd, st.st_rdev);
-  __console_printf("fd %d nlink %d", fd, st.st_nlink);
-  __console_printf("fd %d uid %d", fd, st.st_uid);
-  __console_printf("fd %d gid %d", fd, st.st_gid);
-  __console_printf("fd %d atime %s", fd,
-                   asctime_r(localtime_r(&st.st_atime, &tm), buf));
-  __console_printf("fd %d mtime %s", fd,
-                   asctime_r(localtime_r(&st.st_mtime, &tm), buf));
-  __console_printf("fd %d ctime %s", fd,
-                   asctime_r(localtime_r(&st.st_ctime, &tm), buf));
-  __console_printf("fd %d createtime %s", fd,
-                   asctime_r(localtime_r(&st.st_createtime, &tm), buf));
-  __console_printf("fd %d reftime %s", fd,
-                   asctime_r(localtime_r(&st.st_reftime, &tm), buf));
-  __console_printf("fd %d auditoraudit %d", fd, st.st_auditoraudit);
-  __console_printf("fd %d useraudit %d", fd, st.st_useraudit);
-  __console_printf("fd %d blksize %d", fd, st.st_blksize);
-  __console_printf("fd %d auditid %-.*s", fd, 16, st.st_auditid);
-  __console_printf("fd %d ccsid %d", fd, st.st_tag.ft_ccsid);
-  __console_printf("fd %d txt %d", fd, st.st_tag.ft_txtflag);
-  __console_printf("fd %d blkcnt  %ld", fd, st.st_blocks);
-  __console_printf("fd %d genvalue %d", fd, st.st_genvalue);
-  __console_printf("fd %d fid %-.*s", fd, 8, st.st_fid);
-  __console_printf("fd %d filefmt %d", fd, st.st_filefmt);
-  __console_printf("fd %d fspflag2 %d", fd, st.st_fspflag2);
-  __console_printf("fd %d seclabel %-.*s", fd, 8, st.st_seclabel);
-}
-extern "C" void __perror(const char *str) {
-  char buf[1024];
-  int err = errno;
-  int rc = strerror_r(err, buf, 1024);
-  if (rc == EINVAL) {
-    __console_printf("%s: %d is not a valid errno", str, err);
-  } else {
-    __console_printf("%s: %s", str, buf);
-  }
-  errno = err;
-}
-
-static int __eventinfo(char *buffer, size_t size, short poll_event) {
-  size_t bytes = 0;
-  if (size > 0 && ((poll_event & POLLRDNORM) == POLLRDNORM)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLRDNORM");
-  }
-  if (size > 0 && ((poll_event & POLLRDBAND) == POLLRDBAND)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLRDBAND");
-  }
-  if (size > 0 && ((poll_event & POLLWRNORM) == POLLWRNORM)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLWRNORM");
-  }
-  if (size > 0 && ((poll_event & POLLWRBAND) == POLLWRBAND)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLWRBAND");
-  }
-  if (size > 0 && ((poll_event & POLLIN) == POLLIN)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLIN");
-  }
-  if (size > 0 && ((poll_event & POLLPRI) == POLLPRI)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLPRI");
-  }
-  if (size > 0 && ((poll_event & POLLOUT) == POLLOUT)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLOUT");
-  }
-  if (size > 0 && ((poll_event & POLLERR) == POLLERR)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLERR");
-  }
-  if (size > 0 && ((poll_event & POLLHUP) == POLLHUP)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLHUP");
-  }
-  if (size > 0 && ((poll_event & POLLNVAL) == POLLNVAL)) {
-    bytes += snprintf(buffer + bytes, size - bytes, "%s ", "POLLNVAL");
-  }
-  return bytes;
-}
-extern "C" int poll(void *array, unsigned int count, int timeout) {
-  void *reg15 = __base()[932 / 4]; // BPX4POL offset is 932
-  int rv, rc, rn;
-  int inf = (timeout == -1);
-  int tid = (int)(pthread_self().__ & 0x7fffffffUL);
-
-  typedef struct pollitem {
-    int msg_fd;
-    short events;
-    short revents;
-  } pollitem_t;
-
-  pollitem_t *item;
-  int fd_cnt = count & 0x0ffff;
-  int msg_cnt = (count >> 16) & 0x0ffff;
-
-  int cnt = 9999;
-  if (inf)
-    timeout = 60 * 1000;
-  const void *argv[] = {&array, &count, &timeout, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-  if (-1 == rv) {
-    int err = errno;
-  }
-  if (rv != 0 && rv != -1) {
-    int fd_res_cnt = rv & 0x0ffff;
-  }
-  while (rv == 0 && inf && cnt > 0) {
-    char event_msg[128];
-    char revent_msg[128];
-    __console_printf("%s:%s:%d end tid %d count %08x timeout %d rv %08x rc %d "
-                     "timeout count-down %d",
-                     __FILE__, __FUNCTION__, __LINE__,
-                     (int)(pthread_self().__ & 0x7fffffffUL), count, timeout,
-                     rv, rc, cnt);
-    pollitem_t *fds = (pollitem_t *)array;
-    int i;
-    i = 0;
-    for (; i < fd_cnt; ++i) {
-      if (fds[i].msg_fd != -1) {
-        size_t s1 = __eventinfo(event_msg, 128, fds[i].events);
-        size_t s2 = __eventinfo(revent_msg, 128, fds[i].revents);
-        __console_printf("%s:%s:%d tid:%d ary-i:%d %s %d/0x%04x/0x%04x",
-                         __FILE__, __FUNCTION__, __LINE__, tid, i, "fd",
-                         fds[i].msg_fd, fds[i].events, fds[i].revents);
-        __console_printf(
-            "%s:%s:%d tid:%d ary-i:%d %s %d event:%-.*s revent:%-.*s", __FILE__,
-            __FUNCTION__, __LINE__, tid, i, "fd", fds[i].msg_fd, s1, event_msg,
-            s2, revent_msg);
-      }
-    }
-    for (; i < (fd_cnt + msg_cnt); ++i) {
-      if (fds[i].msg_fd != -1) {
-        size_t s1 = __eventinfo(event_msg, 128, fds[i].events);
-        size_t s2 = __eventinfo(revent_msg, 128, fds[i].revents);
-        __console_printf("%s:%s:%d tid:%d ary-i:%d %s %d/0x%04x/0x%04x",
-                         __FILE__, __FUNCTION__, __LINE__, tid, i, "msgq",
-                         fds[i].msg_fd, fds[i].events, fds[i].revents);
-        __console_printf(
-            "%s:%s:%d tid:%d ary-i:%d %s %d event:%-.*s revent:%-.*s", __FILE__,
-            __FUNCTION__, __LINE__, tid, i, "msgq", fds[i].msg_fd, s1,
-            event_msg, s2, revent_msg);
-      }
-    }
-    reg15 = __base()[932 / 4]; // BPX4POL offset is 932
-    __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-    --cnt;
-  }
-  if (-1 == rv) {
-    errno = rc;
-    __perror("poll");
-  }
-  return rv;
-}
-
-// for debugging use
-extern "C" ssize_t write(int fd, const void *buffer, size_t sz) {
-  void *reg15 = __base()[220 / 4]; // BPX4WRT offset is 220
-  int rv, rc, rn;
-  void *alet = 0;
-  unsigned int size = sz;
-  const void *argv[] = {&fd, &buffer, &alet, &size, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-  if (-1 == rv) {
-    errno = rc;
-    __perror("write");
-  }
-  if (rv > 0) {
-    __console_printf("%s:%s:%d fd %d sz %d return %d type is %s\n", __FILE__,
-                     __FUNCTION__, __LINE__, fd, sz, rv, Fdtype(fd).toString());
-  } else {
-    __console_printf("%s:%s:%d fd %d sz %d return %d errno %d type is %s\n",
-                     __FILE__, __FUNCTION__, __LINE__, fd, sz, rv, rc,
-                     Fdtype(fd).toString());
-  }
-  return rv;
-}
-// for debugging use
-extern "C" ssize_t read(int fd, void *buffer, size_t sz) {
-  void *reg15 = __base()[176 / 4]; // BPX4RED offset is 176
-  int rv, rc, rn;
-  void *alet = 0;
-  unsigned int size = sz;
-  const void *argv[] = {&fd, &buffer, &alet, &size, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-  if (-1 == rv) {
-    errno = rc;
-    __perror("read");
-  }
-  if (rv > 0) {
-    __console_printf("%s:%s:%d fd %d sz %d return %d type is %s\n", __FILE__,
-                     __FUNCTION__, __LINE__, fd, sz, rv, Fdtype(fd).toString());
-  } else {
-    __console_printf("%s:%s:%d fd %d sz %d return %d errno %d type is %s\n",
-                     __FILE__, __FUNCTION__, __LINE__, fd, sz, rv, rc,
-                     Fdtype(fd).toString());
-  }
-  return rv;
-}
-// for debugging use
-extern "C" int close(int fd) {
-  void *reg15 = __base()[72 / 4]; // BPX4CLO offset is 72
-  int rv = -1, rc = -1, rn = -1;
-  const char *fdtype = Fdtype(fd).toString();
-  const void *argv[] = {&fd, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-  if (-1 == rv) {
-    errno = rc;
-    __perror("close");
-  }
-  __console_printf("%s:%s:%d fd %d return %d errno %d type was %s\n", __FILE__,
-                   __FUNCTION__, __LINE__, fd, rv, rc, fdtype);
-  return rv;
-}
-// for debugging use
-extern int __open(const char *file, int oflag, int mode) asm("@@A00144");
-int __open(const char *file, int oflag, int mode) {
-  void *reg15 = __base()[156 / 4]; // BPX4OPN offset is 156
-  int rv, rc, rn, len;
-  char name[1024];
-  strncpy(name, file, 1024);
-  __a2e_s(name);
-  len = strlen(name);
-  const void *argv[] = {&len, name, &oflag, &mode, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
-  if (-1 == rv) {
-    errno = rc;
-    __perror("open");
-  }
-  __console_printf("%s:%s:%d fd %d errno %d open %s (part-1)\n", __FILE__,
-                   __FUNCTION__, __LINE__, rv, rc, file);
-  __console_printf("%s:%s:%d fd %d oflag %08x mode %08x type is %s (part-2)\n",
-                   __FILE__, __FUNCTION__, __LINE__, rv, oflag, mode,
-                   Fdtype(rv).toString());
-  return rv;
-}
-#endif // for debugging use
 
 extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
                              const char *filename, int fildes, off_t off) {
@@ -4125,11 +2681,11 @@ int __update_envar_settings(const char* envar) {
   if (force_update_all || strcmp(envar, config.CCSID_GUESS_BUF_SIZE_ENVAR) == 0) {
     char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR); 
     if (!cgbs) { 
-      ccsid_guess_buf_size = 4096;
+      __set_ccsid_guess_buf_size(4096);
     }
     else {
       int gs = __atoi_a(cgbs);  
-      if (gs > 0) ccsid_guess_buf_size = gs;  
+      if (gs > 0) __set_ccsid_guess_buf_size(gs);
     }
   }
 
@@ -4468,111 +3024,6 @@ extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
   }
 
   return rv;
-}
-
-typedef struct __bpxyatt {
-  char att_id[4];    /* Eye-catcher="ATT " */
-  short att_version; /* Version of this structure=3 */
-  char att_res01[2]; /* (reserved) */
-
-  /* ATTSETFLAGS1 = 1 byte */
-  int att_modechg : 1,  /* X'80' 1=Change to mode indicated */
-      att_ownerchg : 1, /* X'40' 1=Change to Owner indicated */
-      att_setgen : 1,   /* X'20' 1=Set General Attributes */
-      att_trunc : 1,    /* X'10' 1=Truncate Size */
-      att_atimechg : 1, /* X'08' 1=Change the Atime */
-      att_atimetod : 1, /* X'04' 1=Change Atime to Cur. Time */
-      att_mtimechg : 1, /* X'02' 1=Change the Mtime */
-      att_mtimetod : 1; /* X'01' 1=Change Mtime to Cur. Time */
-
-  /* ATTSETFLAGS2 = 1 byte */
-  int att_maaudit : 1,    /* X'80' 1=Modify auditor audit info */
-      att_muaudit : 1,    /* X'40' 1=Modify user audit info */
-      att_ctimechg : 1,   /* X'20' 1=Change the Ctime */
-      att_ctimetod : 1,   /* X'10' 1=Change Ctime to Cur. Time */
-      att_reftimechg : 1, /* X'08' 1=Change the RefTime */
-      att_reftimetod : 1, /* X'04' 1=Change RefTime to Cur.Time */
-      att_filefmtchg : 1, /* X'02' 1=Change File Format */
-      att_res04 : 1;      /* X'01' (reserved flag bits) */
-
-  /* ATTSETFLAGS3 = 1 byte */
-  int att_res05 : 1,        /* X'80' (reserved flag bits) */
-      att_charsetidchg : 1, /* X'40' 1=Change File Tag */
-      att_lp64times : 1,    /* X'20' 1=Use 64-bit time values */
-      att_seclabelchg : 1;  /* X'10' 1=Change Seclabel */
-
-  char att_setflags4; /* Reserved */
-
-  int att_mode; /* File Mode */
-  int att_uid;  /* User ID of the owner of the file  */
-  int att_gid;  /* Group ID of the Group of the file */
-
-  /* 3 bytes */
-  int att_opaquemask : 24; /* (reserved for ADSTAR use) */
-
-  /* ATTVISIBLEMASK = 1 byte */
-  int att_visblmaskres : 2,   /* (reserved for visible mask use) */
-      att_nodelfilesmask : 1, /* X'20' 1=Files should not be deleted */
-      att_sharelibmask : 1,   /* X'10' 1=Shared Library Mask */
-      att_noshareasmask : 1,  /* X'08' 1=No Shareas Flag Mask */
-      att_apfauthmask : 1,    /* X'04' 1=APF Authorized Flag Mask */
-      att_progctlmask : 1,    /* X'02' 1=Prog. Control Flag Mask */
-      att_visblmskrmain : 1;  /* (reserved flag mask bit) */
-
-  /* ATTGENVALUE = 0 bytes */
-  /* 3 bytes */
-  int att_opaque : 24; /* (reserved for ADSTAR use) */
-
-  /** ATTVISIBLE = 1 byte **/
-  int att_visibleres : 2, /* (reserved for visible flag use) */
-      att_nodelfiles : 1, /* X'20' 1=Files should not be deleted */
-      att_sharelib : 1,   /* X'10' 1=Shared Library Flag */
-      att_noshareas : 1,  /* X'08' 1=No Shareas Flag */
-      att_apfauth : 1,    /* X'04' 1=APF Authorized Flag */
-      att_progctl : 1,    /* X'02' 1=Program Controlled Flag */
-      att_visblrmain : 1; /* (reserved flag mask bit) */
-
-  int att_size_h; /* first word of size */
-  int att_size_l; /* second word of size */
-  int att_atime;  /* Time of last access */
-  int att_mtime;  /* Time of last data modification */
-
-  int att_auditoraudit; /* Area for auditor audit info */
-  int att_useraudit;    /* Area for user audit info */
-
-  int att_ctime;   /* Time of last file statuse change */
-  int att_reftime; /* Reference Time */
-
-  /* End of version 1 */
-
-  char att_filefmt;  /* File Format */
-  char att_res02[3]; /* (reserved for expansion) */
-  int att_filetag;   /* File Tag */
-  char att_res03[8]; /* (reserved for expansion) */
-
-  /* End of version 2 */
-
-  long att_atime64;      /* Time of last access */
-  long att_mtime64;      /* Time of last data modification */
-  long att_ctime64;      /* Time of last file statuse change */
-  long att_reftime64;    /* Reference Time */
-  char att_seclabel[8];  /* Security Label */
-  char att_ver3res02[8]; /* (reserved for expansion) */
-
-  /* End of version 3 */
-} __bpxyatt_t;
-
-static void __bpx4lcr(int pathname_length, char *pathname,
-                      int attributes_length, __bpxyatt_t *attributes,
-                      int *return_value, int *return_code, int *reason_code) {
-  // BPX4LCR offset is 1180.
-  void *reg15 = __base()[1180 / 4];
-
-  // os style parm list.
-  void *argv[] = {&pathname_length, pathname,    &attributes_length, attributes,
-                  return_value,     return_code, reason_code};
-
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
 }
 
 extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {

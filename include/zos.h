@@ -6,8 +6,11 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ZOS_H_
-#define __ZOS_H_
+// Main header for ZOSLIB - includes all other headers; see also zos-base that
+// includes most interfaces in ZOSLIB.
+
+#ifndef ZOS_H_
+#define ZOS_H_
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 1
@@ -19,4 +22,4 @@
 #include "zos-semaphore.h"
 #include "zos-sys-info.h"
 
-#endif // __ZOS_H_
+#endif // ZOS_H_

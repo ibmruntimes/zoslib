@@ -34,6 +34,11 @@
       'sources': [
         'src/zos.cc',
         'src/zos-semaphore.cc',
+        'src/zos-sys-info.cc',
+        'src/zos-bpx.cc',
+        'src/zos-char-util.cc',
+        'src/zos-io.cc',
+        'src/zos-tls.cc',
         'src/celquopt.s'
       ],
     }

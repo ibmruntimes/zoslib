@@ -6,8 +6,10 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ZOS_SEMAPHORE_H_
-#define __ZOS_SEMAPHORE_H_
+// APIs that implement POSIX semaphores.
+
+#ifndef ZOS_SEMAPHORE_H_
+#define ZOS_SEMAPHORE_H_
 
 #include <errno.h>
 #include <inttypes.h>
@@ -40,4 +42,4 @@ int sem_post(sem_t *semid);
 
 int sem_timedwait(sem_t *semid, const struct timespec *timeout);
 
-#endif // __ZOS_SEMAPHORE_H_
+#endif // ZOS_SEMAPHORE_H_

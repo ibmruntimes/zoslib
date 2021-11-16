@@ -8,6 +8,11 @@
 
 add_library(zoslib STATIC
   zos-semaphore.cc
+  zos-sys-info.cc
+  zos-bpx.cc
+  zos-char-util.cc
+  zos-io.cc
+  zos-tls.cc
   zos.cc
   celquopt.s)
 INSTALL(TARGETS zoslib DESTINATION "install/lib")
