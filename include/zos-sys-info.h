@@ -86,6 +86,18 @@ oslvl_t __get_os_level(void);
  */
 bool __is_os_level_at_or_above(oslvl_t level);
 
+/**
+ * Check if the current z arch includes Vector Extension Facility
+ * \return true if Vector Extension Facility instructions are available, and false otherwise
+ */
+bool __is_vxf_available();
+
+/**
+ * Check if the current z arch includes Vector Enhancements Facility 1
+ * \return true if Vector Enhancements Facility 1 instructions are available, and false otherwise
+ */
+bool __is_vef1_available();
+
 #ifdef __cplusplus
 }
 #endif

@@ -64,11 +64,34 @@ bool __is_os_level_at_or_above(oslvl_t level) {
 }
 
 bool __is_stfle_available() {
-  // PSA decimal offset 200 from address 0 is STFLE in
+  // PSA decimal offset 200 from address 0 is Facilities List:
   // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-psa-mapping
   // and bit 7 (0x01) specifies if STFLE instruction is available in:
   // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping
-  return (((unsigned char*)200)[0] & 0x01);
+  uint8_t FACLBYTE0 = *(reinterpret_cast<uint8_t*>(200));
+  return ((FACLBYTE0 & 0x01) != 0);
+}
+
+bool __is_vxf_available() {
+  // vxf is Vector Extension Facility; from CVT:
+  // https://www.ibm.com/docs/en/zos/2.4.0?topic=correlator-cvt-information
+  ZOSCVT* __ptr32 cvt = ((ZOSPSA*)0)->cvt;
+  uint8_t CVTFLAG5 = (reinterpret_cast<uint8_t*>(cvt))[244];
+  return ((CVTFLAG5 & 0x80) != 0);
+}
+
+bool __is_vef1_available() {
+  // According to https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping:
+  // "Even if this bit (FACL_VEF1) is on, do not use the VEF1 unless bit CVTVEF
+  // is on" - so check that first:
+  if (!__is_vxf_available())
+    return false;
+  // PSA decimal offset 216 from address 0 is Facilities List bytes 16-31:
+  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-psa-mapping 
+  // and bit x'01' in IHAFACL determines Vector Enhancements Facility 1:
+  // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping
+  uint8_t FACLBYTE16 = *(reinterpret_cast<uint8_t*>(216));
+  return ((FACLBYTE16 & 0x01) != 0);
 }
 
 #ifdef __cplusplus
