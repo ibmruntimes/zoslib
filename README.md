@@ -84,6 +84,10 @@ $ cmake ..
 By default CMake will configure your build as a Debug build.  You can
 configure your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
 
+Also by default, CMake will configure your build to create a shared
+library (libzoslib.so and libzoslib.x). To create a static library,
+pass to CMake the option `-DBUILD_SHARED_LIBS=OFF`.
+
 CMake will detect your development environment, perform a series of 
 tests, and generate the files required for building ZOSLIB. 
 

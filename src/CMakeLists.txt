@@ -6,7 +6,7 @@
 # or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ###############################################################################
 
-add_library(zoslib STATIC
+add_library(zoslib
   zos-semaphore.cc
   zos-sys-info.cc
   zos-bpx.cc
@@ -14,5 +14,8 @@ add_library(zoslib STATIC
   zos-io.cc
   zos-tls.cc
   zos.cc
-  celquopt.s)
-INSTALL(TARGETS zoslib DESTINATION "install/lib")
+)
+install(TARGETS zoslib
+        ARCHIVE DESTINATION "install/lib"
+        LIBRARY DESTINATION "install/lib"
+)
