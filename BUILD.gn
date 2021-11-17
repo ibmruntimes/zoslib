@@ -1,0 +1,41 @@
+###############################################################################
+# Licensed Materials - Property of IBM
+# ZOSLIB
+# (C) Copyright IBM Corp. 2021. All Rights Reserved.
+# US Government Users Restricted Rights - Use, duplication
+# or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+###############################################################################
+
+config("zoslib_config") {
+  include_dirs = [
+    "include",
+  ]
+  cflags = [ "-fvisibility=default" ]
+}
+
+shared_library("zoslib") {
+  output_name = "zoslib"
+
+  sources = [
+    "include/csrsic.h",
+    "include/edcwccwi.h",
+    "include/zos-base.h",
+    "include/zos-bpx.h",
+    "include/zos-char-util.h",
+    "include/zos-io.h",
+    "include/zos-semaphore.h",
+    "include/zos-setlibpath.h",
+    "include/zos-sys-info.h",
+    "include/zos-tls.h",
+    "include/zos.h",
+    "src/zos-bpx.cc",
+    "src/zos-char-util.cc",
+    "src/zos-io.cc",
+    "src/zos-semaphore.cc",
+    "src/zos-sys-info.cc",
+    "src/zos-tls.cc",
+    "src/zos.cc",
+  ]
+
+  configs += [ ":zoslib_config" ]
+}
