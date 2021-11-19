@@ -551,6 +551,8 @@ void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
 
   tag.ft_ccsid = ccsid;
   tag.ft_txtflag = txtflag;
+  tag.ft_deferred = 0;
+  tag.ft_rsvflags = 0;
 
   struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
 
