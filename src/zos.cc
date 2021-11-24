@@ -92,6 +92,22 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
+#if ZOSLIB_C_LE_OVERRIDE
+int (*pipe)(int [2]);
+int (*open)(const char *, int, ... );
+#endif
+
+#if (__EDC_TARGET < 0x42050000)
+int (*futimes)(int fd, const struct timeval tv[2]);
+int (*lutimes)(const char *filename, const struct timeval tv[2]);
+int (*clock_gettime)(clockid_t, struct timespec *);
+int (*epoll_create)(int);
+int (*epoll_create1)(int);
+int (*epoll_ctl)(int, int, int, struct epoll_event *);
+int (*epoll_wait)(int, struct epoll_event *, int, int);
+int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
+int (*eventfd)(unsigned int, int);
+#endif
 
 static int shmid_value(void);
 
@@ -2756,7 +2772,17 @@ void __zinit::populateLEFunctionPointers() {
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
     clock_gettime = (typeof(clock_gettime))((unsigned long*)__get_libvec_base() + (0xDAD<<1));
     futimes = (typeof(futimes))((unsigned long*)__get_libvec_base() + (0xDE2<<1));
+<<<<<<< HEAD
     lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE5<<1));
+=======
+    lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE6<<1));
+    epoll_create = (typeof(epoll_create))((unsigned long*)__get_libvec_base() + (0xDAF<<1));
+    epoll_create1 = (typeof(epoll_create1))((unsigned long*)__get_libvec_base() + (0xDB0<<1));
+    epoll_ctl = (typeof(epoll_ctl))((unsigned long*)__get_libvec_base() + (0xDB1<<1));
+    epoll_wait = (typeof(epoll_wait))((unsigned long*)__get_libvec_base() + (0xDB2<<1));
+    epoll_pwait = (typeof(epoll_pwait))((unsigned long*)__get_libvec_base() + (0xDB3<<1));
+    eventfd = (typeof(eventfd))((unsigned long*)__get_libvec_base() + (0xDB4<<1));
+>>>>>>> src: add epoll and eventfd functions
   }
   else {
     clock_gettime = __clock_gettime;
