@@ -1,0 +1,269 @@
+.TH "src/zos-char-util.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-char-util.cc
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-char\-util\&.h'\fP
+.br
+\fC#include 'zos\-base\&.h'\fP
+.br
+\fC#include 'zos\-io\&.h'\fP
+.br
+\fC#include <_Ccsid\&.h>\fP
+.br
+\fC#include <fcntl\&.h>\fP
+.br
+\fC#include <iconv\&.h>\fP
+.br
+\fC#include <mutex>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <sys/stat\&.h>\fP
+.br
+\fC#include <unordered_map>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fB__csConverter\fP"
+.br
+.ti -1c
+.RI "struct \fBIntHash\fP"
+.br
+.ti -1c
+.RI "class \fBfdAttributeCache\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB_AE_BIMODAL\fP   1"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef unsigned long \fBfd_attribute\fP"
+.br
+.ti -1c
+.RI "typedef std::unordered_map< int, \fBfd_attribute\fP, \fBIntHash\fP >::const_iterator \fBcursor_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void * \fB_convert_e2a\fP (void *dst, const void *src, size_t size)"
+.br
+.ti -1c
+.RI "void * \fB_convert_a2e\fP (void *dst, const void *src, size_t size)"
+.br
+.ti -1c
+.RI "int \fB__guess_ue\fP (const void *src, size_t size, char *errmsg, size_t er_size)"
+.br
+.ti -1c
+.RI "void \fB__set_ccsid_guess_buf_size\fP (int nbytes)"
+.br
+.ti -1c
+.RI "int \fB__guess_fd_ue\fP (int fd, char *errmsg, size_t er_size, int is_new_fd)"
+.br
+.ti -1c
+.RI "int \fB__guess_ae\fP (const void *src, size_t size)"
+.br
+.ti -1c
+.RI "int \fBconv_utf8_utf16\fP (char *out, size_t outsize, const char *in, size_t insize)"
+.br
+.ti -1c
+.RI "int \fBconv_utf16_utf8\fP (char *out, size_t outsize, const char *in, size_t insize)"
+.br
+.ti -1c
+.RI "void \fB__fd_close\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__file_needs_conversion\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__file_needs_conversion_init\fP (const char *name, int fd)"
+.br
+.ti -1c
+.RI "void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "\fBfdAttributeCache\fP \fBfdcache\fP"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define _AE_BIMODAL   1"
+
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef std::unordered_map<int, \fBfd_attribute\fP, \fBIntHash\fP>::const_iterator \fBcursor_t\fP"
+
+.SS "typedef unsigned long \fBfd_attribute\fP"
+
+.SH "Function Documentation"
+.PP 
+.SS "void __fd_close (int fd)"
+Unsets fd attributes 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor 
+.RE
+.PP
+
+.SS "int __file_needs_conversion (int fd)"
+Determines if file descriptor needs conversion from EBCDIC to ASCII\&. Call __file_needs_conversion_init first before calling this function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 1 if file needs conversion, 0 if not\&. 
+.RE
+.PP
+
+.SS "int __file_needs_conversion_init (const char * name, int fd)"
+Determines if file needs conversion from EBCDIC to ASCII\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP path to file 
+.br
+\fIfd\fP file descriptor 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 1 if file needs conversion, 0 if not\&. 
+.RE
+.PP
+
+.SS "int __guess_ae (const void * src, size_t size)"
+Guess if string is ASCII or EBCDIC\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsrc\fP - character string\&. 
+.br
+\fIsize\fP - number of bytes to analyze\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID\&. 
+.RE
+.PP
+
+.SS "int __guess_fd_ue (int fd, char * errmsg, size_t er_size, int is_new_fd)"
+Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd\&. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP - open file descriptor to guess\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
+.RE
+.PP
+
+.SS "int __guess_ue (const void * src, size_t size, char * errmsg, size_t er_size)"
+Guess if string is UTF8 (ASCII) or EBCDIC\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsrc\fP - character string\&. 
+.br
+\fIsize\fP - number of bytes to analyze\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
+.RE
+.PP
+
+.SS "void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+Sets file descriptor to auto convert\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP - file descriptor\&. 
+.br
+\fIccsid\fP - CCSID to auto convert to\&. 
+.br
+\fItxtflag\fP - Indicates if ccsid is text\&. 
+.br
+\fIon_untagged_only\fP - applies only to untagged 
+.RE
+.PP
+
+.SS "void __set_ccsid_guess_buf_size (int nbytes)"
+
+.SS "void* _convert_a2e (void * dst, const void * src, size_t size)"
+Convert from ASCII to EBCDIC 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdst\fP Destination string (must be pre-allocated)\&. 
+.br
+\fIsrc\fP Source string\&. 
+.br
+\fIsize\fP Number of bytes to convert 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns destination string\&. 
+.RE
+.PP
+
+.SS "void* _convert_e2a (void * dst, const void * src, size_t size)"
+Convert from EBCDIC to ASCII\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdst\fP Destination string (must be pre-allocated)\&. 
+.br
+\fIsrc\fP Source string\&. 
+.br
+\fIsize\fP Number of bytes to convert\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns destination string\&. 
+.RE
+.PP
+
+.SS "int conv_utf16_utf8 (char *, size_t, const char *, size_t)"
+Convert string from UTF16 to UTF8\&. 
+.SS "int conv_utf8_utf16 (char *, size_t, const char *, size_t)"
+Convert string from UTF8 to UTF16 
+.SH "Variable Documentation"
+.PP 
+.SS "\fBfdAttributeCache\fP fdcache"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

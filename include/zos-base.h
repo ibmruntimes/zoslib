@@ -18,22 +18,22 @@
 
 #include <_Nascii.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <sys/__getipc.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <sys/__getipc.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdbool.h>
 
 #define __ZOS_CC
 
-#include "zos-sys-info.h"
 #include "zos-bpx.h"
 #include "zos-char-util.h"
 #include "zos-io.h"
+#include "zos-sys-info.h"
 #include "zos-tls.h"
 
 #define IPC_CLEANUP_ENVAR_DEFAULT "__IPC_CLEANUP"
@@ -78,9 +78,9 @@ typedef struct __stack_info {
   void *prev_dsa;
   void *entry_point;
   char entry_name[256];
-  int* return_addr;
-  int* entry_addr;
-  int* stack_addr;
+  int *return_addr;
+  int *entry_addr;
+  int *stack_addr;
 } __stack_info;
 
 #ifdef __cplusplus
@@ -132,8 +132,7 @@ const char *getIFAUsageErrorString(unsigned long rc);
 unsigned long long __registerProduct(const char *major_version,
                                      const char *product_owner,
                                      const char *feature_name,
-                                     const char *product_name,
-                                     const char *pid);
+                                     const char *product_name, const char *pid);
 
 unsigned int atomic_dec(volatile unsigned int *loc);
 unsigned int atomic_inc(volatile unsigned int *loc);
@@ -400,7 +399,7 @@ int get_ipcs_overview(IPCQPROC *info);
  * \param [in] title header, specify NULL for default
  * \return On success, returns 0, or < 0 on error.
  */
-int __print_zoslib_help(FILE* fp, const char* title);
+int __print_zoslib_help(FILE *fp, const char *title);
 
 typedef struct __cpu_relax_workarea {
   void *sfaddr;
@@ -446,7 +445,8 @@ typedef struct zoslib_config {
    */
   const char *FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle ccsid guess buf size in bytes 
+   * string to indicate the envar to be used to toggle ccsid guess buf size in
+   * bytes
    */
   const char *CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   /**
@@ -454,9 +454,11 @@ typedef struct zoslib_config {
    */
   const char *UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle the untagged 1047 read mode
+   * string to indicate the envar to be used to toggle the untagged 1047 read
+   * mode
    */
-  const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR =
+      UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
 } zoslib_config_t;
 
 /**
@@ -487,7 +489,8 @@ typedef struct zoslib_config {
    */
   const char *FORKMAX_ENVAR;
   /**
-   * string to indicate the envar to be used to toggle ccsid guess buf size in bytes 
+   * string to indicate the envar to be used to toggle ccsid guess buf size in
+   * bytes
    */
   const char *CCSID_GUESS_BUF_SIZE_ENVAR;
   /**
@@ -495,7 +498,8 @@ typedef struct zoslib_config {
    */
   const char *UNTAGGED_READ_MODE_ENVAR;
   /**
-   * string to indicate the envar to be used to toggle the untagged 1047 read mode
+   * string to indicate the envar to be used to toggle the untagged 1047 read
+   * mode
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR;
 } zoslib_config_t;
@@ -532,18 +536,18 @@ int nanosleep(const struct timespec *req, struct timespec *rem);
 int __lutimes(const char *filename, const struct timeval tv[2]);
 
 /**
- * Updates the zoslib global variables associated with the zoslib environment variables
- * \param [in] envar environment variable to update, specify NULL to update all
- * \return 0 for success, or -1 for failure
+ * Updates the zoslib global variables associated with the zoslib environment
+ * variables \param [in] envar environment variable to update, specify NULL to
+ * update all \return 0 for success, or -1 for failure
  */
-int __update_envar_settings(const char* envar);
+int __update_envar_settings(const char *envar);
 
 /**
  * Changes the names of one or more of the environment variables zoslib uses
- * \param [in] zoslib_confit_t structure that defines the new environment variable name(s)
- * \return 0 for success, or -1 for failure
+ * \param [in] zoslib_confit_t structure that defines the new environment
+ * variable name(s) \return 0 for success, or -1 for failure
  */
-int __update_envar_names(zoslib_config_t* const config);
+int __update_envar_names(zoslib_config_t *const config);
 
 #ifdef __cplusplus
 }
@@ -579,11 +583,12 @@ struct zoslibEnvar {
   std::string envarName;
   std::string envarValue;
 
-  zoslibEnvar(std::string name, std::string value) :
-    envarName(name), envarValue(value) { }
+  zoslibEnvar(std::string name, std::string value)
+      : envarName(name), envarValue(value) {}
 
-  bool operator < (const zoslibEnvar& t) const {
-    return std::tie(envarName, envarValue) < std::tie(t.envarName, t.envarValue);
+  bool operator<(const zoslibEnvar &t) const {
+    return std::tie(envarName, envarValue) <
+           std::tie(t.envarName, t.envarValue);
   }
 };
 
@@ -681,5 +686,5 @@ struct __init_zoslib {
   __init_zoslib(const zoslib_config_t &config = {}) { __zinit::init(config); }
 };
 
-#endif  // __cplusplus
-#endif  // ZOS_BASE_H_
+#endif // __cplusplus
+#endif // ZOS_BASE_H_

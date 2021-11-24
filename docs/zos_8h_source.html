@@ -76,20 +76,23 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">// US Government Users Restricted Rights - Use, duplication</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef __ZOS_H_</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define __ZOS_H_</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// Main header for ZOSLIB - includes all other headers; see also zos-base that</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// includes most interfaces in ZOSLIB.</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="zos_8h.html#aa9e8f3bb466bb421d13913df7aeaa20c">   12</a></span>&#160;<span class="preprocessor">#define MAJOR_VERSION 1</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="zos_8h.html#a320988aa2655ee094f3a34a52da10831">   13</a></span>&#160;<span class="preprocessor">#define MINOR_VERSION 1</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="zos_8h.html#aed5f6b4b087292b1f6579952fc7c14eb">   14</a></span>&#160;<span class="preprocessor">#define PATCH_VERSION 0</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="csrsic_8h.html">csrsic.h</a>&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="edcwccwi_8h.html">edcwccwi.h</a>&quot;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-base_8h.html">zos-base.h</a>&quot;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-semaphore_8h.html">zos-semaphore.h</a>&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-sys-info_8h.html">zos-sys-info.h</a>&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#endif // __ZOS_H_</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef ZOS_H_</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define ZOS_H_</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="zos_8h.html#aa9e8f3bb466bb421d13913df7aeaa20c">   15</a></span>&#160;<span class="preprocessor">#define MAJOR_VERSION 2</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="zos_8h.html#a320988aa2655ee094f3a34a52da10831">   16</a></span>&#160;<span class="preprocessor">#define MINOR_VERSION 0</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="zos_8h.html#aed5f6b4b087292b1f6579952fc7c14eb">   17</a></span>&#160;<span class="preprocessor">#define PATCH_VERSION 0</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="csrsic_8h.html">csrsic.h</a>&quot;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="edcwccwi_8h.html">edcwccwi.h</a>&quot;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-base_8h.html">zos-base.h</a>&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-semaphore_8h.html">zos-semaphore.h</a>&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="zos-sys-info_8h.html">zos-sys-info.h</a>&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#endif // ZOS_H_</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="acsrsic_8h_html"><div class="ttname"><a href="csrsic_8h.html">csrsic.h</a></div></div>
 <div class="ttc" id="aedcwccwi_8h_html"><div class="ttname"><a href="edcwccwi_8h.html">edcwccwi.h</a></div></div>

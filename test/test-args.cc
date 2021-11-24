@@ -1,6 +1,6 @@
+#include "test-args.h"
 #include "zos.h"
 #include "gtest/gtest.h"
-#include "test-args.h"
 
 namespace {
 

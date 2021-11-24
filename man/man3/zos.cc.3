@@ -6,15 +6,17 @@ src/zos.cc
 .SH SYNOPSIS
 .br
 .PP
-\fC#include 'zos\-base\&.h'\fP
+\fC#include 'edcwccwi\&.h'\fP
 .br
-\fC#include 'zos\-sys\-info\&.h'\fP
+\fC#include 'zos\-base\&.h'\fP
 .br
 \fC#include <_Ccsid\&.h>\fP
 .br
 \fC#include <_Nascii\&.h>\fP
 .br
 \fC#include <__le_api\&.h>\fP
+.br
+\fC#include <assert\&.h>\fP
 .br
 \fC#include <builtins\&.h>\fP
 .br
@@ -77,9 +79,6 @@ src/zos.cc
 
 .in +1c
 .ti -1c
-.RI "class \fB__csConverter\fP"
-.br
-.ti -1c
 .RI "struct \fBtimer_parm\fP"
 .br
 .ti -1c
@@ -98,9 +97,6 @@ src/zos.cc
 .RI "class \fB__Cache\fP"
 .br
 .ti -1c
-.RI "struct \fB__tlsanchor\fP"
-.br
-.ti -1c
 .RI "struct \fBespiearg\fP"
 .br
 .ti -1c
@@ -117,9 +113,6 @@ src/zos.cc
 .br
 .ti -1c
 .RI "struct \fBIFAARGS\fP"
-.br
-.ti -1c
-.RI "struct \fB__bpxyatt\fP"
 .br
 .in -1c
 .SS "Macros"
@@ -142,6 +135,12 @@ src/zos.cc
 .br
 .ti -1c
 .RI "#define \fB__ZOS_CC\fP"
+.br
+.ti -1c
+.RI "#define \fBdsa\fP()   ((unsigned long *)_gdsa())"
+.br
+.ti -1c
+.RI "#define \fBMIN\fP(a,  b)   ((a) < (b) ? (a) : (b))"
 .br
 .ti -1c
 .RI "#define \fBXSTR\fP(a)   \fBSTRINGIFY\fP(a)"
@@ -237,37 +236,12 @@ src/zos.cc
 .ti -1c
 .RI "typedef struct \fBIFAARGS\fP \fBIFAARGS_t\fP"
 .br
-.ti -1c
-.RI "typedef struct \fB__bpxyatt\fP \fB__bpxyatt_t\fP"
-.br
-.in -1c
-.SS "Enumerations"
-
-.in +1c
-.ti -1c
-.RI "enum \fBnotagread\fP { \fB__NO_TAG_READ_DEFAULT\fP = 0, \fB__NO_TAG_READ_DEFAULT_WITHWARNING\fP = 1, \fB__NO_TAG_READ_V6\fP = 2, \fB__NO_TAG_READ_STRICT\fP = 3 }"
-.br
 .in -1c
 .SS "Functions"
 
 .in +1c
 .ti -1c
-.RI "void \fB__settimelimit\fP (int secs)"
-.br
-.ti -1c
-.RI "void * \fB_convert_e2a\fP (void *dst, const void *src, \fBsize_t\fP size)"
-.br
-.ti -1c
-.RI "void * \fB_convert_a2e\fP (void *dst, const void *src, \fBsize_t\fP size)"
-.br
-.ti -1c
-.RI "int \fB__guess_ue\fP (const void *src, \fBsize_t\fP size, char *errmsg, \fBsize_t\fP er_size)"
-.br
-.ti -1c
-.RI "int \fB__guess_fd_ue\fP (int fd, char *errmsg, \fBsize_t\fP er_size, int is_new_fd)"
-.br
-.ti -1c
-.RI "int \fB__guess_ae\fP (const void *src, \fBsize_t\fP size)"
+.RI "void \fB__set_ccsid_guess_buf_size\fP (int nbytes)"
 .br
 .ti -1c
 .RI "char ** \fB__get_environ_np\fP (void)"
@@ -282,31 +256,7 @@ src/zos.cc
 .RI "void \fB__xfer_env\fP (void)"
 .br
 .ti -1c
-.RI "int \fB__chgfdccsid\fP (int fd, unsigned short ccsid)"
-.br
-.ti -1c
-.RI "int \fB__setfdccsid\fP (int fd, int t_ccsid)"
-.br
-.ti -1c
-.RI "int \fB__getfdccsid\fP (int fd)"
-.br
-.ti -1c
-.RI "int \fB__console_printf\fP (const char *fmt,\&.\&.\&.)"
-.br
-.ti -1c
 .RI "int \fBgettid\fP ()"
-.br
-.ti -1c
-.RI "int \fBvdprintf\fP (int fd, const char *fmt, va_list ap)"
-.br
-.ti -1c
-.RI "int \fBdprintf\fP (int fd, const char *fmt,\&.\&.\&.)"
-.br
-.ti -1c
-.RI "void \fB__dump_title\fP (int fd, const void *addr, \fBsize_t\fP len, \fBsize_t\fP bw, const char *format,\&.\&.\&.)"
-.br
-.ti -1c
-.RI "void \fB__dump\fP (int fd, const void *addr, \fBsize_t\fP len, \fBsize_t\fP bw)"
 .br
 .ti -1c
 .RI "int \fBbacktrace\fP (void **buffer, int size)"
@@ -327,7 +277,7 @@ src/zos.cc
 .RI "int \fBstrcasecmp_ignorecp\fP (const char *a, const char *b)"
 .br
 .ti -1c
-.RI "int \fBstrncasecmp_ignorecp\fP (const char *a, const char *b, \fBsize_t\fP n)"
+.RI "int \fBstrncasecmp_ignorecp\fP (const char *a, const char *b, size_t n)"
 .br
 .ti -1c
 .RI "int \fBget_ipcs_overview\fP (IPCQPROC *info)"
@@ -336,13 +286,10 @@ src/zos.cc
 .RI "void \fB__cleanupipc\fP (int others)"
 .br
 .ti -1c
-.RI "int \fBconv_utf8_utf16\fP (char *out, \fBsize_t\fP outsize, const char *in, \fBsize_t\fP insize)"
-.br
-.ti -1c
-.RI "int \fBconv_utf16_utf8\fP (char *out, \fBsize_t\fP outsize, const char *in, \fBsize_t\fP insize)"
-.br
-.ti -1c
 .RI "unsigned long \fB__clock\fP (void)"
+.br
+.ti -1c
+.RI "void \fB__settimelimit\fP (int secs)"
 .br
 .ti -1c
 .RI "void \fB__setdebug\fP (int v)"
@@ -360,13 +307,10 @@ src/zos.cc
 .RI "void * \fB__dlcb_entry_addr\fP (void *dlcb)"
 .br
 .ti -1c
-.RI "int \fB__find_file_in_path\fP (char *out, int size, const char *envvar, const char *file)"
+.RI "void \fBabort\fP (void)"
 .br
 .ti -1c
 .RI "int \fB__cond_timed_wait\fP (unsigned int secs, unsigned int nsecs, unsigned int event_list, unsigned int *secs_rem, unsigned int *nsecs_rem)"
-.br
-.ti -1c
-.RI "void \fBabort\fP (void)"
 .br
 .ti -1c
 .RI "int \fBkill\fP (int pid, int sig)"
@@ -390,52 +334,25 @@ src/zos.cc
 .RI "int \fB__getexepath\fP (char *path, int pathlen, pid_t pid)"
 .br
 .ti -1c
-.RI "int \fB__get_num_online_cpus\fP (void)"
+.RI "\fBnotagread_t\fP \fB__get_no_tag_read_behaviour\fP ()"
 .br
 .ti -1c
-.RI "int \fB__get_num_frames\fP (void)"
-.br
-.ti -1c
-.RI "\fBoslvl_t\fP \fB__get_os_level\fP (void)"
-.br
-.ti -1c
-.RI "bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
-.br
-.ti -1c
-.RI "void \fB__fd_close\fP (int fd)"
-.br
-.ti -1c
-.RI "int \fB__file_needs_conversion\fP (int fd)"
-.br
-.ti -1c
-.RI "int \fB__file_needs_conversion_init\fP (const char *name, int fd)"
+.RI "int \fB__get_no_tag_ignore_ccsid1047\fP ()"
 .br
 .ti -1c
 .RI "unsigned long \fB__mach_absolute_time\fP (void)"
 .br
 .ti -1c
-.RI "void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
-.br
-.ti -1c
 .RI "unsigned long \fBgetipttoken\fP (void)"
 .br
 .ti -1c
-.RI "void * \fBanon_mmap\fP (void *_, \fBsize_t\fP len)"
+.RI "void * \fBanon_mmap\fP (void *_, size_t len)"
 .br
 .ti -1c
-.RI "int \fBanon_munmap\fP (void *addr, \fBsize_t\fP len)"
+.RI "int \fBanon_munmap\fP (void *addr, size_t len)"
 .br
 .ti -1c
 .RI "int \fBexecvpe\fP (const char *name, char *const argv[], char *const envp[])"
-.br
-.ti -1c
-.RI "struct \fB__tlsanchor\fP * \fB__tlsvaranchor_create\fP (\fBsize_t\fP sz)"
-.br
-.ti -1c
-.RI "void \fB__tlsvaranchor_destroy\fP (struct \fB__tlsanchor\fP *anchor)"
-.br
-.ti -1c
-.RI "void * \fB__tlsPtrFromAnchor\fP (struct \fB__tlsanchor\fP *anchor, const void *initvalue)"
 .br
 .ti -1c
 .RI "void \fB__atomic_store_real\fP (int size, void *ptr, void *val, int memorder) asm('__atomic_store')"
@@ -480,13 +397,13 @@ src/zos.cc
 .RI "int \fBclock_gettime\fP (\fBclockid_t\fP clk_id, struct timespec *tp)"
 .br
 .ti -1c
-.RI "int \fBgetentropy\fP (void *output, \fBsize_t\fP size)"
+.RI "int \fBgetentropy\fP (void *output, size_t size)"
 .br
 .ti -1c
 .RI "void \fB__build_version\fP (void)"
 .br
 .ti -1c
-.RI "\fBsize_t\fP \fBstrnlen\fP (const char *str, \fBsize_t\fP maxlen)"
+.RI "size_t \fBstrnlen\fP (const char *str, size_t maxlen)"
 .br
 .ti -1c
 .RI "void \fB__cpu_relax\fP (\fB__crwa_t\fP *p)"
@@ -516,13 +433,22 @@ src/zos.cc
 .RI "unsigned long long \fB__registerProduct\fP (const char *major_version, const char *product_owner, const char *feature_name, const char *product_name, const char *pid)"
 .br
 .ti -1c
-.RI "void * \fBroanon_mmap\fP (void *_, \fBsize_t\fP len, int prot, int flags, const char *filename, int fildes, off_t off)"
+.RI "void * \fBroanon_mmap\fP (void *_, size_t len, int prot, int flags, const char *filename, int fildes, off_t off)"
 .br
 .ti -1c
 .RI "int \fB__print_zoslib_help\fP (FILE *fp, const char *title)"
 .br
 .ti -1c
-.RI "void \fB__update_envar_settings\fP (const char *envar)"
+.RI "int \fB__update_envar_settings\fP (const char *envar)"
+.br
+.ti -1c
+.RI "int \fB__update_envar_names\fP (\fBzoslib_config_t\fP *const config)"
+.br
+.ti -1c
+.RI "void * \fB__iterate_stack_and_get\fP (void *dsaptr, \fB__stack_info\fP *si)"
+.br
+.ti -1c
+.RI "int * \fB__get_stack_start\fP ()"
 .br
 .ti -1c
 .RI "void \fBinit_zoslib_config\fP (\fBzoslib_config_t\fP &config)"
@@ -548,12 +474,6 @@ src/zos.cc
 .br
 .ti -1c
 .RI "char ** \fBenviron\fP"
-.br
-.ti -1c
-.RI "\fBfdAttributeCache\fP \fBfdcache\fP"
-.br
-.ti -1c
-.RI "enum \fBnotagread\fP \fBnotagread\fP"
 .br
 .ti -1c
 .RI "void * \fBplist\fP"
@@ -596,7 +516,11 @@ src/zos.cc
 
 .SS "#define DEFAULT_BUILD_STRING     'v' XSTR(\fBMAJOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBMINOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBPATCH_VERSION\fP)"
 
+.SS "#define dsa()   ((unsigned long *)_gdsa())"
+
 .SS "#define max(a, b)   (((a) > (b)) ? (a) : (b))"
+
+.SS "#define MIN(a, b)   ((a) < (b) ? (a) : (b))"
 
 .SS "#define PGTH_CURRENT   1"
 
@@ -608,8 +532,6 @@ src/zos.cc
 
 .SH "Typedef Documentation"
 .PP 
-.SS "typedef struct \fB__bpxyatt\fP \fB__bpxyatt_t\fP"
-
 .SS "typedef std::unordered_map<int, \fBfd_attribute\fP, \fBIntHash\fP>::const_iterator \fBcursor_t\fP"
 
 .SS "typedef unsigned long \fBfd_attribute\fP"
@@ -652,21 +574,6 @@ src/zos.cc
 
 .SS "typedef unsigned long \fBvalue_type\fP"
 
-.SH "Enumeration Type Documentation"
-.PP 
-.SS "enum \fBnotagread\fP"
-
-.PP
-\fBEnumerator\fP
-.in +1c
-.TP
-\fB\fI__NO_TAG_READ_DEFAULT \fP\fP
-.TP
-\fB\fI__NO_TAG_READ_DEFAULT_WITHWARNING \fP\fP
-.TP
-\fB\fI__NO_TAG_READ_V6 \fP\fP
-.TP
-\fB\fI__NO_TAG_READ_STRICT \fP\fP
 .SH "Function Documentation"
 .PP 
 .SS "void __abend (int comp_code, unsigned reason_code, int flat_byte, void * plist)"
@@ -690,22 +597,6 @@ Generates an SVC 13 abend\&.
 
 .SS "void __build_version (void)"
 Prints the build version of the library 
-.SS "int __chgfdccsid (int fd, unsigned short ccsid)"
-Change file descriptor to CCSID\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP file descriptor\&. 
-.br
-\fIccsid\fP CCSID\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns 0 if successful, or -1 on failure\&. 
-.RE
-.PP
-
 .SS "void __cleanupipc (int others)"
 Remove IPC semaphores and shared memory\&. 
 .PP
@@ -739,8 +630,6 @@ returns 0 if successful, -1 if unsuccessful\&.
 .RE
 .PP
 
-.SS "int __console_printf (const char * fmt,  \&.\&.\&.)"
-Print to MVS Console\&. 
 .SS "void __cpu_relax (\fB__crwa_t\fP *)"
 TODO(itodorov) - zos: document these interfaces 
 .SS "void __display_backtrace (int fd)"
@@ -798,69 +687,6 @@ Get next dlcb entry
 .RE
 .PP
 
-.SS "void __dump (int fd, const void * addr, \fBsize_t\fP len, \fBsize_t\fP bw)"
-Dump to console\&. 
-.SS "void __dump_title (int fd, const void * addr, \fBsize_t\fP len, \fBsize_t\fP bw, const char *,  \&.\&.\&.)"
-Dump title to console\&. 
-.SS "void __fd_close (int fd)"
-Unsets fd attributes 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP file descriptor 
-.RE
-.PP
-
-.SS "int __file_needs_conversion (int fd)"
-Determines if file descriptor needs conversion from EBCDIC to ASCII\&. Call __file_needs_conversion_init first before calling this function\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP file descriptor 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns 1 if file needs conversion, 0 if not\&. 
-.RE
-.PP
-
-.SS "int __file_needs_conversion_init (const char * name, int fd)"
-Determines if file needs conversion from EBCDIC to ASCII\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIname\fP path to file 
-.br
-\fIfd\fP file descriptor 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns 1 if file needs conversion, 0 if not\&. 
-.RE
-.PP
-
-.SS "int __find_file_in_path (char * out, int size, const char * envvar, const char * file)"
-Finds file in a given path 
-.PP
-\fBParameters\fP
-.RS 4
-\fIout\fP Found path string 
-.br
-\fIsize\fP Max size of path string 
-.br
-\fIenvar\fP Environment variable to search 
-.br
-\fIfile\fP file to search 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns non-zero if successful, 0 if not found\&. 
-.RE
-.PP
-
 .SS "int __fork (void)"
 Create a child process 
 .PP
@@ -879,35 +705,21 @@ returns pointer to environment list
 .RE
 .PP
 
-.SS "int __get_num_frames (void)"
-Get the number of frames currently available to the system 
-.PP
-\fBReturns\fP
-.RS 4
-returns the number of available frames 
-.RE
-.PP
+.SS "int __get_no_tag_ignore_ccsid1047 ()"
 
-.SS "int __get_num_online_cpus (void)"
-Get the number of online CPUs 
-.PP
-\fBReturns\fP
-.RS 4
-returns the number of online CPUs 
-.RE
-.PP
+.SS "\fBnotagread_t\fP __get_no_tag_read_behaviour ()"
 
-.SS "\fBoslvl_t\fP __get_os_level (void)"
-Get the OS level 
+.SS "int* __get_stack_start ()"
+Get the stack start address for the current thread 
 .PP
 \fBReturns\fP
 .RS 4
-the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) 
+returns the stack start address 
 .RE
 .PP
 
 .SS "int __getargc (void)"
-Get program argument count 
+Get program argument count of the current process 
 .PP
 \fBReturns\fP
 .RS 4
@@ -939,7 +751,7 @@ On success, returns 0, or -1 on error\&.
 .PP
 
 .SS "char** __getargv (void)"
-Get program argument list 
+Get program argument list of the current process 
 .PP
 \fBReturns\fP
 .RS 4
@@ -967,66 +779,6 @@ On success, returns 0, or -1 on error\&.
 .RE
 .PP
 
-.SS "int __getfdccsid (int fd)"
-Get file descriptor CCSID\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP file descriptor\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns file descriptors ccsid\&. 
-.RE
-.PP
-
-.SS "int __guess_ae (const void * src, \fBsize_t\fP size)"
-Guess if string is ASCII or EBCDIC\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIsrc\fP - character string\&. 
-.br
-\fIsize\fP - number of bytes to analyze\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-guessed CCSID\&. 
-.RE
-.PP
-
-.SS "int __guess_fd_ue (int fd, char * errmsg, \fBsize_t\fP er_size, int is_new_fd)"
-Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd\&. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP - open file descriptor to guess\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
-.RE
-.PP
-
-.SS "int __guess_ue (const void * src, \fBsize_t\fP size, char * errmsg, \fBsize_t\fP er_size)"
-Guess if string is UTF8 (ASCII) or EBCDIC\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIsrc\fP - character string\&. 
-.br
-\fIsize\fP - number of bytes to analyze\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
-.RE
-.PP
-
 .SS "int __indebug (void)"
 Indicates if zoslib is in debug mode 
 .PP
@@ -1036,12 +788,19 @@ returns current debug mode
 .RE
 .PP
 
-.SS "bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
-Check if current OS is at or above a given level 
+.SS "void* __iterate_stack_and_get (void * dsaptr, \fB__stack_info\fP * si)"
+Iterate to next stack dsa based on current dsa 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdsaptr\fP - current dsa entry 
+.br
+\fIsi\fP - stack information of next dsa 
+.RE
 .PP
 \fBReturns\fP
 .RS 4
-true if the current OS level is at or above the given level, and false otherwise 
+returns the next dsa entry in the chain or 0 if not found 
 .RE
 .PP
 
@@ -1119,40 +878,11 @@ returns 0 if successful, non-zero if unsuccessful\&.
 
 .SS "int __sem_wait (\fB__sem_t\fP * s0)"
 
-.SS "void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
-Sets file descriptor to auto convert\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP - file descriptor\&. 
-.br
-\fIccsid\fP - CCSID to auto convert to\&. 
-.br
-\fItxtflag\fP - Indicates if ccsid is text\&. 
-.br
-\fIon_untagged_only\fP - applies only to untagged 
-.RE
-.PP
+.SS "void __set_ccsid_guess_buf_size (int nbytes)"
 
 .SS "void __setdebug (int)"
 Activates debug mode 
 .SS "int __setenv_a (const char *, const char *, int)"
-
-.SS "int __setfdccsid (int fd, int t_ccsid)"
-Set file descriptor to the provided CCSID\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfd\fP file descriptor\&. 
-.br
-\fIt_ccsid\fP CCSID\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns 0 if successful, or -1 on failure\&. 
-.RE
-.PP
 
 .SS "void __settimelimit (int secs)"
 
@@ -1170,17 +900,25 @@ Attempts to a close a socket for a period of time
 .PP
 
 .SS "int __testread (const void * location)"
-
-.SS "void* __tlsPtrFromAnchor (struct \fB__tlsanchor\fP * anchor, const void * initvalue)"
-
-.SS "struct \fB__tlsanchor\fP* __tlsvaranchor_create (\fBsize_t\fP sz)"
-
-.SS "void __tlsvaranchor_destroy (struct \fB__tlsanchor\fP * anchor)"
-
+TODO(itodorov) - zos: document these interfaces 
 .SS "void __unloadmod (void * mod)"
 
-.SS "void __update_envar_settings (const char * envar)"
-Updates the zoslib global variables associated with the zoslib environment variables 
+.SS "int __update_envar_names (\fBzoslib_config_t\fP *const config)"
+Changes the names of one or more of the environment variables zoslib uses 
+.PP
+\fBParameters\fP
+.RS 4
+\fIzoslib_confit_t\fP structure that defines the new environment variable name(s) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+0 for success, or -1 for failure 
+.RE
+.PP
+
+.SS "int __update_envar_settings (const char * envar)"
+Updates the zoslib global variables associated with the zoslib environment variables
 .PP
 \fBParameters\fP
 .RS 4
@@ -1189,7 +927,7 @@ Updates the zoslib global variables associated with the zoslib environment varia
 .PP
 \fBReturns\fP
 .RS 4
-On success, returns 0, or < 0 on error\&. 
+0 for success, or -1 for failure 
 .RE
 .PP
 
@@ -1197,45 +935,9 @@ On success, returns 0, or < 0 on error\&.
 Convert environment variables from EBCDIC to ASCII\&. 
 .SS "unsigned int __zsync_val_compare_and_swap32 (volatile unsigned int * __p, unsigned int __compVal, unsigned int __exchVal)"
 
-.SS "void* _convert_a2e (void * dst, const void * src, \fBsize_t\fP size)"
-Convert from ASCII to EBCDIC 
-.PP
-\fBParameters\fP
-.RS 4
-\fIdst\fP Destination string (must be pre-allocated)\&. 
-.br
-\fIsrc\fP Source string\&. 
-.br
-\fIsize\fP Number of bytes to convert 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns destination string\&. 
-.RE
-.PP
-
-.SS "void* _convert_e2a (void * dst, const void * src, \fBsize_t\fP size)"
-Convert from EBCDIC to ASCII\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIdst\fP Destination string (must be pre-allocated)\&. 
-.br
-\fIsrc\fP Source string\&. 
-.br
-\fIsize\fP Number of bytes to convert\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns destination string\&. 
-.RE
-.PP
-
 .SS "void abort (void)"
 
-.SS "void* anon_mmap (void * _, \fBsize_t\fP len)"
+.SS "void* anon_mmap (void * _, size_t len)"
 Generate an anonymous memory map 
 .PP
 \fBParameters\fP
@@ -1251,7 +953,7 @@ returns start address of anonymous memory map
 .RE
 .PP
 
-.SS "int anon_munmap (void * addr, \fBsize_t\fP len)"
+.SS "int anon_munmap (void * addr, size_t len)"
 Deallocates memory map 
 .PP
 \fBParameters\fP
@@ -1332,19 +1034,6 @@ return 0 for success, or -1 for failure\&.
 .RE
 .PP
 
-.SS "int conv_utf16_utf8 (char *, \fBsize_t\fP, const char *, \fBsize_t\fP)"
-Convert string from UTF16 to UTF8\&. 
-.SS "int conv_utf8_utf16 (char *, \fBsize_t\fP, const char *, \fBsize_t\fP)"
-Convert string from UTF8 to UTF16 
-.SS "int dprintf (int fd, const char *,  \&.\&.\&.)"
-Debug Printf\&. 
-.PP
-\fBReturns\fP
-.RS 4
-returns total number of bytes written to file descriptor 
-.RE
-.PP
-
 .SS "int execvpe (const char * name, char *const argv[], char *const envp[])"
 Execute a file\&. 
 .PP
@@ -1377,7 +1066,7 @@ On success, returns 0, or -1 on error\&.
 .RE
 .PP
 
-.SS "int getentropy (void * buffer, \fBsize_t\fP length)"
+.SS "int getentropy (void * buffer, size_t length)"
 Fill a buffer with random bytes 
 .PP
 \fBParameters\fP
@@ -1455,7 +1144,7 @@ Suspends the execution of the calling thread until either at least the time spec
 .RE
 .PP
 
-.SS "void* roanon_mmap (void * _, \fBsize_t\fP len, int prot, int flags, const char * filename, int fildes, off_t off)"
+.SS "void* roanon_mmap (void * _, size_t len, int prot, int flags, const char * filename, int fildes, off_t off)"
 Generate a read only anonymous memory map for a given file 
 .PP
 \fBParameters\fP
@@ -1495,7 +1184,7 @@ if equal, returns 0, otherwise returns non-zero\&.
 .RE
 .PP
 
-.SS "int strncasecmp_ignorecp (const char * a, const char * b, \fBsize_t\fP n)"
+.SS "int strncasecmp_ignorecp (const char * a, const char * b, size_t n)"
 String case comparision that ignores code page\&. 
 .PP
 \fBParameters\fP
@@ -1513,7 +1202,7 @@ if equal, returns 0, otherwise returns non-zero\&.
 .RE
 .PP
 
-.SS "\fBsize_t\fP strnlen (const char * str, \fBsize_t\fP maxlen)"
+.SS "size_t strnlen (const char * str, size_t maxlen)"
 Determine the length of a fixed-size string 
 .PP
 \fBParameters\fP
@@ -1530,15 +1219,6 @@ returns the length of the string
 .PP
 
 .SS "void Usleep (unsigned int msec)"
-
-.SS "int vdprintf (int fd, const char *, va_list ap)"
-Variadic Debug Printf\&. 
-.PP
-\fBReturns\fP
-.RS 4
-returns total number of bytes written to file descriptor 
-.RE
-.PP
 
 .SH "Variable Documentation"
 .PP 
@@ -1565,8 +1245,6 @@ returns total number of bytes written to file descriptor
           : "r1", "r13", "r14", "r15")
 .fi
 .SS "char** environ\fC [extern]\fP"
-
-.SS "\fBfdAttributeCache\fP fdcache"
 
 .SS "const char* IFAUsageErrorStrings[]"
 \fBInitial value:\fP
@@ -1602,8 +1280,6 @@ returns total number of bytes written to file descriptor
     " is not available on the system\&."}
 .fi
 .SS "const char* MODULE_REGISTER_USAGE = 'IFAUSAGE'"
-
-.SS "enum \fBnotagread\fP \fBnotagread\fP"
 
 .SS "void* plist"
 \fBInitial value:\fP

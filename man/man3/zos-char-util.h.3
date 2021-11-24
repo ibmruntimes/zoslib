@@ -1,0 +1,271 @@
+.TH "include/zos-char-util.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/zos-char-util.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <_Nascii\&.h>\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB_str_e2a\fP(_str)"
+.br
+.ti -1c
+.RI "#define \fB_str_a2e\fP(_str)"
+.br
+.ti -1c
+.RI "#define \fBAEWRAP\fP(_rc,  _x)"
+.br
+.ti -1c
+.RI "#define \fBAEWRAP_VOID\fP(_x)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void * \fB_convert_e2a\fP (void *dst, const void *src, size_t size)"
+.br
+.ti -1c
+.RI "void * \fB_convert_a2e\fP (void *dst, const void *src, size_t size)"
+.br
+.ti -1c
+.RI "int \fB__guess_fd_ue\fP (int fd, char *errmsg, size_t er_size, int is_new_fd)"
+.br
+.ti -1c
+.RI "int \fB__guess_ue\fP (const void *src, size_t size, char *errmsg, size_t er_size)"
+.br
+.ti -1c
+.RI "int \fB__guess_ae\fP (const void *src, size_t size)"
+.br
+.ti -1c
+.RI "int \fBconv_utf8_utf16\fP (char *, size_t, const char *, size_t)"
+.br
+.ti -1c
+.RI "int \fBconv_utf16_utf8\fP (char *, size_t, const char *, size_t)"
+.br
+.ti -1c
+.RI "void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+.br
+.ti -1c
+.RI "int \fB__file_needs_conversion\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__file_needs_conversion_init\fP (const char *name, int fd)"
+.br
+.ti -1c
+.RI "void \fB__fd_close\fP (int fd)"
+.br
+.ti -1c
+.RI "void * \fB__convert_one_to_one\fP (const void *table, void *dst, size_t size, const void *src)"
+.br
+.ti -1c
+.RI "unsigned \fBstrlen_ae\fP (const unsigned char *str, int *code_page, int max_len, int *ambiguous)"
+.br
+.ti -1c
+.RI "unsigned \fBstrlen_e\fP (const unsigned char *str, unsigned size)"
+.br
+.ti -1c
+.RI "const unsigned char __ibm1047_iso88591[256] \fB__attribute__\fP ((aligned(8)))"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define _str_a2e(_str)"
+\fBValue:\fP
+.PP
+.nf
+  ({                                                                           \
+    const char *src = (const char *)(_str);                                    \
+    int len = strlen(src) + 1;                                                 \
+    char *tgt = (char *)alloca(len);                                           \
+    (char *)_convert_a2e(tgt, src, len);                                       \
+  })
+.fi
+.SS "#define _str_e2a(_str)"
+\fBValue:\fP
+.PP
+.nf
+  ({                                                                           \
+    const char *src = (const char *)(_str);                                    \
+    int len = strlen(src) + 1;                                                 \
+    char *tgt = (char *)alloca(len);                                           \
+    (char *)_convert_e2a(tgt, src, len);                                       \
+  })
+.fi
+.SS "#define AEWRAP(_rc, _x)"
+\fBValue:\fP
+.PP
+.nf
+  (__isASCII() ? ((_rc) = (_x), 0)                                             \
+               : (__ae_thread_swapmode(__AE_ASCII_MODE), ((_rc) = (_x)),       \
+                  __ae_thread_swapmode(__AE_EBCDIC_MODE), 1))
+.fi
+.SS "#define AEWRAP_VOID(_x)"
+\fBValue:\fP
+.PP
+.nf
+  (__isASCII() ? ((_x), 0)                                                     \
+               : (__ae_thread_swapmode(__AE_ASCII_MODE), (_x),                 \
+                  __ae_thread_swapmode(__AE_EBCDIC_MODE), 1))
+.fi
+.SH "Function Documentation"
+.PP 
+.SS "const unsigned char __ibm1047_iso88591 [256] __attribute__ ((aligned(8)))"
+
+.SS "void* __convert_one_to_one (const void * table, void * dst, size_t size, const void * src)\fC [inline]\fP"
+
+.SS "void __fd_close (int fd)"
+Unsets fd attributes 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor 
+.RE
+.PP
+
+.SS "int __file_needs_conversion (int fd)"
+Determines if file descriptor needs conversion from EBCDIC to ASCII\&. Call __file_needs_conversion_init first before calling this function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 1 if file needs conversion, 0 if not\&. 
+.RE
+.PP
+
+.SS "int __file_needs_conversion_init (const char * name, int fd)"
+Determines if file needs conversion from EBCDIC to ASCII\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP path to file 
+.br
+\fIfd\fP file descriptor 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 1 if file needs conversion, 0 if not\&. 
+.RE
+.PP
+
+.SS "int __guess_ae (const void * src, size_t size)"
+Guess if string is ASCII or EBCDIC\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsrc\fP - character string\&. 
+.br
+\fIsize\fP - number of bytes to analyze\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID\&. 
+.RE
+.PP
+
+.SS "int __guess_fd_ue (int fd, char * errmsg, size_t er_size, int is_new_fd)"
+Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd\&. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP - open file descriptor to guess\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
+.RE
+.PP
+
+.SS "int __guess_ue (const void * src, size_t size, char * errmsg, size_t er_size)"
+Guess if string is UTF8 (ASCII) or EBCDIC\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsrc\fP - character string\&. 
+.br
+\fIsize\fP - number of bytes to analyze\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
+.RE
+.PP
+
+.SS "void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+Sets file descriptor to auto convert\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP - file descriptor\&. 
+.br
+\fIccsid\fP - CCSID to auto convert to\&. 
+.br
+\fItxtflag\fP - Indicates if ccsid is text\&. 
+.br
+\fIon_untagged_only\fP - applies only to untagged 
+.RE
+.PP
+
+.SS "void* _convert_a2e (void * dst, const void * src, size_t size)"
+Convert from ASCII to EBCDIC 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdst\fP Destination string (must be pre-allocated)\&. 
+.br
+\fIsrc\fP Source string\&. 
+.br
+\fIsize\fP Number of bytes to convert 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns destination string\&. 
+.RE
+.PP
+
+.SS "void* _convert_e2a (void * dst, const void * src, size_t size)"
+Convert from EBCDIC to ASCII\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdst\fP Destination string (must be pre-allocated)\&. 
+.br
+\fIsrc\fP Source string\&. 
+.br
+\fIsize\fP Number of bytes to convert\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns destination string\&. 
+.RE
+.PP
+
+.SS "int conv_utf16_utf8 (char *, size_t, const char *, size_t)"
+Convert string from UTF16 to UTF8\&. 
+.SS "int conv_utf8_utf16 (char *, size_t, const char *, size_t)"
+Convert string from UTF8 to UTF16 
+.SS "unsigned strlen_ae (const unsigned char * str, int * code_page, int max_len, int * ambiguous)\fC [inline]\fP"
+
+.SS "unsigned strlen_e (const unsigned char * str, unsigned size)\fC [inline]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

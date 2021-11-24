@@ -116,21 +116,21 @@ extern "C" {
 
 /* TODO(gabylb): zos - document */
 char *__ptr32 *__ptr32 __uss_base_address(void);
-void __bpx4kil(int pid, int signal, void *signal_options,
-              int *return_value, int *return_code, int *reason_code);
+void __bpx4kil(int pid, int signal, void *signal_options, int *return_value,
+               int *return_code, int *reason_code);
 void __bpx4frk(int *pid, int *return_code, int *reason_code);
 void __bpx4ctw(unsigned int *secs, unsigned int *nsecs,
                unsigned int *event_list, unsigned int *secs_rem,
-               unsigned int *nsecs_rem, int *return_value,
-               int *return_code, int *reason_code);
-void __bpx4gth(int *input_length, void **input_address,
-               int *output_length, void **output_address,
-               int *return_value, int *return_code, int *reason_code);
-void __bpx4lcr(int pathname_length, char *pathname,
-               int attributes_length, __bpxyatt_t *attributes,
-               int *return_value, int *return_code, int *reason_code);
+               unsigned int *nsecs_rem, int *return_value, int *return_code,
+               int *reason_code);
+void __bpx4gth(int *input_length, void **input_address, int *output_length,
+               void **output_address, int *return_value, int *return_code,
+               int *reason_code);
+void __bpx4lcr(int pathname_length, char *pathname, int attributes_length,
+               __bpxyatt_t *attributes, int *return_value, int *return_code,
+               int *reason_code);
 
 #ifdef __cplusplus
 }
 #endif
-#endif  // ZOS_BPX_H_
+#endif // ZOS_BPX_H_

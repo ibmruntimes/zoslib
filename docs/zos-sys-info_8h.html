@@ -68,12 +68,15 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">zos-sys-info.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
+<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+</div>
 <p><a href="zos-sys-info_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
@@ -101,6 +104,36 @@ Typedefs</h2></td></tr>
 <tr class="separator:aab8b5cd2ac59f15d0bc983409d22e7c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c66f5580a71dbf94fde663e7737c09a"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_z_o_s_p_s_a.html">ZOSPSA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#a5c66f5580a71dbf94fde663e7737c09a">ZOSPSA_t</a></td></tr>
 <tr class="separator:a5c66f5580a71dbf94fde663e7737c09a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:adbc37c8430939d1f676d7d6d1fd282aa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a> { <br />
+&#160;&#160;<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1">ZOSLVL_V1R13</a> = 0, 
+<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8">ZOSLVL_V2R1</a>, 
+<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92">ZOSLVL_V2R2</a>, 
+<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558">ZOSLVL_V2R3</a>, 
+<br />
+&#160;&#160;<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5">ZOSLVL_V2R4</a>, 
+<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4">ZOSLVL_V2R5</a>, 
+<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b">ZOSLVL_UNKNOWN</a>
+<br />
+ }</td></tr>
+<tr class="separator:adbc37c8430939d1f676d7d6d1fd282aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a3b2ad7fe0aee30edf781eefd73ee5b88"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#a3b2ad7fe0aee30edf781eefd73ee5b88">__get_num_online_cpus</a> (void)</td></tr>
+<tr class="separator:a3b2ad7fe0aee30edf781eefd73ee5b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67eea4362b2e4efb1cfcf07f17eba6f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#a67eea4362b2e4efb1cfcf07f17eba6f7">__get_num_frames</a> (void)</td></tr>
+<tr class="separator:a67eea4362b2e4efb1cfcf07f17eba6f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45c5eb88465481f83247e8024e59836"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#af45c5eb88465481f83247e8024e59836">__get_os_level</a> (void)</td></tr>
+<tr class="separator:af45c5eb88465481f83247e8024e59836"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73cf375e89e966ca2e6a7e360ccc11f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#a73cf375e89e966ca2e6a7e360ccc11f5">__is_os_level_at_or_above</a> (<a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a> level)</td></tr>
+<tr class="separator:a73cf375e89e966ca2e6a7e360ccc11f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaabf39b1027a0ddb9a5677b13cd7d710"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#aaabf39b1027a0ddb9a5677b13cd7d710">__is_vxf_available</a> ()</td></tr>
+<tr class="separator:aaabf39b1027a0ddb9a5677b13cd7d710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace9343312e3d85eeddebe558b070e280"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8h.html#ace9343312e3d85eeddebe558b070e280">__is_vef1_available</a> ()</td></tr>
+<tr class="separator:ace9343312e3d85eeddebe558b070e280"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="abf4f84f67f059cb26f2c8a8f566acb75"></a>
@@ -170,6 +203,143 @@ Typedefs</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="adbc37c8430939d1f676d7d6d1fd282aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbc37c8430939d1f676d7d6d1fd282aa">&#9670;&nbsp;</a></span>oslvl_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1"></a>ZOSLVL_V1R13&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8"></a>ZOSLVL_V2R1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92"></a>ZOSLVL_V2R2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558"></a>ZOSLVL_V2R3&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5"></a>ZOSLVL_V2R4&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4"></a>ZOSLVL_V2R5&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b"></a>ZOSLVL_UNKNOWN&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a67eea4362b2e4efb1cfcf07f17eba6f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67eea4362b2e4efb1cfcf07f17eba6f7">&#9670;&nbsp;</a></span>__get_num_frames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __get_num_frames </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the number of frames currently available to the system </p><dl class="section return"><dt>Returns</dt><dd>returns the number of available frames </dd></dl>
+
+</div>
+</div>
+<a id="a3b2ad7fe0aee30edf781eefd73ee5b88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b2ad7fe0aee30edf781eefd73ee5b88">&#9670;&nbsp;</a></span>__get_num_online_cpus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __get_num_online_cpus </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the number of online CPUs </p><dl class="section return"><dt>Returns</dt><dd>returns the number of online CPUs </dd></dl>
+
+</div>
+</div>
+<a id="af45c5eb88465481f83247e8024e59836"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af45c5eb88465481f83247e8024e59836">&#9670;&nbsp;</a></span>__get_os_level()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a> __get_os_level </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the OS level </p><dl class="section return"><dt>Returns</dt><dd>the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) </dd></dl>
+
+</div>
+</div>
+<a id="a73cf375e89e966ca2e6a7e360ccc11f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73cf375e89e966ca2e6a7e360ccc11f5">&#9670;&nbsp;</a></span>__is_os_level_at_or_above()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __is_os_level_at_or_above </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a>&#160;</td>
+          <td class="paramname"><em>level</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check if current OS is at or above a given level </p><dl class="section return"><dt>Returns</dt><dd>true if the current OS level is at or above the given level, and false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="ace9343312e3d85eeddebe558b070e280"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace9343312e3d85eeddebe558b070e280">&#9670;&nbsp;</a></span>__is_vef1_available()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __is_vef1_available </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check if the current z arch includes Vector Enhancements Facility 1 </p><dl class="section return"><dt>Returns</dt><dd>true if Vector Enhancements Facility 1 instructions are available, and false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="aaabf39b1027a0ddb9a5677b13cd7d710"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaabf39b1027a0ddb9a5677b13cd7d710">&#9670;&nbsp;</a></span>__is_vxf_available()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __is_vxf_available </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check if the current z arch includes Vector Extension Facility </p><dl class="section return"><dt>Returns</dt><dd>true if Vector Extension Facility instructions are available, and false otherwise </dd></dl>
 
 </div>
 </div>

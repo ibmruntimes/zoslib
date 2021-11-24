@@ -27,11 +27,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <cstdio>
 #include "zos.h"
+#include <cstdio>
 
-#include "gtest/gtest.h"
 #include "test-args.h"
+#include "gtest/gtest.h"
 
 int expected_argc;
 char **expected_argv;
@@ -51,9 +51,7 @@ public:
 };
 
 #ifdef ARDUINO
-void setup() {
-  testing::InitGoogleTest();
-}
+void setup() { testing::InitGoogleTest(); }
 
 void loop() { RUN_ALL_TESTS(); }
 

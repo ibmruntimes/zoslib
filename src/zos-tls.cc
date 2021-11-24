@@ -9,10 +9,9 @@
 #define _POSIX_SOURCE
 #include "zos-tls.h"
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
-
 
 static void _cleanup(void *p) {
   pthread_key_t key = *((pthread_key_t *)p);

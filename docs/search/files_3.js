@@ -1,9 +1,19 @@
 var searchData=
 [
-  ['zos_2dbase_2eh_711',['zos-base.h',['../zos-base_8h.html',1,'']]],
-  ['zos_2dsemaphore_2ecc_712',['zos-semaphore.cc',['../zos-semaphore_8cc.html',1,'']]],
-  ['zos_2dsemaphore_2eh_713',['zos-semaphore.h',['../zos-semaphore_8h.html',1,'']]],
-  ['zos_2dsys_2dinfo_2eh_714',['zos-sys-info.h',['../zos-sys-info_8h.html',1,'']]],
-  ['zos_2ecc_715',['zos.cc',['../zos_8cc.html',1,'']]],
-  ['zos_2eh_716',['zos.h',['../zos_8h.html',1,'']]]
+  ['zos_2dbase_2eh_745',['zos-base.h',['../zos-base_8h.html',1,'']]],
+  ['zos_2dbpx_2ecc_746',['zos-bpx.cc',['../zos-bpx_8cc.html',1,'']]],
+  ['zos_2dbpx_2eh_747',['zos-bpx.h',['../zos-bpx_8h.html',1,'']]],
+  ['zos_2dchar_2dutil_2ecc_748',['zos-char-util.cc',['../zos-char-util_8cc.html',1,'']]],
+  ['zos_2dchar_2dutil_2eh_749',['zos-char-util.h',['../zos-char-util_8h.html',1,'']]],
+  ['zos_2dio_2ecc_750',['zos-io.cc',['../zos-io_8cc.html',1,'']]],
+  ['zos_2dio_2eh_751',['zos-io.h',['../zos-io_8h.html',1,'']]],
+  ['zos_2dsemaphore_2ecc_752',['zos-semaphore.cc',['../zos-semaphore_8cc.html',1,'']]],
+  ['zos_2dsemaphore_2eh_753',['zos-semaphore.h',['../zos-semaphore_8h.html',1,'']]],
+  ['zos_2dsetlibpath_2eh_754',['zos-setlibpath.h',['../zos-setlibpath_8h.html',1,'']]],
+  ['zos_2dsys_2dinfo_2ecc_755',['zos-sys-info.cc',['../zos-sys-info_8cc.html',1,'']]],
+  ['zos_2dsys_2dinfo_2eh_756',['zos-sys-info.h',['../zos-sys-info_8h.html',1,'']]],
+  ['zos_2dtls_2ecc_757',['zos-tls.cc',['../zos-tls_8cc.html',1,'']]],
+  ['zos_2dtls_2eh_758',['zos-tls.h',['../zos-tls_8h.html',1,'']]],
+  ['zos_2ecc_759',['zos.cc',['../zos_8cc.html',1,'']]],
+  ['zos_2eh_760',['zos.h',['../zos_8h.html',1,'']]]
 ];

@@ -29,12 +29,10 @@ public:
   __tlssim(const T &initvalue) : v(initvalue) {
     anchor = __tlsvaranchor_create(sizeof(T));
   }
-  __tlssim() {
-    anchor = __tlsvaranchor_create(sizeof(T));
-  }
+  __tlssim() { anchor = __tlsvaranchor_create(sizeof(T)); }
   ~__tlssim() { __tlsvaranchor_destroy(anchor); }
   T *access(void) { return static_cast<T *>(__tlsPtrFromAnchor(anchor, &v)); }
 };
 
-#endif  // __cplusplus
-#endif  // ZOS_TLS_H_
+#endif // __cplusplus
+#endif // ZOS_TLS_H_

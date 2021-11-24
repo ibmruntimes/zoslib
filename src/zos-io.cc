@@ -11,12 +11,12 @@
 #include "zos-bpx.h"
 #include "zos-char-util.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <errno.h>
 #include <poll.h>
 #include <pthread.h>
-#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -170,7 +170,7 @@ quit:
 }
 
 void __dump_title(int fd, const void *addr, size_t len, size_t bw,
-                         const char *format, ...) {
+                  const char *format, ...) {
   static const unsigned char *atbl = (unsigned char *)"................"
                                                       "................"
                                                       " !\"#$%&'()*+,-./"
@@ -313,7 +313,7 @@ public:
   const char *toString(void) { return buffer; }
 };
 
-//TODO(gabylb): replace 1024 and 1025 in this .cc by PATH_MAX...
+// TODO(gabylb): replace 1024 and 1025 in this .cc by PATH_MAX...
 
 void __fdinfo(int fd) {
   struct stat st;
@@ -578,7 +578,7 @@ int __open(const char *file, int oflag, int mode) {
                    Fdtype(rv).toString());
   return rv;
 }
-#endif  // if TRACE_ON - for debugging use
+#endif // if TRACE_ON - for debugging use
 
 static int return_abspath(char *out, int size, const char *path_file) {
   char buffer[1025];
@@ -589,7 +589,7 @@ static int return_abspath(char *out, int size, const char *path_file) {
 }
 
 int __find_file_in_path(char *out, int size, const char *envvar,
-                                   const char *file) {
+                        const char *file) {
   char *start = (char *)envvar;
   char path[1025];
   char path_file[1025];
@@ -624,7 +624,6 @@ int __find_file_in_path(char *out, int size, const char *envvar,
   }
   return 0;
 }
-
 
 int __chgfdccsid(int fd, unsigned short ccsid) {
   attrib_t attr;

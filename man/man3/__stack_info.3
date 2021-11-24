@@ -1,0 +1,50 @@
+.TH "__stack_info" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+__stack_info
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <zos\-base\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "void * \fBprev_dsa\fP"
+.br
+.ti -1c
+.RI "void * \fBentry_point\fP"
+.br
+.ti -1c
+.RI "char \fBentry_name\fP [256]"
+.br
+.ti -1c
+.RI "int * \fBreturn_addr\fP"
+.br
+.ti -1c
+.RI "int * \fBentry_addr\fP"
+.br
+.ti -1c
+.RI "int * \fBstack_addr\fP"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "int* __stack_info::entry_addr"
+
+.SS "char __stack_info::entry_name[256]"
+
+.SS "void* __stack_info::entry_point"
+
+.SS "void* __stack_info::prev_dsa"
+
+.SS "int* __stack_info::return_addr"
+
+.SS "int* __stack_info::stack_addr"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

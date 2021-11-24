@@ -31,7 +31,7 @@ ssize_t __write(int fd, const void *buffer, size_t sz);
 ssize_t __read(int fd, void *buffer, size_t sz);
 int __close(int fd);
 int __open(const char *file, int oflag, int mode);
-#endif  // if TRACE_ON
+#endif // if TRACE_ON
 
 /**
  * Debug Printf.
@@ -53,8 +53,8 @@ void __dump(int fd, const void *addr, size_t len, size_t bw);
 /**
  * Dump title to console.
  */
-void __dump_title(int fd, const void *addr, size_t len, size_t bw,
-                  const char *, ...);
+void __dump_title(int fd, const void *addr, size_t len, size_t bw, const char *,
+                  ...);
 
 /**
  * Print given buffer to MVS Console.
@@ -103,4 +103,4 @@ int __setfdccsid(int fd, int t_ccsid);
 #ifdef __cplusplus
 }
 #endif
-#endif  // ZOS_IO_H_
+#endif // ZOS_IO_H_

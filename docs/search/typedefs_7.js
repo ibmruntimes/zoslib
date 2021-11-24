@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['size_5ft_1244',['size_t',['../zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984',1,'zos-base.h']]]
+  ['thunk24_5ft_1309',['thunk24_t',['../zos_8cc.html#a34787f758779a3800ee6963d39b49bab',1,'zos.cc']]],
+  ['timer_5fparm_5ft_1310',['timer_parm_t',['../zos_8cc.html#a2f276cbed5c622fd42032a840046474e',1,'zos.cc']]]
 ];

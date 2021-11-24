@@ -10,8 +10,8 @@
 #define ZOS_SETLIBPATH_H_
 
 #include <libgen.h>
-#include <sys/ps.h>
 #include <sstream>
+#include <sys/ps.h>
 
 class __setlibpath {
 public:
@@ -27,18 +27,18 @@ public:
     while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
       if (buf.ps_pid == mypid) {
         /* Found our process. */
-  
+
         /* Resolve path to find true location of executable. */
         if (realpath(&argv[0], &parent[0]) == NULL)
           break;
-  
+
         /* Get parent directory. */
         dirname(&parent[0]);
-  
+
         /* Get parent's parent directory. */
         std::vector<char> parent2(parent.begin(), parent.end());
         dirname(&parent2[0]);
-  
+
         /* Append new paths to libpath. */
         std::ostringstream libpath;
         libpath << getenv("LIBPATH");
@@ -49,6 +49,6 @@ public:
       }
     }
   }
-};  
+};
 
-#endif  // ZOS_SETLIBPATH_H_
+#endif // ZOS_SETLIBPATH_H_

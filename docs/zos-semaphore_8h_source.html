@@ -76,51 +76,53 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">// US Government Users Restricted Rights - Use, duplication</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef __ZOS_SEMAPHORE_H_</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define __ZOS_SEMAPHORE_H_</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;errno.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;inttypes.h&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;sys/sem.h&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#if __WORDSIZE == 64</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define __SIZEOF_SEM_T 32</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a57db768aa087f9542a39faf667924c50">   20</a></span>&#160;<span class="preprocessor">#define __SIZEOF_SEM_T 16</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a2ef55dcb46a51cb0f879f4c1724bdded">   23</a></span>&#160;<span class="preprocessor">#define SEM_FAILED ((sem_t *)0)</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// APIs that implement POSIX semaphores.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#ifndef ZOS_SEMAPHORE_H_</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#define ZOS_SEMAPHORE_H_</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;errno.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;inttypes.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;sys/sem.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#if __WORDSIZE == 64</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define __SIZEOF_SEM_T 32</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a57db768aa087f9542a39faf667924c50">   22</a></span>&#160;<span class="preprocessor">#define __SIZEOF_SEM_T 16</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structsem__t.html">   25</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">   26</a></span>&#160;  pthread_mutex_t <a class="code" href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">mutex</a>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">   27</a></span>&#160;  pthread_cond_t <a class="code" href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">cond</a>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">   28</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">value</a>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;} <a class="code" href="structsem__t.html">sem_t</a>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#adb6183f037741b30b2ec5c9dca3e1385">sem_init</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid, <span class="keywordtype">int</span> pshared, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> value);</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a2ef55dcb46a51cb0f879f4c1724bdded">   25</a></span>&#160;<span class="preprocessor">#define SEM_FAILED ((sem_t *)0)</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structsem__t.html">   27</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">   28</a></span>&#160;  pthread_mutex_t <a class="code" href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">mutex</a>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">   29</a></span>&#160;  pthread_cond_t <a class="code" href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">cond</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">   30</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">value</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;} <a class="code" href="structsem__t.html">sem_t</a>;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a805b225885a048e81d9353d5ba889ac3">sem_destroy</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#adb6183f037741b30b2ec5c9dca3e1385">sem_init</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid, <span class="keywordtype">int</span> pshared, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> value);</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a4c17aae6e654bee46c77d967416fef53">sem_wait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a805b225885a048e81d9353d5ba889ac3">sem_destroy</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a4bc8159607450586a40d9871bb2c3006">   37</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a4bc8159607450586a40d9871bb2c3006">sem_trywait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a4c17aae6e654bee46c77d967416fef53">sem_wait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#af5637fe0b731c83a9468aeb8548a98dc">sem_post</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="zos-semaphore_8h.html#a4bc8159607450586a40d9871bb2c3006">   39</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a4bc8159607450586a40d9871bb2c3006">sem_trywait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a3e9518d388d27b5ccad19fd7436c0d65">sem_timedwait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid, <span class="keyword">const</span> <span class="keyword">struct</span> timespec *timeout);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#af5637fe0b731c83a9468aeb8548a98dc">sem_post</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#endif // __ZOS_SEMAPHORE_H_</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keywordtype">int</span> <a class="code" href="zos-semaphore_8h.html#a3e9518d388d27b5ccad19fd7436c0d65">sem_timedwait</a>(<a class="code" href="structsem__t.html">sem_t</a> *semid, <span class="keyword">const</span> <span class="keyword">struct</span> timespec *timeout);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif // ZOS_SEMAPHORE_H_</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="azos-semaphore_8h_html_a3e9518d388d27b5ccad19fd7436c0d65"><div class="ttname"><a href="zos-semaphore_8h.html#a3e9518d388d27b5ccad19fd7436c0d65">sem_timedwait</a></div><div class="ttdeci">int sem_timedwait(sem_t *semid, const struct timespec *timeout)</div><div class="ttdef"><b>Definition:</b> zos-semaphore.cc:142</div></div>
 <div class="ttc" id="azos-semaphore_8h_html_a805b225885a048e81d9353d5ba889ac3"><div class="ttname"><a href="zos-semaphore_8h.html#a805b225885a048e81d9353d5ba889ac3">sem_destroy</a></div><div class="ttdeci">int sem_destroy(sem_t *semid)</div><div class="ttdef"><b>Definition:</b> zos-semaphore.cc:116</div></div>
 <div class="ttc" id="azos-semaphore_8h_html_a4bc8159607450586a40d9871bb2c3006"><div class="ttname"><a href="zos-semaphore_8h.html#a4bc8159607450586a40d9871bb2c3006">sem_trywait</a></div><div class="ttdeci">int sem_trywait(sem_t *semid)</div></div>
-<div class="ttc" id="astructsem__t_html"><div class="ttname"><a href="structsem__t.html">sem_t</a></div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:25</div></div>
-<div class="ttc" id="astructsem__t_html_ab203e20f45b7a0a0a52d27084725a687"><div class="ttname"><a href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">sem_t::value</a></div><div class="ttdeci">unsigned int value</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:28</div></div>
-<div class="ttc" id="astructsem__t_html_a0d7238ac4d204a062ab0bba619cbe333"><div class="ttname"><a href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">sem_t::mutex</a></div><div class="ttdeci">pthread_mutex_t mutex</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:26</div></div>
+<div class="ttc" id="astructsem__t_html"><div class="ttname"><a href="structsem__t.html">sem_t</a></div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:27</div></div>
+<div class="ttc" id="astructsem__t_html_ab203e20f45b7a0a0a52d27084725a687"><div class="ttname"><a href="structsem__t.html#ab203e20f45b7a0a0a52d27084725a687">sem_t::value</a></div><div class="ttdeci">unsigned int value</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:30</div></div>
+<div class="ttc" id="astructsem__t_html_a0d7238ac4d204a062ab0bba619cbe333"><div class="ttname"><a href="structsem__t.html#a0d7238ac4d204a062ab0bba619cbe333">sem_t::mutex</a></div><div class="ttdeci">pthread_mutex_t mutex</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:28</div></div>
 <div class="ttc" id="azos-semaphore_8h_html_adb6183f037741b30b2ec5c9dca3e1385"><div class="ttname"><a href="zos-semaphore_8h.html#adb6183f037741b30b2ec5c9dca3e1385">sem_init</a></div><div class="ttdeci">int sem_init(sem_t *semid, int pshared, unsigned int value)</div><div class="ttdef"><b>Definition:</b> zos-semaphore.cc:95</div></div>
 <div class="ttc" id="azos-semaphore_8h_html_af5637fe0b731c83a9468aeb8548a98dc"><div class="ttname"><a href="zos-semaphore_8h.html#af5637fe0b731c83a9468aeb8548a98dc">sem_post</a></div><div class="ttdeci">int sem_post(sem_t *semid)</div><div class="ttdef"><b>Definition:</b> zos-semaphore.cc:166</div></div>
-<div class="ttc" id="astructsem__t_html_a4b43a5ff70930485b0fc33ab2e6391ef"><div class="ttname"><a href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">sem_t::cond</a></div><div class="ttdeci">pthread_cond_t cond</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:27</div></div>
+<div class="ttc" id="astructsem__t_html_a4b43a5ff70930485b0fc33ab2e6391ef"><div class="ttname"><a href="structsem__t.html#a4b43a5ff70930485b0fc33ab2e6391ef">sem_t::cond</a></div><div class="ttdeci">pthread_cond_t cond</div><div class="ttdef"><b>Definition:</b> zos-semaphore.h:29</div></div>
 <div class="ttc" id="azos-semaphore_8h_html_a4c17aae6e654bee46c77d967416fef53"><div class="ttname"><a href="zos-semaphore_8h.html#a4c17aae6e654bee46c77d967416fef53">sem_wait</a></div><div class="ttdeci">int sem_wait(sem_t *semid)</div><div class="ttdef"><b>Definition:</b> zos-semaphore.cc:125</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

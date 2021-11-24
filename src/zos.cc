@@ -13,12 +13,13 @@
 #define _OPEN_SYS_FILE_EXT 1
 #define _OPEN_MSGQ_EXT 1
 #define __ZOS_CC
-#include "zos-base.h"
 #include "edcwccwi.h"
+#include "zos-base.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
 #include <__le_api.h>
+#include <assert.h>
 #include <builtins.h>
 #include <ctest.h>
 #include <dlfcn.h>
@@ -42,7 +43,6 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-#include <assert.h>
 
 #include <exception>
 #include <mutex>
@@ -50,20 +50,20 @@
 #include <unordered_map>
 #include <vector>
 
-#pragma linkage(_gtca,builtin)
-#pragma linkage(_gdsa,builtin)
+#pragma linkage(_gtca, builtin)
+#pragma linkage(_gdsa, builtin)
 
 #ifndef dsa
-  #define dsa() ( (unsigned long*)_gdsa() )
+#define dsa() ((unsigned long *)_gdsa())
 #endif
 
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
-static int* __main_thread_stack_top_address = 0;
+static int *__main_thread_stack_top_address = 0;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -665,8 +665,7 @@ extern "C" void abort(void) {
 }
 
 int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
-                      unsigned int event_list,
-                      unsigned int *secs_rem,
+                      unsigned int event_list, unsigned int *secs_rem,
                       unsigned int *nsecs_rem) {
   int rv, rc, rn;
   __bpx4ctw(&secs, &nsecs, &event_list, secs_rem, nsecs_rem, &rv, &rc, &rn);
@@ -922,7 +921,7 @@ public:
 static notagread_t no_tag_read_behaviour;
 static int no_tag_ignore_ccsid1047;
 
-static notagread_t get_no_tag_read_behaviour(const char* envar) {
+static notagread_t get_no_tag_read_behaviour(const char *envar) {
   char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "AUTO")) {
     return __NO_TAG_READ_DEFAULT;
@@ -940,7 +939,7 @@ extern "C" notagread_t __get_no_tag_read_behaviour() {
   return no_tag_read_behaviour;
 }
 
-static int get_no_tag_ignore_ccsid1047(const char* envar) {
+static int get_no_tag_ignore_ccsid1047(const char *envar) {
   char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "NO")) {
     return 1;
@@ -1124,7 +1123,8 @@ static void *__iarv64_alloc(int segs, const char *token) {
   if (segs == 0) {
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
     if (mem_account())
-      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set to ENOMEM");
+      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set "
+                 "to ENOMEM");
     errno = ENOMEM; // mimic behaviour of malloc(0)
     return 0;
   }
@@ -1165,7 +1165,8 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
   if (segs == 0) {
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
     if (mem_account())
-      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set to ENOMEM");
+      dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set "
+                 "to ENOMEM");
     errno = ENOMEM; // mimic behaviour of malloc(0)
     return 0;
   }
@@ -2560,7 +2561,6 @@ unsigned long long __registerProduct(const char *major_version,
   return ifausage_rc;
 }
 
-
 extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
                              const char *filename, int fildes, off_t off) {
   // TODO(gabylb): read-only anonymous mmap: the anon_mmap() call below is used
@@ -2606,8 +2606,8 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
   return memory;
 }
 
-int __print_zoslib_help(FILE* fp, const char* title) {
-  __zinit* zinit_ptr = __zinit::getInstance();
+int __print_zoslib_help(FILE *fp, const char *title) {
+  __zinit *zinit_ptr = __zinit::getInstance();
 
   if (!zinit_ptr)
     return -1;
@@ -2626,22 +2626,24 @@ int __print_zoslib_help(FILE* fp, const char* title) {
 
     if (envarMap.first.envarValue != "")
       ss << "=" << envarMap.first.envarValue;
-  
+
     fprintf(fp, "%-34s %s\n", ss.str().c_str(), envarMap.second.c_str());
-  }    
+  }
 
   return 0;
 }
 
-int __update_envar_settings(const char* envar) {
-  __zinit* zinit_ptr = __zinit::getInstance();
+int __update_envar_settings(const char *envar) {
+  __zinit *zinit_ptr = __zinit::getInstance();
   if (!zinit_ptr)
     return -1;
 
   // Exit early if envar is not a ZOSLIB envar
   if (envar && !zinit_ptr->isValidZOSLIBEnvar(envar)) {
     if (__debug_mode)
-      dprintf(2, "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n", envar);
+      dprintf(2,
+              "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n",
+              envar);
     return -1;
   }
 
@@ -2668,7 +2670,7 @@ int __update_envar_settings(const char* envar) {
   if (force_update_all || strcmp(envar, config.RUNTIME_LIMIT_ENVAR) == 0) {
     char *tl = __getenv_a(config.RUNTIME_LIMIT_ENVAR);
     if (!tl) {
-      // Kill timer thread 
+      // Kill timer thread
       pthread_join(_timer_tid, NULL);
     } else {
       int sec = __atoi_a(tl);
@@ -2678,14 +2680,15 @@ int __update_envar_settings(const char* envar) {
     }
   }
 
-  if (force_update_all || strcmp(envar, config.CCSID_GUESS_BUF_SIZE_ENVAR) == 0) {
-    char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR); 
-    if (!cgbs) { 
+  if (force_update_all ||
+      strcmp(envar, config.CCSID_GUESS_BUF_SIZE_ENVAR) == 0) {
+    char *cgbs = __getenv_a(config.CCSID_GUESS_BUF_SIZE_ENVAR);
+    if (!cgbs) {
       __set_ccsid_guess_buf_size(4096);
-    }
-    else {
-      int gs = __atoi_a(cgbs);  
-      if (gs > 0) __set_ccsid_guess_buf_size(gs);
+    } else {
+      int gs = __atoi_a(cgbs);
+      if (gs > 0)
+        __set_ccsid_guess_buf_size(gs);
     }
   }
 
@@ -2696,7 +2699,7 @@ int __update_envar_settings(const char* envar) {
         zinit_ptr->forkmax = 0;
         shmdt(zinit_ptr->forkcurr);
         shmctl(zinit_ptr->shmid, IPC_RMID, 0);
-      } 
+      }
     } else {
       int v = __atoi_a(fm);
       if (v > 0) {
@@ -2713,17 +2716,20 @@ int __update_envar_settings(const char* envar) {
   }
 
   if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_ENVAR) == 0) {
-    no_tag_read_behaviour = get_no_tag_read_behaviour(config.UNTAGGED_READ_MODE_ENVAR);
+    no_tag_read_behaviour =
+        get_no_tag_read_behaviour(config.UNTAGGED_READ_MODE_ENVAR);
   }
 
-  if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_CCSID1047_ENVAR) == 0) {
-    no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
+  if (force_update_all ||
+      strcmp(envar, config.UNTAGGED_READ_MODE_CCSID1047_ENVAR) == 0) {
+    no_tag_ignore_ccsid1047 =
+        get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
   return 0;
 }
 
-extern "C" int __update_envar_names(zoslib_config_t* const config) {
-  __zinit* zinit_ptr = __zinit::getInstance();
+extern "C" int __update_envar_names(zoslib_config_t *const config) {
+  __zinit *zinit_ptr = __zinit::getInstance();
   if (!zinit_ptr)
     return -1;
 
@@ -2783,13 +2789,13 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
 
   ppa1_layout *ppa1_ptr;
   routine_layout *layout_ptr;
-  
+
   {
     std::mutex access_lock;
     std::lock_guard<std::mutex> lock(access_lock);
     errno = 0;
-    new_dsaptr = __dsa_prev(dsaptr, __EDCWCCWI_PHYSICAL, dsa_format, NULL, NULL, prev_fmt_p,
-                            ph_callee_dsa_p, &ph_callee_dsa_fmt);
+    new_dsaptr = __dsa_prev(dsaptr, __EDCWCCWI_PHYSICAL, dsa_format, NULL, NULL,
+                            prev_fmt_p, ph_callee_dsa_p, &ph_callee_dsa_fmt);
 
     if (errno == EINVAL || errno == ESRCH || errno == EACCES ||
         new_dsaptr == NULL)
@@ -2806,17 +2812,16 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   si->entry_point = (void *)entry_ptr;
   si->return_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_return;
   si->entry_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_entry;
-  si->stack_addr =
-      (int *)((dsa_layout *)new_dsaptr)->savearea_backchain - 2048;
+  si->stack_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_backchain - 2048;
   layout_ptr =
       (routine_layout *)((unsigned long)entry_ptr - sizeof(routine_layout));
   ppa1_ptr =
       (ppa1_layout *)((unsigned long)layout_ptr + layout_ptr->ppa1_offset);
 
-  if (memcmp(&XPLINK_EYECATCHER, &layout_ptr->XPLINK_LAYOUT_EYECATCHER,
-              8) != 0) {
+  if (memcmp(&XPLINK_EYECATCHER, &layout_ptr->XPLINK_LAYOUT_EYECATCHER, 8) !=
+      0) {
     strcpy(si->entry_name,
-            "**Module not traced, not a XPLINK routine layout**");
+           "**Module not traced, not a XPLINK routine layout**");
     return new_dsaptr;
   }
   /* PPA1: Entry Point Block for XPLINK (Version 3)
@@ -2824,15 +2829,15 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   */
   if (memcmp(&PPA1_EYECATCHER, &ppa1_ptr->PPA1_LAYOUT_EYECATCHER, 2) != 0) {
     strcpy(si->entry_name,
-            "**Module not traced, PPA1 format not currently traced**");
+           "**Module not traced, PPA1 format not currently traced**");
     return new_dsaptr;
   }
 
   /* Calculate the offset from the beginning of PPA1 to the name length
-    * field */
+   * field */
   if (!(ppa1_ptr->flag4 & 0x01)) {
     strcpy(si->entry_name,
-            "**Module not traced, name field not included in PPA1**");
+           "**Module not traced, name field not included in PPA1**");
     return new_dsaptr;
   }
   memcpy(&FLAG3, &ppa1_ptr->flag3, 1);
@@ -2890,12 +2895,11 @@ int *__get_stack_start() {
 }
 
 bool __zinit::isValidZOSLIBEnvar(std::string envar) {
-  return std::find_if(envarHelpMap.begin(),
-                      envarHelpMap.end(),
-                      [&envar](std::pair<zoslibEnvar, std::string> const& item)
-                      {
-                         return (envar == item.first.envarName);
-                      }) != envarHelpMap.end();
+  return std::find_if(
+             envarHelpMap.begin(), envarHelpMap.end(),
+             [&envar](std::pair<zoslibEnvar, std::string> const &item) {
+               return (envar == item.first.envarName);
+             }) != envarHelpMap.end();
 }
 
 __zinit::__zinit(const zoslib_config_t &config)
@@ -2937,12 +2941,15 @@ int __zinit::setEnvarHelpMap() {
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("NO")),
-      "changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off"));
+      "changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with "
+      "CCSID 1047 and txtflag turned off"));
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("AUTO")),
-      "(default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of data"
-      "will be read and checked, if it is found to be in CCSID 1047, data is converted from CCSID 1047 to CCSID 819"));
+      "(default) for handling of reading untagged files or files tagged with "
+      "CCSID 1047 and txtflag turned off, up to 4k of data"
+      "will be read and checked, if it is found to be in CCSID 1047, data is "
+      "converted from CCSID 1047 to CCSID 819"));
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("STRICT")),
@@ -2950,31 +2957,34 @@ int __zinit::setEnvarHelpMap() {
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("V6")),
-      "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data from CCSID 1047 to CCSID 819"));
+      "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data "
+      "from CCSID 1047 to CCSID 819"));
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("WARN")),
-      "for same behavior as \"AUTO\" but issue a warning if conversion occurs"));
+      "for same behavior as \"AUTO\" but issue a warning if conversion "
+      "occurs"));
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.CCSID_GUESS_BUF_SIZE_ENVAR, std::string("")),
       "number of bytes to scan for CCSID guess heuristics (default: 4096)"));
 
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
-      "set to indicate max number of forks"));
+  envarHelpMap.insert(
+      std::make_pair(zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
+                     "set to indicate max number of forks"));
 
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.IPC_CLEANUP_ENVAR, std::string("")),
-      "set to toggle IPC cleanup"));
+  envarHelpMap.insert(
+      std::make_pair(zoslibEnvar(config.IPC_CLEANUP_ENVAR, std::string("")),
+                     "set to toggle IPC cleanup"));
 
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
-      "set to toggle debug ZOSLIB mode"));
+  envarHelpMap.insert(
+      std::make_pair(zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
+                     "set to toggle debug ZOSLIB mode"));
 
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.RUNTIME_LIMIT_ENVAR, std::string("")),
-      "number of seconds to run before zoslib raises a SIGABRT signal to terminate"));
+  envarHelpMap.insert(
+      std::make_pair(zoslibEnvar(config.RUNTIME_LIMIT_ENVAR, std::string("")),
+                     "number of seconds to run before zoslib raises a SIGABRT "
+                     "signal to terminate"));
 
   return __update_envar_settings(NULL);
 }
@@ -2992,7 +3002,8 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
-  config->UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  config->UNTAGGED_READ_MODE_CCSID1047_ENVAR =
+      UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {

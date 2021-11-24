@@ -1,0 +1,71 @@
+.TH "src/zos-bpx.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-bpx.cc
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-bpx\&.h'\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <unistd\&.h>\fP
+.br
+\fC#include <mutex>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB_POSIX_SOURCE\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "char *__ptr32 *__ptr32 \fB__uss_base_address\fP (void)"
+.br
+.ti -1c
+.RI "void \fB__bpx4kil\fP (int pid, int signal, void *signal_options, int *return_value, int *return_code, int *reason_code)"
+.br
+.ti -1c
+.RI "void \fB__bpx4frk\fP (int *pid, int *return_code, int *reason_code)"
+.br
+.ti -1c
+.RI "void \fB__bpx4ctw\fP (unsigned int *secs, unsigned int *nsecs, unsigned int *event_list, unsigned int *secs_rem, unsigned int *nsecs_rem, int *return_value, int *return_code, int *reason_code)"
+.br
+.ti -1c
+.RI "void \fB__bpx4gth\fP (int *input_length, void **input_address, int *output_length, void **output_address, int *return_value, int *return_code, int *reason_code)"
+.br
+.ti -1c
+.RI "void \fB__bpx4lcr\fP (int pathname_length, char *pathname, int attributes_length, \fB__bpxyatt_t\fP *attributes, int *return_value, int *return_code, int *reason_code)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define _POSIX_SOURCE"
+
+.SH "Function Documentation"
+.PP 
+.SS "void __bpx4ctw (unsigned int * secs, unsigned int * nsecs, unsigned int * event_list, unsigned int * secs_rem, unsigned int * nsecs_rem, int * return_value, int * return_code, int * reason_code)"
+
+.SS "void __bpx4frk (int * pid, int * return_code, int * reason_code)"
+
+.SS "void __bpx4gth (int * input_length, void ** input_address, int * output_length, void ** output_address, int * return_value, int * return_code, int * reason_code)"
+
+.SS "void __bpx4kil (int pid, int signal, void * signal_options, int * return_value, int * return_code, int * reason_code)"
+
+.SS "void __bpx4lcr (int pathname_length, char * pathname, int attributes_length, \fB__bpxyatt_t\fP * attributes, int * return_value, int * return_code, int * reason_code)"
+
+.SS "char* __ptr32* __ptr32 __uss_base_address (void)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

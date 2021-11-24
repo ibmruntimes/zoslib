@@ -6,6 +6,9 @@ include/zos-sys-info.h
 .SH SYNOPSIS
 .br
 .PP
+\fC#include <stdint\&.h>\fP
+.br
+
 .SS "Classes"
 
 .in +1c
@@ -44,6 +47,35 @@ include/zos-sys-info.h
 .RI "typedef struct \fBZOSPSA\fP \fBZOSPSA_t\fP"
 .br
 .in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBoslvl_t\fP { \fBZOSLVL_V1R13\fP = 0, \fBZOSLVL_V2R1\fP, \fBZOSLVL_V2R2\fP, \fBZOSLVL_V2R3\fP, \fBZOSLVL_V2R4\fP, \fBZOSLVL_V2R5\fP, \fBZOSLVL_UNKNOWN\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fB__get_num_online_cpus\fP (void)"
+.br
+.ti -1c
+.RI "int \fB__get_num_frames\fP (void)"
+.br
+.ti -1c
+.RI "\fBoslvl_t\fP \fB__get_os_level\fP (void)"
+.br
+.ti -1c
+.RI "bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
+.br
+.ti -1c
+.RI "bool \fB__is_vxf_available\fP ()"
+.br
+.ti -1c
+.RI "bool \fB__is_vef1_available\fP ()"
+.br
+.in -1c
 .SH "Typedef Documentation"
 .PP 
 .SS "typedef struct \fBZOSCCT\fP \fBZOSCCT_t\fP"
@@ -55,6 +87,83 @@ include/zos-sys-info.h
 .SS "typedef struct \fBZOSRCE\fP \fBZOSRCE_t\fP"
 
 .SS "typedef struct \fBZOSRMCT\fP \fBZOSRMCT_t\fP"
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBoslvl_t\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIZOSLVL_V1R13 \fP\fP
+.TP
+\fB\fIZOSLVL_V2R1 \fP\fP
+.TP
+\fB\fIZOSLVL_V2R2 \fP\fP
+.TP
+\fB\fIZOSLVL_V2R3 \fP\fP
+.TP
+\fB\fIZOSLVL_V2R4 \fP\fP
+.TP
+\fB\fIZOSLVL_V2R5 \fP\fP
+.TP
+\fB\fIZOSLVL_UNKNOWN \fP\fP
+.SH "Function Documentation"
+.PP 
+.SS "int __get_num_frames (void)"
+Get the number of frames currently available to the system 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of available frames 
+.RE
+.PP
+
+.SS "int __get_num_online_cpus (void)"
+Get the number of online CPUs 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of online CPUs 
+.RE
+.PP
+
+.SS "\fBoslvl_t\fP __get_os_level (void)"
+Get the OS level 
+.PP
+\fBReturns\fP
+.RS 4
+the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) 
+.RE
+.PP
+
+.SS "bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
+Check if current OS is at or above a given level 
+.PP
+\fBReturns\fP
+.RS 4
+true if the current OS level is at or above the given level, and false otherwise 
+.RE
+.PP
+
+.SS "bool __is_vef1_available ()"
+Check if the current z arch includes Vector Enhancements Facility 1 
+.PP
+\fBReturns\fP
+.RS 4
+true if Vector Enhancements Facility 1 instructions are available, and false otherwise 
+.RE
+.PP
+
+.SS "bool __is_vxf_available ()"
+Check if the current z arch includes Vector Extension Facility 
+.PP
+\fBReturns\fP
+.RS 4
+true if Vector Extension Facility instructions are available, and false otherwise 
+.RE
+.PP
 
 .SH "Author"
 .PP 

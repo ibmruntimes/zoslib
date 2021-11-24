@@ -1,0 +1,76 @@
+\hypertarget{zos-bpx_8cc}{}\doxysection{src/zos-\/bpx.cc File Reference}
+\label{zos-bpx_8cc}\index{src/zos-\/bpx.cc@{src/zos-\/bpx.cc}}
+{\ttfamily \#include \char`\"{}zos-\/bpx.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{zos-bpx_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}{\+\_\+\+P\+O\+S\+I\+X\+\_\+\+S\+O\+U\+R\+CE}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$\+\_\+\+\_\+ptr32 $\ast$\+\_\+\+\_\+ptr32 \mbox{\hyperlink{zos-bpx_8cc_ab93c7896ccd54c6a83d09c5cfdc1b293}{\+\_\+\+\_\+uss\+\_\+base\+\_\+address}} (void)
+\item 
+void \mbox{\hyperlink{zos-bpx_8cc_a40ccb73d1693e50f760406b9b1a7a251}{\+\_\+\+\_\+bpx4kil}} (int pid, int signal, void $\ast$signal\+\_\+options, int $\ast$return\+\_\+value, int $\ast$return\+\_\+code, int $\ast$reason\+\_\+code)
+\item 
+void \mbox{\hyperlink{zos-bpx_8cc_ab24b6a8b94f3d3576ade861d7dfcd597}{\+\_\+\+\_\+bpx4frk}} (int $\ast$pid, int $\ast$return\+\_\+code, int $\ast$reason\+\_\+code)
+\item 
+void \mbox{\hyperlink{zos-bpx_8cc_adc164aaec4309b6d0a4c7fbd3fa0848e}{\+\_\+\+\_\+bpx4ctw}} (unsigned int $\ast$secs, unsigned int $\ast$nsecs, unsigned int $\ast$event\+\_\+list, unsigned int $\ast$secs\+\_\+rem, unsigned int $\ast$nsecs\+\_\+rem, int $\ast$return\+\_\+value, int $\ast$return\+\_\+code, int $\ast$reason\+\_\+code)
+\item 
+void \mbox{\hyperlink{zos-bpx_8cc_ab6528e724f82a7d497bb0a2f6a979e21}{\+\_\+\+\_\+bpx4gth}} (int $\ast$input\+\_\+length, void $\ast$$\ast$input\+\_\+address, int $\ast$output\+\_\+length, void $\ast$$\ast$output\+\_\+address, int $\ast$return\+\_\+value, int $\ast$return\+\_\+code, int $\ast$reason\+\_\+code)
+\item 
+void \mbox{\hyperlink{zos-bpx_8cc_a18d7ea291df4db2bf197abb7dfd8f291}{\+\_\+\+\_\+bpx4lcr}} (int pathname\+\_\+length, char $\ast$pathname, int attributes\+\_\+length, \mbox{\hyperlink{zos-bpx_8h_a07a9577d6129da8993206435115f8dc0}{\+\_\+\+\_\+bpxyatt\+\_\+t}} $\ast$attributes, int $\ast$return\+\_\+value, int $\ast$return\+\_\+code, int $\ast$reason\+\_\+code)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{zos-bpx_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}\label{zos-bpx_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_POSIX\_SOURCE@{\_POSIX\_SOURCE}}
+\index{\_POSIX\_SOURCE@{\_POSIX\_SOURCE}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_POSIX\_SOURCE}{\_POSIX\_SOURCE}}
+{\footnotesize\ttfamily \#define \+\_\+\+P\+O\+S\+I\+X\+\_\+\+S\+O\+U\+R\+CE}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{zos-bpx_8cc_adc164aaec4309b6d0a4c7fbd3fa0848e}\label{zos-bpx_8cc_adc164aaec4309b6d0a4c7fbd3fa0848e}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_bpx4ctw@{\_\_bpx4ctw}}
+\index{\_\_bpx4ctw@{\_\_bpx4ctw}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_bpx4ctw()}{\_\_bpx4ctw()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+bpx4ctw (\begin{DoxyParamCaption}\item[{unsigned int $\ast$}]{secs,  }\item[{unsigned int $\ast$}]{nsecs,  }\item[{unsigned int $\ast$}]{event\+\_\+list,  }\item[{unsigned int $\ast$}]{secs\+\_\+rem,  }\item[{unsigned int $\ast$}]{nsecs\+\_\+rem,  }\item[{int $\ast$}]{return\+\_\+value,  }\item[{int $\ast$}]{return\+\_\+code,  }\item[{int $\ast$}]{reason\+\_\+code }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-bpx_8cc_ab24b6a8b94f3d3576ade861d7dfcd597}\label{zos-bpx_8cc_ab24b6a8b94f3d3576ade861d7dfcd597}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_bpx4frk@{\_\_bpx4frk}}
+\index{\_\_bpx4frk@{\_\_bpx4frk}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_bpx4frk()}{\_\_bpx4frk()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+bpx4frk (\begin{DoxyParamCaption}\item[{int $\ast$}]{pid,  }\item[{int $\ast$}]{return\+\_\+code,  }\item[{int $\ast$}]{reason\+\_\+code }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-bpx_8cc_ab6528e724f82a7d497bb0a2f6a979e21}\label{zos-bpx_8cc_ab6528e724f82a7d497bb0a2f6a979e21}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_bpx4gth@{\_\_bpx4gth}}
+\index{\_\_bpx4gth@{\_\_bpx4gth}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_bpx4gth()}{\_\_bpx4gth()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+bpx4gth (\begin{DoxyParamCaption}\item[{int $\ast$}]{input\+\_\+length,  }\item[{void $\ast$$\ast$}]{input\+\_\+address,  }\item[{int $\ast$}]{output\+\_\+length,  }\item[{void $\ast$$\ast$}]{output\+\_\+address,  }\item[{int $\ast$}]{return\+\_\+value,  }\item[{int $\ast$}]{return\+\_\+code,  }\item[{int $\ast$}]{reason\+\_\+code }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-bpx_8cc_a40ccb73d1693e50f760406b9b1a7a251}\label{zos-bpx_8cc_a40ccb73d1693e50f760406b9b1a7a251}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_bpx4kil@{\_\_bpx4kil}}
+\index{\_\_bpx4kil@{\_\_bpx4kil}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_bpx4kil()}{\_\_bpx4kil()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+bpx4kil (\begin{DoxyParamCaption}\item[{int}]{pid,  }\item[{int}]{signal,  }\item[{void $\ast$}]{signal\+\_\+options,  }\item[{int $\ast$}]{return\+\_\+value,  }\item[{int $\ast$}]{return\+\_\+code,  }\item[{int $\ast$}]{reason\+\_\+code }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-bpx_8cc_a18d7ea291df4db2bf197abb7dfd8f291}\label{zos-bpx_8cc_a18d7ea291df4db2bf197abb7dfd8f291}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_bpx4lcr@{\_\_bpx4lcr}}
+\index{\_\_bpx4lcr@{\_\_bpx4lcr}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_bpx4lcr()}{\_\_bpx4lcr()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+bpx4lcr (\begin{DoxyParamCaption}\item[{int}]{pathname\+\_\+length,  }\item[{char $\ast$}]{pathname,  }\item[{int}]{attributes\+\_\+length,  }\item[{\mbox{\hyperlink{zos-bpx_8h_a07a9577d6129da8993206435115f8dc0}{\+\_\+\+\_\+bpxyatt\+\_\+t}} $\ast$}]{attributes,  }\item[{int $\ast$}]{return\+\_\+value,  }\item[{int $\ast$}]{return\+\_\+code,  }\item[{int $\ast$}]{reason\+\_\+code }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-bpx_8cc_ab93c7896ccd54c6a83d09c5cfdc1b293}\label{zos-bpx_8cc_ab93c7896ccd54c6a83d09c5cfdc1b293}} 
+\index{zos-\/bpx.cc@{zos-\/bpx.cc}!\_\_uss\_base\_address@{\_\_uss\_base\_address}}
+\index{\_\_uss\_base\_address@{\_\_uss\_base\_address}!zos-\/bpx.cc@{zos-\/bpx.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_uss\_base\_address()}{\_\_uss\_base\_address()}}
+{\footnotesize\ttfamily char$\ast$ \+\_\+\+\_\+ptr32$\ast$ \+\_\+\+\_\+ptr32 \+\_\+\+\_\+uss\+\_\+base\+\_\+address (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+

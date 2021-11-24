@@ -1,0 +1,260 @@
+\hypertarget{zos-char-util_8cc}{}\doxysection{src/zos-\/char-\/util.cc File Reference}
+\label{zos-char-util_8cc}\index{src/zos-\/char-\/util.cc@{src/zos-\/char-\/util.cc}}
+{\ttfamily \#include \char`\"{}zos-\/char-\/util.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}zos-\/base.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}zos-\/io.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$\+\_\+\+Ccsid.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$iconv.\+h$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
+{\ttfamily \#include $<$unordered\+\_\+map$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class____cs_converter}{\+\_\+\+\_\+cs\+Converter}}
+\item 
+struct \mbox{\hyperlink{struct_int_hash}{Int\+Hash}}
+\item 
+class \mbox{\hyperlink{classfd_attribute_cache}{fd\+Attribute\+Cache}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{zos-char-util_8cc_a55c845b63ed7450afbd05ada9c9bfded}{\+\_\+\+A\+E\+\_\+\+B\+I\+M\+O\+D\+AL}}~1
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef unsigned long \mbox{\hyperlink{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}{fd\+\_\+attribute}}
+\item 
+typedef std\+::unordered\+\_\+map$<$ int, \mbox{\hyperlink{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}{fd\+\_\+attribute}}, \mbox{\hyperlink{struct_int_hash}{Int\+Hash}} $>$\+::const\+\_\+iterator \mbox{\hyperlink{zos-char-util_8cc_a55030292cd8a20bf0b443fb5d5865da9}{cursor\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \mbox{\hyperlink{zos-char-util_8cc_a8b9226967c1d98227eced5eee36301ef}{\+\_\+convert\+\_\+e2a}} (void $\ast$dst, const void $\ast$src, size\+\_\+t size)
+\item 
+void $\ast$ \mbox{\hyperlink{zos-char-util_8cc_aaa7f8746a5d3f1ec038b64ae2ff2ca8e}{\+\_\+convert\+\_\+a2e}} (void $\ast$dst, const void $\ast$src, size\+\_\+t size)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_a8f1aa901e609043fac0cdd29d6e57912}{\+\_\+\+\_\+guess\+\_\+ue}} (const void $\ast$src, size\+\_\+t size, char $\ast$errmsg, size\+\_\+t er\+\_\+size)
+\item 
+void \mbox{\hyperlink{zos-char-util_8cc_a94042c9c134f84c2b0828cc9bf990acf}{\+\_\+\+\_\+set\+\_\+ccsid\+\_\+guess\+\_\+buf\+\_\+size}} (int nbytes)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_acccc80c73ea31d4e50ffba89be63662b}{\+\_\+\+\_\+guess\+\_\+fd\+\_\+ue}} (int fd, char $\ast$errmsg, size\+\_\+t er\+\_\+size, int is\+\_\+new\+\_\+fd)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_acd80c9142c65aa99177bf1e5924d0f04}{\+\_\+\+\_\+guess\+\_\+ae}} (const void $\ast$src, size\+\_\+t size)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_a8eca1644db807544ac28030859762e9a}{conv\+\_\+utf8\+\_\+utf16}} (char $\ast$out, size\+\_\+t outsize, const char $\ast$in, size\+\_\+t insize)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_a727e1aecd09ef6c8a0f3b8003ef7d2f1}{conv\+\_\+utf16\+\_\+utf8}} (char $\ast$out, size\+\_\+t outsize, const char $\ast$in, size\+\_\+t insize)
+\item 
+void \mbox{\hyperlink{zos-char-util_8cc_a1c9b02f2c32d8ef0621b41b4142c8816}{\+\_\+\+\_\+fd\+\_\+close}} (int fd)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_a828c1d76a7773572f289e210fd94b09f}{\+\_\+\+\_\+file\+\_\+needs\+\_\+conversion}} (int fd)
+\item 
+int \mbox{\hyperlink{zos-char-util_8cc_a690294b495f591280cd4e76006cf86b4}{\+\_\+\+\_\+file\+\_\+needs\+\_\+conversion\+\_\+init}} (const char $\ast$name, int fd)
+\item 
+void \mbox{\hyperlink{zos-char-util_8cc_a471dc9324e1d385a16614bc1c2171d45}{\+\_\+\+\_\+set\+\_\+autocvt\+\_\+on\+\_\+fd\+\_\+stream}} (int fd, unsigned short ccsid, unsigned char txtflag, int on\+\_\+untagged\+\_\+only)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classfd_attribute_cache}{fd\+Attribute\+Cache}} \mbox{\hyperlink{zos-char-util_8cc_af43c53b9e21844b545fd8728e00d405d}{fdcache}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{zos-char-util_8cc_a55c845b63ed7450afbd05ada9c9bfded}\label{zos-char-util_8cc_a55c845b63ed7450afbd05ada9c9bfded}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_AE\_BIMODAL@{\_AE\_BIMODAL}}
+\index{\_AE\_BIMODAL@{\_AE\_BIMODAL}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_AE\_BIMODAL}{\_AE\_BIMODAL}}
+{\footnotesize\ttfamily \#define \+\_\+\+A\+E\+\_\+\+B\+I\+M\+O\+D\+AL~1}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{zos-char-util_8cc_a55030292cd8a20bf0b443fb5d5865da9}\label{zos-char-util_8cc_a55030292cd8a20bf0b443fb5d5865da9}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!cursor\_t@{cursor\_t}}
+\index{cursor\_t@{cursor\_t}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{cursor\_t}{cursor\_t}}
+{\footnotesize\ttfamily typedef std\+::unordered\+\_\+map$<$int, \mbox{\hyperlink{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}{fd\+\_\+attribute}}, \mbox{\hyperlink{struct_int_hash}{Int\+Hash}}$>$\+::const\+\_\+iterator \mbox{\hyperlink{zos-char-util_8cc_a55030292cd8a20bf0b443fb5d5865da9}{cursor\+\_\+t}}}
+
+\mbox{\Hypertarget{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}\label{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!fd\_attribute@{fd\_attribute}}
+\index{fd\_attribute@{fd\_attribute}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{fd\_attribute}{fd\_attribute}}
+{\footnotesize\ttfamily typedef unsigned long \mbox{\hyperlink{zos-char-util_8cc_a95ec3b81d9a25978296e95e389e9665e}{fd\+\_\+attribute}}}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{zos-char-util_8cc_a1c9b02f2c32d8ef0621b41b4142c8816}\label{zos-char-util_8cc_a1c9b02f2c32d8ef0621b41b4142c8816}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_fd\_close@{\_\_fd\_close}}
+\index{\_\_fd\_close@{\_\_fd\_close}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_fd\_close()}{\_\_fd\_close()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+fd\+\_\+close (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
+
+Unsets fd attributes 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{zos-char-util_8cc_a828c1d76a7773572f289e210fd94b09f}\label{zos-char-util_8cc_a828c1d76a7773572f289e210fd94b09f}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_file\_needs\_conversion@{\_\_file\_needs\_conversion}}
+\index{\_\_file\_needs\_conversion@{\_\_file\_needs\_conversion}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_file\_needs\_conversion()}{\_\_file\_needs\_conversion()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+file\+\_\+needs\+\_\+conversion (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
+
+Determines if file descriptor needs conversion from E\+B\+C\+D\+IC to A\+S\+C\+II. Call \+\_\+\+\_\+file\+\_\+needs\+\_\+conversion\+\_\+init first before calling this function. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns 1 if file needs conversion, 0 if not. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_a690294b495f591280cd4e76006cf86b4}\label{zos-char-util_8cc_a690294b495f591280cd4e76006cf86b4}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_file\_needs\_conversion\_init@{\_\_file\_needs\_conversion\_init}}
+\index{\_\_file\_needs\_conversion\_init@{\_\_file\_needs\_conversion\_init}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_file\_needs\_conversion\_init()}{\_\_file\_needs\_conversion\_init()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+file\+\_\+needs\+\_\+conversion\+\_\+init (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{int}]{fd }\end{DoxyParamCaption})}
+
+Determines if file needs conversion from E\+B\+C\+D\+IC to A\+S\+C\+II. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em name} & path to file \\
+\hline
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns 1 if file needs conversion, 0 if not. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_acd80c9142c65aa99177bf1e5924d0f04}\label{zos-char-util_8cc_acd80c9142c65aa99177bf1e5924d0f04}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_guess\_ae@{\_\_guess\_ae}}
+\index{\_\_guess\_ae@{\_\_guess\_ae}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_guess\_ae()}{\_\_guess\_ae()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+guess\+\_\+ae (\begin{DoxyParamCaption}\item[{const void $\ast$}]{src,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Guess if string is A\+S\+C\+II or E\+B\+C\+D\+IC. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src} & -\/ character string. \\
+\hline
+\mbox{\texttt{ in}}  & {\em size} & -\/ number of bytes to analyze. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+guessed C\+C\+S\+ID. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_acccc80c73ea31d4e50ffba89be63662b}\label{zos-char-util_8cc_acccc80c73ea31d4e50ffba89be63662b}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_guess\_fd\_ue@{\_\_guess\_fd\_ue}}
+\index{\_\_guess\_fd\_ue@{\_\_guess\_fd\_ue}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_guess\_fd\_ue()}{\_\_guess\_fd\_ue()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+guess\+\_\+fd\+\_\+ue (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{char $\ast$}]{errmsg,  }\item[{size\+\_\+t}]{er\+\_\+size,  }\item[{int}]{is\+\_\+new\+\_\+fd }\end{DoxyParamCaption})}
+
+Guess if string is U\+T\+F8 (A\+S\+C\+II) or E\+B\+C\+D\+IC based on the first C\+C\+S\+I\+D\+\_\+\+G\+U\+E\+S\+S\+\_\+\+B\+U\+F\+\_\+\+S\+I\+Z\+E\+\_\+\+E\+N\+V\+AR of the file associated with the given fd. C\+C\+S\+I\+D\+\_\+\+G\+U\+E\+S\+S\+\_\+\+B\+U\+F\+\_\+\+S\+I\+Z\+E\+\_\+\+E\+N\+V\+AR is default at 4KB. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em fd} & -\/ open file descriptor to guess. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+guessed C\+C\+S\+ID (819 for U\+T\+F8, 1047 for E\+B\+C\+D\+IC; otherwise 65535 for B\+I\+N\+A\+RY and, if not N\+U\+LL, errmsg will contain details). 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_a8f1aa901e609043fac0cdd29d6e57912}\label{zos-char-util_8cc_a8f1aa901e609043fac0cdd29d6e57912}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_guess\_ue@{\_\_guess\_ue}}
+\index{\_\_guess\_ue@{\_\_guess\_ue}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_guess\_ue()}{\_\_guess\_ue()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+guess\+\_\+ue (\begin{DoxyParamCaption}\item[{const void $\ast$}]{src,  }\item[{size\+\_\+t}]{size,  }\item[{char $\ast$}]{errmsg,  }\item[{size\+\_\+t}]{er\+\_\+size }\end{DoxyParamCaption})}
+
+Guess if string is U\+T\+F8 (A\+S\+C\+II) or E\+B\+C\+D\+IC. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src} & -\/ character string. \\
+\hline
+\mbox{\texttt{ in}}  & {\em size} & -\/ number of bytes to analyze. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+guessed C\+C\+S\+ID (819 for U\+T\+F8, 1047 for E\+B\+C\+D\+IC; otherwise 65535 for B\+I\+N\+A\+RY and, if not N\+U\+LL, errmsg will contain details). 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_a471dc9324e1d385a16614bc1c2171d45}\label{zos-char-util_8cc_a471dc9324e1d385a16614bc1c2171d45}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_set\_autocvt\_on\_fd\_stream@{\_\_set\_autocvt\_on\_fd\_stream}}
+\index{\_\_set\_autocvt\_on\_fd\_stream@{\_\_set\_autocvt\_on\_fd\_stream}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_set\_autocvt\_on\_fd\_stream()}{\_\_set\_autocvt\_on\_fd\_stream()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+set\+\_\+autocvt\+\_\+on\+\_\+fd\+\_\+stream (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{unsigned short}]{ccsid,  }\item[{unsigned char}]{txtflag,  }\item[{int}]{on\+\_\+untagged\+\_\+only }\end{DoxyParamCaption})}
+
+Sets file descriptor to auto convert. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em fd} & -\/ file descriptor. \\
+\hline
+\mbox{\texttt{ in}}  & {\em ccsid} & -\/ C\+C\+S\+ID to auto convert to. \\
+\hline
+\mbox{\texttt{ in}}  & {\em txtflag} & -\/ Indicates if ccsid is text. \\
+\hline
+\mbox{\texttt{ in}}  & {\em on\+\_\+untagged\+\_\+only} & -\/ applies only to untagged \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{zos-char-util_8cc_a94042c9c134f84c2b0828cc9bf990acf}\label{zos-char-util_8cc_a94042c9c134f84c2b0828cc9bf990acf}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_\_set\_ccsid\_guess\_buf\_size@{\_\_set\_ccsid\_guess\_buf\_size}}
+\index{\_\_set\_ccsid\_guess\_buf\_size@{\_\_set\_ccsid\_guess\_buf\_size}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_set\_ccsid\_guess\_buf\_size()}{\_\_set\_ccsid\_guess\_buf\_size()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+set\+\_\+ccsid\+\_\+guess\+\_\+buf\+\_\+size (\begin{DoxyParamCaption}\item[{int}]{nbytes }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-char-util_8cc_aaa7f8746a5d3f1ec038b64ae2ff2ca8e}\label{zos-char-util_8cc_aaa7f8746a5d3f1ec038b64ae2ff2ca8e}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_convert\_a2e@{\_convert\_a2e}}
+\index{\_convert\_a2e@{\_convert\_a2e}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_convert\_a2e()}{\_convert\_a2e()}}
+{\footnotesize\ttfamily void$\ast$ \+\_\+convert\+\_\+a2e (\begin{DoxyParamCaption}\item[{void $\ast$}]{dst,  }\item[{const void $\ast$}]{src,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Convert from A\+S\+C\+II to E\+B\+C\+D\+IC 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em dst} & Destination string (must be pre-\/allocated). \\
+\hline
+\mbox{\texttt{ in}}  & {\em src} & Source string. \\
+\hline
+\mbox{\texttt{ in}}  & {\em size} & Number of bytes to convert \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns destination string. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_a8b9226967c1d98227eced5eee36301ef}\label{zos-char-util_8cc_a8b9226967c1d98227eced5eee36301ef}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!\_convert\_e2a@{\_convert\_e2a}}
+\index{\_convert\_e2a@{\_convert\_e2a}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{\_convert\_e2a()}{\_convert\_e2a()}}
+{\footnotesize\ttfamily void$\ast$ \+\_\+convert\+\_\+e2a (\begin{DoxyParamCaption}\item[{void $\ast$}]{dst,  }\item[{const void $\ast$}]{src,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Convert from E\+B\+C\+D\+IC to A\+S\+C\+II. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em dst} & Destination string (must be pre-\/allocated). \\
+\hline
+\mbox{\texttt{ in}}  & {\em src} & Source string. \\
+\hline
+\mbox{\texttt{ in}}  & {\em size} & Number of bytes to convert. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns destination string. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos-char-util_8cc_a727e1aecd09ef6c8a0f3b8003ef7d2f1}\label{zos-char-util_8cc_a727e1aecd09ef6c8a0f3b8003ef7d2f1}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!conv\_utf16\_utf8@{conv\_utf16\_utf8}}
+\index{conv\_utf16\_utf8@{conv\_utf16\_utf8}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{conv\_utf16\_utf8()}{conv\_utf16\_utf8()}}
+{\footnotesize\ttfamily int conv\+\_\+utf16\+\_\+utf8 (\begin{DoxyParamCaption}\item[{char $\ast$}]{,  }\item[{size\+\_\+t}]{,  }\item[{const char $\ast$}]{,  }\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+Convert string from U\+T\+F16 to U\+T\+F8. \mbox{\Hypertarget{zos-char-util_8cc_a8eca1644db807544ac28030859762e9a}\label{zos-char-util_8cc_a8eca1644db807544ac28030859762e9a}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!conv\_utf8\_utf16@{conv\_utf8\_utf16}}
+\index{conv\_utf8\_utf16@{conv\_utf8\_utf16}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{conv\_utf8\_utf16()}{conv\_utf8\_utf16()}}
+{\footnotesize\ttfamily int conv\+\_\+utf8\+\_\+utf16 (\begin{DoxyParamCaption}\item[{char $\ast$}]{,  }\item[{size\+\_\+t}]{,  }\item[{const char $\ast$}]{,  }\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+Convert string from U\+T\+F8 to U\+T\+F16 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{zos-char-util_8cc_af43c53b9e21844b545fd8728e00d405d}\label{zos-char-util_8cc_af43c53b9e21844b545fd8728e00d405d}} 
+\index{zos-\/char-\/util.cc@{zos-\/char-\/util.cc}!fdcache@{fdcache}}
+\index{fdcache@{fdcache}!zos-\/char-\/util.cc@{zos-\/char-\/util.cc}}
+\doxysubsubsection{\texorpdfstring{fdcache}{fdcache}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classfd_attribute_cache}{fd\+Attribute\+Cache}} fdcache}
+

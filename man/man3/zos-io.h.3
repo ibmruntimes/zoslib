@@ -1,0 +1,144 @@
+.TH "include/zos-io.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/zos-io.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdarg\&.h>\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBdprintf\fP (int fd, const char *,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBvdprintf\fP (int fd, const char *, va_list ap)"
+.br
+.ti -1c
+.RI "void \fB__dump\fP (int fd, const void *addr, size_t len, size_t bw)"
+.br
+.ti -1c
+.RI "void \fB__dump_title\fP (int fd, const void *addr, size_t len, size_t bw, const char *,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "void \fB__console\fP (const void *p_in, int len_i)"
+.br
+.ti -1c
+.RI "int \fB__console_printf\fP (const char *fmt,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fB__find_file_in_path\fP (char *out, int size, const char *envvar, const char *file)"
+.br
+.ti -1c
+.RI "int \fB__chgfdccsid\fP (int fd, unsigned short ccsid)"
+.br
+.ti -1c
+.RI "int \fB__getfdccsid\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__setfdccsid\fP (int fd, int t_ccsid)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int __chgfdccsid (int fd, unsigned short ccsid)"
+Change file descriptor to CCSID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.br
+\fIccsid\fP CCSID\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
+.SS "void __console (const void * p_in, int len_i)"
+Print given buffer to MVS Console\&. 
+.SS "int __console_printf (const char * fmt,  \&.\&.\&.)"
+Print formatted data to MVS Console\&. 
+.SS "void __dump (int fd, const void * addr, size_t len, size_t bw)"
+Dump to console\&. 
+.SS "void __dump_title (int fd, const void * addr, size_t len, size_t bw, const char *,  \&.\&.\&.)"
+Dump title to console\&. 
+.SS "int __find_file_in_path (char * out, int size, const char * envvar, const char * file)"
+Finds file in a given path 
+.PP
+\fBParameters\fP
+.RS 4
+\fIout\fP Found path string 
+.br
+\fIsize\fP Max size of path string 
+.br
+\fIenvar\fP Environment variable to search 
+.br
+\fIfile\fP file to search 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns non-zero if successful, 0 if not found\&. 
+.RE
+.PP
+
+.SS "int __getfdccsid (int fd)"
+Get file descriptor CCSID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns file descriptors ccsid\&. 
+.RE
+.PP
+
+.SS "int __setfdccsid (int fd, int t_ccsid)"
+Set file descriptor to the provided CCSID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.br
+\fIt_ccsid\fP CCSID\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
+.SS "int dprintf (int fd, const char *,  \&.\&.\&.)"
+Debug Printf\&. 
+.PP
+\fBReturns\fP
+.RS 4
+returns total number of bytes written to file descriptor 
+.RE
+.PP
+
+.SS "int vdprintf (int fd, const char *, va_list ap)"
+Variadic Debug Printf\&. 
+.PP
+\fBReturns\fP
+.RS 4
+returns total number of bytes written to file descriptor 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

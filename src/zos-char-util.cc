@@ -8,16 +8,16 @@
 
 #define _AE_BIMODAL 1
 #include "zos-char-util.h"
-#include "zos-io.h"
 #include "zos-base.h"
+#include "zos-io.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
 #include <_Ccsid.h>
+#include <fcntl.h>
 #include <iconv.h>
-#include <sys/stat.h>
 #include <mutex>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <unordered_map>
 
 #ifdef __cplusplus
@@ -26,22 +26,24 @@ extern "C" {
 
 static int ccsid_guess_buf_size = 4096;
 
-static int utf8scan(const unsigned char *str, unsigned size, char *errmsg, size_t sz) {
+static int utf8scan(const unsigned char *str, unsigned size, char *errmsg,
+                    size_t sz) {
   static int byte0_next_state[256] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,
-    2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,
-    3,  -1, -1, -1, -1, -1, -1, -1, -1};
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1,  1,  1,  1,  1,  1,
+      1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+      1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
+      2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  3,  -1, -1, -1, -1,
+      -1, -1, -1, -1};
 
   unsigned char onebyte;
   int bytes;
@@ -50,7 +52,7 @@ static int utf8scan(const unsigned char *str, unsigned size, char *errmsg, size_
   unsigned char d[4];
   size_t offset = 0;
   int linenum = 1;
-  onebyte = str[offset]; 
+  onebyte = str[offset];
   while (onebyte && offset < size) {
     switch (state) {
     case 0:
@@ -193,7 +195,7 @@ static int utf8scan(const unsigned char *str, unsigned size, char *errmsg, size_
       return -1;
     }
     ++offset;
-    onebyte = str[offset]; 
+    onebyte = str[offset];
   }
   if (state != 0) {
     snprintf(errmsg, sz,
@@ -227,7 +229,7 @@ void *_convert_a2e(void *dst, const void *src, size_t size) {
   return __convert_one_to_one(__iso88591_ibm1047, dst, size, src);
 }
 
-int __guess_ue(const void* src, size_t size, char *errmsg, size_t er_size) {
+int __guess_ue(const void *src, size_t size, char *errmsg, size_t er_size) {
   const int ERR_MG_SIZE = 1024;
   char utf8msg[ERR_MG_SIZE];
   char ebcdicmsg[ERR_MG_SIZE];
@@ -235,14 +237,16 @@ int __guess_ue(const void* src, size_t size, char *errmsg, size_t er_size) {
   if (utf8scan((unsigned char *)src, size, utf8msg, sizeof(utf8msg)) == 0)
     return 819;
 
-  unsigned e_size = strlen_e((unsigned char *)src, size); 
-  if (e_size == size) return 1047;
+  unsigned e_size = strlen_e((unsigned char *)src, size);
+  if (e_size == size)
+    return 1047;
 
   if (errmsg) {
     snprintf(ebcdicmsg, sizeof(ebcdicmsg),
              "Character that does not belong to codepage 1047 was found");
 
-    snprintf(errmsg, er_size, "unicode: %s, ebcdic-1047: %s", utf8msg, ebcdicmsg);
+    snprintf(errmsg, er_size, "unicode: %s, ebcdic-1047: %s", utf8msg,
+             ebcdicmsg);
   }
   return 65535;
 }
@@ -253,7 +257,7 @@ extern "C" void __set_ccsid_guess_buf_size(int nbytes) {
 
 int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd) {
   if (!is_new_fd && lseek(fd, 0, SEEK_SET) < 0) {
-    perror("guess_ue:lseek"); 
+    perror("guess_ue:lseek");
     return -1;
   }
 
@@ -273,7 +277,7 @@ int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd) {
     goto quit;
   }
   buffer[bytes] = '\0';
-  
+
   ccsid = __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
 quit:
   if (ccsid_guess_buf_size > 4096)
@@ -354,8 +358,7 @@ size_t __a2e_s(char *string) {
   }
   return __a2e_l(string, strlen(string));
 }
-#endif  // #if DEBUG_ONLY
-
+#endif // #if DEBUG_ONLY
 
 __auto_ascii::__auto_ascii(void) {
   ascii_mode = __isASCII();
@@ -374,7 +377,6 @@ __conv_off::__conv_off(void) {
 }
 
 __conv_off::~__conv_off(void) { __ae_autoconvert_state(convert_state); }
-
 
 class __csConverter {
   int fr_id;
@@ -429,16 +431,13 @@ public:
 static __csConverter utf16_to_8(1208, 1200);
 static __csConverter utf8_to_16(1200, 1208);
 
-int conv_utf8_utf16(char *out, size_t outsize, const char *in,
-                               size_t insize) {
+int conv_utf8_utf16(char *out, size_t outsize, const char *in, size_t insize) {
   return utf8_to_16.conv(out, outsize, in, insize);
 }
 
-int conv_utf16_utf8(char *out, size_t outsize, const char *in,
-                               size_t insize) {
+int conv_utf16_utf8(char *out, size_t outsize, const char *in, size_t insize) {
   return utf16_to_8.conv(out, outsize, in, insize);
 }
-
 
 struct IntHash {
   size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
@@ -477,9 +476,7 @@ public:
 
 fdAttributeCache fdcache;
 
-void __fd_close(int fd) {
-  fdcache.unset_attribute(fd);
-}
+void __fd_close(int fd) { fdcache.unset_attribute(fd); }
 
 int __file_needs_conversion(int fd) {
   if (__get_no_tag_read_behaviour() == __NO_TAG_READ_STRICT)
@@ -545,8 +542,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
 }
 
 void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
-                                unsigned char txtflag,
-                                int on_untagged_only) {
+                                unsigned char txtflag, int on_untagged_only) {
   struct file_tag tag;
 
   tag.ft_ccsid = ccsid;

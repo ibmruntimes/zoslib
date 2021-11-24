@@ -1,0 +1,110 @@
+.TH "src/zos-sys-info.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-sys-info.cc
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-sys\-info\&.h'\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <unistd\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fB__get_num_online_cpus\fP (void)"
+.br
+.ti -1c
+.RI "int \fB__get_num_frames\fP (void)"
+.br
+.ti -1c
+.RI "\fBoslvl_t\fP \fB__get_os_level\fP (void)"
+.br
+.ti -1c
+.RI "bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
+.br
+.ti -1c
+.RI "bool \fB__is_stfle_available\fP ()"
+.br
+.ti -1c
+.RI "bool \fB__is_vxf_available\fP ()"
+.br
+.ti -1c
+.RI "bool \fB__is_vef1_available\fP ()"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int __get_num_frames (void)"
+Get the number of frames currently available to the system 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of available frames 
+.RE
+.PP
+
+.SS "int __get_num_online_cpus (void)"
+Get the number of online CPUs 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of online CPUs 
+.RE
+.PP
+
+.SS "\fBoslvl_t\fP __get_os_level (void)"
+Get the OS level 
+.PP
+\fBReturns\fP
+.RS 4
+the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) 
+.RE
+.PP
+
+.SS "bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
+Check if current OS is at or above a given level 
+.PP
+\fBReturns\fP
+.RS 4
+true if the current OS level is at or above the given level, and false otherwise 
+.RE
+.PP
+
+.SS "bool __is_stfle_available ()"
+Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available 
+.PP
+\fBReturns\fP
+.RS 4
+true if the STFLE instruction is available 
+.RE
+.PP
+
+.SS "bool __is_vef1_available ()"
+Check if the current z arch includes Vector Enhancements Facility 1 
+.PP
+\fBReturns\fP
+.RS 4
+true if Vector Enhancements Facility 1 instructions are available, and false otherwise 
+.RE
+.PP
+
+.SS "bool __is_vxf_available ()"
+Check if the current z arch includes Vector Extension Facility 
+.PP
+\fBReturns\fP
+.RS 4
+true if Vector Extension Facility instructions are available, and false otherwise 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.
