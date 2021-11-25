@@ -6,8 +6,8 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZOS_TIME_H_
-#define ZOS_TIME_H_
+#ifndef ZOS_SYS_EVENTFD_H_
+#define ZOS_SYS_EVENTFD_H_
 
 #define __XPLAT 1
 
@@ -33,7 +33,7 @@ int (*eventfd)(unsigned int initval, int flags);
 #endif
 
 #else //!(__EDC_TARGET < 0x42050000)
-#include_next <sys/time.h>
+#include_next <sys/eventfd.h>
 #endif
 
 #endif

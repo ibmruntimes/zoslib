@@ -10,6 +10,7 @@
 #include "zos-base.h"
 
 #include <errno.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <pthread.h>
 #include <stdio.h>
