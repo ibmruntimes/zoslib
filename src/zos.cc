@@ -43,6 +43,8 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/epoll.h>
+#include <sys/eventfd.h>
 
 #include <exception>
 #include <mutex>
@@ -2772,9 +2774,6 @@ void __zinit::populateLEFunctionPointers() {
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
     clock_gettime = (typeof(clock_gettime))((unsigned long*)__get_libvec_base() + (0xDAD<<1));
     futimes = (typeof(futimes))((unsigned long*)__get_libvec_base() + (0xDE2<<1));
-<<<<<<< HEAD
-    lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE5<<1));
-=======
     lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE6<<1));
     epoll_create = (typeof(epoll_create))((unsigned long*)__get_libvec_base() + (0xDAF<<1));
     epoll_create1 = (typeof(epoll_create1))((unsigned long*)__get_libvec_base() + (0xDB0<<1));
@@ -2782,7 +2781,6 @@ void __zinit::populateLEFunctionPointers() {
     epoll_wait = (typeof(epoll_wait))((unsigned long*)__get_libvec_base() + (0xDB2<<1));
     epoll_pwait = (typeof(epoll_pwait))((unsigned long*)__get_libvec_base() + (0xDB3<<1));
     eventfd = (typeof(eventfd))((unsigned long*)__get_libvec_base() + (0xDB4<<1));
->>>>>>> src: add epoll and eventfd functions
   }
   else {
     clock_gettime = __clock_gettime;
@@ -2998,3 +2996,32 @@ extern "C" bool __doLogMemoryWarning() {
 }
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
+
+// C Library Extensions
+//-----------------------------------------------------------------
+
+int __pipe(int [2]) asm("pipe");
+int __open(const char *filename, int opts, ...) asm("@@A00144");
+
+extern "C" int __open_ascii(const char *filename, int opts, ...) {
+  int fd;
+  va_list ap;
+  va_start(ap, opts);
+  fd = __open(filename, opts, ap);
+  if (fd && (opts & (O_CREAT|O_WRONLY))) {
+    __chgfdccsid(fd, 819);
+  }
+  va_end(ap);
+  return fd;
+}
+
+extern "C" int __pipe_ascii(int fd[2]) {
+  int ret = __pipe(fd);
+  if (ret < 0) return ret;
+
+  if (__getfdccsid(fd[0]) == 0)
+    __chgfdccsid(fd[0], 819);
+  if (__getfdccsid(fd[1]) == 0)
+    __chgfdccsid(fd[1], 819);
+  return ret;
+}
