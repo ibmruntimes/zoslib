@@ -9,24 +9,34 @@
 #ifndef ZOS_SYS_TIME_H_
 #define ZOS_SYS_TIME_H_
 
+#define __XPLAT 1
+
 #if (__EDC_TARGET < 0x42050000)
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 /**
  * Changes the access and modification times of a file
  * \param [in] fd file descriptor to modify
  * \param [in] tv timeval structure containing new time
  * \return return 0 for success, or -1 for failure.
  */
-extern int (*futimes)(int fd, const struct timeval tv[2]);
+int (*futimes)(int fd, const struct timeval tv[2]);
 /**
  * Changes the access and modification times of a file
  * \param [in] filename file path to modify
  * \param [in] tv timeval structure containing new time
  * \return return 0 for success, or -1 for failure.
  */
-extern int (*lutimes)(const char *filename, const struct timeval tv[2]);
+int (*lutimes)(const char *filename, const struct timeval tv[2]);
+#if defined(__cplusplus)
+};
+#endif
 
 #include_next <sys/time.h>
-#else
+
+#else //!(__EDC_TARGET < 0x42050000)
 #include_next <sys/time.h>
 #endif
 

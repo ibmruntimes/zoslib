@@ -29,6 +29,10 @@
 #define EPOLLERR         0x00000020
 #define EPOLLHUP         0x00000040
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 typedef union epoll_data {
     void *      ptr;
     int         fd;
@@ -41,12 +45,18 @@ struct epoll_event {
     epoll_data_t    data;
 };
 
-extern int (*epoll_create)(int);
-extern int (*epoll_create1)(int);
-extern int (*epoll_ctl)(int, int, int, struct epoll_event *);
-extern int (*epoll_wait)(int, struct epoll_event *, int, int);
-extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
-#else
+int (*epoll_create)(int);
+int (*epoll_create1)(int);
+int (*epoll_ctl)(int, int, int, struct epoll_event *);
+int (*epoll_wait)(int, struct epoll_event *, int, int);
+int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
+
+#if defined(__cplusplus)
+};
+#endif
+
+#else //!(__EDC_TARGET < 0x42050000)
 #include_next <sys/epoll.h>
 #endif
+
 #endif

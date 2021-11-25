@@ -704,6 +704,33 @@ void __memprintf(const char *format, ...) {
   va_end(args);
 
   fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
+
+// C Library Overrides
+//-----------------------------------------------------------------
+int __pipe(int [2]) asm("pipe");
+int __open(const char *filename, int opts, ...) asm("@@A00144");
+
+int __open_ascii(const char *filename, int opts, ...) {
+  int fd;
+  va_list ap;
+  va_start(ap, opts);
+  fd = __open(filename, opts, ap);
+  if (fd && (opts & (O_CREAT|O_WRONLY))) {
+    __chgfdccsid(fd, 819);
+  }
+  va_end(ap);
+  return fd;
+}
+
+int __pipe_ascii(int fd[2]) {
+  int ret = __pipe(fd);
+  if (ret < 0) return ret;
+
+  if (__getfdccsid(fd[0]) == 0)
+    __chgfdccsid(fd[0], 819);
+  if (__getfdccsid(fd[1]) == 0)
+    __chgfdccsid(fd[1], 819);
+  return ret;
 }
 
 #ifdef __cplusplus

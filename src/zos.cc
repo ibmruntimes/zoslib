@@ -94,10 +94,6 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
-#if ZOSLIB_C_LE_OVERRIDE
-int (*pipe)(int [2]);
-int (*open)(const char *, int, ... );
-#endif
 
 #if (__EDC_TARGET < 0x42050000)
 int (*futimes)(int fd, const struct timeval tv[2]);
