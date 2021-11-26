@@ -10,6 +10,12 @@
 #define ZOS_TIME_H_
 
 #if (__EDC_TARGET < 0x42050000)
+#include_next <time.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 typedef enum {
   CLOCK_REALTIME,
   CLOCK_MONOTONIC,
@@ -17,9 +23,6 @@ typedef enum {
   CLOCK_THREAD_CPUTIME_ID
 } clockid_t;
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 /**
  * Retrieves the time of the specified clock id
  * \param [in] clk_id clock id.
@@ -30,8 +33,6 @@ int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
 #if defined(__cplusplus)
 };
 #endif
-
-#include_next <time.h>
 
 #else //!(__EDC_TARGET < 0x42050000)
 #include_next <time.h>

@@ -12,6 +12,9 @@
 #define __XPLAT 1
 
 #if (__EDC_TARGET < 0x42050000)
+
+// Guard since libuv implement some epoll functions
+#if defined(ZOSLIB_OVERRIDE_SYS_EPOLL)
 /* epoll_create options */
 #define EPOLL_CLOEXEC    1
 
@@ -53,6 +56,7 @@ int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
 
 #if defined(__cplusplus)
 };
+#endif
 #endif
 
 #else //!(__EDC_TARGET < 0x42050000)

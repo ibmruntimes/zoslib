@@ -16,6 +16,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
 /**
  * Changes the access and modification times of a file
  * \param [in] fd file descriptor to modify
@@ -30,6 +31,7 @@ int (*futimes)(int fd, const struct timeval tv[2]);
  * \return return 0 for success, or -1 for failure.
  */
 int (*lutimes)(const char *filename, const struct timeval tv[2]);
+
 #if defined(__cplusplus)
 };
 #endif

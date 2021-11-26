@@ -94,7 +94,6 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
-
 static int shmid_value(void);
 
 #ifndef max
@@ -2416,7 +2415,7 @@ extern "C" int __update_envar_names(zoslib_config_t *const config) {
   return zinit_ptr->setEnvarHelpMap();
 }
 
-void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
+extern "C" void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   /* Eyecatcher .C.E.E.1 */
   static const char XPLINK_EYECATCHER[] = {0x00, 0xC3, 0x00, 0xC5,
                                            0x00, 0xC5, 0x00, 0xF1};
@@ -2552,7 +2551,7 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   return new_dsaptr;
 }
 
-int *__get_stack_start() {
+extern "C" int *__get_stack_start() {
   if (gettid() == 1 && __main_thread_stack_top_address != 0)
     return __main_thread_stack_top_address;
 
@@ -2569,7 +2568,7 @@ int *__get_stack_start() {
   return nullptr;
 }
 
-unsigned long __get_libvec_base() {
+extern "C" unsigned long __get_libvec_base() {
   unsigned long psalaa = ((int* __ptr32)(1208))[0];
   unsigned long lca64 = *(unsigned long*)(psalaa + 88);
   unsigned long caa64 = *(unsigned long*)(lca64 + 8);
@@ -2759,11 +2758,13 @@ void __zinit::populateLEFunctionPointers() {
     clock_gettime = (typeof(clock_gettime))((unsigned long*)__get_libvec_base() + (0xDAD<<1));
     futimes = (typeof(futimes))((unsigned long*)__get_libvec_base() + (0xDE2<<1));
     lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE6<<1));
+#if defined(ZOSLIB_OVERRIDE_SYS_EPOLL)
     epoll_create = (typeof(epoll_create))((unsigned long*)__get_libvec_base() + (0xDAF<<1));
     epoll_create1 = (typeof(epoll_create1))((unsigned long*)__get_libvec_base() + (0xDB0<<1));
     epoll_ctl = (typeof(epoll_ctl))((unsigned long*)__get_libvec_base() + (0xDB1<<1));
     epoll_wait = (typeof(epoll_wait))((unsigned long*)__get_libvec_base() + (0xDB2<<1));
     epoll_pwait = (typeof(epoll_pwait))((unsigned long*)__get_libvec_base() + (0xDB3<<1));
+#endif
     eventfd = (typeof(eventfd))((unsigned long*)__get_libvec_base() + (0xDB4<<1));
   }
   else {
