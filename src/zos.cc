@@ -1124,7 +1124,7 @@ static void *__iarv64_alloc(int segs, const char *token) {
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
     if (mem_account())
       dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set "
-                 "to ENOMEM");
+                 "to ENOMEM\n");
     errno = ENOMEM; // mimic behaviour of malloc(0)
     return 0;
   }
@@ -1151,9 +1151,9 @@ static void *__iarv64_alloc(int segs, const char *token) {
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), (int)(pthread_self().__ & 0x7fffffff), parm.xorigin,
-            (unsigned long)(segs * 1024 * 1024),
-            (unsigned long)(segs * 1024 * 1024), rc, reason);
+            getpid(), gettid(), parm.xorigin,
+            (unsigned long)segs * kMegaByte,
+            (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
   }
@@ -1166,7 +1166,7 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
     if (mem_account())
       dprintf(2, "WARNING: ignoring request to allocate 0 segments, errno set "
-                 "to ENOMEM");
+                 "to ENOMEM\n");
     errno = ENOMEM; // mimic behaviour of malloc(0)
     return 0;
   }
@@ -1195,9 +1195,9 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), (int)(pthread_self().__ & 0x7fffffff), parm.xorigin,
-            (unsigned long)(segs * 1024 * 1024),
-            (unsigned long)(segs * 1024 * 1024), rc, reason);
+            getpid(), gettid(), parm.xorigin,
+            (unsigned long)segs * kMegaByte,
+            (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
   }
@@ -1220,7 +1220,7 @@ static int __iarv64_free(void *ptr, const char *token) {
   rc = __iarv64(&parm, &reason);
   if (mem_account())
     dprintf(2, "__iarv64_free pid %d tid %d ptr=%p rc=%lld\n", getpid(),
-            (int)(pthread_self().__ & 0x7fffffff), org, rc);
+            gettid(), org, rc);
   return rc;
 }
 
@@ -1236,9 +1236,9 @@ static void *__mo_alloc(int segs) {
     fprintf(stderr,
             "__moservices-alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%d, "
             "iarv64_rc=%d\n",
-            getpid(), (int)(pthread_self().__ & 0x7fffffff), p,
-            (unsigned long)(segs * 1024 * 1024),
-            (unsigned long)(segs * 1024 * 1024), rc, moparm.__mopl_iarv64_rc);
+            getpid(), gettid(), p,
+            (unsigned long)segs * kMegaByte,
+            (unsigned long)segs * kMegaByte, rc, moparm.__mopl_iarv64_rc);
   }
   if (rc == 0 && moparm.__mopl_iarv64_rc == 0) {
     return p;
@@ -1251,7 +1251,7 @@ static int __mo_free(void *ptr) {
   int rc = __moservices(__MO_DETACH, 0, NULL, &ptr);
   if (mem_account()) {
     fprintf(stderr, "__moservices-free: pid %d tid %d ptr=%p rc=%d\n", getpid(),
-            (int)(pthread_self().__ & 0x7fffffff), ptr, rc);
+            gettid(), ptr, rc);
   }
   if (rc) {
     perror("__moservices DETACH");
@@ -1299,9 +1299,9 @@ public:
   void addptr(const void *ptr, size_t v) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
-    cache[k] = v;
+    cache[k] = (unsigned long)v;
     if (mem_account())
-      dprintf(2, "ADDED: @%lx size %lu\n", k, v);
+      dprintf(2, "ADDED: @%lx size %lu\n", k, cache[k]);
   }
   // normal case:  bool elligible() { return oktouse; }
   bool elligible() { return true; } // always true for now
@@ -1311,10 +1311,9 @@ public:
     void *p = __iarv64_alloc(segs, xttoken);
     if (p) {
       unsigned long k = (unsigned long)p;
-      cache[k] = segs * 1024 * 1024;
+      cache[k] = (unsigned long)segs * kMegaByte;
       if (mem_account())
-        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
-                (size_t)(segs * 1024 * 1024));
+        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k, cache[k]);
     }
     return p;
   }
@@ -1325,7 +1324,7 @@ public:
     if (rc == 0) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        size_t s = c->second;
+        unsigned long s = c->second;
         cache.erase(c);
         if (mem_account()) {
           dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
@@ -1340,10 +1339,10 @@ public:
     std::lock_guard<std::mutex> guard(access_lock);
     if (p) {
       unsigned long k = (unsigned long)p;
-      cache[k] = segs * 1024 * 1024;
+      cache[k] = (unsigned long)segs * kMegaByte;
       if (mem_account())
         dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
-                (size_t)(segs * 1024 * 1024));
+                (unsigned long)segs * kMegaByte);
     }
     return p;
   }
@@ -1354,7 +1353,7 @@ public:
     if (rc == 0) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        size_t s = c->second;
+        unsigned long s = c->second;
         cache.erase(c);
         if (mem_account()) {
           dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
@@ -1521,8 +1520,8 @@ extern "C" void *anon_mmap(void *_, size_t len) {
 extern "C" int anon_munmap(void *addr, size_t len) {
   if (alloc_info.is_exist_ptr(addr)) {
     if (mem_account())
-      dprintf(2, "Address found, attempt to free @%p size %d\n", addr,
-              (int)len);
+      dprintf(2, "Address found, attempt to free @%p size %zu\n", addr,
+              len);
     int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
     if (rc != 0) {
       if (mem_account()) {
@@ -1533,8 +1532,8 @@ extern "C" int anon_munmap(void *addr, size_t len) {
     return 0;
   } else {
     if (mem_account())
-      dprintf(2, "Error: attempt to free %p size %d (not allocated)\n", addr,
-              (int)len);
+      dprintf(2, "Error: attempt to free %p size %zu (not allocated)\n", addr,
+              len);
     return 0;
   }
 }
