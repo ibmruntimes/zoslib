@@ -712,25 +712,27 @@ int __pipe(int [2]) asm("pipe");
 int __open(const char *filename, int opts, ...) asm("@@A00144");
 
 int __open_ascii(const char *filename, int opts, ...) {
-  int fd;
   va_list ap;
   va_start(ap, opts);
-  fd = __open(filename, opts, ap);
-  if (fd && (opts & (O_CREAT|O_WRONLY))) {
+  int perms = va_arg(ap, int);
+  struct stat sb;
+  int is_new_file = stat(filename, &sb) != 0;
+  int fd = __open(filename, opts, perms);
+  // Tag new files as 819
+  if (fd >= 0 && is_new_file)
     __chgfdccsid(fd, 819);
-  }
   va_end(ap);
   return fd;
 }
 
 int __pipe_ascii(int fd[2]) {
   int ret = __pipe(fd);
-  if (ret < 0) return ret;
+  if (ret < 0)
+    return ret;
 
-  if (__getfdccsid(fd[0]) == 0)
-    __chgfdccsid(fd[0], 819);
-  if (__getfdccsid(fd[1]) == 0)
-    __chgfdccsid(fd[1], 819);
+  // Default ccsid for new pipes should be 819
+  __chgfdccsid(fd[0], 819);
+  __chgfdccsid(fd[1], 819);
   return ret;
 }
 

@@ -23,6 +23,7 @@ extern "C" {
 /**
  * Same as C open but tags new files as ASCII (819)
  */
+int __open_ascii(const char *filename, int opts, ...);
 int open(const char *filename, int opts, ...) asm("__open_ascii");
 
 #if defined(__cplusplus)

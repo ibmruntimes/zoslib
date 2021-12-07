@@ -13,6 +13,8 @@
 
 #if (__EDC_TARGET < 0x42050000)
 
+#include_next <sys/time.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -35,8 +37,6 @@ int (*lutimes)(const char *filename, const struct timeval tv[2]);
 #if defined(__cplusplus)
 };
 #endif
-
-#include_next <sys/time.h>
 
 #else //!(__EDC_TARGET < 0x42050000)
 #include_next <sys/time.h>
