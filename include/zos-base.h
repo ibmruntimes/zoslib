@@ -150,6 +150,11 @@ int gettid();
 void __display_backtrace(int fd);
 
 /**
+ * Enable or disable abort() from calling display_backtrace(). Default is true.
+ */
+void __set_backtrace_on_abort(bool flag);
+
+/**
  * Execute a file.
  * \param [in] name used to construct a pathname that identifies the new
  *  process image file.
@@ -577,6 +582,12 @@ inline bool operator<(const pthread_t &_a, const pthread_t &_b) {
 }
 inline bool operator>(const pthread_t &_a, const pthread_t &_b) {
   return _a.__ > _b.__;
+}
+inline bool operator==(const pthread_t &_a, const int _b) {
+  return _a.__ == static_cast<unsigned long long>(_b);
+}
+inline bool operator!=(const pthread_t &_a, const int _b) {
+  return _a.__ != static_cast<unsigned long long>(_b);
 }
 
 struct zoslibEnvar {

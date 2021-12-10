@@ -64,6 +64,7 @@ static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
 static int *__main_thread_stack_top_address = 0;
+static bool __is_backtrace_on_abort = true;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -659,9 +660,15 @@ extern "C" void *__dlcb_entry_addr(void *dlcb) {
 }
 
 extern "C" void abort(void) {
-  __display_backtrace(STDERR_FILENO);
+  if (__is_backtrace_on_abort) {
+    __display_backtrace(STDERR_FILENO);
+  }
   __zinit::getInstance()->__abort();
   exit(-1); // never reach here, suppress clang warning
+}
+
+extern "C" void __set_backtrace_on_abort(bool flag) {
+  __is_backtrace_on_abort = flag;
 }
 
 int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
