@@ -152,6 +152,9 @@ include/zos-base.h
 .RI "void \fB__display_backtrace\fP (int fd)"
 .br
 .ti -1c
+.RI "void \fB__set_backtrace_on_abort\fP (bool flag)"
+.br
+.ti -1c
 .RI "int \fBexecvpe\fP (const char *name, char *const argv[], char *const envp[])"
 .br
 .ti -1c
@@ -676,6 +679,8 @@ returns 0 if successful, non-zero if unsuccessful\&.
 
 .SS "int __sem_wait (\fB__sem_t\fP * s0)"
 
+.SS "void __set_backtrace_on_abort (bool flag)"
+Enable or disable \fBabort()\fP from calling display_backtrace()\&. Default is true\&. 
 .SS "void __setdebug (int)"
 Activates debug mode 
 .SS "void __tb (void)"

@@ -103,6 +103,8 @@ int \mbox{\hyperlink{zos-base_8h_ad7d99c4618975fd753197a2f412d3fd0}{gettid}} ()
 \item 
 void \mbox{\hyperlink{zos-base_8h_adaadac4f341edd6973a413370bbcd382}{\+\_\+\+\_\+display\+\_\+backtrace}} (int fd)
 \item 
+void \mbox{\hyperlink{zos-base_8h_a669a2def8764ee4faffc13756bb22a00}{\+\_\+\+\_\+set\+\_\+backtrace\+\_\+on\+\_\+abort}} (bool flag)
+\item 
 int \mbox{\hyperlink{zos-base_8h_a024eef20782126c07492cd8e687396d4}{execvpe}} (const char $\ast$name, char $\ast$const argv\mbox{[}$\,$\mbox{]}, char $\ast$const envp\mbox{[}$\,$\mbox{]})
 \item 
 int \mbox{\hyperlink{zos-base_8h_a3747bea884034d32d4d558872223969e}{backtrace}} (void $\ast$$\ast$buffer, int size)
@@ -711,7 +713,13 @@ returns 0 if successful, non-\/zero if unsuccessful.
 \doxysubsubsection{\texorpdfstring{\_\_sem\_wait()}{\_\_sem\_wait()}}
 {\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-base_8h_a2cea5c0e624b0131aba94ab6d0df91a9}\label{zos-base_8h_a2cea5c0e624b0131aba94ab6d0df91a9}} 
+\mbox{\Hypertarget{zos-base_8h_a669a2def8764ee4faffc13756bb22a00}\label{zos-base_8h_a669a2def8764ee4faffc13756bb22a00}} 
+\index{zos-\/base.h@{zos-\/base.h}!\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}}
+\index{\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}!zos-\/base.h@{zos-\/base.h}}
+\doxysubsubsection{\texorpdfstring{\_\_set\_backtrace\_on\_abort()}{\_\_set\_backtrace\_on\_abort()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+set\+\_\+backtrace\+\_\+on\+\_\+abort (\begin{DoxyParamCaption}\item[{bool}]{flag }\end{DoxyParamCaption})}
+
+Enable or disable \mbox{\hyperlink{zos_8cc_a8dec7c95227ff149687066cf04029191}{abort()}} from calling display\+\_\+backtrace(). Default is true. \mbox{\Hypertarget{zos-base_8h_a2cea5c0e624b0131aba94ab6d0df91a9}\label{zos-base_8h_a2cea5c0e624b0131aba94ab6d0df91a9}} 
 \index{zos-\/base.h@{zos-\/base.h}!\_\_setdebug@{\_\_setdebug}}
 \index{\_\_setdebug@{\_\_setdebug}!zos-\/base.h@{zos-\/base.h}}
 \doxysubsubsection{\texorpdfstring{\_\_setdebug()}{\_\_setdebug()}}

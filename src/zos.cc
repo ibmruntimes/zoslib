@@ -1158,8 +1158,7 @@ static void *__iarv64_alloc(int segs, const char *token) {
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), gettid(), parm.xorigin,
-            (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), parm.xorigin, (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
@@ -1202,8 +1201,7 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), gettid(), parm.xorigin,
-            (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), parm.xorigin, (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
@@ -1243,8 +1241,7 @@ static void *__mo_alloc(int segs) {
     fprintf(stderr,
             "__moservices-alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%d, "
             "iarv64_rc=%d\n",
-            getpid(), gettid(), p,
-            (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), p, (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, moparm.__mopl_iarv64_rc);
   }
   if (rc == 0 && moparm.__mopl_iarv64_rc == 0) {
@@ -1527,8 +1524,7 @@ extern "C" void *anon_mmap(void *_, size_t len) {
 extern "C" int anon_munmap(void *addr, size_t len) {
   if (alloc_info.is_exist_ptr(addr)) {
     if (mem_account())
-      dprintf(2, "Address found, attempt to free @%p size %zu\n", addr,
-              len);
+      dprintf(2, "Address found, attempt to free @%p size %zu\n", addr, len);
     int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
     if (rc != 0) {
       if (mem_account()) {

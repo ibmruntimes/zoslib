@@ -192,6 +192,8 @@ void $\ast$ \mbox{\hyperlink{zos_8cc_a53a6a70a1e25ac646020762525af5578}{\+\_\+\+
 \item 
 void \mbox{\hyperlink{zos_8cc_a8dec7c95227ff149687066cf04029191}{abort}} (void)
 \item 
+void \mbox{\hyperlink{zos_8cc_a669a2def8764ee4faffc13756bb22a00}{\+\_\+\+\_\+set\+\_\+backtrace\+\_\+on\+\_\+abort}} (bool flag)
+\item 
 int \mbox{\hyperlink{zos_8cc_ae647b7279cea008a3b5785dfb2097891}{\+\_\+\+\_\+cond\+\_\+timed\+\_\+wait}} (unsigned int secs, unsigned int nsecs, unsigned int event\+\_\+list, unsigned int $\ast$secs\+\_\+rem, unsigned int $\ast$nsecs\+\_\+rem)
 \item 
 int \mbox{\hyperlink{zos_8cc_a17629c5f27ae250d924b74b1789e3b27}{kill}} (int pid, int sig)
@@ -924,7 +926,13 @@ returns 0 if successful, non-\/zero if unsuccessful.
 \doxysubsubsection{\texorpdfstring{\_\_sem\_wait()}{\_\_sem\_wait()}}
 {\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos_8cc_a94042c9c134f84c2b0828cc9bf990acf}\label{zos_8cc_a94042c9c134f84c2b0828cc9bf990acf}} 
+\mbox{\Hypertarget{zos_8cc_a669a2def8764ee4faffc13756bb22a00}\label{zos_8cc_a669a2def8764ee4faffc13756bb22a00}} 
+\index{zos.cc@{zos.cc}!\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}}
+\index{\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_set\_backtrace\_on\_abort()}{\_\_set\_backtrace\_on\_abort()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+set\+\_\+backtrace\+\_\+on\+\_\+abort (\begin{DoxyParamCaption}\item[{bool}]{flag }\end{DoxyParamCaption})}
+
+Enable or disable \mbox{\hyperlink{zos_8cc_a8dec7c95227ff149687066cf04029191}{abort()}} from calling display\+\_\+backtrace(). Default is true. \mbox{\Hypertarget{zos_8cc_a94042c9c134f84c2b0828cc9bf990acf}\label{zos_8cc_a94042c9c134f84c2b0828cc9bf990acf}} 
 \index{zos.cc@{zos.cc}!\_\_set\_ccsid\_guess\_buf\_size@{\_\_set\_ccsid\_guess\_buf\_size}}
 \index{\_\_set\_ccsid\_guess\_buf\_size@{\_\_set\_ccsid\_guess\_buf\_size}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_set\_ccsid\_guess\_buf\_size()}{\_\_set\_ccsid\_guess\_buf\_size()}}

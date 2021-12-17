@@ -310,6 +310,9 @@ src/zos.cc
 .RI "void \fBabort\fP (void)"
 .br
 .ti -1c
+.RI "void \fB__set_backtrace_on_abort\fP (bool flag)"
+.br
+.ti -1c
 .RI "int \fB__cond_timed_wait\fP (unsigned int secs, unsigned int nsecs, unsigned int event_list, unsigned int *secs_rem, unsigned int *nsecs_rem)"
 .br
 .ti -1c
@@ -878,6 +881,8 @@ returns 0 if successful, non-zero if unsuccessful\&.
 
 .SS "int __sem_wait (\fB__sem_t\fP * s0)"
 
+.SS "void __set_backtrace_on_abort (bool flag)"
+Enable or disable \fBabort()\fP from calling display_backtrace()\&. Default is true\&. 
 .SS "void __set_ccsid_guess_buf_size (int nbytes)"
 
 .SS "void __setdebug (int)"
