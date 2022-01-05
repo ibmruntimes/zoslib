@@ -7,9 +7,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
                    ??=ifndef __edcwccwi
-                   ??=ifdef __COMPILER_VER__
-                     ??=pragma filetag("IBM-1047")
-                   ??=endif
                    #define __edcwccwi 1
                    #pragma nomargins nosequence
                    #pragma checkout(suspend)
