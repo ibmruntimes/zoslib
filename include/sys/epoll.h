@@ -13,6 +13,9 @@
 
 #if (__EDC_TARGET < 0x42050000)
 
+#include <sys/types.h>
+#include <stdint.h>
+
 // Guard since libuv implement some epoll functions
 #if defined(ZOSLIB_OVERRIDE_SYS_EPOLL)
 /* epoll_create options */
@@ -24,13 +27,16 @@
 #define EPOLL_CTL_DEL    2
 
 /* epoll events */
-#define EPOLLIN          0x00030000
-#define EPOLLOUT         0x000C0000
-#define EPOLLPRI         0x00100000
-#define EPOLLONESHOT     0x40000000
-#define EPOLLEXCLUSIVE   0x20000000
-#define EPOLLERR         0x00000020
-#define EPOLLHUP         0x00000040
+#define EPOLLRDNORM     0x0001
+#define EPOLLRDBAND     0x0002
+#define EPOLLIN         0x0003
+#define EPOLLOUT        0x0004
+#define EPOLLWRBAND     0x0008
+#define EPOLLPRI        0x0010
+#define EPOLLERR        0x0020
+#define EPOLLHUP        0x0040
+#define EPOLLEXCLUSIVE  0x20000000
+#define EPOLLONESHOT    0x40000000
 
 #if defined(__cplusplus)
 extern "C" {
@@ -43,10 +49,19 @@ typedef union epoll_data {
     uint64_t    u64;
 } epoll_data_t;
 
-struct epoll_event {
-    uint32_t        events;
-    epoll_data_t    data;
-};
+#if defined(__clang__) && !defined(__ibmxl__)
+        struct epoll_event {
+            uint32_t        events __attribute__((__aligned__(4)));
+            epoll_data_t    data;
+        };
+#else
+        #pragma pack(4)
+        struct epoll_event {
+            uint32_t        events;
+            epoll_data_t    data;
+        };
+        #pragma pack(reset)
+#endif
 
 int (*epoll_create)(int);
 int (*epoll_create1)(int);

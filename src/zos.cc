@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
+#include <sys/inotify.h>
 
 #include <exception>
 #include <mutex>
@@ -2750,22 +2751,28 @@ int __zinit::setEnvarHelpMap() {
   return __update_envar_settings(NULL);
 }
 
+#define MAP_LE_FUNC(func, offset) (func = (typeof(func))((unsigned long*)__get_libvec_base() + (offset<<1)))
+
 void __zinit::populateLEFunctionPointers() {
 #if (__EDC_TARGET < 0x42050000)
   // LE vector table offset calculated by:
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
-    clock_gettime = (typeof(clock_gettime))((unsigned long*)__get_libvec_base() + (0xDAD<<1));
-    futimes = (typeof(futimes))((unsigned long*)__get_libvec_base() + (0xDE2<<1));
-    lutimes = (typeof(lutimes))((unsigned long*)__get_libvec_base() + (0xDE6<<1));
+    MAP_LE_FUNC(clock_gettime, 0xDAD);
+    MAP_LE_FUNC(futimes, 0xDE2);
+    MAP_LE_FUNC(lutimes, 0xDE6);
 #if defined(ZOSLIB_OVERRIDE_SYS_EPOLL)
-    epoll_create = (typeof(epoll_create))((unsigned long*)__get_libvec_base() + (0xDAF<<1));
-    epoll_create1 = (typeof(epoll_create1))((unsigned long*)__get_libvec_base() + (0xDB0<<1));
-    epoll_ctl = (typeof(epoll_ctl))((unsigned long*)__get_libvec_base() + (0xDB1<<1));
-    epoll_wait = (typeof(epoll_wait))((unsigned long*)__get_libvec_base() + (0xDB2<<1));
-    epoll_pwait = (typeof(epoll_pwait))((unsigned long*)__get_libvec_base() + (0xDB3<<1));
+    MAP_LE_FUNC(epoll_create, 0xDAF);
+    MAP_LE_FUNC(epoll_create1, 0xDB0);
+    MAP_LE_FUNC(epoll_ctl, 0xDB1);
+    MAP_LE_FUNC(epoll_wait, 0xDB2);
+    MAP_LE_FUNC(epoll_pwait, 0xDB3);
 #endif
-    eventfd = (typeof(eventfd))((unsigned long*)__get_libvec_base() + (0xDB4<<1));
+    MAP_LE_FUNC(eventfd, 0xDB4);
+    MAP_LE_FUNC(inotify_init, 0xDB8);
+    MAP_LE_FUNC(inotify_init1, 0xDB9);
+    MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
+    MAP_LE_FUNC(inotify_add_watch, 0xDBB);
   }
   else {
     clock_gettime = __clock_gettime;
