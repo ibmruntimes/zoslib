@@ -86,6 +86,6 @@ install(
 
 if(NOT ${BUILD_SHARED_LIBS} MATCHES "OFF")
   install(
-    FILES ${CMAKE_SOURCE_DIR}/src/libzoslib.x
+    FILES ${CMAKE_BINARY_DIR}/src/libzoslib.x
     DESTINATION "install/lib")
 endif()
