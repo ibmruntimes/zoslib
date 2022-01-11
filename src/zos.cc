@@ -2761,13 +2761,11 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(clock_gettime, 0xDAD);
     MAP_LE_FUNC(futimes, 0xDE2);
     MAP_LE_FUNC(lutimes, 0xDE6);
-#if defined(ZOSLIB_OVERRIDE_SYS_EPOLL)
     MAP_LE_FUNC(epoll_create, 0xDAF);
     MAP_LE_FUNC(epoll_create1, 0xDB0);
     MAP_LE_FUNC(epoll_ctl, 0xDB1);
     MAP_LE_FUNC(epoll_wait, 0xDB2);
     MAP_LE_FUNC(epoll_pwait, 0xDB3);
-#endif
     MAP_LE_FUNC(eventfd, 0xDB4);
     MAP_LE_FUNC(inotify_init, 0xDB8);
     MAP_LE_FUNC(inotify_init1, 0xDB9);
