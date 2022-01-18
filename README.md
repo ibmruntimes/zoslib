@@ -177,7 +177,7 @@ xlclang++ -I path/to/zoslib/include -L path/to/mybuilddir/lib -lzoslib random.cc
 
 You should get an output similar to the following:
 ```
-ZOSLIB version: 1.0.0
+ZOSLIB version: v1.1.0
 Generating 2 random values
 Random index: 0
 BC DE CF DE  7 E3 58 3A 4F 22

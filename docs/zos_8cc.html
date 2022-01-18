@@ -77,7 +77,8 @@ $(function() {
 <div class="title">zos.cc File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="zos_8h_source.html">zos.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="zos-base_8h_source.html">zos-base.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="zos-sys-info_8h_source.html">zos-sys-info.h</a>&quot;</code><br />
 <code>#include &lt;_Ccsid.h&gt;</code><br />
 <code>#include &lt;_Nascii.h&gt;</code><br />
 <code>#include &lt;__le_api.h&gt;</code><br />
@@ -95,7 +96,6 @@ $(function() {
 <code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;sys/__getipc.h&gt;</code><br />
 <code>#include &lt;sys/mman.h&gt;</code><br />
 <code>#include &lt;sys/msg.h&gt;</code><br />
 <code>#include &lt;sys/ps.h&gt;</code><br />
@@ -241,6 +241,10 @@ Functions</h2></td></tr>
 <tr class="separator:a8b9226967c1d98227eced5eee36301ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa7f8746a5d3f1ec038b64ae2ff2ca8e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#aaa7f8746a5d3f1ec038b64ae2ff2ca8e">_convert_a2e</a> (void *dst, const void *src, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> size)</td></tr>
 <tr class="separator:aaa7f8746a5d3f1ec038b64ae2ff2ca8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f1aa901e609043fac0cdd29d6e57912"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a8f1aa901e609043fac0cdd29d6e57912">__guess_ue</a> (const void *src, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> size, char *errmsg, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> er_size)</td></tr>
+<tr class="separator:a8f1aa901e609043fac0cdd29d6e57912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acccc80c73ea31d4e50ffba89be63662b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#acccc80c73ea31d4e50ffba89be63662b">__guess_fd_ue</a> (int fd, char *errmsg, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> er_size, int is_new_fd)</td></tr>
+<tr class="separator:acccc80c73ea31d4e50ffba89be63662b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd80c9142c65aa99177bf1e5924d0f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#acd80c9142c65aa99177bf1e5924d0f04">__guess_ae</a> (const void *src, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> size)</td></tr>
 <tr class="separator:acd80c9142c65aa99177bf1e5924d0f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af533310fcdfe17eb1d68114bfc33a1a6"><td class="memItemLeft" align="right" valign="top">char **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#af533310fcdfe17eb1d68114bfc33a1a6">__get_environ_np</a> (void)</td></tr>
@@ -321,6 +325,16 @@ Functions</h2></td></tr>
 <tr class="separator:ad9bb80365d219c432a4d4901d4db3f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bc167e04f4b05824076ec2e20e4a581"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a3bc167e04f4b05824076ec2e20e4a581">__getargc</a> (void)</td></tr>
 <tr class="separator:a3bc167e04f4b05824076ec2e20e4a581"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af30187abaa1cd19be451e99e186b38c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#af30187abaa1cd19be451e99e186b38c6">__getexepath</a> (char *path, int pathlen, pid_t pid)</td></tr>
+<tr class="separator:af30187abaa1cd19be451e99e186b38c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b2ad7fe0aee30edf781eefd73ee5b88"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a3b2ad7fe0aee30edf781eefd73ee5b88">__get_num_online_cpus</a> (void)</td></tr>
+<tr class="separator:a3b2ad7fe0aee30edf781eefd73ee5b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67eea4362b2e4efb1cfcf07f17eba6f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a67eea4362b2e4efb1cfcf07f17eba6f7">__get_num_frames</a> (void)</td></tr>
+<tr class="separator:a67eea4362b2e4efb1cfcf07f17eba6f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45c5eb88465481f83247e8024e59836"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-base_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#af45c5eb88465481f83247e8024e59836">__get_os_level</a> (void)</td></tr>
+<tr class="separator:af45c5eb88465481f83247e8024e59836"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73cf375e89e966ca2e6a7e360ccc11f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a73cf375e89e966ca2e6a7e360ccc11f5">__is_os_level_at_or_above</a> (<a class="el" href="zos-base_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a> level)</td></tr>
+<tr class="separator:a73cf375e89e966ca2e6a7e360ccc11f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c9b02f2c32d8ef0621b41b4142c8816"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a1c9b02f2c32d8ef0621b41b4142c8816">__fd_close</a> (int fd)</td></tr>
 <tr class="separator:a1c9b02f2c32d8ef0621b41b4142c8816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a828c1d76a7773572f289e210fd94b09f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a828c1d76a7773572f289e210fd94b09f">__file_needs_conversion</a> (int fd)</td></tr>
@@ -355,19 +369,19 @@ Functions</h2></td></tr>
 <tr class="separator:a68bff7004136b886a1d072088c1a7aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac276a4ee174620ca6c8c15802dec8ece"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#ac276a4ee174620ca6c8c15802dec8ece">atomic_inc</a> (volatile unsigned int *loc)</td></tr>
 <tr class="separator:ac276a4ee174620ca6c8c15802dec8ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1384c2247230a3c174fc5f0d2c7a9ad8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a1384c2247230a3c174fc5f0d2c7a9ad8">__sem_init</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0, int shared, unsigned int val)</td></tr>
+<tr class="memitem:a1384c2247230a3c174fc5f0d2c7a9ad8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a1384c2247230a3c174fc5f0d2c7a9ad8">__sem_init</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0, int shared, unsigned int val)</td></tr>
 <tr class="separator:a1384c2247230a3c174fc5f0d2c7a9ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa9b944d46ae048731ef457bac855fa3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#aaa9b944d46ae048731ef457bac855fa3">__sem_post</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0)</td></tr>
+<tr class="memitem:aaa9b944d46ae048731ef457bac855fa3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#aaa9b944d46ae048731ef457bac855fa3">__sem_post</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0)</td></tr>
 <tr class="separator:aaa9b944d46ae048731ef457bac855fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab645a4486f4249e0f5e24e713199b9ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#ab645a4486f4249e0f5e24e713199b9ad">__sem_trywait</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0)</td></tr>
+<tr class="memitem:ab645a4486f4249e0f5e24e713199b9ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#ab645a4486f4249e0f5e24e713199b9ad">__sem_trywait</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0)</td></tr>
 <tr class="separator:ab645a4486f4249e0f5e24e713199b9ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abefbdaf388bed46623de543588fba24b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#abefbdaf388bed46623de543588fba24b">__sem_timedwait</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0, const struct timespec *abs_timeout)</td></tr>
+<tr class="memitem:abefbdaf388bed46623de543588fba24b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#abefbdaf388bed46623de543588fba24b">__sem_timedwait</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0, const struct timespec *abs_timeout)</td></tr>
 <tr class="separator:abefbdaf388bed46623de543588fba24b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1adbe1c392115b2ff023ab7dbf605011"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a1adbe1c392115b2ff023ab7dbf605011">__sem_wait</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0)</td></tr>
+<tr class="memitem:a1adbe1c392115b2ff023ab7dbf605011"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a1adbe1c392115b2ff023ab7dbf605011">__sem_wait</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0)</td></tr>
 <tr class="separator:a1adbe1c392115b2ff023ab7dbf605011"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a493515255bd9d8113483a3d3dd124e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a4a493515255bd9d8113483a3d3dd124e">__sem_destroy</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0)</td></tr>
+<tr class="memitem:a4a493515255bd9d8113483a3d3dd124e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a4a493515255bd9d8113483a3d3dd124e">__sem_destroy</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0)</td></tr>
 <tr class="separator:a4a493515255bd9d8113483a3d3dd124e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4696c3760dd8a87ed4b5f5079d452609"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a4696c3760dd8a87ed4b5f5079d452609">__sem_getvalue</a> (<a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *s0, int *sval)</td></tr>
+<tr class="memitem:a4696c3760dd8a87ed4b5f5079d452609"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a4696c3760dd8a87ed4b5f5079d452609">__sem_getvalue</a> (<a class="el" href="struct____sem__t.html">__sem_t</a> *s0, int *sval)</td></tr>
 <tr class="separator:a4696c3760dd8a87ed4b5f5079d452609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1ad85ba2714fc321967050989c5fee7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#aa1ad85ba2714fc321967050989c5fee7">__tb</a> (void)</td></tr>
 <tr class="separator:aa1ad85ba2714fc321967050989c5fee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -399,6 +413,10 @@ Functions</h2></td></tr>
 <tr class="separator:a12c0dd60622e54588c056aef25313df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abacb87ed98c22ed1c16d5100e9d8e903"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#abacb87ed98c22ed1c16d5100e9d8e903">roanon_mmap</a> (void *_, <a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a> len, int prot, int flags, const char *filename, int fildes, off_t off)</td></tr>
 <tr class="separator:abacb87ed98c22ed1c16d5100e9d8e903"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac597a71375605aa919ffde000a4e9bf9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#ac597a71375605aa919ffde000a4e9bf9">__print_zoslib_help</a> (FILE *fp, const char *title)</td></tr>
+<tr class="separator:ac597a71375605aa919ffde000a4e9bf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9142fb1bf3e67052a3fb42a97166ef37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a9142fb1bf3e67052a3fb42a97166ef37">__update_envar_settings</a> (const char *envar)</td></tr>
+<tr class="separator:a9142fb1bf3e67052a3fb42a97166ef37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07a98c0cfecbb83c41bea035f85af5c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#a07a98c0cfecbb83c41bea035f85af5c0">init_zoslib_config</a> (<a class="el" href="zos-base_8h.html#a10670868ce3060c834376eae096982ae">zoslib_config_t</a> &amp;config)</td></tr>
 <tr class="separator:a07a98c0cfecbb83c41bea035f85af5c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad08be3bfe25046883b7d3bea7ac88cc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos_8cc.html#ad08be3bfe25046883b7d3bea7ac88cc2">init_zoslib_config</a> (<a class="el" href="zos-base_8h.html#a10670868ce3060c834376eae096982ae">zoslib_config_t</a> *const config)</td></tr>
@@ -1730,6 +1748,63 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a67eea4362b2e4efb1cfcf07f17eba6f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67eea4362b2e4efb1cfcf07f17eba6f7">&#9670;&nbsp;</a></span>__get_num_frames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __get_num_frames </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the number of frames currently available to the system </p><dl class="section return"><dt>Returns</dt><dd>returns the number of available frames </dd></dl>
+
+</div>
+</div>
+<a id="a3b2ad7fe0aee30edf781eefd73ee5b88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b2ad7fe0aee30edf781eefd73ee5b88">&#9670;&nbsp;</a></span>__get_num_online_cpus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __get_num_online_cpus </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the number of online CPUs </p><dl class="section return"><dt>Returns</dt><dd>returns the number of online CPUs </dd></dl>
+
+</div>
+</div>
+<a id="af45c5eb88465481f83247e8024e59836"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af45c5eb88465481f83247e8024e59836">&#9670;&nbsp;</a></span>__get_os_level()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="zos-base_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a> __get_os_level </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the OS level </p><dl class="section return"><dt>Returns</dt><dd>the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) </dd></dl>
+
+</div>
+</div>
 <a id="a3bc167e04f4b05824076ec2e20e4a581"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3bc167e04f4b05824076ec2e20e4a581">&#9670;&nbsp;</a></span>__getargc()</h2>
 
@@ -1830,6 +1905,49 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="af30187abaa1cd19be451e99e186b38c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af30187abaa1cd19be451e99e186b38c6">&#9670;&nbsp;</a></span>__getexepath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __getexepath </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pathlen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">pid_t&#160;</td>
+          <td class="paramname"><em>pid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the executable path of a given process id </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">path</td><td>- pointer to the destination array to copy the null-terminated path to </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pathlen</td><td>- length of the given array </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pid</td><td>- process id to obtain the executable path for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns 0, or -1 on error. </dd></dl>
+
+</div>
+</div>
 <a id="a5595cb548093b4cba59dbe97ccce1097"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5595cb548093b4cba59dbe97ccce1097">&#9670;&nbsp;</a></span>__getfdccsid()</h2>
 
@@ -1887,7 +2005,102 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>returns guessed CCSID. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>guessed CCSID. </dd></dl>
+
+</div>
+</div>
+<a id="acccc80c73ea31d4e50ffba89be63662b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acccc80c73ea31d4e50ffba89be63662b">&#9670;&nbsp;</a></span>__guess_fd_ue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __guess_fd_ue </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>fd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>errmsg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a>&#160;</td>
+          <td class="paramname"><em>er_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>is_new_fd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">fd</td><td>- open file descriptor to guess. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details). </dd></dl>
+
+</div>
+</div>
+<a id="a8f1aa901e609043fac0cdd29d6e57912"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f1aa901e609043fac0cdd29d6e57912">&#9670;&nbsp;</a></span>__guess_ue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __guess_ue </td>
+          <td>(</td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a>&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>errmsg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="zos-base_8h.html#acf18a0d6c4b39d531e021702e9a77984">size_t</a>&#160;</td>
+          <td class="paramname"><em>er_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Guess if string is UTF8 (ASCII) or EBCDIC. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>- character string. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>- number of bytes to analyze. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details). </dd></dl>
 
 </div>
 </div>
@@ -1907,6 +2120,25 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Indicates if zoslib is in debug mode </p><dl class="section return"><dt>Returns</dt><dd>returns current debug mode </dd></dl>
+
+</div>
+</div>
+<a id="a73cf375e89e966ca2e6a7e360ccc11f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73cf375e89e966ca2e6a7e360ccc11f5">&#9670;&nbsp;</a></span>__is_os_level_at_or_above()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool __is_os_level_at_or_above </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="zos-base_8h.html#adbc37c8430939d1f676d7d6d1fd282aa">oslvl_t</a>&#160;</td>
+          <td class="paramname"><em>level</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check if current OS is at or above a given level </p><dl class="section return"><dt>Returns</dt><dd>true if the current OS level is at or above the given level, and false otherwise </dd></dl>
 
 </div>
 </div>
@@ -1982,6 +2214,42 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ac597a71375605aa919ffde000a4e9bf9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac597a71375605aa919ffde000a4e9bf9">&#9670;&nbsp;</a></span>__print_zoslib_help()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __print_zoslib_help </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>fp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>title</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Prints zoslib help information to specified FILE pointer </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">FILE</td><td>pointer to write to </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title</td><td>header, specify NULL for default </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns 0, or &lt; 0 on error. </dd></dl>
+
+</div>
+</div>
 <a id="a12c0dd60622e54588c056aef25313df0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a12c0dd60622e54588c056aef25313df0">&#9670;&nbsp;</a></span>__registerProduct()</h2>
 
@@ -2048,7 +2316,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_destroy </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2066,7 +2334,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_getvalue </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em>, </td>
         </tr>
         <tr>
@@ -2094,7 +2362,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_init </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em>, </td>
         </tr>
         <tr>
@@ -2128,7 +2396,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_post </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2146,7 +2414,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_timedwait </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em>, </td>
         </tr>
         <tr>
@@ -2174,7 +2442,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_trywait </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2192,7 +2460,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int __sem_wait </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="zos-base_8h.html#aae0de884c84dcd706b561e0fa02f49b4">__sem_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct____sem__t.html">__sem_t</a> *&#160;</td>
           <td class="paramname"><em>s0</em></td><td>)</td>
           <td></td>
         </tr>
@@ -2507,6 +2775,31 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9142fb1bf3e67052a3fb42a97166ef37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9142fb1bf3e67052a3fb42a97166ef37">&#9670;&nbsp;</a></span>__update_envar_settings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __update_envar_settings </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>envar</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Updates the zoslib global variables associated with the zoslib environment variables </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">envar</td><td>environment variable to update, specify NULL to update all </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns 0, or &lt; 0 on error. </dd></dl>
 
 </div>
 </div>
@@ -3805,8 +4098,8 @@ Variables</h2></td></tr>
 </div>
 </div>
 </div><!-- contents -->
-<div class="ttc" id="azos_8cc_html_a24a75778e4eea3c696ecc59576fe16d1"><div class="ttname"><a href="zos_8cc.html#a24a75778e4eea3c696ecc59576fe16d1">rc</a></div><div class="ttdeci">long rc</div><div class="ttdef"><b>Definition:</b> zos.cc:3084</div></div>
-<div class="ttc" id="astructloadmod_html"><div class="ttname"><a href="structloadmod.html">loadmod</a></div><div class="ttdef"><b>Definition:</b> zos.cc:3002</div></div>
+<div class="ttc" id="azos_8cc_html_a24a75778e4eea3c696ecc59576fe16d1"><div class="ttname"><a href="zos_8cc.html#a24a75778e4eea3c696ecc59576fe16d1">rc</a></div><div class="ttdeci">long rc</div><div class="ttdef"><b>Definition:</b> zos.cc:3431</div></div>
+<div class="ttc" id="astructloadmod_html"><div class="ttname"><a href="structloadmod.html">loadmod</a></div><div class="ttdef"><b>Definition:</b> zos.cc:3349</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19

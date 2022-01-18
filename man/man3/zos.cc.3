@@ -1,4 +1,4 @@
-.TH "src/zos.cc" 3 "Thu Jun 10 2021" "zoslib" \" -*- nroff -*-
+.TH "src/zos.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,7 +6,9 @@ src/zos.cc
 .SH SYNOPSIS
 .br
 .PP
-\fC#include 'zos\&.h'\fP
+\fC#include 'zos\-base\&.h'\fP
+.br
+\fC#include 'zos\-sys\-info\&.h'\fP
 .br
 \fC#include <_Ccsid\&.h>\fP
 .br
@@ -41,8 +43,6 @@ src/zos.cc
 \fC#include <stdlib\&.h>\fP
 .br
 \fC#include <string\&.h>\fP
-.br
-\fC#include <sys/__getipc\&.h>\fP
 .br
 \fC#include <sys/mman\&.h>\fP
 .br
@@ -261,6 +261,12 @@ src/zos.cc
 .RI "void * \fB_convert_a2e\fP (void *dst, const void *src, \fBsize_t\fP size)"
 .br
 .ti -1c
+.RI "int \fB__guess_ue\fP (const void *src, \fBsize_t\fP size, char *errmsg, \fBsize_t\fP er_size)"
+.br
+.ti -1c
+.RI "int \fB__guess_fd_ue\fP (int fd, char *errmsg, \fBsize_t\fP er_size, int is_new_fd)"
+.br
+.ti -1c
 .RI "int \fB__guess_ae\fP (const void *src, \fBsize_t\fP size)"
 .br
 .ti -1c
@@ -381,6 +387,21 @@ src/zos.cc
 .RI "int \fB__getargc\fP (void)"
 .br
 .ti -1c
+.RI "int \fB__getexepath\fP (char *path, int pathlen, pid_t pid)"
+.br
+.ti -1c
+.RI "int \fB__get_num_online_cpus\fP (void)"
+.br
+.ti -1c
+.RI "int \fB__get_num_frames\fP (void)"
+.br
+.ti -1c
+.RI "\fBoslvl_t\fP \fB__get_os_level\fP (void)"
+.br
+.ti -1c
+.RI "bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
+.br
+.ti -1c
 .RI "void \fB__fd_close\fP (int fd)"
 .br
 .ti -1c
@@ -496,6 +517,12 @@ src/zos.cc
 .br
 .ti -1c
 .RI "void * \fBroanon_mmap\fP (void *_, \fBsize_t\fP len, int prot, int flags, const char *filename, int fildes, off_t off)"
+.br
+.ti -1c
+.RI "int \fB__print_zoslib_help\fP (FILE *fp, const char *title)"
+.br
+.ti -1c
+.RI "void \fB__update_envar_settings\fP (const char *envar)"
 .br
 .ti -1c
 .RI "void \fBinit_zoslib_config\fP (\fBzoslib_config_t\fP &config)"
@@ -852,6 +879,33 @@ returns pointer to environment list
 .RE
 .PP
 
+.SS "int __get_num_frames (void)"
+Get the number of frames currently available to the system 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of available frames 
+.RE
+.PP
+
+.SS "int __get_num_online_cpus (void)"
+Get the number of online CPUs 
+.PP
+\fBReturns\fP
+.RS 4
+returns the number of online CPUs 
+.RE
+.PP
+
+.SS "\fBoslvl_t\fP __get_os_level (void)"
+Get the OS level 
+.PP
+\fBReturns\fP
+.RS 4
+the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order) 
+.RE
+.PP
+
 .SS "int __getargc (void)"
 Get program argument count 
 .PP
@@ -895,6 +949,24 @@ returns an array of process arguments
 
 .SS "char** __getargv_a (void)"
 
+.SS "int __getexepath (char * path, int pathlen, pid_t pid)"
+Get the executable path of a given process id 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpath\fP - pointer to the destination array to copy the null-terminated path to 
+.br
+\fIpathlen\fP - length of the given array 
+.br
+\fIpid\fP - process id to obtain the executable path for 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+On success, returns 0, or -1 on error\&. 
+.RE
+.PP
+
 .SS "int __getfdccsid (int fd)"
 Get file descriptor CCSID\&. 
 .PP
@@ -921,7 +993,37 @@ Guess if string is ASCII or EBCDIC\&.
 .PP
 \fBReturns\fP
 .RS 4
-returns guessed CCSID\&. 
+guessed CCSID\&. 
+.RE
+.PP
+
+.SS "int __guess_fd_ue (int fd, char * errmsg, \fBsize_t\fP er_size, int is_new_fd)"
+Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd\&. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP - open file descriptor to guess\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
+.RE
+.PP
+
+.SS "int __guess_ue (const void * src, \fBsize_t\fP size, char * errmsg, \fBsize_t\fP er_size)"
+Guess if string is UTF8 (ASCII) or EBCDIC\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsrc\fP - character string\&. 
+.br
+\fIsize\fP - number of bytes to analyze\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if not NULL, errmsg will contain details)\&. 
 .RE
 .PP
 
@@ -931,6 +1033,15 @@ Indicates if zoslib is in debug mode
 \fBReturns\fP
 .RS 4
 returns current debug mode 
+.RE
+.PP
+
+.SS "bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
+Check if current OS is at or above a given level 
+.PP
+\fBReturns\fP
+.RS 4
+true if the current OS level is at or above the given level, and false otherwise 
 .RE
 .PP
 
@@ -953,6 +1064,22 @@ Obtain the mach absolute time
 \fBReturns\fP
 .RS 4
 returns mach absolute time 
+.RE
+.PP
+
+.SS "int __print_zoslib_help (FILE * fp, const char * title)"
+Prints zoslib help information to specified FILE pointer 
+.PP
+\fBParameters\fP
+.RS 4
+\fIFILE\fP pointer to write to 
+.br
+\fItitle\fP header, specify NULL for default 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+On success, returns 0, or < 0 on error\&. 
 .RE
 .PP
 
@@ -1051,6 +1178,20 @@ Attempts to a close a socket for a period of time
 .SS "void __tlsvaranchor_destroy (struct \fB__tlsanchor\fP * anchor)"
 
 .SS "void __unloadmod (void * mod)"
+
+.SS "void __update_envar_settings (const char * envar)"
+Updates the zoslib global variables associated with the zoslib environment variables 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenvar\fP environment variable to update, specify NULL to update all 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+On success, returns 0, or < 0 on error\&. 
+.RE
+.PP
 
 .SS "void __xfer_env (void)"
 Convert environment variables from EBCDIC to ASCII\&. 

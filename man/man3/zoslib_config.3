@@ -1,4 +1,4 @@
-.TH "zoslib_config" 3 "Thu Jun 10 2021" "zoslib" \" -*- nroff -*-
+.TH "zoslib_config" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -23,20 +23,35 @@ zoslib_config
 .ti -1c
 .RI "const char * \fBFORKMAX_ENVAR\fP"
 .br
+.ti -1c
+.RI "const char * \fBCCSID_GUESS_BUF_SIZE_ENVAR\fP"
+.br
+.ti -1c
+.RI "const char * \fBUNTAGGED_READ_MODE_ENVAR\fP"
+.br
+.ti -1c
+.RI "const char * \fBUNTAGGED_READ_MODE_CCSID1047_ENVAR\fP"
+.br
 .in -1c
 .SH "Detailed Description"
 .PP 
 Configuration for zoslib library 
 .SH "Member Data Documentation"
 .PP 
+.SS "const char* zoslib_config::CCSID_GUESS_BUF_SIZE_ENVAR"
+string to indicate the envar to be used to toggle ccsid guess buf size in bytes 
 .SS "const char* zoslib_config::DEBUG_ENVAR"
 string to indicate the envar to be used to toggle debug mode 
 .SS "const char* zoslib_config::FORKMAX_ENVAR"
-string to indicate the envar to be to toggle max number of forks 
+string to indicate the envar to be used to toggle max number of forks 
 .SS "const char* zoslib_config::IPC_CLEANUP_ENVAR"
 string to indicate the envar to be used to toggle IPC cleanup 
 .SS "const char* zoslib_config::RUNTIME_LIMIT_ENVAR"
-string to indicate the envar to be to toggle runtime limit 
+string to indicate the envar to be used to toggle runtime limit 
+.SS "const char* zoslib_config::UNTAGGED_READ_MODE_CCSID1047_ENVAR"
+string to indicate the envar to be used to toggle the untagged 1047 read mode 
+.SS "const char* zoslib_config::UNTAGGED_READ_MODE_ENVAR"
+string to indicate the envar to be used to toggle the untagged read mode 
 
 .SH "Author"
 .PP 
