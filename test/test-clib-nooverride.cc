@@ -24,7 +24,7 @@ protected:
 
 TEST_F(CLIBNoOverrides, open) {
     EXPECT_GE(fd, 0);
-    // New files should be tagged as ASCII 819
+    // New files should be untagged
     EXPECT_EQ(__getfdccsid(fd), 0);
 
     // Should have no effect on reading 
