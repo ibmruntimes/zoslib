@@ -25,13 +25,6 @@ extern "C" {
 /**
  * Same as C open but tags new files as ASCII (819)
  */
-#if (__EDC_TARGET < 0x42050000)
-#define O_CLOEXEC   0x00001000
-#define O_DIRECT    0x00002000
-#define O_NOFOLLOW  0x00004000
-#define O_DIRECTORY 0x00008000
-#define O_PATH      0x00080000
-#endif
 int __open_ascii(const char *filename, int opts, ...);
 int open(const char *filename, int opts, ...) asm("__open_ascii");
 
@@ -43,14 +36,14 @@ int open(const char *filename, int opts, ...) asm("__open_ascii");
 
 #include_next <fcntl.h>
 
+#endif
+
 #if (__EDC_TARGET < 0x42050000)
 #define O_CLOEXEC   0x00001000
 #define O_DIRECT    0x00002000
 #define O_NOFOLLOW  0x00004000
 #define O_DIRECTORY 0x00008000
 #define O_PATH      0x00080000
-#endif
-
 #endif
 
 #endif

@@ -2416,7 +2416,7 @@ extern "C" int __update_envar_names(zoslib_config_t *const config) {
   return zinit_ptr->setEnvarHelpMap();
 }
 
-extern "C" void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
+void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   /* Eyecatcher .C.E.E.1 */
   static const char XPLINK_EYECATCHER[] = {0x00, 0xC3, 0x00, 0xC5,
                                            0x00, 0xC5, 0x00, 0xF1};
@@ -2552,7 +2552,7 @@ extern "C" void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   return new_dsaptr;
 }
 
-extern "C" int *__get_stack_start() {
+int *__get_stack_start() {
   if (gettid() == 1 && __main_thread_stack_top_address != 0)
     return __main_thread_stack_top_address;
 
@@ -2671,7 +2671,7 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   tenv = getenv("_EDC_SUSV3");
   if (!tenv || !*tenv) {
     setenv("_EDC_SUSV3", "1", 1);
-  };
+  }
 
   populateLEFunctionPointers();
 
