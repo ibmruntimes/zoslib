@@ -9,6 +9,8 @@
 #ifndef ZOS_UNISTD_H_
 #define ZOS_UNISTD_H_
 
+#define __XPLAT 1
+
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD)
 
 #undef pipe 
@@ -18,6 +20,10 @@
 
 #if defined(__cplusplus)
 extern "C" {
+#endif
+
+#if (__EDC_TARGET < 0x42050000)
+int (*pipe2)(int pipefd[2], int flags);
 #endif
 
 /**
@@ -31,6 +37,11 @@ int pipe(int [2]) asm("__pipe_ascii");
 
 #else // #if !(defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD))
 #include_next <unistd.h>
+
+#if (__EDC_TARGET < 0x42050000)
+int (*pipe2)(int pipefd[2], int flags);
+#endif 
+
 #endif
 
 #endif

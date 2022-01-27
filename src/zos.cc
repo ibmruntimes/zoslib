@@ -2751,6 +2751,124 @@ int __zinit::setEnvarHelpMap() {
   return __update_envar_settings(NULL);
 }
 
+int __accept4(int s, struct sockaddr * addr,
+               socklen_t * addrlen, int flags) {
+  int fd;
+  if ((fd = accept(s, addr, addrlen)) == -1)
+    return -1;
+
+  if (flags == 0)
+    return fd;
+
+  int file_flags = fcntl(fd, F_GETFL);
+  if (file_flags < 0)
+    return -1;
+  int fd_flags = fcntl(fd, F_GETFD);
+  if (fd_flags < 0)
+    return -1;
+
+  if (flags & SOCK_CLOEXEC) {
+    file_flags |= FD_CLOEXEC;
+  }
+
+  if (flags & SOCK_NONBLOCK) {
+    fd_flags |= O_NONBLOCK;
+  }
+ 
+  if (fcntl(fd, F_SETFL, file_flags) < 0)
+    return -1;
+
+  if (fcntl(fd, F_SETFD, fd_flags) < 0)
+    return -1;
+
+  return fd;
+}
+
+int __pipe2(int pipefd[2], int flags) {
+  int err;
+  if ((err = pipe(pipefd)) < 0)
+    return err;
+
+  if (flags == 0) 
+    return 0;
+
+  int fd_flags = fcntl(pipefd[0], F_GETFD);
+  if (fd_flags < 0)
+    return -1;
+
+  int fd2_flags = fcntl(pipefd[1], F_GETFD);
+  if (fd2_flags < 0)
+    return -1;
+
+  int fl_flags = fcntl(pipefd[0], F_GETFL);
+  if (fl_flags < 0)
+    return -1;
+
+  int fl2_flags = fcntl(pipefd[1], F_GETFL);
+  if (fl2_flags < 0)
+    return -1;
+
+  if (flags & O_CLOEXEC) {
+    fd_flags |= FD_CLOEXEC;
+    fd2_flags |= FD_CLOEXEC;
+    if (fcntl(pipefd[0], F_SETFD, fd_flags) < 0)
+      return -1;
+
+    if (fcntl(pipefd[1], F_SETFD, fd2_flags) < 0)
+      return -1;
+  }
+
+  if (flags & O_NONBLOCK) {
+    fl_flags |= O_NONBLOCK;
+    fl2_flags |= O_NONBLOCK;
+    if (fcntl(pipefd[0], F_SETFL, fl_flags) < 0)
+      return -1;
+
+    if (fcntl(pipefd[1], F_SETFL, fl2_flags) < 0)
+      return -1;
+  }
+ 
+  return 0;
+}
+
+int __futimes(int fd, const struct timeval tv[2]) {
+  attrib_t atr;
+  memset(&atr, 0, sizeof(atr));
+  atr.att_mtimechg = 1;
+  atr.att_atimechg = 1;
+  atr.att_atime = tv[0].tv_sec;
+  atr.att_mtime = tv[1].tv_sec;
+  return __fchattr(fd, &atr, sizeof(atr));
+}
+
+int __lutimes(const char *filename, const struct timeval tv[2]) {
+  int return_value;
+  int return_code;
+  int reason_code;
+
+  __bpxyatt_t attributes;
+  memset(&attributes, 0, sizeof(attributes));
+  memcpy(attributes.att_id, "\xC1\xE3\xE3\x40", 4); // "ATT ".
+  attributes.att_version = 3;
+  attributes.att_atimechg = 1;
+  attributes.att_atime = tv[0].tv_sec;
+  attributes.att_mtimechg = 1;
+  attributes.att_mtime = tv[1].tv_sec;
+
+  // ZOSLIB is built in ASCII, but BPX4LCR wants EBCDIC.
+  char *pathname = _str_a2e(filename);
+
+  __bpx4lcr(strlen(pathname), pathname, sizeof(attributes), &attributes,
+            &return_value, &return_code, &reason_code);
+
+  if (return_value != 0) {
+    errno = return_code;
+    return -1;
+  }
+
+  return 0;
+}
+
 #define MAP_LE_FUNC(func, offset) (func = (typeof(func))((unsigned long*)__get_libvec_base() + (offset<<1)))
 
 void __zinit::populateLEFunctionPointers() {
@@ -2771,11 +2889,15 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(inotify_init1, 0xDB9);
     MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
     MAP_LE_FUNC(inotify_add_watch, 0xDBB);
+    MAP_LE_FUNC(pipe2, 0xDBD);
+    MAP_LE_FUNC(accept4, 0xDA8);
   }
   else {
     clock_gettime = __clock_gettime;
     futimes = __futimes;
     lutimes = __lutimes;
+    pipe2 = __pipe2;
+    accept4 = __accept4;
   }
 #endif
 }

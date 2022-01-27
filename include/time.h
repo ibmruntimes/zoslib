@@ -9,6 +9,8 @@
 #ifndef ZOS_TIME_H_
 #define ZOS_TIME_H_
 
+#define __XPLAT 1
+
 #if (__EDC_TARGET < 0x42050000)
 #include_next <time.h>
 
