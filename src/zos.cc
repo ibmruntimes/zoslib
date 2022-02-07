@@ -83,17 +83,13 @@ static int shmid_value(void);
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
-// From deps/v8/src/base/macros.h
-// Return the largest multiple of m which is <= x.
-template <typename T> static inline T RoundDown(T x, intptr_t m) {
-  // m must be a power of two.
-  assert(m != 0 && ((m & (m - 1)) == 0));
-  return x & -m;
-}
-
 // Return the smallest multiple of m which is >= x.
-template <typename T> static inline T RoundUp(T x, intptr_t m) {
-  return RoundDown<T>(static_cast<T>(x + m - 1), m);
+static inline size_t __round_up(size_t x, size_t m) {
+  assert(m > 0);
+  size_t mod = x % m;
+  if (mod == 0) return x;
+  if (x < m) return m;
+  return x + m - mod;
 }
 
 extern char **environ; // this would be the ebcdic one
@@ -1428,7 +1424,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
     else
       return MAP_FAILED;
   } else if (alloc_info.elligible() && len > 2UL * kGigaByte) {
-    size_t request_size = RoundUp(len, kMegaByte) / kMegaByte;
+    size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
     void *p = alloc_info.alloc_seg(request_size);
     if (p)
       return p;
@@ -2584,7 +2580,7 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
     return nullptr;
   }
   static const int pgsize = sysconf(_SC_PAGESIZE);
-  size_t size = RoundUp(len, pgsize);
+  size_t size = __round_up(len, pgsize);
 
   void *memory = anon_mmap(_, size);
   if (memory == MAP_FAILED) {
