@@ -16,7 +16,7 @@ target_compile_options(cctest PRIVATE ${zoslib_cflags})
 if((NOT BUILD_SHARED_LIBS) OR (${BUILD_SHARED_LIBS} MATCHES "OFF"))
   target_link_libraries(cctest zoslib)
 else()
-  target_link_libraries(cctest ${CMAKE_BINARY_DIR}/src/libzoslib.x)
+  target_link_libraries(cctest ${CMAKE_BINARY_DIR}/lib/libzoslib.x)
 endif()
 
 INSTALL(TARGETS cctest DESTINATION "install/bin")
