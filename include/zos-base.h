@@ -33,6 +33,7 @@
 #include "zos-bpx.h"
 #include "zos-char-util.h"
 #include "zos-io.h"
+#include "zos-savstack.h"
 #include "zos-sys-info.h"
 #include "zos-tls.h"
 

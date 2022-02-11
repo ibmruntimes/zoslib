@@ -23,6 +23,7 @@ shared_library("zoslib") {
     "include/zos-bpx.h",
     "include/zos-char-util.h",
     "include/zos-io.h",
+    "include/zos-savstack.h",
     "include/zos-semaphore.h",
     "include/zos-setlibpath.h",
     "include/zos-sys-info.h",
