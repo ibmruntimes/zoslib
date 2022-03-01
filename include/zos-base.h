@@ -305,6 +305,18 @@ int __dlcb_entry_name(char *buf, int size, void *dlcb);
 void *__dlcb_entry_addr(void *dlcb);
 
 /**
+ * Walk through list of dlcb 
+ * \param [in] cb - callback function for each dlcb,
+ *  the callback will have the name, the address and data, which is
+ *  a copy of whatever value was passed as the second argument, as
+ *  input parameters
+ * \param [in] data - pass to callback
+ * \return returns whatever value was returned by the last call to callback,
+ *  if no dlcb is found, return -1
+ */
+int __dlcb_iterate(int (*cb)(char* name, void* addr, void* data), void *data);
+
+/**
  * Obtain the mach absolute time
  * \return returns mach absolute time
  */

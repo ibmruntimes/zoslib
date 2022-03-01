@@ -655,6 +655,25 @@ extern "C" void *__dlcb_entry_addr(void *dlcb) {
   return addr;
 }
 
+extern "C" int __dlcb_iterate(int (*cb)(char*, void*, void*), void *data) {
+  void *dlcb = 0;
+  char buffer[PATH_MAX];
+  char filename[PATH_MAX];
+  char *libpath = getenv("LIBPATH");
+  int r = -1;
+  while (dlcb = __dlcb_next(dlcb), dlcb) {
+    int len = __dlcb_entry_name(buffer, sizeof(buffer), dlcb);
+    void *addr = __dlcb_entry_addr(dlcb);
+    if (buffer[0] != '/' && libpath && 
+       __find_file_in_path(filename, sizeof(filename), libpath, buffer) > 0) {
+      snprintf(buffer + len, sizeof(buffer) - len, " => %s (0x%p)", filename, addr);
+    } else
+      snprintf(buffer + len, sizeof(buffer) - len, " (0x%p)", addr);
+    r = (*cb)(buffer, addr, data);
+  }
+  return r;
+}
+
 extern "C" void abort(void) {
   if (__is_backtrace_on_abort) {
     __display_backtrace(STDERR_FILENO);
