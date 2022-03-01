@@ -30,6 +30,22 @@ typedef struct {
   unsigned int value;
 } sem_t;
 
+typedef struct __sem {
+  volatile unsigned int value;
+  volatile unsigned int id; // 0 for non shared (thread), pid for share
+  volatile unsigned int waitcnt;
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+} ____sem_t;
+
+typedef struct {
+  ____sem_t *_s;
+} __sem_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int sem_init(sem_t *semid, int pshared, unsigned int value);
 
 int sem_destroy(sem_t *semid);
@@ -41,5 +57,21 @@ int sem_trywait(sem_t *semid);
 int sem_post(sem_t *semid);
 
 int sem_timedwait(sem_t *semid, const struct timespec *timeout);
+
+/**TODO(itodorov) - zos: document these interfaces**/
+int __sem_init(__sem_t *s0, int shared, unsigned int val);
+int __sem_post(__sem_t *s0);
+int __sem_trywait(__sem_t *s0);
+int __sem_timedwait(__sem_t *s0, const struct timespec *abs_timeout);
+int __sem_wait(__sem_t *s0);
+int __sem_getvalue(__sem_t *s0, int *sval);
+int __sem_destroy(__sem_t *s0);
+
+unsigned int atomic_dec(volatile unsigned int *loc);
+unsigned int atomic_inc(volatile unsigned int *loc);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // ZOS_SEMAPHORE_H_

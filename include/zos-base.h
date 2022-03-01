@@ -61,18 +61,6 @@ typedef enum {
   CLOCK_THREAD_CPUTIME_ID
 } clockid_t;
 
-typedef struct __sem {
-  volatile unsigned int value;
-  volatile unsigned int id; // 0 for non shared (thread), pid for share
-  volatile unsigned int waitcnt;
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-} ____sem_t;
-
-typedef struct {
-  ____sem_t *_s;
-} __sem_t;
-
 extern const char *__zoslib_version;
 
 typedef struct __stack_info {
@@ -134,9 +122,6 @@ unsigned long long __registerProduct(const char *major_version,
                                      const char *product_owner,
                                      const char *feature_name,
                                      const char *product_name, const char *pid);
-
-unsigned int atomic_dec(volatile unsigned int *loc);
-unsigned int atomic_inc(volatile unsigned int *loc);
 
 /**
  * Get the Thread ID.
@@ -426,13 +411,6 @@ typedef struct __cpu_relax_workarea {
 
 /**TODO(itodorov) - zos: document these interfaces**/
 void __cpu_relax(__crwa_t *);
-int __sem_init(__sem_t *s0, int shared, unsigned int val);
-int __sem_post(__sem_t *s0);
-int __sem_trywait(____sem_t *s0);
-int __sem_timedwait(____sem_t *s0, const struct timespec *abs_timeout);
-int __sem_wait(__sem_t *s0);
-int __sem_getvalue(__sem_t *s0, int *sval);
-int __sem_destroy(__sem_t *s0);
 
 /**TODO(itodorov) - zos: document these interfaces **/
 int __testread(const void *location);
