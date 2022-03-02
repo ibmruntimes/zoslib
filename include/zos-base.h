@@ -370,6 +370,12 @@ int __fork(void);
 int getentropy(void *buffer, size_t length);
 
 /**
+ * Return the LE version as a string in the format of
+ * "Product %d%s Version %d Release %d Modification %d" 
+ */
+char* __get_le_version(void);
+
+/**
  * Prints the build version of the library
  */
 void __build_version(void);

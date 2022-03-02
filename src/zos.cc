@@ -1867,6 +1867,38 @@ extern "C" int getentropy(void *output, size_t size) {
   return 0;
 }
 
+extern "C" char* __get_le_version(void) {
+  static char leversion[1024] = "";
+  static int has_read = 0;
+  // LE version would be the same so only need to read 1 time,
+  // if leversion already computed we can return the result 
+  // directly without locking
+  if (has_read && leversion[0] != '\0') {
+    return leversion;
+  }
+
+  static std::mutex le_ver_lock;
+  std::lock_guard<std::mutex> lock(le_ver_lock);
+  if (leversion[0] != '\0') {
+    return leversion;
+  }
+
+  char *r;
+  __asm(" llgt %0,1208 \n"
+        " lg   %0,88(%0) \n"
+        " lg   %0,8(%0) \n"
+        " lg   %0,984(%0) \n"
+        : "=r"(r)::);
+  if (r == NULL)
+    return r;
+  const char *prod = (int)r[80] == 4 ? " (MVS LE)" : "";
+  snprintf(leversion, sizeof(leversion),
+           "Product %d%s Version %d Release %d Modification %d",
+           (int)r[80], prod, (int)r[81], (int)r[82], (int)r[83]);
+  has_read = 1;
+  return leversion;
+}
+
 extern "C" void __build_version(void) {
   char *V = __getenv_a("V");
   if (V && !memcmp(V, "1", 2)) {
