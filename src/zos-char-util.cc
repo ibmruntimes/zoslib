@@ -46,7 +46,6 @@ static int utf8scan(const unsigned char *str, unsigned size, char *errmsg,
       -1, -1, -1, -1};
 
   unsigned char onebyte;
-  int bytes;
   int state = 0;
   unsigned int value;
   unsigned char d[4];
@@ -210,7 +209,7 @@ static int utf8scan(const unsigned char *str, unsigned size, char *errmsg,
 void *_convert_e2a(void *dst, const void *src, size_t size) {
   int ccsid;
   int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
+  strlen_ae((unsigned char *)src, &ccsid, size, &am);
   if (ccsid == 819) {
     memcpy(dst, src, size);
     return dst;
@@ -221,7 +220,7 @@ void *_convert_e2a(void *dst, const void *src, size_t size) {
 void *_convert_a2e(void *dst, const void *src, size_t size) {
   int ccsid;
   int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
+  strlen_ae((unsigned char *)src, &ccsid, size, &am);
   if (ccsid == 1047) {
     memcpy(dst, src, size);
     return dst;
@@ -289,7 +288,7 @@ quit:
 int __guess_ae(const void *src, size_t size) {
   int ccsid;
   int am;
-  unsigned len = strlen_ae((unsigned char *)src, &ccsid, size, &am);
+  strlen_ae((unsigned char *)src, &ccsid, size, &am);
   return ccsid;
 }
 

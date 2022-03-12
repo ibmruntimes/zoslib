@@ -169,10 +169,10 @@ void __fd_close(int fd);
 inline void *__convert_one_to_one(const void *table, void *dst, size_t size,
                                   const void *src) {
   void *rst = dst;
-  __asm(" troo 2,%2,b'0001' \n jo *-4 \n"
-        : "+NR:r3"(size), "+NR:r2"(dst), "+r"(src)
-        : "NR:r1"(table)
-        : "r0", "r1", "r2", "r3");
+  __asm volatile(" troo 2,%2,1 \n jo *-4 \n"
+                 : "+NR:r3"(size), "+NR:r2"(dst), "+r"(src)
+                 : "NR:r1"(table)
+                 : "r0");
   return rst;
 }
 
@@ -232,21 +232,21 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page, int max_len,
   bytes = max_len;
   code_out = 0;
   start = str;
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_a)
-        : "r1", "r2", "r3");
+  __asm volatile(" trte %1,%3,0\n"
+                 " jo *-4\n"
+                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
+                 : "NR:r1"(_tab_a)
+                 :);
   unsigned a_len = str - start;
 
   bytes = max_len;
   code_out = 0;
   str = start;
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_e)
-        : "r1", "r2", "r3");
+  __asm volatile(" trte %1,%3,0\n"
+                 " jo *-4\n"
+                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
+                 : "NR:r1"(_tab_e)
+                 :);
   unsigned e_len = str - start;
   if (a_len > e_len) {
     *code_page = 819;
@@ -283,11 +283,11 @@ inline unsigned strlen_e(const unsigned char *str, unsigned size) {
   unsigned long code_out = 0;
   const unsigned char *start = str;
 
-  __asm(" trte %1,%3,b'0000'\n"
-        " jo *-4\n"
-        : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-        : "NR:r1"(_tab_e)
-        : "r1", "r2", "r3");
+  __asm volatile(" trte %1,%3,0\n"
+                 " jo *-4\n"
+                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
+                 : "NR:r1"(_tab_e)
+                 :);
 
   return str - start;
 }

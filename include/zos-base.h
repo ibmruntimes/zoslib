@@ -36,6 +36,7 @@
 #include "zos-savstack.h"
 #include "zos-sys-info.h"
 #include "zos-tls.h"
+#include "zos-getentropy.h"
 
 #define IPC_CLEANUP_ENVAR_DEFAULT "__IPC_CLEANUP"
 #define DEBUG_ENVAR_DEFAULT "__RUNDEBUG"
@@ -647,10 +648,10 @@ public:
     do {
       original = *forkcurr;
       new_value = original + 1;
-      __asm(" cs %0,%2,%1 \n "
-            : "+r"(original), "+m"(*forkcurr)
-            : "r"(new_value)
-            :);
+      __asm volatile(" cs %0,%2,%1 \n "
+                     : "+r"(original), "+m"(*forkcurr)
+                     : "r"(new_value)
+                     :);
     } while (original != (new_value - 1));
     return new_value;
   }
@@ -665,10 +666,10 @@ public:
       if (original == 0)
         return 0;
       new_value = original - 1;
-      __asm(" cs %0,%2,%1 \n "
-            : "+r"(original), "+m"(*forkcurr)
-            : "r"(new_value)
-            :);
+      __asm volatile(" cs %0,%2,%1 \n "
+                     : "+r"(original), "+m"(*forkcurr)
+                     : "r"(new_value)
+                     :);
     } while (original != (new_value - 1));
     return new_value;
   }

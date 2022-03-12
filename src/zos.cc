@@ -50,6 +50,10 @@
 #include <unordered_map>
 #include <vector>
 
+#if !defined(_gdsa) && defined(__llvm__)
+#define _gdsa __builtin_s390_gdsa
+#endif
+
 #pragma linkage(_gtca, builtin)
 #pragma linkage(_gdsa, builtin)
 
@@ -424,7 +428,10 @@ void __abend(int comp_code, unsigned reason_code, int flat_byte, void *plist) {
   if (flat_byte == -1)
     flat_byte = 0x84;
   r1 = (flat_byte << 24) + (0x00ffffff & comp_code);
-  __asm(" SVC 13\n" : : "NR:r0"(r0), "NR:r1"(r1), "NR:r15"(r15) :);
+  __asm volatile(" SVC 13\n"
+                 :
+                 : "NR:r0"(r0), "NR:r1"(r1), "NR:r15"(r15)
+                 :);
 }
 
 static const unsigned char ascii_to_lower[256] __attribute__((aligned(8))) = {
@@ -652,7 +659,7 @@ extern "C" int __dlcb_iterate(int (*cb)(char*, void*, void*), void *data) {
   while (dlcb = __dlcb_next(dlcb), dlcb) {
     int len = __dlcb_entry_name(buffer, sizeof(buffer), dlcb);
     void *addr = __dlcb_entry_addr(dlcb);
-    if (buffer[0] != '/' && libpath && 
+    if (buffer[0] != '/' && libpath &&
        __find_file_in_path(filename, sizeof(filename), libpath, buffer) > 0) {
       snprintf(buffer + len, sizeof(buffer) - len, " => %s (0x%p)", filename, addr);
     } else
@@ -987,10 +994,12 @@ static int mem_account(void) {
 
 static void getxttoken(char *out) {
   void *p;
-  asm("  l %0,1208 \n"
-      "  llgtr %0,%0 \n"
-      "  lg %0,x'130'(%0)\n"
-      : "+r"(p)::);
+  asm volatile("  l %0,1208 \n"
+               "  llgtr %0,%0 \n"
+               "  lg %0,304(%0)\n"
+               : "+r"(p)
+               :
+               : "r0");
   memcpy(out, (char *)p + 0x14, 16);
 }
 
@@ -1108,10 +1117,10 @@ static long long __iarv64(void *parm, long long *reason_code_ptr) {
   long long reason;
   char *code = ((char *__ptr32 *__ptr32 *__ptr32 *)0)[4][193][52];
   code = (char *)(((unsigned long long)code) | 14); // offset to the entry
-  asm(" pc 0(%3)"
-      : "=NR:r0"(reason), "+NR:r1"(parm), "=NR:r15"(rc)
-      : "r"(code)
-      :);
+  asm volatile(" PC 0(%3)"
+               : "=NR:r0"(reason), "+NR:r1"(parm), "=NR:r15"(rc)
+               : "a"(code)
+               : );
   rc = (rc & 0x0ffff);
   if (rc != 0 && reason_code_ptr != 0) {
     *reason_code_ptr = (0x0ffff & reason);
@@ -1161,7 +1170,8 @@ static void *__iarv64_alloc(int segs, const char *token) {
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), gettid(), parm.xorigin, (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), parm.xorigin,
+            (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
@@ -1204,7 +1214,8 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
     dprintf(2,
             "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
             "reason=%llx\n",
-            getpid(), gettid(), parm.xorigin, (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), parm.xorigin,
+            (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, reason);
   if (rc == 0) {
     return parm.xorigin;
@@ -1244,7 +1255,8 @@ static void *__mo_alloc(int segs) {
     fprintf(stderr,
             "__moservices-alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%d, "
             "iarv64_rc=%d\n",
-            getpid(), gettid(), p, (unsigned long)segs * kMegaByte,
+            getpid(), gettid(), p,
+            (unsigned long)segs * kMegaByte,
             (unsigned long)segs * kMegaByte, rc, moparm.__mopl_iarv64_rc);
   }
   if (rc == 0 && moparm.__mopl_iarv64_rc == 0) {
@@ -1439,35 +1451,46 @@ static void *anon_mmap_inner(void *addr, size_t len) {
       return MAP_FAILED;
   } else {
     char *p;
-#if defined(__64BIT__)
-    __asm(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
-          " STORAGE "
-          "OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),"
-          "LOC=(31,64)\n"
-#if defined(__clang__)
-          : "=NR:r1"(p), "=NR:r15"(retcode)
-          : "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+#if defined(__llvm__)
+    // The following solution allocates memory 2gb below the bar whose length
+    // is a multiple of 8 and whose memory is aligned on a page (4096) boundary.
+    // The below solution is similar to:
+    // STORAGE OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),LOC=(31,64)
+    len = (len + 7) &(-8);
+
+    size_t alignment = 4096;
+
+    // Original unaligned memory returned by __malloc31
+    void *mem_default;
+    // Aligned memory
+    void **mem_aligned;
+
+    size_t extra_size = alignment - 1 + sizeof(void *);
+
+    // Allocate the required size and a bit extra
+    mem_default = (void *)__malloc31(len + extra_size);
+
+    // If memory allocation failed, nothing we can do.
+    if (mem_default == NULL) {
+      return MAP_FAILED;
+    }
+
+    mem_aligned = (void **)(((size_t)(mem_default) + extra_size) & ~(alignment - 1));
+    mem_aligned[-1] = mem_default;
+
+    p = (char *)mem_aligned;
+    alloc_info.addptr(p, len);
+    return p;
 #else
-          : "=r"(p), "=r"(retcode)
-          : "r"(len)
-          : "r0", "r1", "r14", "r15");
-#endif
-#else
-    __asm(" SYSSTATE ARCHLVL=2\n"
-          " STORAGE "
-          "OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1)\n"
-#if defined(__clang__)
-          : "=NR:r1"(p), "=NR:r15"(retcode)
-          : "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
-#else
-          : "=r"(p), "=r"(retcode)
-          : "r"(len)
-          : "r0", "r1", "r14", "r15");
+    __asm volatile(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
+                   " STORAGE "
+                   "OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),"
+                   "LOC=(31,64)\n"
+                   : "=NR:r1"(p), "=NR:r15"(retcode)
+                   : "NR:r0"(len)
+                   : "r0", "r1", "r14", "r15");
 #endif
 
-#endif
     if (retcode == 0) {
       alloc_info.addptr(p, len);
       return p;
@@ -1477,40 +1500,30 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 }
 
 static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
-  int retcode;
   if (is_above_bar) {
     return alloc_info.free_seg(addr);
   } else {
-#if defined(__64BIT__)
-    __asm(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
-          " STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n"
-#if defined(__clang__)
-          : "=NR:r15"(retcode)
-          : "NR:r1"(addr), "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+#if defined(__llvm__)
+  // The following solution frees the original unaligned memory returned by
+  // __malloc31. Since free() doesn't return a return value, this simply
+  // returns 0.
+  // This solution is similar to:
+  // STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n
+  free(((void **)addr)[-1]);
+  alloc_info.freeptr(addr);
+  return 0;
 #else
-          : "=r"(retcode)
-          : "r"(addr), "r"(len)
-          : "r0", "r1", "r14", "r15");
-#endif
-#else
-    __asm("SYSSTATE ARCHLVL=2"
-          "STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES"
-#if defined(__clang__)
-          : "=NR:r15"(retcode)
-          : "NR:r1"(addr), "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
-#else
-          : "=r"(retcode)
-          : "r"(addr), "r"(len)
-          : "r0", "r1", "r14", "r15");
-#endif
-
-#endif
+    int retcode;
+    __asm volatile(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
+                   " STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n"
+                   : "=NR:r15"(retcode)
+                   : "NR:r1"(addr), "NR:r0"(len)
+                   : "r0", "r1", "r14", "r15");
     if (0 == retcode)
       alloc_info.freeptr(addr);
+    return retcode;
+#endif
   }
-  return retcode;
 }
 
 extern "C" void *anon_mmap(void *_, size_t len) {
@@ -1527,7 +1540,8 @@ extern "C" void *anon_mmap(void *_, size_t len) {
 extern "C" int anon_munmap(void *addr, size_t len) {
   if (alloc_info.is_exist_ptr(addr)) {
     if (mem_account())
-      dprintf(2, "Address found, attempt to free @%p size %zu\n", addr, len);
+      dprintf(2, "Address found, attempt to free @%p size %zu\n", addr,
+              len);
     int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
     if (rc != 0) {
       if (mem_account()) {
@@ -1633,10 +1647,10 @@ done:
 
 // --- start __atomic_store
 #define CSG(_op1, _op2, _op3)                                                  \
-  __asm(" csg %0,%2,%1 \n " : "+r"(_op1), "+m"(_op2) : "r"(_op3) :)
+  __asm volatile(" csg %0,%2,%1 \n " : "+r"(_op1), "+m"(_op2) : "r"(_op3) :)
 
 #define CS(_op1, _op2, _op3)                                                   \
-  __asm(" cs %0,%2,%1 \n " : "+r"(_op1), "+m"(_op2) : "r"(_op3) :)
+  __asm volatile(" cs %0,%2,%1 \n " : "+r"(_op1), "+m"(_op2) : "r"(_op3) :)
 
 extern "C" void __atomic_store_real(int size, void *ptr, void *val,
                                     int memorder) asm("__atomic_store");
@@ -1665,18 +1679,20 @@ void __atomic_store_real(int size, void *ptr, void *val, int memorder) {
     long cc;
     int retry = 10000;
     while (retry--) {
-      __asm(" TBEGIN 0,X'FF00'\n"
-            " IPM      %0\n"
-            " LLGTR    %0,%0\n"
-            " SRLG     %0,%0,28\n"
-            : "=r"(cc)::);
+      __asm volatile(" TBEGIN 0,65280\n"
+                     " IPM      %0\n"
+                     " LLGTR    %0,%0\n"
+                     " SRLG     %0,%0,28\n"
+                     : "=r"(cc)
+                     ::);
       if (0 == cc) {
         memcpy(ptr, val, size);
-        __asm(" TEND\n"
-              " IPM      %0\n"
-              " LLGTR    %0,%0\n"
-              " SRLG     %0,%0,28\n"
-              : "=r"(cc)::);
+        __asm volatile(" TEND\n"
+                       " IPM      %0\n"
+                       " LLGTR    %0,%0\n"
+                       " SRLG     %0,%0,28\n"
+                       : "=r"(cc)
+                       ::);
         if (0 == cc)
           break;
       }
@@ -1708,6 +1724,28 @@ extern "C" int __testread(const void *location) {
   volatile int word;
   r1->flags = 0x08000000;
   r1->reserved = 0;
+#if defined(__llvm__)
+  __asm volatile(" lg 1,%1\n"
+                 " larl 0,*+40\n" // *+40 -> "l 2,4(%%r1)"
+                 " st 0,0(1)\n"
+                 " larl 0,*+50\n" // *+50 -> "nopr 0"
+                 " st 0,4(1)\n"
+                 " la 15,28\n"
+                 " la 0,4\n"
+                 " svc 109\n"
+                 " stg 1,%0\n"
+                 " j *+24 \n" // *+24 -> "nopr 0"
+                 " l 2,4(1)\n"
+                 " la 3,1\n"
+                 " sll 3,31\n"
+                 " or 2,3\n"
+                 " st 2,76(1)\n"
+                 " br 14\n"
+                 " nopr 0\n"
+                 : "=m"(token)
+                 : "m"(r1)
+                 : "r0", "r2", "r3", "r15");
+#else
   __asm volatile("&suffix SETA &suffix+1\n"
                  " lg 1,%1\n"
                  " larl 0,exit&suffix \n"
@@ -1729,6 +1767,7 @@ extern "C" int __testread(const void *location) {
                  : "=m"(token)
                  : "m"(r1)
                  : "r0", "r1", "r15");
+#endif
 
   if (state == 1) {
     state = 2;
@@ -1768,110 +1807,12 @@ extern "C" int clock_gettime(clockid_t clk_id, struct timespec *tp) {
   tp->tv_nsec = (value % 4096000000UL) * 1000 / 4096;
   return 0;
 }
-static unsigned char _value(int bit) {
-  unsigned long long t0, t1, start;
-  int i;
-  asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
-  asm(" stckf %0 " : "=m"(start)::);
-  start = start >> bit;
-  for (i = 0; i < 400; ++i) {
-    asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
-    asm(" stckf %0 " : "=m"(t0)::);
-    t0 = t0 >> bit;
-    if ((t0 - start) > 0xfffff) {
-      break;
-    }
-    t1 ^= t0;
-  }
-  return (unsigned char)t1;
-}
-
-static void _slow(int size, void *output) {
-  char *out = (char *)output;
-  int i;
-#ifdef _LP64
-  static int bits = 0;
-#else
-  int bits = 0;
-#endif
-  unsigned long long t0, t1, r, m = 0xffff;
-  unsigned int zbitcnt[] = {0xffffffff, 0,  1,  26, 2,  23, 27, 0, 3,  16,
-                            24,         30, 28, 11, 0,  13, 4,  7, 17, 0,
-                            25,         22, 31, 15, 29, 19, 12, 6, 0,  21,
-                            14,         9,  5,  20, 8,  19, 18};
-  unsigned int t = 0xaa;
-
-  while (bits == 0 || bits > 11) {
-    for (i = 0; i < 10; ++i) {
-      asm(" stckf %0 " : "=m"(t0)::);
-      asm(" stckf %0 " : "=m"(t1)::);
-      r = t0 ^ t1;
-      if (r < m)
-        m = r;
-    }
-    bits = zbitcnt[(-m & m) % 37];
-  }
-  for (i = 0; i < size; ++i) {
-    t ^= _value(bits);
-    out[i] = t;
-  }
-}
-
-extern "C" int getentropy(void *output, size_t size) {
-  char *out = (char *)output;
-#ifdef _LP64
-  static int feature = -1;
-#else
-  int feature = -1;
-#endif
-  typedef struct parm {
-    unsigned long long a;
-    unsigned long long b;
-  } parm_t;
-
-  if (feature == -1) {
-    if (0x40 & *(char *)(207)) {
-      volatile parm_t value = {0, 0};
-      asm(" dc x'b93c008a' \n"
-          " jo *-4\n"
-          :
-          : "NR:r0"(0), "NR:r1"(&value)
-          :);
-      if (0x2000 & value.b) {
-        feature = 1;
-        // parm bit 114 is on
-      } else {
-        feature = 0;
-      }
-    } else {
-      feature = 0;
-    }
-  }
-  if (feature == 0) {
-    _slow(size, out);
-    return 0;
-  }
-#ifdef __XPLINK__
-  asm(" dc x'b93c00a2' \n"
-      " jo *-4\n"
-      : "+NR:r2"(out), "+NR:r3"(size)
-      : "NR:r0"(114), "NR:r11"(0)
-      : "r0");
-#else
-  asm(" dc x'b93c008a' \n"
-      " jo *-4\n"
-      : "+NR:r10"(out), "+NR:r11"(size)
-      : "NR:r0"(114), "NR:r9"(0)
-      : "r0");
-#endif
-  return 0;
-}
 
 extern "C" char* __get_le_version(void) {
   static char leversion[1024] = "";
   static int has_read = 0;
   // LE version would be the same so only need to read 1 time,
-  // if leversion already computed we can return the result 
+  // if leversion already computed we can return the result
   // directly without locking
   if (has_read && leversion[0] != '\0') {
     return leversion;
@@ -1905,26 +1846,28 @@ extern "C" void __build_version(void) {
     printf("%s\n", __zoslib_version);
   }
 }
+
 extern "C" size_t strnlen(const char *str, size_t maxlen) {
   char *op1 = (char *)str + maxlen;
-  asm(" SRST %0,%1\n"
-      " jo *-4"
-      : "+r"(op1)
-      : "r"(str), "NR:r0"(0)
-      :);
+  asm volatile(" SRST %0,%1\n"
+               " jo *-4"
+               : "+r"(op1)
+               : "r"(str), "NR:r0"(0)
+               :);
   return op1 - str;
 }
+
 extern "C" void __cpu_relax(__crwa_t *p) {
   // heuristics to avoid excessive CPU spin
   void *r4;
   sched_yield();
-  asm(" lgr %0,4" : "=r"(r4)::);
+  asm volatile(" lgr %0,4" : "=r"(r4)::);
   if (p->sfaddr != r4) {
     p->sfaddr = r4;
-    asm(" stckf %0 " : "=m"(p->t0)::);
+    asm volatile(" stckf %0 " : "=m"(p->t0)::);
   } else {
     unsigned long now;
-    asm(" stckf %0 " : "=m"(now)::);
+    asm volatile(" stckf %0 " : "=m"(now)::);
     unsigned long ticks = now - p->t0;
 
     if (ticks < 12288000000UL) {
@@ -1991,16 +1934,21 @@ extern void __unloadmod(void *mod) {
   loadmod_t *m = (loadmod_t *)mod;
   if (!m)
     return;
-  __asm(" lgr 0,%1\n"
-        " svc 9\n"
-        " st 15,%0\n"
-        : "=m"(m->load_r15)
-        : "r"(m->modname)
-        : "r0", "r1", "r15");
+  __asm volatile(" lgr 0,%1\n"
+                 " svc 9\n"
+                 " st 15,%0\n"
+                 : "=m"(m->load_r15)
+                 : "r"(m->modname)
+                 : "r0", "r1", "r15");
   if (m->thptr)
     free(m->thptr);
   free(m);
 }
+
+#if defined(__ibmxl__)
+// FIXME:
+// __loadmod() and __callmod() supported only by __ibmxl__;
+// have to identify workaround for the amode24/31 query status.
 
 extern void *__loadmod(const char *name) {
   loadmod_t *m = (loadmod_t *)__malloc31(sizeof(loadmod_t));
@@ -2015,15 +1963,15 @@ extern void *__loadmod(const char *name) {
     memset(len + m->modname, 0x40, 8 - len);
   }
   m->load_r1 = 0x80000000;
-  __asm(" lgr 0,%3\n"
-        " l  1,%1\n"
-        " svc 8\n"
-        " stg 0,%0\n"
-        " st 1,%1\n"
-        " st 15,%2\n"
-        : "=m"(m->reg15), "+m"(m->load_r1), "=m"(m->load_r15)
-        : "r"(m->modname)
-        : "r0", "r1", "r15");
+  __asm volatile(" lgr 0,%3\n"
+                 " l  1,%1\n"
+                 " svc 8\n"
+                 " stg 0,%0\n"
+                 " st 1,%1\n"
+                 " st 15,%2\n"
+                 : "=m"(m->reg15), "+m"(m->load_r1), "=m"(m->load_r15)
+                 : "r"(m->modname)
+                 : "r0", "r1", "r15");
   if (m->load_r15) {
     free(m);
     return 0;
@@ -2055,6 +2003,7 @@ extern void *__loadmod(const char *name) {
 
 // FIXME: noinline is specified, otherwise we get an error: No active USING for
 // operand H3090
+
 __attribute__((noinline)) extern long __callmod(void *mod, void *plist) {
   loadmod_t *m = (loadmod_t *)mod;
   long rc;
@@ -2063,41 +2012,42 @@ __attribute__((noinline)) extern long __callmod(void *mod, void *plist) {
   m->reg1 = plist;
   if (m->thptr) {
     // amode 24 call
-    __asm(" BASR 14,0 \n"
-          " USING *,14 \n"
-          " LG 1,%3 \n"
-          " LG 13,%4 \n"
-          " LG 15,%5 \n"
-          " LA 14,H3090 \n" // get the branch back address
-          " DROP 14 \n"
-          " STG 14,%1 \n" // store in braddr
-          " LGR 14,%2 \n" // load r4 to point to SAM24 instruction
-          " STMH 14,12,72(13)\n"
-          " BR 14 \n"                 // branch to thunk
-          "H3090 LMH  14,12,72(13)\n" // just in case program mess with the
-                                      // upper half of registers.
-          " LGR %0,15 \n"
-          : "=r"(rc), "=m"(m->thptr->braddr)
-          : "r"(&(m->thptr->sam24)), "m"(m->reg1), "m"(m->reg13), "m"(m->reg15)
-          : "r1", "r13", "r14", "r15");
+    __asm volatile(" BASR 14,0 \n"
+                   " USING *,14 \n"
+                   " LG 1,%3 \n"
+                   " LG 13,%4 \n"
+                   " LG 15,%5 \n"
+                   " LA 14,H3090 \n" // get the branch back address
+                   " DROP 14 \n"
+                   " STG 14,%1 \n" // store in braddr
+                   " LGR 14,%2 \n" // load r4 to point to SAM24 instruction
+                   " STMH 14,12,72(13)\n"
+                   " BR 14 \n"                 // branch to thunk
+                   "H3090 LMH  14,12,72(13)\n" // just in case program mess with the
+                                               // upper half of registers.
+                   " LGR %0,15 \n"
+                   : "=r"(rc), "=m"(m->thptr->braddr)
+                   : "r"(&(m->thptr->sam24)), "m"(m->reg1), "m"(m->reg13), "m"(m->reg15)
+                   : "r1", "r13", "r14", "r15");
   } else {
     // amode 31 call
-    __asm(" LG 1,%1 \n"
-          " LG 13,%2 \n"
-          " LG 15,%3 \n"
-          " SAM31 \n"
-          " STMH 14,12,72(13)\n"
-          " BASR 14,15 \n"
-          " LMH  14,12,72(13)\n" // just in case program mess with the upper
-                                 // half of registers
-          " SAM64 \n"
-          " LGR %0,15 \n"
-          : "=r"(rc)
-          : "m"(m->reg1), "m"(m->reg13), "m"(m->reg15)
-          : "r1", "r13", "r14", "r15");
+    __asm volatile(" LG 1,%1 \n"
+                   " LG 13,%2 \n"
+                   " LG 15,%3 \n"
+                   " SAM31 \n"
+                   " STMH 14,12,72(13)\n"
+                   " BASR 14,15 \n"
+                   " LMH  14,12,72(13)\n" // just in case program mess with the upper
+                                          // half of registers
+                   " SAM64 \n"
+                   " LGR %0,15 \n"
+                   : "=r"(rc)
+                   : "m"(m->reg1), "m"(m->reg13), "m"(m->reg15)
+                   : "r1", "r13", "r14", "r15");
   }
   return rc;
 }
+#endif
 
 // IFAED Interfaces
 /*  Type for TYPE operand of IFAEDREG                                */
@@ -2296,7 +2246,7 @@ unsigned long long __registerProduct(const char *major_version,
   arg->begtime_addr = (char *__ptr32)__malloc31(sizeof(char *__ptr32));
 
   // Load 25 (IFAUSAGE) into reg15 and call via SVC
-  asm(" svc 109\n" : "=NR:r15"(ifausage_rc) : "NR:r1"(arg), "NR:r15"(25) :);
+  asm volatile(" svc 109\n" : "=NR:r15"(ifausage_rc) : "NR:r1"(arg), "NR:r15"(25) :);
 
   free(arg);
 
@@ -2523,10 +2473,7 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   void *new_dsaptr = NULL;
   short int epname_length;
   void *entry_ptr;
-  int *ppa1off_ptr;
-  int ppa1_offset;
   char FLAG3;
-  char FLAG4;
   int offset_lth;
 
   ppa1_layout *ppa1_ptr;
@@ -2554,7 +2501,8 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   si->entry_point = (void *)entry_ptr;
   si->return_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_return;
   si->entry_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_entry;
-  si->stack_addr = (int *)((dsa_layout *)new_dsaptr)->savearea_backchain - 2048;
+  si->stack_addr = (int *)((char *)((dsa_layout *)new_dsaptr)->savearea_backchain
+                           + 2048);
   layout_ptr =
       (routine_layout *)((unsigned long)entry_ptr - sizeof(routine_layout));
   ppa1_ptr =

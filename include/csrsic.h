@@ -10,6 +10,10 @@
 
 #define __CSRSI
 
+// TODO(gabylb): disable for Woz clang till it supports OS linkage:
+// extern "OS" ??< - error: unknown linkage language
+#if defined(__ibmxl__)
+
 /*********************************************************************
  *                                                                   *
  *  Name: CSRSIC                                                     *
@@ -142,7 +146,7 @@ struct CSRSI_PSA ??<
 
 /*  End of CSRSI Header                                              */
 
-#endif
+#endif  // if defined(__ibmxl__)
 
 /*********************************************************************/
 /* si11v1 represents the output for a V1 CPC when general CPC        */
@@ -842,3 +846,5 @@ typedef struct ??<
 #define CSRSI_BADREQUEST               12
 #define CSRSI_BADINFOAREALEN           16
 #define CSRSI_BADLOCK                  20
+
+#endif  // ifndef(__CSRSI)

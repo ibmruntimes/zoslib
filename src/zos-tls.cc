@@ -26,7 +26,10 @@ static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
   unsigned int newv = 1;
   expv = 0;
   newv = 1;
-  __asm(" cs  %0,%2,%1 \n" : "+r"(expv), "+m"(*o) : "r"(newv) :);
+  __asm volatile(" cs  %0,%2,%1 \n"
+                 : "+r"(expv), "+m"(*o)
+                 : "r"(newv)
+                 :);
   initv = expv;
   if (initv == 2) {
     // proceed
@@ -35,19 +38,22 @@ static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
     pthread_key_create(k, _cleanup);
     expv = 1;
     newv = 2;
-    __asm(" cs  %0,%2,%1 \n" : "+r"(expv), "+m"(*o) : "r"(newv) :);
+    __asm volatile(" cs  %0,%2,%1 \n"
+                   : "+r"(expv), "+m"(*o)
+                   : "r"(newv)
+                   :);
     initv = expv;
   } else {
     // wait and poll for completion
     while (initv != 2) {
       expv = 0;
       newv = 1;
-      __asm(" la 15,0\n"
-            " svc 137\n"
-            " cs  %0,%2,%1 \n"
-            : "+r"(expv), "+m"(*o)
-            : "r"(newv)
-            : "r15", "r6");
+      __asm volatile(" la 15,0\n"
+                     " svc 137\n"
+                     " cs  %0,%2,%1 \n"
+                     : "+r"(expv), "+m"(*o)
+                     : "r"(newv)
+                     : "r15", "r6");
       initv = expv;
     }
   }

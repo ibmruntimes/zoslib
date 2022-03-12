@@ -11,8 +11,8 @@
 
 ## Overview
 
-ZOSLIB is a z/OS C/C++ library.  It is an extended implementation of the
-z/OS LE C Runtime Library.  
+ZOSLIB is a z/OS C/C++ library. It is an extended implementation of the
+z/OS LE C Runtime Library.
 
 ZOSLIB implements the following:
 
@@ -81,17 +81,17 @@ From the directory `mybuilddir`, enter the following CMake command
 $ cmake ..
 ```
 
-By default CMake will configure your build as a Debug build.  You can
+By default CMake will configure your build as a Debug build. You can
 configure your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
 
-Also by default, CMake will configure your build to create a shared
-library (libzoslib.so and libzoslib.x). To create a static library,
-pass to CMake the option `-DBUILD_SHARED_LIBS=OFF`.
+Also by default, CMake will configure your build to create a static
+library (libzoslib.a). To create a shared library, pass to CMake
+the option `-DBUILD_SHARED_LIBS=ON`.
 
 CMake will detect your development environment, perform a series of 
 tests, and generate the files required for building ZOSLIB. 
 
-By default, CMake will generate Makefiles.  If you prefer to use Ninja,
+By default, CMake will generate Makefiles. If you prefer to use Ninja,
 you can specify -GNinja as an option to CMake.
 
 After CMake has finished with the configuration, start the build from `mybuilddir`
@@ -110,7 +110,7 @@ $ cmake --build . --target install
 ## Quick Start
 
 Once we have ZOSLIB built and installed, let's attempt to build our first
-ZOSLIB C++ application.  The application will generate a series of random 
+ZOSLIB C++ application. The application will generate a series of random 
 numbers, leveraging the `getentropy` C API in ZOSLIB.
 
 1. Create a file named `random.cc` containing the following contents:
@@ -125,7 +125,7 @@ numbers, leveraging the `getentropy` C API in ZOSLIB.
 // Initialize ZOSLIB class
 __init_zoslib __nodezoslib;
 
-int main(int argc,  char** argv) {
+int main(int argc, char** argv) {
   printf("ZOSLIB version: %s\n", __zoslib_version);
   if (argc < 1) {
     printf("An argument specifying the number of random "
@@ -155,13 +155,13 @@ int main(int argc,  char** argv) {
 ```
 
 This example will first include the main ZOSLIB header file, `zos.h`,
-which subsequently includes all of the ZOSLIB header files.  Alternatively,
+which subsequently includes all of the ZOSLIB header files. Alternatively,
 we could have just included `zos-base.h`, since the prototype for `getentropy`
 is defined in `zos-base.h`.
 
 2. In order to initialize ZOSLIB, we need to create a static instance
-of the `__init_zoslib` class: `__init_zoslib zoslib_init;`.  This initializes
-the Enhanced ASCII runtime environment, among other things.  If your application
+of the `__init_zoslib` class: `__init_zoslib zoslib_init;`. This initializes
+the Enhanced ASCII runtime environment, among other things. If your application
 is C only, you can make use of the `init_zoslib` function instead.
 
 In the `main` function, we make use of two ZOSLIB definitions, 

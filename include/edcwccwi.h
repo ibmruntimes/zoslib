@@ -38,13 +38,15 @@ Correct your header search path.
 extern "C" {
 #endif
 
+#if !defined(__features_h) || defined(__inc_features)
+  #include <features.h>
+#endif
+
 #ifndef __EDC_LE
   #define __EDC_LE 0x10000000
 #endif
 
-
 #if __TARGET_LIB__ >= __EDC_LE
-
 #pragma map (__dsa_prev, "\174\174DSAPRV")
 #pragma map (__ep_find, "\174\174EPFIND")
 #pragma map (__fnwsa, "\174\174FNWSA")
@@ -59,10 +61,6 @@ extern "C" {
 #ifdef _LP64
   #pragma map (__set_laa_for_jit, "\174\174SETJIT")
   #define __bldxfd(fd) fd
-#endif
-
-#if !defined(__features_h) || defined(__inc_features)
-  #include <features.h>
 #endif
 
 #ifndef __types

@@ -41,12 +41,12 @@ void __console(const void *p_in, int len_i) {
     m->flags = 0x8000;
     memcpy(m->msgarea, p, 126);
     memcpy(m->msgarea + 126, "\x20\x00\x00\x20", 4);
-    __asm(" la  0,0 \n"
-          " lr  1,%0 \n"
-          " svc 35 \n"
-          :
-          : "r"(m)
-          : "r0", "r1", "r15");
+    __asm volatile(" la  0,0 \n"
+                   " lr  1,%0 \n"
+                   " svc 35 \n"
+                   :
+                   : "r"(m)
+                   : "r0", "r1", "r15");
     p += 126;
     len -= 126;
   }
@@ -55,12 +55,12 @@ void __console(const void *p_in, int len_i) {
     m->flags = 0x8000;
     memcpy(m->msgarea, p, len);
     memcpy(m->msgarea + len, "\x20\x00\x00\x20", 4);
-    __asm(" la  0,0 \n"
-          " lr  1,%0 \n"
-          " svc 35 \n"
-          :
-          : "r"(m)
-          : "r0", "r1", "r15");
+    __asm volatile(" la  0,0 \n"
+                   " lr  1,%0 \n"
+                   " svc 35 \n"
+                   :
+                   : "r"(m)
+                   : "r0", "r1", "r15");
   }
   free(m);
 }
@@ -442,7 +442,10 @@ int __dpoll(void *array, unsigned int count, int timeout) {
   if (inf)
     timeout = 60 * 1000;
   const void *argv[] = {&array, &count, &timeout, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+  __asm volatile(" basr 14,%0\n"
+                 : "+NR:r15"(reg15)
+                 : "NR:r1"(&argv)
+                 : "r0", "r14");
   if (rv != 0 && rv != -1) {
     int fd_res_cnt = rv & 0x0ffff;
   }
@@ -484,7 +487,10 @@ int __dpoll(void *array, unsigned int count, int timeout) {
       }
     }
     reg15 = __uss_base_address()[932 / 4]; // BPX4POL offset is 932
-    __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+    __asm volatile(" basr 14,%0\n"
+                   : "+NR:r15"(reg15)
+                   : "NR:r1"(&argv)
+                   : "r0", "r14");
     --cnt;
   }
   if (-1 == rv) {
@@ -501,7 +507,10 @@ ssize_t __write(int fd, const void *buffer, size_t sz) {
   void *alet = 0;
   unsigned int size = sz;
   const void *argv[] = {&fd, &buffer, &alet, &size, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+  __asm volatile(" basr 14,%0\n"
+                 : "+NR:r15"(reg15)
+                 : "NR:r1"(&argv)
+                 : "r0", "r14");
   if (-1 == rv) {
     errno = rc;
     __perror("write");
@@ -524,7 +533,10 @@ ssize_t __read(int fd, void *buffer, size_t sz) {
   void *alet = 0;
   unsigned int size = sz;
   const void *argv[] = {&fd, &buffer, &alet, &size, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+  __asm volatile(" basr 14,%0\n"
+                 : "+NR:r15"(reg15)
+                 : "NR:r1"(&argv)
+                 : "r0", "r14");
   if (-1 == rv) {
     errno = rc;
     __perror("read");
@@ -546,7 +558,10 @@ int __close(int fd) {
   int rv = -1, rc = -1, rn = -1;
   const char *fdtype = Fdtype(fd).toString();
   const void *argv[] = {&fd, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+  __asm volatile(" basr 14,%0\n"
+                 : "+NR:r15"(reg15)
+                 : "NR:r1"(&argv)
+                 : "r0", "r14");
   if (-1 == rv) {
     errno = rc;
     __perror("close");
@@ -566,7 +581,10 @@ int __open(const char *file, int oflag, int mode) {
   __a2e_s(name);
   len = strlen(name);
   const void *argv[] = {&len, name, &oflag, &mode, &rv, &rc, &rn};
-  __asm(" basr 14,%0\n" : "+NR:r15"(reg15) : "NR:r1"(&argv) : "r0", "r14");
+  __asm volatile(" basr 14,%0\n"
+                 : "+NR:r15"(reg15)
+                 : "NR:r1"(&argv)
+                 : "r0", "r14");
   if (-1 == rv) {
     errno = rc;
     __perror("open");
