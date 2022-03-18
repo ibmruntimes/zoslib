@@ -12,6 +12,10 @@
 #define ZOS_SYS_INFO_H_
 
 #include <stdint.h>
+#include <stdlib.h>
+
+/* CPU model number length */
+#define ZOSCPU_MODEL_LENGTH 4
 
 typedef enum {
   ZOSLVL_V1R13 = 0,
@@ -43,11 +47,13 @@ typedef struct ZOSRCE {
 
 // Communications Vector Table (CVT).
 typedef struct ZOSCVT {
-  uint8_t filler[604];
+  uint8_t filler1[604];
   struct ZOSRMCT *__ptr32 rmct;
-  uint8_t filler1[560];
+  uint8_t filler2[156];
+  struct ZOSPCCAVT *__ptr32 pccavt;
+  uint8_t filler3[400];
   struct ZOSRCE *__ptr32 rce;
-  uint8_t filler2[92];
+  uint8_t filler4[92];
   uint8_t cvtoslvl[16];
 } ZOSCVT_t;
 
@@ -57,6 +63,26 @@ typedef struct ZOSPSA {
   uint8_t filler[16]; // Ignore 16 bytes before CVT pointer.
   struct ZOSCVT *__ptr32 cvt;
 } ZOSPSA_t;
+
+// Physical Configuration Communication Area (PCCA).
+// https://www.ibm.com/docs/en/zos/2.4.0?topic=information-pcca-mapping
+typedef struct ZOSPCCA {
+  char pcca[4];
+  // Offset 4 is PCCACPID which is 12 bytes that gets broken down into:
+  // https://www.ibm.com/docs/en/tdmffz/5.7?topic=reference-determine-cpu-serial-number
+  char cpu_version[2];
+  char cpu_lpid[2];
+  char cpu_serial[4];
+  char cpu_model[4];
+  char filler1[372];
+} ZOSPCCA;
+
+// Physical CCA Vector Table (PCCAVT).
+// https://www.ibm.com/docs/en/zos/2.4.0?topic=information-pccavt-mapping
+typedef struct ZOSPCCAVT {
+  struct ZOSPCCA *__ptr32 cpu0;
+  char filler1[252];
+} ZOSPCCAVT;
 
 #ifdef __cplusplus
 extern "C" {
@@ -100,6 +126,16 @@ bool __is_vxf_available();
  * and false otherwise
  */
 bool __is_vef1_available();
+
+/**
+ * Gets the 4 character CPU model of the system, including the null terminating
+ * character. Truncated if buffer size is too small.
+ *
+ * \param buffer pointer to the buffer where the cpu model is to be stored
+ * \param size the size of the buffer
+ * \return pointer to the buffer.
+ */
+char *__get_cpu_model(char *buffer, size_t size);
 
 #ifdef __cplusplus
 }

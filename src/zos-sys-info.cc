@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 // Byte 6 of CVTOSLVL
@@ -100,6 +101,20 @@ bool __is_vef1_available() {
   // https://www.ibm.com/docs/en/zos/2.4.0?topic=information-ihafacl-mapping
   uint8_t FACLBYTE16 = *(reinterpret_cast<uint8_t *>(216));
   return ((FACLBYTE16 & 0x01) != 0);
+}
+
+char *__get_cpu_model(char *buffer, size_t size) {
+  ZOSCVT *__ptr32 cvt = ((ZOSPSA *)0)->cvt;
+  ZOSPCCAVT *__ptr32 pccavt = cvt->pccavt;
+  ZOSPCCA *__ptr32 cpu = pccavt->cpu0;
+
+  size_t n = size > ZOSCPU_MODEL_LENGTH ? ZOSCPU_MODEL_LENGTH : size - 1;
+
+  memcpy(buffer, cpu->cpu_model, n);
+  buffer[n] = '\0';
+  __e2a_l(buffer, n);
+
+  return buffer;
 }
 
 #ifdef __cplusplus
