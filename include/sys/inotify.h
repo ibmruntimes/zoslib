@@ -17,7 +17,7 @@
 #include <stdint.h>
 
 /* inotify_init options */
-#define IN_CLOEXEC      0x00000002
+#define IN_CLOEXEC      0x00001000
 #define IN_NONBLOCK     0x00000004
 
 /* inotify events */

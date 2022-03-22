@@ -15,8 +15,11 @@
 
 #undef pipe 
 #define pipe __pipe_replaced
+#undef close
+#define close __close_replaced
 #include_next <unistd.h>
 #undef pipe
+#undef close
 
 #if defined(__cplusplus)
 extern "C" {
@@ -30,6 +33,7 @@ int (*pipe2)(int pipefd[2], int flags);
  * Same as C pipe but tags pipes as ASCII (819)
  */
 int pipe(int [2]) asm("__pipe_ascii");
+int close(int) asm("__close");
 
 #if defined(__cplusplus)
 };

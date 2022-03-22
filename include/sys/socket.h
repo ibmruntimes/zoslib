@@ -17,7 +17,7 @@
 #include_next <sys/socket.h>
 
 /* epoll_ctl options */
-#define SOCK_CLOEXEC  32
+#define SOCK_CLOEXEC  0x00001000
 #define SOCK_NONBLOCK 16
 
 #if defined(__cplusplus)

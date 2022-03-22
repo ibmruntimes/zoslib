@@ -718,9 +718,21 @@ int __open_ascii(const char *filename, int opts, ...) {
   struct stat sb;
   int is_new_file = stat(filename, &sb) != 0;
   int fd = __open(filename, opts, perms);
-  // Tag new files as 819
-  if (fd >= 0 && is_new_file)
-    __chgfdccsid(fd, 819);
+
+  if (fd >= 0) {
+    struct file_tag *t = &sb.st_tag;
+    if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
+        opts & O_RDONLY != 0) {
+      // Enable reading untagged files
+      if (__file_needs_conversion_init(filename, fd)) {
+        struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+        fcntl(fd, F_CONTROL_CVT, &cvtreq);
+      }
+    }
+    // Tag new files as ASCII (819)
+    if (is_new_file)
+      __chgfdccsid(fd, 819);
+  }
   va_end(ap);
   return fd;
 }
@@ -733,6 +745,15 @@ int __pipe_ascii(int fd[2]) {
   // Default ccsid for new pipes should be 819
   __chgfdccsid(fd[0], 819);
   __chgfdccsid(fd[1], 819);
+  return ret;
+}
+
+int __close(int fd) {
+  int ret = close(fd);
+  if (ret < 0)
+    return ret;
+
+  __fd_close(fd);
   return ret;
 }
 

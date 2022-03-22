@@ -17,7 +17,8 @@
 #include <stdint.h>
 
 /* epoll_create options */
-#define EPOLL_CLOEXEC    1
+/* EPOLL_CLOEXEC: same value as O_CLOEXEC in fcntl.h */
+#define EPOLL_CLOEXEC    0x00001000
 
 /* epoll_ctl options */
 #define EPOLL_CTL_ADD    0
@@ -49,11 +50,11 @@ typedef union epoll_data {
 
 #if defined(__clang__) && !defined(__ibmxl__)
         struct epoll_event {
-            uint32_t        events __attribute__((__aligned__(4)));
-            epoll_data_t    data;
+            uint32_t        events;
+            epoll_data_t    data __attribute__((packed));
         };
 #else
-        #pragma pack(4)
+        #pragma pack(1)
         struct epoll_event {
             uint32_t        events;
             epoll_data_t    data;
