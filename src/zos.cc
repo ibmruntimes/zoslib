@@ -2786,7 +2786,7 @@ int __accept4(int s, struct sockaddr * addr,
 
 int __pipe2(int pipefd[2], int flags) {
   int err;
-  if ((err = pipe(pipefd)) < 0)
+  if ((err = __pipe_ascii(pipefd)) < 0)
     return err;
 
   if (flags == 0) 
@@ -2890,7 +2890,9 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
     MAP_LE_FUNC(inotify_add_watch, 0xDBB);
     MAP_LE_FUNC(pipe2, 0xDBD);
-    MAP_LE_FUNC(accept4, 0xDA8);
+    //TODO: revert once LE resolves accept4 issue
+    //MAP_LE_FUNC(accept4, 0xDA8);
+    accept4 = __accept4;
   }
   else {
     clock_gettime = __clock_gettime;

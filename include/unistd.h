@@ -11,6 +11,15 @@
 
 #define __XPLAT 1
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+int __pipe_ascii(int [2]);
+int __close(int);
+#if defined(__cplusplus)
+};
+#endif
+
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD)
 
 #undef pipe 
