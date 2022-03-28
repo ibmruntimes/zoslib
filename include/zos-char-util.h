@@ -144,7 +144,7 @@ void __fd_close(int fd);
   ({                                                                           \
     const char *src = (const char *)(_str);                                    \
     int len = strlen(src) + 1;                                                 \
-    char *tgt = (char *)alloca(len);                                           \
+    char tgt[len];                                                             \
     (char *)_convert_e2a(tgt, src, len);                                       \
   })
 
@@ -152,7 +152,7 @@ void __fd_close(int fd);
   ({                                                                           \
     const char *src = (const char *)(_str);                                    \
     int len = strlen(src) + 1;                                                 \
-    char *tgt = (char *)alloca(len);                                           \
+    char tgt[len];                                                             \
     (char *)_convert_a2e(tgt, src, len);                                       \
   })
 

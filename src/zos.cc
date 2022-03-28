@@ -145,11 +145,10 @@ extern "C" void __xfer_env(void) {
   int i;
   int len;
   char *str;
-  char *a_str;
   while (*start) {
     str = *start;
     len = strlen(str);
-    a_str = (char *)alloca(len + 1);
+    char a_str[len + 1];
     memcpy(a_str, str, len);
     a_str[len] = 0;
     for (i = 0; i < len; ++i) {
@@ -466,8 +465,10 @@ int strcasecmp_ignorecp(const char *a, const char *b) {
     return len_a - len_b;
   if (!memcmp(a, b, len_a))
     return 0;
-  char *a_new = (char *)_convert_e2a(alloca(len_a + 1), a, len_a + 1);
-  char *b_new = (char *)_convert_e2a(alloca(len_b + 1), b, len_b + 1);
+  char a_new[len_a + 1];
+  _convert_e2a(a_new, a, len_a + 1);
+  char b_new[len_b + 1];
+  _convert_e2a(b_new, b, len_b + 1);
   __convert_one_to_one(ascii_to_lower, a_new, len_a, a_new);
   __convert_one_to_one(ascii_to_lower, b_new, len_b, a_new);
   return strcmp(a_new, b_new);
@@ -478,30 +479,25 @@ int strncasecmp_ignorecp(const char *a, const char *b, size_t n) {
   int am_a, am_b;
   unsigned len_a = strlen_ae((unsigned char *)a, &ccsid_a, n, &am_a);
   unsigned len_b = strlen_ae((unsigned char *)b, &ccsid_b, n, &am_b);
-  char *a_new;
-  char *b_new;
   if (len_a != len_b)
     return len_a - len_b;
-
+  char a_new[len_a + 1];
+  char b_new[len_b + 1];
   if (ccsid_a != 819) {
-    a_new = (char *)__convert_one_to_one(__ibm1047_iso88591, alloca(len_a + 1),
-                                         len_a, a);
+    __convert_one_to_one(__ibm1047_iso88591, a_new, len_a, a);
     a_new[len_a] = 0;
-    a_new = (char *)__convert_one_to_one(ascii_to_lower, a_new, len_a, a_new);
+    __convert_one_to_one(ascii_to_lower, a_new, len_a, a_new);
   } else {
-    a_new = (char *)__convert_one_to_one(ascii_to_lower, alloca(len_a + 1),
-                                         len_a, a);
+    __convert_one_to_one(ascii_to_lower, a_new, len_a, a);
     a_new[len_a] = 0;
   }
 
   if (ccsid_b != 819) {
-    b_new = (char *)__convert_one_to_one(__ibm1047_iso88591, alloca(len_b + 1),
-                                         len_b, b);
+    __convert_one_to_one(__ibm1047_iso88591, b_new, len_b, b);
     b_new[len_b] = 0;
-    b_new = (char *)__convert_one_to_one(ascii_to_lower, b_new, len_b, b_new);
+    __convert_one_to_one(ascii_to_lower, b_new, len_b, b_new);
   } else {
-    b_new = (char *)__convert_one_to_one(ascii_to_lower, alloca(len_b + 1),
-                                         len_b, b);
+    __convert_one_to_one(ascii_to_lower, b_new, len_b, b);
     b_new[len_b] = 0;
   }
 
@@ -639,9 +635,10 @@ extern "C" int __dlcb_entry_name(char *buf, int size, void *dlcb) {
     return 0;
   n = ((unsigned short *)dlcb)[44];
   name = ((char **)dlcb)[12];
+  char tmpbuf[n + 1];
   return __snprintf_a(
       buf, size, "%-.*s", n,
-      __convert_one_to_one(__ibm1047_iso88591, alloca(n + 1), n, name));
+      __convert_one_to_one(__ibm1047_iso88591, tmpbuf, n, name));
 }
 extern "C" void *__dlcb_entry_addr(void *dlcb) {
   if (dlcb == 0)
@@ -1560,32 +1557,32 @@ extern "C" int anon_munmap(void *addr, size_t len) {
 
 extern "C" int execvpe(const char *name, char *const argv[],
                        char *const envp[]) {
-  int lp, ln;
-  const char *p;
-
-  int eacces = 0, etxtbsy = 0;
-  char *bp, *cur, *path, *buf = 0;
-
   // Absolute or Relative Path Name
   if (strchr(name, '/')) {
     return execve(name, argv, envp);
   }
+  int lp, ln;
+  const char *p;
+  int eacces = 0, etxtbsy = 0;
+  char *bp, *cur;
 
   // Get the path we're searching
-  if (!(path = getenv("PATH"))) {
-    if ((cur = path = (char *)alloca(2)) != NULL) {
-      path[0] = ':';
-      path[1] = '\0';
-    }
-  } else {
-    char *n = (char *)alloca(strlen(path) + 1);
-    strcpy(n, path);
-    cur = path = n;
+  int len;
+  if (cur = getenv("PATH"))
+    len = strlen(cur);
+  else
+    len = 1;
+  char path[len + 1];
+  if (cur)
+    strcpy(path, cur);
+  else {
+    path[0] = ':';
+    path[1] = '\0';
+    cur = path;
   }
 
-  if (path == NULL ||
-      (bp = buf = (char *)alloca(strlen(path) + strlen(name) + 2)) == NULL)
-    goto done;
+  char buf[len + strlen(name) + 2];
+  bp = buf;
 
   while (cur != NULL) {
     p = cur;
@@ -1619,13 +1616,13 @@ extern "C" int execvpe(const char *name, char *const argv[],
 
       for (cnt = 0, ap = (char **)argv; *ap; ++ap, ++cnt)
         ;
-      if ((ap = (char **)alloca((cnt + 2) * sizeof(char *))) != NULL) {
-        memcpy(ap + 2, argv + 1, cnt * sizeof(char *));
+      char tbuf[(cnt + 2) * sizeof(char *)];
+      ap = (char **)tbuf;
+      memcpy(ap + 2, argv + 1, cnt * sizeof(char *));
 
-        ap[0] = (char *)"sh";
-        ap[1] = bp;
-        (void)execve("/bin/sh", ap, envp);
-      }
+      ap[0] = (char *)"sh";
+      ap[1] = bp;
+      (void)execve("/bin/sh", ap, envp);
       goto done;
     }
     case ETXTBSY:

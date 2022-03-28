@@ -67,7 +67,6 @@ void __console(const void *p_in, int len_i) {
 
 int __console_printf(const char *fmt, ...) {
   va_list ap;
-  char *buf;
   int len;
   va_start(ap, fmt);
   va_list ap1;
@@ -82,22 +81,25 @@ int __console_printf(const char *fmt, ...) {
   if (ccsid == 819) {
     mode = __ae_thread_swapmode(__AE_ASCII_MODE);
     bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
     __a2e_l(buf, len);
+    va_end(ap2);
+    va_end(ap1);
+    va_end(ap);
+    if (len > 0)
+      __console(buf, len);
   } else {
     mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
     bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
+    va_end(ap2);
+    va_end(ap1);
+    va_end(ap);
+    if (len > 0)
+      __console(buf, len);
   }
-  va_end(ap2);
-  va_end(ap1);
-  va_end(ap);
-  if (len <= 0)
-    goto quit;
-  __console(buf, len);
-quit:
   __ae_thread_swapmode(mode);
   return len;
 }
@@ -109,7 +111,6 @@ int vdprintf(int fd, const char *fmt, va_list ap) {
   int mode;
   int len;
   int bytes;
-  char *buf;
   va_list ap1;
   va_list ap2;
   va_copy(ap1, ap);
@@ -117,25 +118,24 @@ int vdprintf(int fd, const char *fmt, va_list ap) {
   if (ccsid == 819) {
     mode = __ae_thread_swapmode(__AE_ASCII_MODE);
     bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
+    if (len > 0)
+      len = write(fd, buf, len);
   } else {
     mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
     bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
+    if (len > 0)
+      len = write(fd, buf, len);
   }
-  if (len == -1)
-    goto quit;
-  len = write(fd, buf, len);
-quit:
   __ae_thread_swapmode(mode);
   return len;
 }
 
 int dprintf(int fd, const char *fmt, ...) {
   va_list ap;
-  char *buf;
   int len;
   va_start(ap, fmt);
   va_list ap1;
@@ -150,21 +150,24 @@ int dprintf(int fd, const char *fmt, ...) {
   if (ccsid == 819) {
     mode = __ae_thread_swapmode(__AE_ASCII_MODE);
     bytes = __vsnprintf_a(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_a(buf, bytes + 1, fmt, ap2);
+    va_end(ap2);
+    va_end(ap1);
+    va_end(ap);
+    if (len > 0)
+      len = write(fd, buf, len);
   } else {
     mode = __ae_thread_swapmode(__AE_EBCDIC_MODE);
     bytes = __vsnprintf_e(0, 0, fmt, ap1);
-    buf = (char *)alloca(bytes + 1);
+    char buf[bytes + 1];
     len = __vsnprintf_e(buf, bytes + 1, fmt, ap2);
+    va_end(ap2);
+    va_end(ap1);
+    va_end(ap);
+    if (len > 0)
+      len = write(fd, buf, len);
   }
-  va_end(ap2);
-  va_end(ap1);
-  va_end(ap);
-  if (len == -1)
-    goto quit;
-  len = write(fd, buf, len);
-quit:
   __ae_thread_swapmode(mode);
   return len;
 }

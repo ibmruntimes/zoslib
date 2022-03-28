@@ -260,29 +260,29 @@ int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd) {
     return -1;
   }
 
-  char *buffer;
-  int ccsid;
-
   // Only guess first CCSID_GUESS_BUF_SIZE_ENVAR byte of data at most
   if (ccsid_guess_buf_size <= 4096) {
-    buffer = (char *)alloca(ccsid_guess_buf_size);
+    char buffer[ccsid_guess_buf_size];
+    ssize_t bytes = read(fd, buffer, ccsid_guess_buf_size);
+    if (bytes < 0) {
+      perror("guess_ue:read");
+      return -1;
+    }
+    buffer[bytes] = '\0';
+    return __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
   } else {
-    buffer = (char *)malloc(ccsid_guess_buf_size);
-  }
-  ssize_t bytes = read(fd, buffer, ccsid_guess_buf_size);
-  if (bytes < 0) {
-    perror("guess_ue:read");
-    ccsid = -1;
-    goto quit;
-  }
-  buffer[bytes] = '\0';
-
-  ccsid = __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
-quit:
-  if (ccsid_guess_buf_size > 4096)
+    char *buffer = (char *)malloc(ccsid_guess_buf_size);
+    ssize_t bytes = read(fd, buffer, ccsid_guess_buf_size);
+    if (bytes < 0) {
+      perror("guess_ue:read");
+      free(buffer);
+      return -1;
+    }
+    buffer[bytes] = '\0';
+    int ccsid = __guess_ue(buffer, (size_t)bytes, errmsg, er_size);
     free(buffer);
-
-  return ccsid;
+    return ccsid;
+  }
 }
 
 int __guess_ae(const void *src, size_t size) {
@@ -520,22 +520,21 @@ int __file_needs_conversion_init(const char *name, int fd) {
       unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
       if (ccsid == 1047 && len == cnt) {
         if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
-          const char *filename = "(null)";
           if (name) {
-            int len = strlen(name);
-            filename =
-                (const char *)_convert_e2a(alloca(len + 1), name, len + 1);
+            len = strlen(name) + 1;
+            char filename[len];
+            _convert_e2a(filename, name, len);
+            dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
+                       "EBCDIC characters\n", filename);
           }
-          dprintf(2,
-                  "Warning: File \"%s\" is untagged and seems to "
-                  "contain EBCDIC "
-                  "characters\n",
-                  filename);
+        } else {
+          dprintf(2, "Warning: File (null) is untagged and seems to contain "
+                     "EBCDIC characters\n");
         }
         fdcache.set_attribute(fd, 0x0000000000020000UL);
         return 1;
       }
-    }       // seekable files
+    }       // cnt > 8
   }         // seekable files
   return 0; // not seekable
 }
