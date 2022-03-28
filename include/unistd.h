@@ -41,8 +41,10 @@ int (*pipe2)(int pipefd[2], int flags);
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
-int pipe(int [2]) asm("__pipe_ascii");
-int close(int) asm("__close");
+int pipe(int [2]);
+#pragma map(pipe, "__pipe_ascii")
+int close(int);
+#pragma map(close, "__close")
 
 #if defined(__cplusplus)
 };

@@ -59,19 +59,6 @@ typedef enum {
 
 struct timespec;
 
-#if (__EDC_TARGET < 0x42050000)
-extern int (*futimes)(int fd, const struct timeval tv[2]);
-extern int (*lutimes)(const char *filename, const struct timeval tv[2]);
-
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
-extern int (*clock_gettime)(clockid_t, struct timespec *);
-#endif
-
 extern const char *__zoslib_version;
 
 typedef struct __stack_info {
@@ -680,6 +667,7 @@ __Z_EXPORT void init_zoslib_config(zoslib_config_t &config);
 #include <exception>
 #include <map>
 #include <string>
+#include <unordered_map>
 
 inline bool operator==(const pthread_t &_a, const pthread_t &_b) {
   return _a.__ == _b.__;
@@ -719,6 +707,41 @@ struct zoslibEnvar {
   }
 };
 
+typedef unsigned long fd_attribute;
+
+struct IntHash {
+  size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
+};
+
+typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
+
+class fdAttributeCache {
+  std::unordered_map<int, fd_attribute, IntHash> cache;
+  std::mutex access_lock;
+
+public:
+  fd_attribute get_attribute(int fd) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cursor_t c = cache.find(fd);
+    if (c != cache.end()) {
+      return c->second;
+    }
+    return 0;
+  }
+  void set_attribute(int fd, fd_attribute attr) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache[fd] = attr;
+  }
+  void unset_attribute(int fd) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache.erase(fd);
+  }
+  void clear(void) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache.clear();
+  }
+};
+
 class __zinit {
   int mode;
   int cvstate;
@@ -731,6 +754,7 @@ public:
   int shmid;
   zoslib_config_t config;
   std::map<zoslibEnvar, std::string> envarHelpMap;
+  fdAttributeCache fdcache;
 
 public:
   __zinit();

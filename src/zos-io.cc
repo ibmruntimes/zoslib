@@ -709,6 +709,7 @@ void __memprintf(const char *format, ...) {
 // C Library Overrides
 //-----------------------------------------------------------------
 int __pipe(int [2]) asm("pipe");
+int __close_orig(int) asm("close");
 int __open(const char *filename, int opts, ...) asm("@@A00144");
 
 int __open_ascii(const char *filename, int opts, ...) {
@@ -720,18 +721,20 @@ int __open_ascii(const char *filename, int opts, ...) {
   int fd = __open(filename, opts, perms);
 
   if (fd >= 0) {
-    struct file_tag *t = &sb.st_tag;
-    if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
-        opts & O_RDONLY != 0) {
-      // Enable reading untagged files
-      if (__file_needs_conversion_init(filename, fd)) {
-        struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-        fcntl(fd, F_CONTROL_CVT, &cvtreq);
-      }
-    }
     // Tag new files as ASCII (819)
     if (is_new_file)
       __chgfdccsid(fd, 819);
+    // Enable auto-conversion of untagged files
+    else if (S_ISREG(sb.st_mode)) {
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
+          (opts & O_RDONLY) != 0) {
+        if (__file_needs_conversion_init(filename, fd)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+        }
+      }
+    }
   }
   va_end(ap);
   return fd;
@@ -749,7 +752,7 @@ int __pipe_ascii(int fd[2]) {
 }
 
 int __close(int fd) {
-  int ret = close(fd);
+  int ret = __close_orig(fd);
   if (ret < 0)
     return ret;
 

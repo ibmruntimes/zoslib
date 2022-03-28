@@ -916,41 +916,6 @@ extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
   return 0;
 }
 
-struct IntHash {
-  size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
-};
-
-typedef unsigned long fd_attribute;
-
-typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
-
-class fdAttributeCache {
-  std::unordered_map<int, fd_attribute, IntHash> cache;
-  std::mutex access_lock;
-
-public:
-  fd_attribute get_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cursor_t c = cache.find(fd);
-    if (c != cache.end()) {
-      return c->second;
-    }
-    return 0;
-  }
-  void set_attribute(int fd, fd_attribute attr) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cache[fd] = attr;
-  }
-  void unset_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cache.erase(fd);
-  }
-  void clear(void) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cache.clear();
-  }
-};
-
 static notagread_t no_tag_read_behaviour;
 static int no_tag_ignore_ccsid1047;
 

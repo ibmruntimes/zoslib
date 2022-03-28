@@ -11,6 +11,17 @@
 
 #define __XPLAT 1
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+/**
+ * Same as C open but tags new files as ASCII (819)
+ */
+int __open_ascii(const char *filename, int opts, ...);
+#if defined(__cplusplus)
+};
+#endif
+
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_FCNTL)
 
 #undef open
@@ -22,11 +33,8 @@
 extern "C" {
 #endif
 
-/**
- * Same as C open but tags new files as ASCII (819)
- */
-int __open_ascii(const char *filename, int opts, ...);
-int open(const char *filename, int opts, ...) asm("__open_ascii");
+int open(const char *filename, int opts, ...);
+#pragma map(open, "__open_ascii")
 
 #if defined(__cplusplus)
 };
