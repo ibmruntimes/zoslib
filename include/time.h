@@ -31,7 +31,7 @@ typedef enum {
  * \param [out] tp structure to store the current time to.  
  * \return return 0 for success, or -1 for failure.
  */
-int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
+extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
 #if defined(__cplusplus)
 };
 #endif

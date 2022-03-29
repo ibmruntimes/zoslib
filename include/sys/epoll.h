@@ -62,11 +62,11 @@ typedef union epoll_data {
         #pragma pack(reset)
 #endif
 
-int (*epoll_create)(int);
-int (*epoll_create1)(int);
-int (*epoll_ctl)(int, int, int, struct epoll_event *);
-int (*epoll_wait)(int, struct epoll_event *, int, int);
-int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
+extern int (*epoll_create)(int);
+extern int (*epoll_create1)(int);
+extern int (*epoll_ctl)(int, int, int, struct epoll_event *);
+extern int (*epoll_wait)(int, struct epoll_event *, int, int);
+extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
 
 #if defined(__cplusplus)
 };

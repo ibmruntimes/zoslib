@@ -64,6 +64,24 @@
 #define dsa() ((unsigned long *)_gdsa())
 #endif
 
+#if (__EDC_TARGET < 0x42050000)
+int (*epoll_create)(int);
+int (*epoll_create1)(int);
+int (*epoll_ctl)(int, int, int, struct epoll_event *);
+int (*epoll_wait)(int, struct epoll_event *, int, int);
+int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
+int (*eventfd)(unsigned int initval, int flags);
+int (*inotify_init)(void);
+int (*inotify_init1)(int);
+int (*inotify_add_watch)(int, const char *, uint32_t);
+int (*inotify_rm_watch)(int, int);
+int (*accept4)(int s, struct sockaddr * addr, socklen_t * addrlen, int flags);
+int (*futimes)(int fd, const struct timeval tv[2]);
+int (*lutimes)(const char *filename, const struct timeval tv[2]);
+int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
+int (*pipe2)(int pipefd[2], int flags);
+#endif
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 static int __debug_mode = 0;
@@ -1707,7 +1725,7 @@ extern "C" void __tb(void) {
   }
 }
 
-int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
+extern "C" int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
   unsigned long long value;
   __stckf(&value);
   tp->tv_sec = (value / 4096000000UL) - 2208988800UL;

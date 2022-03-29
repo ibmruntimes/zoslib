@@ -26,7 +26,7 @@ extern "C" {
  * \param [in] flags behaviour flags for event fd
  * \return returns a fd for success, or -1 for failure.
  */
-int (*eventfd)(unsigned int initval, int flags);
+extern int (*eventfd)(unsigned int initval, int flags);
 
 #if defined(__cplusplus)
 };

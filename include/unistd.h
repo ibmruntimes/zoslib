@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 #if (__EDC_TARGET < 0x42050000)
-int (*pipe2)(int pipefd[2], int flags);
+extern int (*pipe2)(int pipefd[2], int flags);
 #endif
 
 /**
@@ -54,7 +54,7 @@ int close(int);
 #include_next <unistd.h>
 
 #if (__EDC_TARGET < 0x42050000)
-int (*pipe2)(int pipefd[2], int flags);
+extern int (*pipe2)(int pipefd[2], int flags);
 #endif 
 
 #endif

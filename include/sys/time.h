@@ -25,14 +25,14 @@ extern "C" {
  * \param [in] tv timeval structure containing new time
  * \return return 0 for success, or -1 for failure.
  */
-int (*futimes)(int fd, const struct timeval tv[2]);
+extern int (*futimes)(int fd, const struct timeval tv[2]);
 /**
  * Changes the access and modification times of a file
  * \param [in] filename file path to modify
  * \param [in] tv timeval structure containing new time
  * \return return 0 for success, or -1 for failure.
  */
-int (*lutimes)(const char *filename, const struct timeval tv[2]);
+extern int (*lutimes)(const char *filename, const struct timeval tv[2]);
 
 #if defined(__cplusplus)
 };

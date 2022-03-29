@@ -70,11 +70,11 @@ struct inotify_event {
   char        name[];
 };
 
-int (*inotify_init)(void);
-int (*inotify_init1)(int);
-int (*inotify_add_watch)(int, const char *,
+extern int (*inotify_init)(void);
+extern int (*inotify_init1)(int);
+extern int (*inotify_add_watch)(int, const char *,
                                     uint32_t);
-int (*inotify_rm_watch)(int, int);
+extern int (*inotify_rm_watch)(int, int);
 
 #if defined(__cplusplus)
 };

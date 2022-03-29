@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-int (*accept4)(int s, struct sockaddr * addr,
+extern int (*accept4)(int s, struct sockaddr * addr,
                socklen_t * addrlen, int flags);
 
 #if defined(__cplusplus)
