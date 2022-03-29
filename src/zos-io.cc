@@ -748,10 +748,11 @@ int __pipe_ascii(int fd[2]) {
   if (ret < 0)
     return ret;
 
-  // Default ccsid for new pipes should be 819
-  __chgfdccsid(fd[0], 819);
-  __chgfdccsid(fd[1], 819);
-  return ret;
+  // Default ccsid for new pipes should be ASCII (819)
+  if (__chgfdccsid(fd[0], 819) == 0)
+    return __chgfdccsid(fd[1], 819);
+
+  return -1;
 }
 
 int __close(int fd) {
