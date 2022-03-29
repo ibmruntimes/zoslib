@@ -2534,7 +2534,7 @@ int *__get_stack_start() {
   return nullptr;
 }
 
-extern "C" unsigned long __get_libvec_base() {
+unsigned long __get_libvec_base() {
   unsigned long psalaa = ((int* __ptr32)(1208))[0];
   unsigned long lca64 = *(unsigned long*)(psalaa + 88);
   unsigned long caa64 = *(unsigned long*)(lca64 + 8);

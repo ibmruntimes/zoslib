@@ -708,9 +708,12 @@ void __memprintf(const char *format, ...) {
 
 // C Library Overrides
 //-----------------------------------------------------------------
-int __pipe(int [2]) asm("pipe");
-int __close_orig(int) asm("close");
-int __open(const char *filename, int opts, ...) asm("@@A00144");
+int __pipe_orig(int [2]);
+#pragma map(__pipe_orig, "pipe")
+int __close_orig(int);
+#pragma map(__close_orig, "close")
+int __open_orig(const char *filename, int opts, ...);
+#pragma map(__open_orig, "@@A00144")
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
@@ -718,7 +721,7 @@ int __open_ascii(const char *filename, int opts, ...) {
   int perms = va_arg(ap, int);
   struct stat sb;
   int is_new_file = stat(filename, &sb) != 0;
-  int fd = __open(filename, opts, perms);
+  int fd = __open_orig(filename, opts, perms);
 
   if (fd >= 0) {
     // Tag new files as ASCII (819)
@@ -741,7 +744,7 @@ int __open_ascii(const char *filename, int opts, ...) {
 }
 
 int __pipe_ascii(int fd[2]) {
-  int ret = __pipe(fd);
+  int ret = __pipe_orig(fd);
   if (ret < 0)
     return ret;
 

@@ -1,4 +1,6 @@
 #include "zos.h"
+#include <sys/socket.h>
+#include <fcntl.h>
 #include "gtest/gtest.h"
 
 namespace {
@@ -37,6 +39,21 @@ TEST_F(DynamicV2R5Temp, lutimes) {
   lstat(temp_path, &buff);
   EXPECT_EQ(buff.st_atime, 0);
   EXPECT_EQ(buff.st_mtime, 0);
+}
+
+TEST_F(DynamicV2R5Temp, pipe2) {
+  int fd[2];
+  int ret = pipe2(fd, O_CLOEXEC | O_NONBLOCK);
+  EXPECT_EQ(ret, 0);
+  EXPECT_GT(fd[0], 2);
+  EXPECT_GT(fd[1], 2);
+  close(fd[0]);
+  close(fd[1]);
+}
+
+TEST_F(DynamicV2R5Temp, accept4) {
+  int ret = accept4(-1, 0, 0, SOCK_NONBLOCK);
+  EXPECT_LT(ret, 0);
 }
 
 TEST_F(DynamicV2R5Temp, futimes) {
