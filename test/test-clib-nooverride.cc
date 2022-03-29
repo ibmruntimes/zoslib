@@ -8,6 +8,8 @@ namespace {
 
 class CLIBNoOverrides : public ::testing::Test {
     virtual void SetUp() {
+      // Make sure default untagged read mode is set
+      setenv("UNTAGGED_READ_MODE", "AUTO", 1);
       temp_path = tmpnam(NULL);
       fd = open(temp_path, O_CREAT | O_WRONLY, 0660);
     }
@@ -27,9 +29,19 @@ TEST_F(CLIBNoOverrides, open) {
     // New files should be untagged
     EXPECT_EQ(__getfdccsid(fd), 0);
 
-    // Should have no effect on reading 
+    // Should have no auto conversion on reading
     fd = open("/etc/profile", O_RDONLY);
-    EXPECT_EQ(__getfdccsid(fd), 0);
+    if (fd >= 0) {
+      EXPECT_EQ(__getfdccsid(fd), 0);
+      close(fd);
+    }
+
+    // Should not auto-convert character files
+    fd = open("/dev/random", O_RDONLY);
+    if (fd >= 0) {
+      EXPECT_EQ(__getfdccsid(fd), 0);
+      close(fd);
+    }
 }
 
 TEST_F(CLIBNoOverrides, pipe) {
