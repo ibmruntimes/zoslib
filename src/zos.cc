@@ -2734,7 +2734,7 @@ int __zinit::setEnvarHelpMap() {
   return __update_envar_settings(NULL);
 }
 
-int __accept4(int s, struct sockaddr * addr,
+extern "C" int __accept4(int s, struct sockaddr * addr,
                socklen_t * addrlen, int flags) {
   int fd;
   if ((fd = accept(s, addr, addrlen)) == -1)
@@ -2767,7 +2767,7 @@ int __accept4(int s, struct sockaddr * addr,
   return fd;
 }
 
-int __pipe2(int pipefd[2], int flags) {
+extern "C" int __pipe2(int pipefd[2], int flags) {
   int err;
   if ((err = __pipe_ascii(pipefd)) < 0)
     return err;
@@ -2814,7 +2814,7 @@ int __pipe2(int pipefd[2], int flags) {
   return 0;
 }
 
-int __futimes(int fd, const struct timeval tv[2]) {
+extern "C" int __futimes(int fd, const struct timeval tv[2]) {
   attrib_t atr;
   memset(&atr, 0, sizeof(atr));
   atr.att_mtimechg = 1;
@@ -2824,7 +2824,7 @@ int __futimes(int fd, const struct timeval tv[2]) {
   return __fchattr(fd, &atr, sizeof(atr));
 }
 
-int __lutimes(const char *filename, const struct timeval tv[2]) {
+extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
   int return_value;
   int return_code;
   int reason_code;
