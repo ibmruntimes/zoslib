@@ -715,7 +715,7 @@ int __close_orig(int);
 int __open_orig(const char *filename, int opts, ...);
 #pragma map(__open_orig, "@@A00144")
 
-extern "C" int __open_ascii(const char *filename, int opts, ...) {
+int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
   va_start(ap, opts);
   int perms = va_arg(ap, int);
@@ -743,7 +743,7 @@ extern "C" int __open_ascii(const char *filename, int opts, ...) {
   return fd;
 }
 
-extern "C" int __pipe_ascii(int fd[2]) {
+int __pipe_ascii(int fd[2]) {
   int ret = __pipe_orig(fd);
   if (ret < 0)
     return ret;
@@ -755,7 +755,7 @@ extern "C" int __pipe_ascii(int fd[2]) {
   return -1;
 }
 
-extern "C" int __close(int fd) {
+int __close(int fd) {
   int ret = __close_orig(fd);
   if (ret < 0)
     return ret;

@@ -2873,9 +2873,7 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
     MAP_LE_FUNC(inotify_add_watch, 0xDBB);
     MAP_LE_FUNC(pipe2, 0xDBD);
-    //TODO: revert once LE resolves accept4 issue
-    //MAP_LE_FUNC(accept4, 0xDA8);
-    accept4 = __accept4;
+    MAP_LE_FUNC(accept4, 0xDA8);
   }
   else {
     clock_gettime = __clock_gettime;
