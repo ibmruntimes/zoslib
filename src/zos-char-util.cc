@@ -526,10 +526,10 @@ int __file_needs_conversion_init(const char *name, int fd) {
             _convert_e2a(filename, name, len);
             dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
                        "EBCDIC characters\n", filename);
+          } else {
+            dprintf(2, "Warning: File (null) is untagged and seems to contain "
+                       "EBCDIC characters\n");
           }
-        } else {
-          dprintf(2, "Warning: File (null) is untagged and seems to contain "
-                     "EBCDIC characters\n");
         }
         fdcache.set_attribute(fd, 0x0000000000020000UL);
         return 1;
