@@ -11,10 +11,29 @@
 
 #define __XPLAT 1
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+int __socketpair_ascii(int domain, int type, int protocol, int sv[2]);
+#if defined(__cplusplus)
+};
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_SOCKET)
+#undef socketpair
+#define socketpair __socketpair_replaced
+#include_next <sys/socket.h>
+#undef socketpair
+int socketpair(int domain, int type, int protocol, int sv[2]);
+#pragma map(socketpair, "__socketpair_ascii")
+
+#else
+#include_next <sys/socket.h>
+#endif
+
 #if (__EDC_TARGET < 0x42050000)
 
 #include <sys/types.h>
-#include_next <sys/socket.h>
 
 /* epoll_ctl options */
 #define SOCK_CLOEXEC  0x00001000
@@ -30,9 +49,6 @@ extern int (*accept4)(int s, struct sockaddr * addr,
 #if defined(__cplusplus)
 };
 #endif
-
-#else //!(__EDC_TARGET < 0x42050000)
-#include_next <sys/socket.h>
 #endif
 
 #endif

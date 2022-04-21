@@ -18,6 +18,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -710,6 +711,8 @@ void __memprintf(const char *format, ...) {
 //-----------------------------------------------------------------
 int __pipe_orig(int [2]);
 #pragma map(__pipe_orig, "pipe")
+int __socketpair_orig(int domain, int type, int protocol, int sv[2]);
+#pragma map(__socketpair_orig, "socketpair")
 int __close_orig(int);
 #pragma map(__close_orig, "close")
 int __open_orig(const char *filename, int opts, ...);
@@ -762,6 +765,22 @@ int __close(int fd) {
 
   __fd_close(fd);
   return ret;
+}
+
+int __socketpair_ascii(int domain, int type, int protocol, int sv[2]) {
+  int ret = __socketpair_orig(domain, type, protocol, sv);
+  if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
+    if (ret < 0 || domain != AF_UNIX)
+      return ret;
+
+    struct f_cnvrt cvtreq = {SETCVTON, 0, 0};
+    if (fcntl(sv[0], F_CONTROL_CVT, &cvtreq) == 0)
+      return fcntl(sv[1], F_CONTROL_CVT, &cvtreq);
+  } else { 
+    return ret;
+  }
+
+  return -1;
 }
 
 #ifdef __cplusplus
