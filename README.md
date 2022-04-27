@@ -23,7 +23,7 @@ ZOSLIB implements the following:
 
 ## System Requirements
 
-ZOSLIB is supported on the following z/OS operating systems 
+ZOSLIB is supported on the following z/OS operating systems
 with z/OS® UNIX System Services enabled:
 
 - z/OS V2R3 with the following PTFs installed:
@@ -53,55 +53,78 @@ ZOSLIB is supported on the following hardware:
 * Git
 * Ninja (optional)
 
-Clone the ZOSLIB source code using Git into the newly created
-zoslib directory:
+Clone the ZOSLIB source code using Git into a newly created zoslib directory:
 
 ``` bash
 $ git clone git@github.com:ibmruntimes/zoslib.git zoslib
 ```
 
-After obtaining the source, `cd` to the `zoslib` directory
-and create a build directory to hold your build files:
+After obtaining the source, `cd` to the `zoslib` directory and follow one of the
+following options to build zoslib and run its tests.
+
+1. Use the included `build.sh` to build and optionally run the zoslib tests:
 
 ``` bash
-$ cd zoslib
-$ mkdir mybuilddir && cd mybuilddir
+$ ./build.sh -h
+```
+
+which displays flags that you can pass to `build.sh` to specify a Release build
+(default is Debug) or Shared library (default is Static), and whether to build
+and run the zoslib tests.
+
+Example:
+``` bash
+$ ./build.sh -c -r -s -t
+```
+
+performs a Clean (-c) Release (-r) build that creates a Shared (-s) library
+`libzoslib.so` and its sidedeck `libzoslib.x`, builds and runs the tests (-t).
+
+`build.sh` creates directory `./build` to hold the build files, and then places
+the target files under `./install` directory.
+
+2. Use the steps below to build and optionally run the zoslib tests:
+
+Create a build directory to hold your build files and `cd` to it:
+
+``` bash
+$ mkdir build && cd build
 ```
 
 Next, we will configure our build with CMake.
 
-Make sure to export the `CC` and `CXX` environment variables to 
-point to the supported C/C++ build compiler, or pass in the CMake 
+Make sure to export the `CC` and `CXX` environment variables to
+point to the supported C/C++ build compiler, or pass in the CMake
 options -DCMAKE_C_COMPILER and -DCMAKE_CXX_COMPILER.
 
-From the directory `mybuilddir`, enter the following CMake command
+From the directory `build`, enter the following CMake command
 (here, `..` refers to the ZOSLIB source directory)
 
 ``` bash
 $ cmake ..
 ```
 
-By default CMake will configure your build as a Debug build. You can
-configure your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
+By default CMake will configure your build as a Debug build. You can configure
+your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
 
-Also by default, CMake will configure your build to create a static
-library (libzoslib.a). To create a shared library, pass to CMake
-the option `-DBUILD_SHARED_LIBS=ON`.
+Also by default, CMake will configure your build to create a static library
+`libzoslib.a`. To create a shared library, pass to CMake the option
+`-DBUILD_SHARED_LIBS=ON`.
 
-CMake will detect your development environment, perform a series of 
-tests, and generate the files required for building ZOSLIB. 
+CMake will detect your development environment, perform a series of tests, and
+generate the files required for building ZOSLIB.
 
-By default, CMake will generate Makefiles. If you prefer to use Ninja,
-you can specify -GNinja as an option to CMake.
+By default, CMake will generate Makefiles. If you prefer to use Ninja, you can
+specify -GNinja as an option to CMake.
 
-After CMake has finished with the configuration, start the build from `mybuilddir`
+After CMake has finished with the configuration, start the build from `build`
 using CMake:
 
 ``` bash
 $ cmake --build .
 ```
 
-After ZOSLIB has finished building, install it from `mybuilddir`:
+After ZOSLIB has finished building, install it from `build`:
 
 ``` bash
 $ cmake --build . --target install
@@ -110,7 +133,7 @@ $ cmake --build . --target install
 ## Quick Start
 
 Once we have ZOSLIB built and installed, let's attempt to build our first
-ZOSLIB C++ application. The application will generate a series of random 
+ZOSLIB C++ application. The application will generate a series of random
 numbers, leveraging the `getentropy` C API in ZOSLIB.
 
 1. Create a file named `random.cc` containing the following contents:
@@ -154,24 +177,24 @@ int main(int argc, char** argv) {
 }
 ```
 
-This example will first include the main ZOSLIB header file, `zos.h`,
-which subsequently includes all of the ZOSLIB header files. Alternatively,
-we could have just included `zos-base.h`, since the prototype for `getentropy`
-is defined in `zos-base.h`.
+This example will first include the main ZOSLIB header file, `zos.h`, which
+subsequently includes all of the ZOSLIB header files. Alternatively, we could
+have just included `zos-base.h`, since the prototype for `getentropy` is defined
+in `zos-base.h`.
 
-2. In order to initialize ZOSLIB, we need to create a static instance
-of the `__init_zoslib` class: `__init_zoslib zoslib_init;`. This initializes
-the Enhanced ASCII runtime environment, among other things. If your application
+2. In order to initialize ZOSLIB, we need to create a static instance of the
+`__init_zoslib` class: `__init_zoslib zoslib_init;`. This initializes the
+Enhanced ASCII runtime environment, among other things. If your application
 is C only, you can make use of the `init_zoslib` function instead.
 
-In the `main` function, we make use of two ZOSLIB definitions, 
-`__zoslib_version` to obtain the ZOSLIB version, and `getentropy` to generate 
+In the `main` function, we make use of two ZOSLIB definitions,
+`__zoslib_version` to obtain the ZOSLIB version, and `getentropy` to generate
 a list of random values.
 
 3. To compile and link the application, enter the following command:
 
 ``` bash
-xlclang++ -I path/to/zoslib/include -L path/to/mybuilddir/lib -lzoslib random.cc -o random
+xlclang++ -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
 ```
 
 4. To run the application, enter the following command:
@@ -195,8 +218,8 @@ The ZOSLIB API documentation is available [here](docs).
 
 ## Legalities
 
-ZOSLIB is available under the Apache 2.0 license. See the [LICENSE 
-file](LICENSE) for details
+ZOSLIB is available under the Apache 2.0 license. See the [LICENSE file](LICENSE)
+for details
 
 ### Copyright
 
