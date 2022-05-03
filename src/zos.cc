@@ -69,6 +69,7 @@ static int __argc = -1;
 static pthread_t _timer_tid;
 static int *__main_thread_stack_top_address = 0;
 static bool __is_backtrace_on_abort = true;
+static bool __zoslib_terminated = false;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -86,6 +87,13 @@ static int shmid_value(void);
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
+
+static __zinit __instance;
+
+static __zinit* __get_instance() {
+  assert(!__zoslib_terminated);
+  return &__instance;
+}
 
 // Return the smallest multiple of m which is >= x.
 static inline size_t __round_up(size_t x, size_t m) {
@@ -670,7 +678,7 @@ extern "C" void abort(void) {
   if (__is_backtrace_on_abort) {
     __display_backtrace(STDERR_FILENO);
   }
-  __zinit::getInstance()->__abort();
+  __get_instance()->__abort();
   exit(-1); // never reach here, suppress clang warning
 }
 
@@ -699,8 +707,8 @@ extern "C" int kill(int pid, int sig) {
 
 // overriding LE's fork when linked statically
 extern "C" int __fork(void) {
-  int cnt = __zinit::getInstance()->inc_forkcount();
-  int max = __zinit::getInstance()->get_forkmax();
+  int cnt = __get_instance()->inc_forkcount();
+  int max = __get_instance()->get_forkmax();
   if (cnt > max) {
     dprintf(2,
             "fork(): current count %d is greater than "
@@ -719,7 +727,7 @@ extern "C" int __fork(void) {
 #else
   int pid = fork();
   if (pid == 0) {
-    __zinit::getInstance()->forked(1);
+    __get_instance()->forked(1);
   }
   return pid;
 #endif
@@ -1416,32 +1424,39 @@ public:
       cache.erase(c);
     }
   }
-  ~__Cache() {
+  void displayDebris() {
     std::lock_guard<std::mutex> guard(access_lock);
-    if (mem_account()) {
-      for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
-        dprintf(2,
-                "Error: DEBRIS (allocated but never free'd): @%lx size %lu\n",
-                it->first, it->second);
-      }
+    for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
+      dprintf(2,
+              "Error: DEBRIS (allocated but never free'd): @%lx size %lu\n",
+              it->first, it->second);
     }
+  }
+  ~__Cache() {
+    // This should never be called as we deliberately don't destroy it.
+    // See ~__zinit()
+    assert(0);
   }
 };
 
-static __Cache alloc_info;
+static __Cache* __galloc_info = nullptr;
 
+static __Cache * __get_galloc_info() {
+  assert(__galloc_info != nullptr);
+  return __galloc_info;
+}
 static void *anon_mmap_inner(void *addr, size_t len) {
   int retcode;
-  if (alloc_info.elligible() && len % kMegaByte == 0) {
+  if (__get_galloc_info()->elligible() && len % kMegaByte == 0) {
     size_t request_size = len / kMegaByte;
-    void *p = alloc_info.alloc_seg(request_size);
+    void *p = __get_galloc_info()->alloc_seg(request_size);
     if (p)
       return p;
     else
       return MAP_FAILED;
-  } else if (alloc_info.elligible() && len > 2UL * kGigaByte) {
+  } else if (__get_galloc_info()->elligible() && len > 2UL * kGigaByte) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
-    void *p = alloc_info.alloc_seg(request_size);
+    void *p = __get_galloc_info()->alloc_seg(request_size);
     if (p)
       return p;
     else
@@ -1476,7 +1491,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
     mem_aligned[-1] = mem_default;
 
     p = (char *)mem_aligned;
-    alloc_info.addptr(p, len);
+    __get_galloc_info()->addptr(p, len);
     return p;
 #else
     __asm volatile(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
@@ -1489,7 +1504,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 #endif
 
     if (retcode == 0) {
-      alloc_info.addptr(p, len);
+      __get_galloc_info()->addptr(p, len);
       return p;
     }
     return MAP_FAILED;
@@ -1498,7 +1513,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 
 static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
   if (is_above_bar) {
-    return alloc_info.free_seg(addr);
+    return __get_galloc_info()->free_seg(addr);
   } else {
 #if defined(__llvm__)
   // The following solution frees the original unaligned memory returned by
@@ -1507,7 +1522,7 @@ static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
   // This solution is similar to:
   // STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n
   free(((void **)addr)[-1]);
-  alloc_info.freeptr(addr);
+  __get_galloc_info()->freeptr(addr);
   return 0;
 #else
     int retcode;
@@ -1517,7 +1532,7 @@ static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
                    : "NR:r1"(addr), "NR:r0"(len)
                    : "r0", "r1", "r14", "r15");
     if (0 == retcode)
-      alloc_info.freeptr(addr);
+      __get_galloc_info()->freeptr(addr);
     return retcode;
 #endif
   }
@@ -1535,11 +1550,11 @@ extern "C" void *anon_mmap(void *_, size_t len) {
 }
 
 extern "C" int anon_munmap(void *addr, size_t len) {
-  if (alloc_info.is_exist_ptr(addr)) {
+  if (__get_galloc_info()->is_exist_ptr(addr)) {
     if (mem_account())
       dprintf(2, "Address found, attempt to free @%p size %zu\n", addr,
               len);
-    int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
+    int rc = anon_munmap_inner(addr, len, __get_galloc_info()->is_rmode64(addr));
     if (rc != 0) {
       if (mem_account()) {
         dprintf(2, "Error: anon_munmap @%p size %zu failed\n", addr, len);
@@ -2296,7 +2311,7 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
 }
 
 int __print_zoslib_help(FILE *fp, const char *title) {
-  __zinit *zinit_ptr = __zinit::getInstance();
+  __zinit *zinit_ptr = __get_instance();
 
   if (!zinit_ptr)
     return -1;
@@ -2323,7 +2338,7 @@ int __print_zoslib_help(FILE *fp, const char *title) {
 }
 
 int __update_envar_settings(const char *envar) {
-  __zinit *zinit_ptr = __zinit::getInstance();
+  __zinit *zinit_ptr = __get_instance();
   if (!zinit_ptr)
     return -1;
 
@@ -2418,7 +2433,7 @@ int __update_envar_settings(const char *envar) {
 }
 
 extern "C" int __update_envar_names(zoslib_config_t *const config) {
-  __zinit *zinit_ptr = __zinit::getInstance();
+  __zinit *zinit_ptr = __get_instance();
   if (!zinit_ptr)
     return -1;
 
@@ -2589,12 +2604,40 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
              }) != envarHelpMap.end();
 }
 
-__zinit::__zinit(const zoslib_config_t &config)
-    : forkmax(0), shmid(0), __forked(0) {
-  memcpy(&this->config, &config, sizeof(config));
+__zinit:: ~__zinit() {
+  if (_CVTSTATE_OFF == cvstate) {
+    __ae_autoconvert_state(cvstate);
+  }
+  __ae_thread_swapmode(mode);
+  if (shmid != 0) {
+    if (__forked) {
+      dec_forkcount();
+    }
+    shmdt(forkcurr);
+    shmctl(shmid, IPC_RMID, 0);
+  }
+  ::__cleanupipc(0);
+
+  // Don't delete __galloc_info (__Cache), as during exit-time a process may
+  // still be allocating memory using anon_mmap(), which call its alloc_seg().
+
+  if (mem_account()) {
+    __get_galloc_info()->displayDebris();
+  }
+  __zoslib_terminated = true;
 }
 
-int __zinit::initialize() {
+__init_zoslib::__init_zoslib(const zoslib_config_t &config) {
+  __get_instance()->initialize(config);
+}
+
+int __zinit::initialize(const zoslib_config_t &aconfig) {
+  memcpy(&config, &aconfig, sizeof(config));
+  forkmax = 0;
+  shmid = 0;
+  __forked = 0;
+  __galloc_info = new __Cache;
+
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
   if (_CVTSTATE_OFF == cvstate) {
@@ -2676,8 +2719,6 @@ int __zinit::setEnvarHelpMap() {
   return __update_envar_settings(NULL);
 }
 
-__zinit *__zinit::instance = 0;
-
 void init_zoslib_config(zoslib_config_t &config) {
   init_zoslib_config(&config);
 }
@@ -2694,7 +2735,7 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {
-  __init_zoslib __nodezoslib(config);
+  __get_instance()->initialize(config);
 }
 
 extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {

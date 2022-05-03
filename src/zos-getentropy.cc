@@ -1,5 +1,5 @@
 // Need to compile this file with at least z14 to use PRNO instruction.
-#pragma options("-march=z14 -mtune=z14 if clang++")
+#pragma options("-march=z14 -mtune=z14 if ibm-clang++64")
 #define _AE_BIMODAL 1
 #ifdef __ibmxl__
 #undef _ENHANCED_ASCII_EXT
@@ -20,19 +20,15 @@
 #error not build with correct codeset
 #endif
 
-#if defined (__ibmxl__)
-#define __builtin_s390_stckf(x) __stckf(x)
-#endif
-
 static unsigned char _value(int bit) {
   unsigned long long t0, t1, start;
   int i;
   asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
-  (void) __builtin_s390_stckf(&start);
+  (void) __stckf(&start);
   start = start >> bit;
   for (i = 0; i < 400; ++i) {
     asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
-    (void) __builtin_s390_stckf(&t0);
+    (void) __stckf(&t0);
     t0 = t0 >> bit;
     if ((t0 - start) > 0xfffff) {
       break;
@@ -59,8 +55,8 @@ static void _slow(int size, void* output) {
 
   while (bits == 0 || bits > 11) {
     for (i = 0; i < 10; ++i) {
-      (void) __builtin_s390_stckf(&t0);
-      (void) __builtin_s390_stckf(&t1);
+      (void) __stckf(&t0);
+      (void) __stckf(&t1);
       r = t0 ^ t1;
       if (r < m) m = r;
     }

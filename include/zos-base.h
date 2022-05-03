@@ -606,7 +606,6 @@ class __zinit {
   int cvstate;
   std::terminate_handler _th;
   int __forked;
-  static __zinit *instance;
 
 public:
   int forkmax;
@@ -616,20 +615,12 @@ public:
   std::map<zoslibEnvar, std::string> envarHelpMap;
 
 public:
-  __zinit(const zoslib_config_t &config);
+  __zinit() {}
+  ~__zinit();
 
+  int initialize(const zoslib_config_t &config);
   bool isValidZOSLIBEnvar(std::string envar);
-
-  static __zinit *init(const zoslib_config_t &config) {
-    instance = new __zinit(config);
-    instance->initialize();
-    return instance;
-  }
-
-  int initialize(void);
   int setEnvarHelpMap(void);
-
-  static __zinit *getInstance() { return instance; }
 
   int forked(int newvalue) {
     int old = __forked;
@@ -675,24 +666,14 @@ public:
   }
   int shmid_value(void) { return shmid; }
 
-  ~__zinit() {
-    if (_CVTSTATE_OFF == cvstate) {
-      __ae_autoconvert_state(cvstate);
-    }
-    __ae_thread_swapmode(mode);
-    if (shmid != 0) {
-      if (__forked)
-        dec_forkcount();
-      shmdt(forkcurr);
-      shmctl(shmid, IPC_RMID, 0);
-    }
-    __cleanupipc(0);
-  }
   void __abort() { _th(); }
+
+private:
+  void del_instance();
 };
 
 struct __init_zoslib {
-  __init_zoslib(const zoslib_config_t &config = {}) { __zinit::init(config); }
+  __init_zoslib(const zoslib_config_t &config = {});
 };
 
 #endif // __cplusplus
