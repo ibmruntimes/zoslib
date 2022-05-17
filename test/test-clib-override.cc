@@ -59,4 +59,19 @@ TEST_F(CLIBOverrides, pipe) {
     dup2(STDOUT_FILENO, pipefd[0]);
     EXPECT_EQ(__getfdccsid(pipefd[0]), ccsid);
 }
+
+TEST_F(CLIBOverrides, socketpair) {
+    int fd[2];
+    int rc = socketpair(AF_UNIX, SOCK_STREAM, 0, fd);
+    EXPECT_GE(rc, 0);
+    EXPECT_GE(fd[0], 0);
+    EXPECT_GE(fd[1], 0);
+    if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
+      EXPECT_EQ(__getfdccsid(fd[0]), 65536);
+      EXPECT_EQ(__getfdccsid(fd[1]), 65536);
+    } else {
+      EXPECT_EQ(__getfdccsid(fd[0]), 0);
+      EXPECT_EQ(__getfdccsid(fd[1]), 0);
+    }
+}
 } // namespace
