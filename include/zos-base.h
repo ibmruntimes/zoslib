@@ -44,6 +44,7 @@ typedef unsigned long size_t;
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
+#define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 
 typedef enum {
   ZOSLVL_V1R13 = 0,
@@ -77,6 +78,18 @@ typedef struct {
 } __sem_t;
 
 extern const char *__zoslib_version;
+
+/**
+ * Logs memory allocation statistics to the file name specified
+ * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
+ * \param [in] same as C's printf() parameters
+ */
+extern void __memprintf(const char *format, ...);
+
+/**
+ * Returns true if logging of memory allocation and release is specified.
+ */
+extern bool __doLogMemoryUsage();
 
 /**
  * Convert from EBCDIC to ASCII.
@@ -586,6 +599,12 @@ typedef struct zoslib_config {
    * string to indicate the envar to be used to toggle the untagged 1047 read mode
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  /**
+   * string to indicate the envar to be used to set to the path, including the
+   * names stdout or stderr, where memory usage (allocate/free) is to be written
+   */
+  const char *MEMORY_USAGE_LOG_FILE_ENVAR = MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT;
+
 } zoslib_config_t;
 
 /**
@@ -626,6 +645,11 @@ typedef struct zoslib_config {
    * string to indicate the envar to be used to toggle the untagged 1047 read mode
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR;
+  /**
+   * string to indicate the envar to be used to set to the path, including the
+   * names stdout or stderr, where memory usage (allocate/free) is to be written
+   */
+  const char *MEMORY_USAGE_LOG_FILE_ENVAR;
 } zoslib_config_t;
 /**
  * Initialize zoslib library

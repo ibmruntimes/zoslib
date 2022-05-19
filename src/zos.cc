@@ -62,6 +62,9 @@ static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
+static char __gMemoryUsageLogFile[PATH_MAX] = "";
+static bool __gLogMemoryUsage = false;
+static char __gArgsStr[PATH_MAX*2] = "";
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -2006,6 +2009,8 @@ extern "C" void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
 
   tag.ft_ccsid = ccsid;
   tag.ft_txtflag = txtflag;
+  tag.ft_deferred = 0;
+  tag.ft_rsvflags = 0;
 
   struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
 
@@ -2177,8 +2182,8 @@ unsigned long getipttoken(void) {
          << 32;
 }
 
-static void *__iarv64_alloc(int segs, const char *token) {
-  long long rc, reason;
+static void *__iarv64_alloc(int segs, const char *token,
+                            long long *prc, long long *preason) {
   struct iarv64parm parm __attribute__((__aligned__(16)));
   memset(&parm, 0, sizeof(parm));
   parm.xversion = 5;
@@ -2196,23 +2201,14 @@ static void *__iarv64_alloc(int segs, const char *token) {
   parm.xexecutable_yes = 1;
   parm.keyused_ttoken = 1;
   memcpy(&parm.xttoken, token, 16);
-  rc = __iarv64(&parm, &reason);
-  if (mem_account())
-    dprintf(2,
-            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
-            "reason=%llx\n",
-            getpid(), (int)(pthread_self().__ & 0x7fffffff), parm.xorigin,
-            (unsigned long)(segs * 1024 * 1024),
-            (unsigned long)(segs * 1024 * 1024), rc, reason);
-  if (rc == 0) {
+  *prc = __iarv64(&parm, preason);
+  if (*prc == 0)
     return parm.xorigin;
-  }
-  return 0;
+  return nullptr;
 }
 
 static void *__iarv64_alloc_inorigin(int segs, const char *token,
-                                     void *inorigin) {
-  long long rc, reason;
+             void *inorigin, long long *prc, long long *preason) {
   struct iarv64parm parm __attribute__((__aligned__(16)));
   memset(&parm, 0, sizeof(parm));
   parm.xversion = 6;
@@ -2232,23 +2228,15 @@ static void *__iarv64_alloc_inorigin(int segs, const char *token,
   parm.xkeyused_inorigin = 1;
   parm.xmemobjstart = inorigin;
   memcpy(&parm.xttoken, token, 16);
-  rc = __iarv64(&parm, &reason);
-  if (mem_account())
-    dprintf(2,
-            "__iarv64_alloc: pid %d tid %d ptr=%p size=%lu(0x%lx) rc=%llx, "
-            "reason=%llx\n",
-            getpid(), (int)(pthread_self().__ & 0x7fffffff), parm.xorigin,
-            (unsigned long)(segs * 1024 * 1024),
-            (unsigned long)(segs * 1024 * 1024), rc, reason);
-  if (rc == 0) {
+  *prc = __iarv64(&parm, preason);
+  if (*prc == 0)
     return parm.xorigin;
-  }
-  return 0;
+  return nullptr;
 }
 
 #define __USE_IARV64 1 // 0=moservices, 1=iarv64
-static int __iarv64_free(void *ptr, const char *token) {
-  long long rc, reason;
+static long long __iarv64_free(void *ptr, const char *token,
+                               long long *preason) {
   void *org = ptr;
   struct iarv64parm parm __attribute__((__aligned__(16)));
   memset(&parm, 0, sizeof(parm));
@@ -2259,11 +2247,7 @@ static int __iarv64_free(void *ptr, const char *token) {
   parm.xmemobjstart = ptr;
   parm.keyused_ttoken = 1;
   memcpy(&parm.xttoken, token, 16);
-  rc = __iarv64(&parm, &reason);
-  if (mem_account())
-    dprintf(2, "__iarv64_free pid %d tid %d ptr=%p rc=%lld\n", getpid(),
-            (int)(pthread_self().__ & 0x7fffffff), org, rc);
-  return rc;
+  return __iarv64(&parm, preason);
 }
 
 static void *__mo_alloc(int segs) {
@@ -2316,8 +2300,6 @@ struct __hash_func {
   }
 };
 
-static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar);
-
 typedef std::unordered_map<key_type, value_type, __hash_func>::const_iterator
     mem_cursor_t;
 
@@ -2326,7 +2308,9 @@ class __Cache {
   std::mutex access_lock;
   char xttoken[16];
   unsigned short asid;
-  int oktouse;
+  bool oktouse;
+  size_t totalmem31;
+  size_t totalmem64;
 
 public:
   __Cache() {
@@ -2335,43 +2319,75 @@ public:
     asid = ((unsigned short *)(*(char *__ptr32 *)(0x224)))[18];
 #endif
     oktouse =
-        (*(int *)(80 + ((char ****__ptr32 *)1208)[0][11][1][123]) > 0x040202FF);
+        (*(int *)(80 + ((char ****__ptr32 *)1208)[0][11][1][123]) >= 0x04020200);
     // LE level is 220 or above
   }
-  void addptr(const void *ptr, size_t v) {
+  size_t getTotalmem31() { return totalmem31; }
+  size_t getTotalmem64() { return totalmem64; }
+  void addptr31(const void *ptr, size_t v) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     cache[k] = v;
-    if (mem_account())
-      dprintf(2, "ADDED: @%lx size %lu\n", k, v);
+    totalmem31 += v;
+    if (__doLogMemoryUsage()) {
+      __memprintf("addr=%p, size=%zu: malloc31 OK (total=%zu)\n", ptr, v,
+                  totalmem31);
+    }
   }
-  // normal case:  bool elligible() { return oktouse; }
-  bool elligible() { return true; } // always true for now
 #if __USE_IARV64
   void *alloc_seg(int segs) {
+    long long rc, reason;
     std::lock_guard<std::mutex> guard(access_lock);
-    void *p = __iarv64_alloc(segs, xttoken);
+    void *p = __iarv64_alloc(segs, xttoken, &rc, &reason);
+    size_t size = (unsigned long)(segs * 1024 * 1024);
     if (p) {
       unsigned long k = (unsigned long)p;
-      cache[k] = segs * 1024 * 1024;
-      if (mem_account())
-        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
-                (size_t)(segs * 1024 * 1024));
+      cache[k] = size;
+      totalmem64 += cache[k];
+      if (__doLogMemoryUsage()) {
+        __memprintf("addr=%p, size=%zu: iarv64_alloc OK (total=%zu)\n",
+                    p, size, totalmem64);
+      }
+      return p;
+    } else {
+      if (__doLogMemoryUsage()) {
+        __memprintf("size=%zu: iarv64_alloc FAILED, rc=%llx, reason=%llx " \
+                    "(total=%zu)\n", size, rc, reason, totalmem64);
+      }
+      return nullptr;
     }
-    return p;
   }
   int free_seg(void *ptr) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
-    int rc = __iarv64_free(ptr, xttoken);
+    long long rc, reason;
+    rc = __iarv64_free(ptr, xttoken, &reason);
+    mem_cursor_t c = cache.find(k);
+    size_t size;
     if (rc == 0) {
-      mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        size_t s = c->second;
+        size = c->second;
         cache.erase(c);
-        if (mem_account()) {
-          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
+        totalmem64 -= size;
+        if (__doLogMemoryUsage()) {
+          __memprintf("addr=%p, size=%zu: iarv64_free OK (total=%zu)\n", ptr, size,
+                      totalmem64);
         }
+      }
+      else if (__doLogMemoryUsage()) {
+        __memprintf("WARNING: addr=%p: iarv64_free OK but address not found " \
+                    "in cache (total=%zu)\n", ptr, totalmem64);
+      }
+    } else if (__doLogMemoryUsage()) {
+      if (c != cache.end()) {
+        size = c->second;
+        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free FAILED, rc=%llx, " \
+                    "reason=%llx (total=%zu)\n", ptr, size, rc, reason,
+                    totalmem64);
+      } else {
+        __memprintf("ERROR: addr=%p: iarv64_free FAILED and address not " \
+                    "found in cache: rc=%llx, reason=%llx (total=%zu)\n",
+                    ptr, rc, reason, totalmem64);
       }
     }
     return rc;
@@ -2383,9 +2399,6 @@ public:
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = segs * 1024 * 1024;
-      if (mem_account())
-        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
-                (size_t)(segs * 1024 * 1024));
     }
     return p;
   }
@@ -2398,9 +2411,6 @@ public:
       if (c != cache.end()) {
         size_t s = c->second;
         cache.erase(c);
-        if (mem_account()) {
-          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
-        }
       }
     }
     return rc;
@@ -2427,46 +2437,46 @@ public:
     }
     return 0;
   }
-  void show(void) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    if (mem_account()) {
-      for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
-        dprintf(2, "LIST: @%lx size %lu\n", it->first, it->second);
-      }
-    }
-  }
-  void freeptr(const void *ptr) {
+  void freeptr31(const void *ptr) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     mem_cursor_t c = cache.find(k);
     if (c != cache.end()) {
+      totalmem31 -= c->second;
+      if (__doLogMemoryUsage()) {
+        __memprintf("addr=%p, size=%zu: free31 OK (total=%zu)\n", ptr, c->second,
+                    totalmem31);
+      }
       cache.erase(c);
+    } else {
+      if (__doLogMemoryUsage()) {
+        __memprintf("WARNING: addr=%p free31 OK but not found in cache\n", ptr);
+      }
     }
   }
   ~__Cache() {
-    std::lock_guard<std::mutex> guard(access_lock);
-    if (mem_account()) {
+    if (__doLogMemoryUsage()) {
       for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
-        dprintf(2,
-                "Error: DEBRIS (allocated but never free'd): @%lx size %lu\n",
-                it->first, it->second);
+        __memprintf("WARNING: addr=%lx, size=%lu: DEBRIS (allocated but not " \
+                    "(yet?) free'd)\n", it->first, it->second);
       }
+      __memprintf("PROCESS TERMINATING: %s\n", __gArgsStr);
     }
   }
 };
 
 static __Cache alloc_info;
 
-static void *anon_mmap_inner(void *addr, size_t len) {
+extern "C" void *anon_mmap(void *addr, size_t len) {
   int retcode;
-  if (alloc_info.elligible() && len % kMegaByte == 0) {
+  if (len % kMegaByte == 0) {
     size_t request_size = len / kMegaByte;
     void *p = alloc_info.alloc_seg(request_size);
     if (p)
       return p;
     else
       return MAP_FAILED;
-  } else if (alloc_info.elligible() && len > 2UL * kGigaByte) {
+  } else if (len > 2UL * kGigaByte) {
     size_t request_size = RoundUp(len, kMegaByte) / kMegaByte;
     void *p = alloc_info.alloc_seg(request_size);
     if (p)
@@ -2475,6 +2485,8 @@ static void *anon_mmap_inner(void *addr, size_t len) {
       return MAP_FAILED;
   } else {
     char *p;
+    static std::mutex access_lock;
+    std::lock_guard<std::mutex> guard(access_lock);
 #if defined(__64BIT__)
     __asm(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
           " STORAGE "
@@ -2483,7 +2495,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 #if defined(__clang__)
           : "=NR:r1"(p), "=NR:r15"(retcode)
           : "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+          : "r14");
 #else
           : "=r"(p), "=r"(retcode)
           : "r"(len)
@@ -2496,7 +2508,7 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 #if defined(__clang__)
           : "=NR:r1"(p), "=NR:r15"(retcode)
           : "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+          : "r14");
 #else
           : "=r"(p), "=r"(retcode)
           : "r"(len)
@@ -2505,25 +2517,30 @@ static void *anon_mmap_inner(void *addr, size_t len) {
 
 #endif
     if (retcode == 0) {
-      alloc_info.addptr(p, len);
+      alloc_info.addptr31(p, len);
+      assert(p != nullptr);
       return p;
+    } else if (__doLogMemoryUsage()) {
+      __memprintf("ERROR: addr=%p, size=%zu: malloc31 FAILED, rc=%llx " \
+                 "(total=%zu)\n",
+                 p, len, retcode, alloc_info.getTotalmem31());
     }
     return MAP_FAILED;
   }
 }
 
-static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
-  int retcode;
-  if (is_above_bar) {
+extern "C" int anon_munmap(void *addr, size_t len) {
+  if (alloc_info.is_rmode64(addr)) {
     return alloc_info.free_seg(addr);
   } else {
+    int retcode;
 #if defined(__64BIT__)
     __asm(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
           " STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n"
 #if defined(__clang__)
           : "=NR:r15"(retcode)
           : "NR:r1"(addr), "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+          : "r14");
 #else
           : "=r"(retcode)
           : "r"(addr), "r"(len)
@@ -2535,7 +2552,7 @@ static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
 #if defined(__clang__)
           : "=NR:r15"(retcode)
           : "NR:r1"(addr), "NR:r0"(len)
-          : "r0", "r1", "r14", "r15");
+          : "r14");
 #else
           : "=r"(retcode)
           : "r"(addr), "r"(len)
@@ -2543,41 +2560,13 @@ static int anon_munmap_inner(void *addr, size_t len, bool is_above_bar) {
 #endif
 
 #endif
-    if (0 == retcode)
-      alloc_info.freeptr(addr);
-  }
-  return retcode;
-}
-
-extern "C" void *anon_mmap(void *_, size_t len) {
-  void *ret = anon_mmap_inner(_, len);
-  if (ret == MAP_FAILED) {
-    if (mem_account()) {
-      dprintf(2, "Error: anon_mmap request size %zu failed\n", len);
+    if (0 == retcode) {
+      alloc_info.freeptr31(addr);
+    } else if (__doLogMemoryUsage()) {
+      __memprintf("ERROR: addr=%p, size=%zu: free31 FAILED, rc=%llx (total=%zu)\n",
+                  addr, len, retcode, alloc_info.getTotalmem31());
     }
-    return ret;
-  }
-  return ret;
-}
-
-extern "C" int anon_munmap(void *addr, size_t len) {
-  if (alloc_info.is_exist_ptr(addr)) {
-    if (mem_account())
-      dprintf(2, "Address found, attempt to free @%p size %d\n", addr,
-              (int)len);
-    int rc = anon_munmap_inner(addr, len, alloc_info.is_rmode64(addr));
-    if (rc != 0) {
-      if (mem_account()) {
-        dprintf(2, "Error: anon_munmap @%p size %zu failed\n", addr, len);
-      }
-      return rc;
-    }
-    return 0;
-  } else {
-    if (mem_account())
-      dprintf(2, "Error: attempt to free %p size %d (not allocated)\n", addr,
-              (int)len);
-    return 0;
+    return retcode;
   }
 }
 
@@ -3984,13 +3973,10 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
   // processed; without it, d8 could not process .js with EBCDIC content
   // (tagged and untagged).
 
-  if (prot != PROT_READ || flags == MAP_SHARED) {
-    return mmap(_, len, prot, flags, fildes, off);
-  }
   struct stat st;
   if (fstat(fildes, &st)) {
     perror("fstat");
-    return nullptr;
+    return MAP_FAILED;
   }
   static const int pgsize = sysconf(_SC_PAGESIZE);
   size_t size = RoundUp(len, pgsize);
@@ -4001,12 +3987,12 @@ extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
   }
   if (lseek(fildes, 0, SEEK_SET) != 0) {
     perror("lseek");
-    return nullptr;
+    return MAP_FAILED;
   }
   size_t nread = read(fildes, memory, len);
   if (nread != len) {
     perror("read");
-    return nullptr;
+    return MAP_FAILED;
   }
   if (st.st_tag.ft_txtflag == 0 && st.st_tag.ft_ccsid == 0) {
     __file_needs_conversion_init(filename, fildes);
@@ -4130,6 +4116,27 @@ void __update_envar_settings(const char* envar) {
   if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_CCSID1047_ENVAR) == 0) {
     no_tag_ignore_ccsid1047 = get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
+
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0) {
+    char *p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR);
+    if (p)
+      strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
+    else if (mem_account())
+      strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
+
+    if (*__gMemoryUsageLogFile) {
+      __gLogMemoryUsage = true;
+      int len = 0;
+      __gArgsStr[0] = 0;
+      for (int i=0; i<__getargc(); ++i) {
+        __strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
+        len += strlen(__argv[i]);
+        __gArgsStr[len++] = ' ';
+        __gArgsStr[len] = 0;
+      }
+      __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
+    }
+  }
 }
 
 bool __zinit::isValidZOSLIBEnvar(std::string envar) {
@@ -4190,6 +4197,11 @@ void __zinit::initialize() {
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
       "set to toggle debug ZOSLIB mode"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.MEMORY_USAGE_LOG_FILE_ENVAR, std::string("")),
+      "set to a path, or set to \"stdout\" or \"stderr\" where memory " \
+      "usage (allocate/free) is to be written"));
 
   __update_envar_settings(NULL);
 
@@ -4256,6 +4268,7 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   config->UNTAGGED_READ_MODE_CCSID1047_ENVAR = UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  config->MEMORY_USAGE_LOG_FILE_ENVAR = MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT;
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {
@@ -4420,4 +4433,30 @@ extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
   }
 
   return 0;
+}
+
+extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
+
+extern "C" void __memprintf(const char *format, ...) {
+  if (!__doLogMemoryUsage())
+    return;
+
+  va_list args;
+  va_start(args, format);
+
+  static bool isstderr = !strcmp(__gMemoryUsageLogFile, "stderr");
+  static bool isstdout = !strcmp(__gMemoryUsageLogFile, "stdout");
+  static FILE *fp = isstderr ? stderr : \
+                    isstdout ? stdout : \
+                    fopen(__gMemoryUsageLogFile, "a+");
+  if (!fp) {
+    perror(__gMemoryUsageLogFile);
+    __gLogMemoryUsage = false;
+    va_end(args);
+    return;
+  }
+  char buf[PATH_MAX*2];
+  vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+  fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
 }
