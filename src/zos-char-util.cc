@@ -439,14 +439,14 @@ int conv_utf16_utf8(char *out, size_t outsize, const char *in, size_t insize) {
 }
 
 void __fd_close(int fd) { 
-  if (__zinit::getInstance())
-    __zinit::getInstance()->fdcache.unset_attribute(fd);
+  if (__get_instance())
+    __get_instance()->fdcache.unset_attribute(fd);
 }
 
 int __file_needs_conversion(int fd) {
   if (__get_no_tag_read_behaviour() == __NO_TAG_READ_STRICT)
     return 0;
-  unsigned long attr = __zinit::getInstance()->fdcache.get_attribute(fd);
+  unsigned long attr = __get_instance()->fdcache.get_attribute(fd);
   if (attr == 0x0000000000020000UL) {
     return 1;
   }
@@ -468,7 +468,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
   if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
     return 0;
   if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
-    __zinit::getInstance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
+    __get_instance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
     return 1;
   }
   if (lseek(fd, 1, SEEK_SET) == 1 && lseek(fd, 0, SEEK_SET) == 0) {
@@ -497,7 +497,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
                        "EBCDIC characters\n");
           }
         }
-        __zinit::getInstance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
+        __get_instance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
         return 1;
       }
     }       // cnt > 8

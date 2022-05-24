@@ -121,8 +121,9 @@ static int shmid_value(void);
 
 static __zinit __instance;
 
-static __zinit* __get_instance() {
-  assert(!__zoslib_terminated);
+__zinit* __get_instance() {
+  if (__zoslib_terminated)
+    return 0;
   return &__instance;
 }
 
@@ -2884,8 +2885,6 @@ void __zinit::populateLEFunctionPointers() {
   }
 #endif
 }
-
-__zinit *__zinit::instance = 0;
 
 void init_zoslib_config(zoslib_config_t &config) {
   init_zoslib_config(&config);
