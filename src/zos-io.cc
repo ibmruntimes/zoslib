@@ -7,9 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define _AE_BIMODAL 1
-#include "zos-io.h"
-#include "zos-bpx.h"
-#include "zos-char-util.h"
+#include "zos-base.h"
 
 #include <errno.h>
 #include <poll.h>
@@ -677,6 +675,34 @@ int __getfdccsid(int fd) {
     return 65536 + ccsid;
   }
   return ccsid;
+}
+
+// Defined in zos.cc, no need to expose it:
+extern void __setLogMemoryUsage(bool value);
+
+void __memprintf(const char *format, ...) {
+  if (!__doLogMemoryUsage())
+    return;
+
+  va_list args;
+  va_start(args, format);
+
+  static const char *fname = __getMemoryUsageLogFile();
+  static bool isstderr = !strcmp(fname, "stderr");
+  static bool isstdout = !strcmp(fname, "stdout");
+  static FILE *fp = isstderr ? stderr : \
+                    isstdout ? stdout : \
+                    fopen(fname, "a+");
+  if (!fp) {
+    va_end(args);
+    perror(fname);
+    __setLogMemoryUsage(false);
+    return;
+  }
+  char buf[PATH_MAX*2];
+  vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+  fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
 }
 
 #ifdef __cplusplus

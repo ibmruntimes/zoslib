@@ -100,6 +100,13 @@ int __getfdccsid(int fd);
  */
 int __setfdccsid(int fd, int t_ccsid);
 
+/**
+ * Logs memory allocation and release to the file name specified
+ * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
+ * \param [in] same as C's printf() parameters
+ */
+void __memprintf(const char *format, ...);
+
 #ifdef __cplusplus
 }
 #endif

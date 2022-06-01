@@ -45,6 +45,7 @@
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
+#define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 
 typedef enum {
   __NO_TAG_READ_DEFAULT = 0,
@@ -462,6 +463,12 @@ typedef struct zoslib_config {
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR =
       UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  /**
+   * string to indicate the envar to be used to set the name of the log file,
+   * including 'stdout' or 'stderr', to which diagnostic messages for memory
+   * allocation and release "
+   */
+  const char *MEMORY_USAGE_LOG_FILE_ENVAR = MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT;
 } zoslib_config_t;
 
 /**
@@ -505,6 +512,11 @@ typedef struct zoslib_config {
    * mode
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR;
+  /**
+   * string to indicate the envar to be used to set to the path, including the
+   * names stdout or stderr, where memory usage (allocate/free) is to be written
+   */
+  const char *MEMORY_USAGE_LOG_FILE_ENVAR;
 } zoslib_config_t;
 
 /**
@@ -551,6 +563,17 @@ int __update_envar_settings(const char *envar);
  * variable name(s) \return 0 for success, or -1 for failure
  */
 int __update_envar_names(zoslib_config_t *const config);
+
+/**
+ * Returns true if logging of memory allocation and release is specified.
+ */
+bool __doLogMemoryUsage();
+
+/**
+ * Returns the file name, including "stdout" or "stderr", used to log memory
+ * allocation and release to.
+ */
+char *__getMemoryUsageLogFile();
 
 #ifdef __cplusplus
 }
@@ -615,7 +638,7 @@ public:
   std::map<zoslibEnvar, std::string> envarHelpMap;
 
 public:
-  __zinit() {}
+  __zinit();
   ~__zinit();
 
   int initialize(const zoslib_config_t &config);
