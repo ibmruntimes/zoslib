@@ -24,12 +24,6 @@
 
 #define SEM_FAILED ((sem_t *)0)
 
-typedef struct {
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-  unsigned int value;
-} sem_t;
-
 typedef struct __sem {
   volatile unsigned int value;
   volatile unsigned int id; // 0 for non shared (thread), pid for share
@@ -42,21 +36,19 @@ typedef struct {
   ____sem_t *_s;
 } __sem_t;
 
+#define sem_t         __sem_t
+
+#define sem_init      __sem_init
+#define sem_post      __sem_post
+#define sem_trywait   __sem_trywait
+#define sem_timedwait __sem_timedwait
+#define sem_wait      __sem_wait
+#define sem_getvalue  __sem_getvalue
+#define sem_destroy   __sem_destroy
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-int sem_init(sem_t *semid, int pshared, unsigned int value);
-
-int sem_destroy(sem_t *semid);
-
-int sem_wait(sem_t *semid);
-
-int sem_trywait(sem_t *semid);
-
-int sem_post(sem_t *semid);
-
-int sem_timedwait(sem_t *semid, const struct timespec *timeout);
 
 /**TODO(itodorov) - zos: document these interfaces**/
 int __sem_init(__sem_t *s0, int shared, unsigned int val);
