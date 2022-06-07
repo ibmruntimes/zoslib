@@ -30,6 +30,7 @@ TEST_F(CLIBOverrides, open) {
     EXPECT_GE(fd, 0);
     // New files should be tagged as ASCII 819
     EXPECT_EQ(__getfdccsid(fd), 66355);
+    close(fd);
 
     // Should auto-convert untagged files to EBCDIC 1047
     fd = open("/etc/profile", O_RDONLY);
@@ -44,6 +45,12 @@ TEST_F(CLIBOverrides, open) {
       EXPECT_EQ(__getfdccsid(fd), 0);
       close(fd);
     }
+
+    // Delete and re-open temp_path with only read permissions
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_RDONLY, S_IRUSR);
+    EXPECT_EQ(__getfdccsid(fd), 66355);
+    close(fd);
 }
 
 TEST_F(CLIBOverrides, pipe) {

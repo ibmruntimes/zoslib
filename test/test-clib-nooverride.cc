@@ -28,6 +28,7 @@ TEST_F(CLIBNoOverrides, open) {
     EXPECT_GE(fd, 0);
     // New files should be untagged
     EXPECT_EQ(__getfdccsid(fd), 0);
+    close(fd);
 
     // Should have no auto conversion on reading
     fd = open("/etc/profile", O_RDONLY);
@@ -42,6 +43,12 @@ TEST_F(CLIBNoOverrides, open) {
       EXPECT_EQ(__getfdccsid(fd), 0);
       close(fd);
     }
+
+    // Delete and re-open temp_path with only read permissions
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_RDONLY, S_IRUSR);
+    EXPECT_EQ(__getfdccsid(fd), 0);
+    close(fd);
 }
 
 TEST_F(CLIBNoOverrides, pipe) {
