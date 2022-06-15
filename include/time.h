@@ -32,6 +32,7 @@ typedef enum {
  * \return return 0 for success, or -1 for failure.
  */
 extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
+extern int (*nanosleep)(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 };
 #endif

@@ -36,6 +36,7 @@ extern "C" {
 
 #if (__EDC_TARGET < 0x42050000)
 extern int (*pipe2)(int pipefd[2], int flags);
+extern int (*getentropy)(void *, size_t);
 #endif
 
 /**
@@ -55,6 +56,7 @@ int close(int);
 
 #if (__EDC_TARGET < 0x42050000)
 extern int (*pipe2)(int pipefd[2], int flags);
+extern int (*getentropy)(void *, size_t);
 #endif 
 
 #endif

@@ -68,7 +68,7 @@ static void _slow(int size, void* output) {
   }
 }
 
-extern "C" int getentropy(void* output, size_t size) {
+extern "C" int __getentropy(void* output, size_t size) {
   char* out = (char*)output;
 #ifdef _LP64
   static int feature = -1;

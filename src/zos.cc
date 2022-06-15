@@ -80,6 +80,8 @@ int (*futimes)(int fd, const struct timeval tv[2]);
 int (*lutimes)(const char *filename, const struct timeval tv[2]);
 int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
 int (*pipe2)(int pipefd[2], int flags);
+int (*getentropy)(void *, size_t);
+int (*nanosleep)(const struct timespec*, struct timespec*);
 #endif
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -2875,6 +2877,8 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(inotify_add_watch, 0xDBB);
     MAP_LE_FUNC(pipe2, 0xDBD);
     MAP_LE_FUNC(accept4, 0xDA8);
+    MAP_LE_FUNC(nanosleep, 0xE22);
+    MAP_LE_FUNC(getentropy, 0xE21);
   }
   else {
     clock_gettime = __clock_gettime;
@@ -2882,6 +2886,8 @@ void __zinit::populateLEFunctionPointers() {
     lutimes = __lutimes;
     pipe2 = __pipe2;
     accept4 = __accept4;
+    nanosleep = __nanosleep;
+    getentropy = __getentropy;
   }
 #endif
 }
@@ -2907,7 +2913,7 @@ extern "C" void init_zoslib(const zoslib_config_t config) {
   __get_instance()->initialize(config);
 }
 
-extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
+extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
   unsigned secrem;
   unsigned nanorem;
   int rv;

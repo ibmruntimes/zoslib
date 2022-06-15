@@ -592,21 +592,7 @@ __Z_EXPORT void init_zoslib_config(zoslib_config_t *const config);
  *  precision
  * \param [out] rem the remaining time if the call is interrupted
  */
-__Z_EXPORT int nanosleep(const struct timespec *req, struct timespec *rem);
-
-/**
- * Changes the access and modification times of a file of a file descriptor
- * \param [in] fd file descriptor
- * \param [in] tv two structs used to specify the new times
- */
-extern int __futimes(int fd, const struct timeval tv[2]);
-/**
- * Changes the access and modification times of a file in the same way as
- * lutimes, with the difference that microsecond precision is not supported.
- * \param [in] filename the path to file
- * \param [in] tv two structs used to specify the new times
- */
-__Z_EXPORT int __lutimes(const char *filename, const struct timeval tv[2]);
+__Z_EXPORT int __nanosleep(const struct timespec *req, struct timespec *rem);
 
 /**
  * Updates the zoslib global variables associated with the zoslib environment
