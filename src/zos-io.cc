@@ -725,12 +725,14 @@ int __open_ascii(const char *filename, int opts, ...) {
   struct stat sb;
   int is_new_file = stat(filename, &sb) != 0;
   int fd = __open_orig(filename, opts, perms);
+  int old_errno = errno;
 
   if (fd >= 0) {
     // Tag new files as ASCII (819)
     if (is_new_file) {
-      if (__chgfdccsid(fd, 819) < 0)
-        return -1;
+      __chgfdccsid(fd, 819);
+     /* Calling __chgfdccsid() should not clobber errno. */
+     errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
@@ -739,8 +741,9 @@ int __open_ascii(const char *filename, int opts, ...) {
           (opts & O_RDONLY) != 0) {
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-          if (fcntl(fd, F_CONTROL_CVT, &cvtreq) == -1) 
-            return -1;
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
         }
       }
     }

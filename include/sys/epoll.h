@@ -49,17 +49,17 @@ typedef union epoll_data {
 } epoll_data_t;
 
 #if defined(__clang__) && !defined(__ibmxl__)
-        struct epoll_event {
-            uint32_t        events;
-            epoll_data_t    data __attribute__((packed));
-        };
+struct epoll_event {
+    uint32_t        events;
+    epoll_data_t    data __attribute__((packed));
+};
 #else
-        #pragma pack(1)
-        struct epoll_event {
-            uint32_t        events;
-            epoll_data_t    data;
-        };
-        #pragma pack(reset)
+#pragma pack(1)
+struct epoll_event {
+    uint32_t        events;
+    epoll_data_t    data;
+};
+#pragma pack(reset)
 #endif
 
 extern int (*epoll_create)(int);

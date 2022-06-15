@@ -64,4 +64,15 @@ TEST_F(CLIBNoOverrides, pipe) {
     dup2(STDOUT_FILENO, pipefd[0]);
     EXPECT_EQ(__getfdccsid(pipefd[0]), ccsid);
 }
+
+TEST_F(CLIBNoOverrides, socketpair) {
+    int fd[2];
+    int rc = socketpair(AF_UNIX, SOCK_STREAM, 0, fd);
+    EXPECT_GE(rc, 0);
+    EXPECT_GE(fd[0], 0);
+    EXPECT_GE(fd[1], 0);
+    EXPECT_NE(fd[0], fd[1]);
+    EXPECT_EQ(__getfdccsid(fd[0]), 0);
+    EXPECT_EQ(__getfdccsid(fd[1]), 0);
+}
 } // namespace
