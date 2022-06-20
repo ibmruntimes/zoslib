@@ -1257,8 +1257,10 @@ class __Cache {
   char xttoken[16];
   unsigned short asid;
   int oktouse;
-  size_t totalmem31;
-  size_t totalmem64;
+  size_t curmem31;
+  size_t curmem64;
+  size_t maxmem31;
+  size_t maxmem64;
 
 public:
   __Cache() {
@@ -1269,19 +1271,23 @@ public:
     oktouse =
         (*(int *)(80 + ((char ****__ptr32 *)1208)[0][11][1][123]) >= 0x04020200);
     // LE level is 220 or above
+    curmem31 = curmem64 = maxmem31 = maxmem64 = 0u;
   }
 
-  size_t getTotalmem31() { return totalmem31; }
-  size_t getTotalmem64() { return totalmem64; }
+  size_t getCurrentMem31() { return curmem31; }
+  size_t getCurrentMem64() { return curmem64; }
+  size_t getMaxMem31() { return maxmem31; }
+  size_t getMaxMem64() { return maxmem64; }
 
   void addptr31(const void *ptr, size_t v) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     cache[k] = (unsigned long)v;
-    totalmem31 += v;
     if (__doLogMemoryUsage()) {
-      __memprintf("addr=%p, size=%zu: malloc31 OK (total=%zu)\n", ptr, v,
-                  totalmem31);
+      curmem31 += v;
+      maxmem31 = max(maxmem31, curmem31);
+      __memprintf("addr=%p, size=%zu: malloc31 OK (current=%zu, max=%zu)\n",
+                  ptr, v, curmem31, maxmem31);
     }
   }
 #if __USE_IARV64
@@ -1293,18 +1299,20 @@ public:
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = size;
-      totalmem64 += cache[k];
       if (__doLogMemoryUsage()) {
-        __memprintf("addr=%p, size=%zu: iarv64_alloc OK (total=%zu)\n",
-                    p, size, totalmem64);
+        curmem64 += cache[k];
+        maxmem64 = max(maxmem64, curmem64);
+        __memprintf("addr=%p, size=%zu: iarv64_alloc OK (current=%zu, " \
+                    "max=%zu)\n", p, size, curmem64, maxmem64);
       }
     } else if (__doLogMemoryUsage()) {
       __memprintf("size=%zu: iarv64_alloc FAILED, rc=%llx, reason=%llx " \
-                  "(total=%zu)\n", size, rc, reason, totalmem64);
+                  "(current=%zu, max=%zu)\n",
+                  size, rc, reason, curmem64, maxmem64);
     }
     return p;
   }
-  int free_seg(void *ptr) {
+  int free_seg(void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     long long rc, reason;
     rc = __iarv64_free(ptr, xttoken, &reason);
@@ -1315,25 +1323,27 @@ public:
       if (c != cache.end()) {
         size = c->second;
         cache.erase(c);
-        totalmem64 -= size;
         if (__doLogMemoryUsage()) {
-          __memprintf("addr=%p, size=%zu: iarv64_free OK (total=%zu)\n", ptr, size,
-                      totalmem64);
+          curmem64 -= size;
+          const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
+          __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
+                      "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
         }
       } else if (__doLogMemoryUsage()) {
-        __memprintf("WARNING: addr=%p: iarv64_free OK but address not found " \
-                    "in cache (total=%zu)\n", ptr, totalmem64);
+        __memprintf("WARNING: addr=%p, req-size=%zu: iarv64_free OK but " \
+                    "address not found in cache (current=%zu)\n",
+                    ptr, reqsize, curmem64);
       }
     } else if (__doLogMemoryUsage()) {
       if (c != cache.end()) {
         size = c->second;
         __memprintf("ERROR: addr=%p, size=%zu: iarv64_free FAILED, rc=%llx, " \
-                    "reason=%llx (total=%zu)\n", ptr, size, rc, reason,
-                    totalmem64);
+                    "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
+                    curmem64);
       } else {
         __memprintf("ERROR: addr=%p: iarv64_free FAILED and address not " \
-                    "found in cache: rc=%llx, reason=%llx (total=%zu)\n",
-                    ptr, rc, reason, totalmem64);
+                    "found in cache: rc=%llx, reason=%llx (current=%zu)\n",
+                    ptr, rc, reason, curmem64);
       }
     }
     return rc;
@@ -1380,20 +1390,22 @@ public:
     }
     return 0;
   }
-  void freeptr31(const void *ptr) {
+  void freeptr31(const void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     mem_cursor_t c = cache.find(k);
     if (c != cache.end()) {
-      totalmem31 -= c->second;
       if (__doLogMemoryUsage()) {
-        __memprintf("addr=%p, size=%zu: free31 OK (total=%zu)\n", ptr, c->second,
-                    totalmem31);
+        curmem31 -= c->second;
+        const char *w = c->second != reqsize ? " WARNING: size vs req-size" : "";
+        __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
+                    "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
       }
       cache.erase(c);
     } else {
       if (__doLogMemoryUsage()) {
-        __memprintf("WARNING: addr=%p free31 OK but not found in cache\n", ptr);
+        __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
+                    "in cache\n", ptr, reqsize);
       }
     }
   }
@@ -1418,105 +1430,66 @@ static __Cache * __get_galloc_info() {
   return __galloc_info;
 }
 
-extern "C" void *anon_mmap(void *_, size_t len) {
+extern "C" void *__zalloc(size_t len, size_t alignment) {
   if (len % kMegaByte == 0) {
     size_t request_size = len / kMegaByte;
-    void *p = __get_galloc_info()->alloc_seg(request_size);
-    if (p)
-      return p;
-    else
-      return MAP_FAILED;
+    return __get_galloc_info()->alloc_seg(request_size);
   } else if (len > (2UL * kGigaByte)) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
-    void *p = __get_galloc_info()->alloc_seg(request_size);
-    if (p)
-      return p;
-    else
-      return MAP_FAILED;
+    return __get_galloc_info()->alloc_seg(request_size);
   } else {
     char *p;
-#if defined(__llvm__)
     // The following solution allocates memory 2gb below the bar whose length
     // is a multiple of 8 and whose memory is aligned on a page (4096) boundary.
     // The below solution is similar to:
     // STORAGE OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),LOC=(31,64)
     len = (len + 7) &(-8);
 
-    size_t alignment = 4096;
-
-    // Original unaligned memory returned by __malloc31
-    void *mem_default;
-    // Aligned memory
-    void **mem_aligned;
-
     size_t extra_size = alignment - 1 + sizeof(void *);
 
     // Allocate the required size and a bit extra
-    mem_default = __malloc31(len + extra_size);
+    void *mem_default = __malloc31(len + extra_size);
     if (mem_default == NULL) {
       if (__doLogMemoryUsage()) {
         __memprintf("ERROR: size=%zu: malloc31 FAILED, errno=%d " \
-                   "(total=%zu), will try to allocate from virtual storage\n",
+                   "(current=%zu), will try to allocate from virtual storage\n",
                    len + extra_size, errno,
-                   __get_galloc_info()->getTotalmem31());
+                   __get_galloc_info()->getCurrentMem31());
       }
       size_t up_size = __round_up(len + extra_size, kMegaByte);
       size_t request_size = up_size / kMegaByte;
-      mem_default = __get_galloc_info()->alloc_seg(request_size);
-      if (mem_default == NULL) {
-        return MAP_FAILED;
-      }
-      return mem_default;
+      return __get_galloc_info()->alloc_seg(request_size);
     }
 
-    mem_aligned = (void **)(((size_t)(mem_default) + extra_size) & ~(alignment - 1));
+    void **mem_aligned = (void **)(((size_t)(mem_default) +
+                                             extra_size) & ~(alignment - 1));
     mem_aligned[-1] = mem_default;
 
     p = (char *)mem_aligned;
     __get_galloc_info()->addptr31(p, len);
+    memset(p, 0, len);
     return p;
-#else
-    int retcode;
-    __asm volatile(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
-                   " STORAGE "
-                   "OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),"
-                   "LOC=(31,64)\n"
-                   : "=NR:r1"(p), "=NR:r15"(retcode)
-                   : "NR:r0"(len)
-                   : "r0", "r1", "r14", "r15");
-    if (retcode == 0) {
-      __get_galloc_info()->addptr31(p, len);
-      return p;
-    }
-    return MAP_FAILED;
-#endif
   }
 }
 
-extern "C" int anon_munmap(void *addr, size_t len) {
+void *anon_mmap(void *_, size_t len) {
+  void *p = __zalloc(len, PAGE_SIZE);
+  return (p == nullptr) ? MAP_FAILED : p;
+}
+
+extern "C" int __zfree(void *addr, int len) {
   if (__get_galloc_info()->is_rmode64(addr)) {
-    return __get_galloc_info()->free_seg(addr);
+    return __get_galloc_info()->free_seg(addr, len);
   }
-#if defined(__llvm__)
-  // The following solution frees the original unaligned memory returned by
-  // __malloc31. Since free() doesn't return a return value, this simply
-  // returns 0.
-  // This solution is similar to:
-  // STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n
+  // Free the original unaligned memory returned by __malloc31. Since free()
+  // doesn't return a value, simply return 0.
   free(((void **)addr)[-1]);
-  __get_galloc_info()->freeptr31(addr);
+  __get_galloc_info()->freeptr31(addr, len);
   return 0;
-#else
-  int retcode;
-  __asm volatile(" SYSSTATE ARCHLVL=2,AMODE64=YES\n"
-                 " STORAGE RELEASE,LENGTH=(%2),ADDR=(%1),RTCD=(%0),COND=YES\n"
-                 : "=NR:r15"(retcode)
-                 : "NR:r1"(addr), "NR:r0"(len)
-                 : "r0", "r1", "r14", "r15");
-  if (0 == retcode)
-    __get_galloc_info()->freeptr31(addr);
-  return retcode;
-#endif
+}
+
+int anon_munmap(void *addr, size_t len) {
+  return __zfree(addr, len);
 }
 
 extern "C" int execvpe(const char *name, char *const argv[],
@@ -2213,46 +2186,49 @@ unsigned long long __registerProduct(const char *major_version,
   return ifausage_rc;
 }
 
-extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
-                             const char *filename, int fildes, off_t off) {
-  // TODO(gabylb): read-only anonymous mmap: the anon_mmap() call below is used
-  // rather than the OS's mmap() because mmap() doesn't convert .js with EBCDIC
-  // content to ASCII (in both tagged and untagged files).
-  // This function is currently called only by d8, and has been tested only
-  // when d8 processes its .js arg (from OS::MemoryMappedFile::open()), hence
-  // the first check below)
-  // With this, .js with either EBCDIC or ASCII, tagged or untagged can be
-  // processed; without it, d8 could not process .js with EBCDIC content
-  // (tagged and untagged).
+extern "C" void *__zalloc_for_fd(size_t len, const char *filename, int fd,
+                                  off_t offset) {
+  // Allocate memory to read contents of given file at the given offset;
+  // handles conversion if file contains EBCDIC data.
+  // TODO(gabylb): mmap() could be used and the mapped memory contents converted
+  // if EBCDIC, however mmap() at 64-bit (flag=__MAP_64) is currently not used
+  // (as it requires specical system config by the user), and we want to avoid
+  // allocating below the bar (which is the case without __MAP_64).
 
   struct stat st;
-  if (fstat(fildes, &st)) {
+  if (fstat(fd, &st)) {
     perror("fstat");
-    return MAP_FAILED;
+    return nullptr;
+  }
+  if (lseek(fd, offset, SEEK_SET) != offset) {
+    perror("lseek");
+    return nullptr;
   }
   static const int pgsize = sysconf(_SC_PAGESIZE);
   size_t size = __round_up(len, pgsize);
-
-  void *memory = anon_mmap(_, size);
-  if (memory == MAP_FAILED) {
+  void *memory = __zalloc(size, pgsize);
+  if (memory == nullptr) {
     return memory;
   }
-  if (lseek(fildes, 0, SEEK_SET) != 0) {
-    perror("lseek");
-    return MAP_FAILED;
-  }
-  size_t nread = read(fildes, memory, len);
+  size_t nread = read(fd, memory, len);
   if (nread != len) {
     perror("read");
-    return MAP_FAILED;
+    __zfree(memory, len);
+    return nullptr;
   }
   if (st.st_tag.ft_txtflag == 0 && st.st_tag.ft_ccsid == 0) {
-    __file_needs_conversion_init(filename, fildes);
-    if (__file_needs_conversion(fildes)) {
+    __file_needs_conversion_init(filename, fd);
+    if (__file_needs_conversion(fd)) {
       __e2a_l((char *)memory, len);
     }
   }
   return memory;
+}
+
+extern "C" void *roanon_mmap(void *_, size_t len, int prot, int flags,
+                             const char *filename, int fd, off_t offset) {
+  void *p = __zalloc_for_fd(len, filename, fd, offset);
+  return (p == nullptr) ? MAP_FAILED : p;
 }
 
 int __print_zoslib_help(FILE *fp, const char *title) {
@@ -2601,11 +2577,33 @@ __zinit:: ~__zinit() {
   ::__cleanupipc(0);
 
   // Don't delete __galloc_info (__Cache), as during exit-time a process may
-  // still be allocating memory using anon_mmap(), which call its alloc_seg().
+  // still be allocating memory using __zalloc(), which call its alloc_seg().
 
   if (__doLogMemoryUsage()) {
     __get_galloc_info()->displayDebris();
-    __memprintf("PROCESS TERMINATING: %s\n", __gArgsStr);
+    int ppid = getppid();
+    char childInfo[32] = "";
+    // Include <parent-name>(parent-pid) in the termination message:
+    int argc;
+    char **argv = nullptr;
+    if (__getargcv(&argc, &argv, ppid) != 0) {
+      snprintf(childInfo, sizeof(childInfo), "?(%d)-CHILD ", ppid);
+    } else {
+      const char *parentname = strrchr(argv[0], '/');
+      parentname = (parentname != nullptr) ? parentname + 1 : argv[0]; 
+      snprintf(childInfo, sizeof(childInfo), "%s(%d)-CHILD ", parentname, ppid);
+    }
+    if (argv != nullptr)
+      free((char*)argv);
+
+    __memprintf("%sPROCESS TERMINATING (current31=%zu, max31=%zu, " \
+                "current64=%zu, max64=%zu): %s\n",
+                childInfo,
+                __get_galloc_info()->getCurrentMem31(),
+                __get_galloc_info()->getMaxMem31(),
+                __get_galloc_info()->getCurrentMem64(),
+                __get_galloc_info()->getMaxMem64(),
+                __gArgsStr);
   }
   __zoslib_terminated = true;
 }

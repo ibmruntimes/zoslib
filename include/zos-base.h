@@ -310,31 +310,69 @@ int __dlcb_iterate(int (*cb)(char* name, void* addr, void* data), void *data);
 unsigned long __mach_absolute_time(void);
 
 /**
- * Generate an anonymous memory map
+ * Allocate memory in 64-bit virtual storage when size is a megabyte multiple
+ * or above 2GB, or in 31-bit storage otherwise, and if none is available,
+ * attempt to allocate from 64-bit virtual storage.
+ * \param [in] len length in bytes of memory to allocate
+ * \param [in] alignment in bytes and applies only to 31-bit storage (64-bit storage is always megabyte-aligned)
+ * \return pointer to the beginning of newly allocated memory, or 0 if unsuccessful
+ */
+void *__zalloc(size_t len, size_t alignment);
+
+/**
+ * Allocate memory in 64-bit virtual storage when size is a megabyte multiple
+ * or above 2GB, or in 31-bit storage (with PAGE_SIZE bytes alignment) otherwise, and
+ * if none is available, attempt to allocate from 64-bit virtual storage.
  * \param [in] _ ignored
- * \param [in] len length in bytes of memory map
- * \return returns start address of anonymous memory map
+ * \param [in] len length in bytes of memory to allocate
+ * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful
+ * \deprecated This function will be removed once mmap is fully functional
+ * (e.g. MAP_ANONYMOUS is supported)
  */
 void *anon_mmap(void *_, size_t len);
 
 /**
- * Generate a read only anonymous memory map for a given file
+ * Allocate memory (using __zalloc()) and read into it contents of given file
+ * \param [in] len length in bytes of memory to allocate
+ * \param [in] filename filename to read
+ * \param [in] fd file descriptor
+ * \param [in] offset offset in bytes into the file to read
+ * \return pointer to the beginning of newly allocated memory, or 0 if unsuccessful
+ */
+void *__zalloc_for_fd(size_t len, const char *filename, int fd, off_t offset);
+
+/**
+ * Allocate memory (using __zalloc()) and read into it contents of given file
+ * at the given offset.
  * \param [in] _ ignored
  * \param [in] len length in bytes of memory map
  * \param [in] prot protection bits
  * \param [in] flags mmap flags
  * \param [in] filename filename to read
- * \param [in] filedes file descriptor
- * \return returns start address of anonymous memory map
+ * \param [in] fd file descriptor
+ * \param [in] offset offset in bytes into the file to read
+ * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful
+ * \deprecated This function will be removed once mmap is fully functional
+ * (e.g. MAP_ANONYMOUS is supported), in which case mapped memory would need to be converted
+ * to ASCII if the file contains EBCDIC.
  */
 void *roanon_mmap(void *_, size_t len, int prot, int flags,
-                  const char *filename, int fildes, off_t off);
+                  const char *filename, int fd, off_t offset);
+/**
+ * Deallocate memory
+ * \param [in] addr start address of memory
+ * \param [in] len length in bytes
+ * \return returns 0 if successful, -1 if unsuccessful
+ */
+int __zfree(void *addr, int len);
 
 /**
- * Deallocates memory map
- * \param [in] addr start address of memory map
+ * Deallocate memory
+ * \param [in] addr start address of memory
  * \param [in] len length in bytes
- * \return returns 0 if successful, -1 if unsuccessful.
+ * \return returns 0 if successful, -1 if unsuccessful
+ * \deprecated This function will be removed once mmap is fully functional
+ * (e.g. MAP_ANONYMOUS is supported)
  */
 int anon_munmap(void *addr, size_t len);
 
