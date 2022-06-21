@@ -191,15 +191,13 @@ static void init_tf_parms_t(__tf_parms_t *parm, char *pu_name_buf, size_t len1,
                             char *entry_name_buf, size_t len2,
                             char *stmt_id_buf, size_t len3) {
   _FEEDBACK fc;
+  memset(parm, 0, sizeof(__tf_parms_t));
   parm->__tf_pu_name.__tf_buff = pu_name_buf;
   parm->__tf_pu_name.__tf_bufflen = len1;
   parm->__tf_entry_name.__tf_buff = entry_name_buf;
   parm->__tf_entry_name.__tf_bufflen = len2;
   parm->__tf_statement_id.__tf_buff = stmt_id_buf;
   parm->__tf_statement_id.__tf_bufflen = len3;
-  parm->__tf_dsa_addr = 0;
-  parm->__tf_caa_addr = 0;
-  parm->__tf_call_instruction = 0;
   int skip = 2;
   while (skip > 0 && !parm->__tf_is_main) {
     ____le_traceback_a(__TRACEBACK_FIELDS, parm, &fc);
