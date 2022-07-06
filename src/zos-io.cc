@@ -703,8 +703,6 @@ void __memprintf(const char *format, ...) {
   vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
 
-  static std::mutex mtx;
-  std::lock_guard<std::mutex> lock(mtx);
   fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
 }
 

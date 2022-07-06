@@ -71,9 +71,15 @@ static int *__main_thread_stack_top_address = 0;
 static bool __is_backtrace_on_abort = true;
 static bool __zoslib_terminated = false;
 
+static const char MEMLOG_LEVEL_WARNING = '1';
+static const char MEMLOG_LEVEL_ALL = '2';
+
 static char __gMemoryUsageLogFile[PATH_MAX] = "";
 static bool __gLogMemoryUsage = false;
+static bool __gLogMemoryAll = false;
+static bool __gLogMemoryWarning = false;
 static char __gArgsStr[PATH_MAX*2] = "";
+static bool __gMainTerminating = false;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -1149,7 +1155,7 @@ static void *__iarv64_alloc(int segs, const char *token,
                             long long *prc, long long *preason) {
   if (segs == 0) {
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
-    if (__doLogMemoryUsage()) {
+    if (__doLogMemoryWarning()) {
       __memprintf("WARNING: ignoring request to allocate 0 segments, errno set "
                   "to ENOMEM\n");
     }
@@ -1281,9 +1287,9 @@ public:
     unsigned long k = (unsigned long)ptr;
     std::lock_guard<std::mutex> guard(access_lock);
     cache[k] = (unsigned long)v;
-    if (__doLogMemoryUsage()) {
-      curmem31 += v;
-      maxmem31 = max(maxmem31, curmem31);
+    curmem31 += v;
+    maxmem31 = max(maxmem31, curmem31);
+    if (__doLogMemoryAll()) {
       __memprintf("addr=%p, size=%zu: malloc31 OK (current=%zu, max=%zu)\n",
                   ptr, v, curmem31, maxmem31);
     }
@@ -1297,15 +1303,15 @@ public:
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = size;
-      if (__doLogMemoryUsage()) {
-        curmem64 += cache[k];
-        maxmem64 = max(maxmem64, curmem64);
+      curmem64 += size;
+      maxmem64 = max(maxmem64, curmem64);
+      if (__doLogMemoryAll()) {
         __memprintf("addr=%p, size=%zu: iarv64_alloc OK (current=%zu, " \
                     "max=%zu)\n", p, size, curmem64, maxmem64);
       }
     } else if (__doLogMemoryUsage()) {
-      __memprintf("size=%zu: iarv64_alloc FAILED, rc=%llx, reason=%llx " \
-                  "(current=%zu, max=%zu)\n",
+      __memprintf("ERROR: size=%zu: iarv64_alloc failed, rc=%llx, " \
+                  "reason=%llx (current=%zu, max=%zu)\n",
                   size, rc, reason, curmem64, maxmem64);
     }
     return p;
@@ -1320,14 +1326,15 @@ public:
     if (rc == 0) {
       if (c != cache.end()) {
         size = c->second;
+        curmem64 -= size;
         cache.erase(c);
         if (__doLogMemoryUsage()) {
-          curmem64 -= size;
-          const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
-          __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
-                      "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+          const char *w = size != reqsize ? " INFO: size vs req-size" : "";
+          if (*w && __doLogMemoryAll())
+            __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
+                        "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
         }
-      } else if (__doLogMemoryUsage()) {
+      } else if (__doLogMemoryWarning()) {
         __memprintf("WARNING: addr=%p, req-size=%zu: iarv64_free OK but " \
                     "address not found in cache (current=%zu)\n",
                     ptr, reqsize, curmem64);
@@ -1335,11 +1342,11 @@ public:
     } else if (__doLogMemoryUsage()) {
       if (c != cache.end()) {
         size = c->second;
-        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free FAILED, rc=%llx, " \
+        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, rc=%llx, " \
                     "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
                     curmem64);
       } else {
-        __memprintf("ERROR: addr=%p: iarv64_free FAILED and address not " \
+        __memprintf("ERROR: addr=%p: iarv64_free failed and address not " \
                     "found in cache: rc=%llx, reason=%llx (current=%zu)\n",
                     ptr, rc, reason, curmem64);
       }
@@ -1393,15 +1400,16 @@ public:
     std::lock_guard<std::mutex> guard(access_lock);
     mem_cursor_t c = cache.find(k);
     if (c != cache.end()) {
+      curmem31 -= c->second;
       if (__doLogMemoryUsage()) {
-        curmem31 -= c->second;
         const char *w = c->second != reqsize ? " WARNING: size vs req-size" : "";
-        __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
+        if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
+          __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
                     "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
       }
       cache.erase(c);
     } else {
-      if (__doLogMemoryUsage()) {
+      if (__doLogMemoryWarning()) {
         __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
                     "in cache\n", ptr, reqsize);
       }
@@ -1411,7 +1419,7 @@ public:
     // This should only be called during exit-time, so there's no lock.
     for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
       __memprintf("WARNING: addr=%lx, size=%lu: DEBRIS (allocated but not " \
-                  "(yet?) free'd)\n", it->first, it->second);
+                  "freed)\n", it->first, it->second);
     }
   }
   ~__Cache() {
@@ -1449,7 +1457,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     void *mem_default = __malloc31(len + extra_size);
     if (mem_default == NULL) {
       if (__doLogMemoryUsage()) {
-        __memprintf("ERROR: size=%zu: malloc31 FAILED, errno=%d " \
+        __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
                    "(current=%zu), will try to allocate from virtual storage\n",
                    len + extra_size, errno,
                    __get_galloc_info()->getCurrentMem31());
@@ -2376,9 +2384,21 @@ int __update_envar_settings(const char *envar) {
     no_tag_ignore_ccsid1047 =
         get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
+
   if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0) {
     update_memlogging(envar);
   }
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0) {
+    char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
+    if (penv && __doLogMemoryUsage()) {
+      // Errors and start/terminating messages are always displayed.
+      if (*penv == MEMLOG_LEVEL_ALL)
+        __gLogMemoryAll = true;  // display all messages
+      else if (*penv == MEMLOG_LEVEL_WARNING)
+        __gLogMemoryWarning = true; // warnings only
+    }
+  }
+
   return 0;
 }
 
@@ -2555,7 +2575,7 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 }
 
 __zinit::__zinit() {
-  update_memlogging(NULL);
+  update_memlogging(nullptr);
   if (__doLogMemoryUsage())
     __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
 }
@@ -2578,7 +2598,8 @@ __zinit:: ~__zinit() {
   // still be allocating memory using __zalloc(), which call its alloc_seg().
 
   if (__doLogMemoryUsage()) {
-    __get_galloc_info()->displayDebris();
+    if (__gMainTerminating && __doLogMemoryWarning())
+      __get_galloc_info()->displayDebris();
     int ppid = getppid();
     char childInfo[32] = "";
     // Include <parent-name>(parent-pid) in the termination message:
@@ -2593,10 +2614,14 @@ __zinit:: ~__zinit() {
     }
     if (argv != nullptr)
       free((char*)argv);
-
-    __memprintf("%sPROCESS TERMINATING (current31=%zu, max31=%zu, " \
+    const char *leak = __gMainTerminating &&
+                       (__get_galloc_info()->getCurrentMem31() != 0 ||
+                        __get_galloc_info()->getCurrentMem64() != 0) ?
+                        "LEAK: " : "";
+     
+    __memprintf("%s%sPROCESS TERMINATING (current31=%zu, max31=%zu, " \
                 "current64=%zu, max64=%zu): %s\n",
-                childInfo,
+                leak, childInfo,
                 __get_galloc_info()->getCurrentMem31(),
                 __get_galloc_info()->getMaxMem31(),
                 __get_galloc_info()->getCurrentMem64(),
@@ -2701,6 +2726,16 @@ int __zinit::setEnvarHelpMap() {
                      "to which diagnostic messages for memory allocation and "
                      "release are to be written"));
 
+  envarHelpMap.insert(
+      std::make_pair(zoslibEnvar(config.MEMORY_USAGE_LOG_LEVEL_ENVAR, std::string("")),
+                     "set to 1 to display only warnings when memory is "
+                     "allocated or freed, and 2 to display all messages; "
+                     "the process started/terminated messages that include "
+                     "memory stats summary, as well as any error message will "
+                     "always be displayed if memory diagnostic messages is "
+                     "enabled"));
+ 
+
   return __update_envar_settings(NULL);
 }
 
@@ -2783,3 +2818,11 @@ extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
 extern "C" void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
 
 extern "C" char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
+
+extern "C" bool __doLogMemoryAll() { return __gLogMemoryAll; }
+
+extern "C" bool __doLogMemoryWarning() {
+  return __gLogMemoryAll || __gLogMemoryWarning;
+}
+
+extern "C" void __mainTerminating() { __gMainTerminating = true; }

@@ -46,6 +46,7 @@
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 #define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
+#define MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_LEVEL"
 
 typedef enum {
   __NO_TAG_READ_DEFAULT = 0,
@@ -471,42 +472,47 @@ int __get_no_tag_ignore_ccsid1047();
  */
 typedef struct zoslib_config {
   /**
-   * string to indicate the envar to be used to toggle IPC cleanup
+   * String to indicate the envar to be used to toggle IPC cleanup.
    */
   const char *IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle debug mode
+   * String to indicate the envar to be used to toggle debug mode.
    */
   const char *DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle runtime limit
+   * String to indicate the envar to be used to toggle runtime limit.
    */
   const char *RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle max number of forks
+   * String to indicate the envar to be used to toggle max number of forks.
    */
   const char *FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle ccsid guess buf size in
-   * bytes
+   * String to indicate the envar to be used to toggle ccsid guess buf size in
+   * bytes.
    */
   const char *CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle the untagged read mode
+   * String to indicate the envar to be used to toggle the untagged read mode.
    */
   const char *UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   /**
-   * string to indicate the envar to be used to toggle the untagged 1047 read
-   * mode
+   * String to indicate the envar to be used to toggle the untagged 1047 read
+   * mode.
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR =
       UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
   /**
-   * string to indicate the envar to be used to set the name of the log file,
+   * String to indicate the envar to be used to set the name of the log file,
    * including 'stdout' or 'stderr', to which diagnostic messages for memory
-   * allocation and release "
+   * allocation and release are to be written.
    */
   const char *MEMORY_USAGE_LOG_FILE_ENVAR = MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT;
+  /**
+   * String to indicate the envar to be used to specify the level of details
+   * to display when memory is allocated or freed.
+   */
+  const char *MEMORY_USAGE_LOG_LEVEL_ENVAR = MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
 } zoslib_config_t;
 
 /**
@@ -551,10 +557,16 @@ typedef struct zoslib_config {
    */
   const char *UNTAGGED_READ_MODE_CCSID1047_ENVAR;
   /**
-   * string to indicate the envar to be used to set to the path, including the
-   * names stdout or stderr, where memory usage (allocate/free) is to be written
+   * String to indicate the envar to be used to set the name of the log file,
+   * including 'stdout' or 'stderr', to which diagnostic messages for memory
+   * allocation and release are to be written.
    */
   const char *MEMORY_USAGE_LOG_FILE_ENVAR;
+  /**
+   * String to indicate the envar to be used to specify the level of details
+   * to display when memory is allocated or freed.
+   */
+  const char *MEMORY_USAGE_LOG_LEVEL_ENVAR;
 } zoslib_config_t;
 
 /**
@@ -612,6 +624,23 @@ bool __doLogMemoryUsage();
  * allocation and release to.
  */
 char *__getMemoryUsageLogFile();
+
+/**
+ * Returns true if all messages from memory allocation and release are being
+ * displayed.
+ */
+bool __doLogMemoryAll();
+
+/**
+ * Returns true if only warnings from memory allocation and release are being
+ * displayed. Errors are always included if memory logging in on.
+ */
+bool __doLogMemoryWarning();
+
+/**
+ * Tell zoslib that the main process is terminating, for its diagnostics.
+ */
+void __mainTerminating();
 
 #ifdef __cplusplus
 }
