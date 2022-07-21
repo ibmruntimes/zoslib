@@ -23,10 +23,16 @@
         '_LARGE_TIME_API',
         '_OPEN_SYS_FILE_EXT',
         '_AE_BIMODAL',
-        'PATH_MAX=1023',
+        'PATH_MAX=1024',
         '_ENHANCED_ASCII_EXT=0xFFFFFFFF',
       ],
-      'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\''],
+      'conditions': [
+        [ '"<!(echo $CC)" == "ibm-clang64"', {
+          'cflags': ['-fzos-le-char-mode=ascii', '-Wno-missing-field-initializers']
+        }, {
+          'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\'']
+        }],
+      ],
       'direct_dependent_settings': {
         'include_dirs': ['include'],
       },

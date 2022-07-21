@@ -10,7 +10,13 @@ config("zoslib_config") {
   include_dirs = [
     "include",
   ]
-  cflags = [ "-fvisibility=default" ]
+  cflags = [
+    "-march=arch10",
+    "-mtune=10",
+    "-fno-short-enums",
+    "-fvisibility=default",
+    "-fzos-le-char-mode=ascii",
+  ]
 }
 
 shared_library("zoslib") {

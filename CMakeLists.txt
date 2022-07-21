@@ -51,18 +51,26 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-list(APPEND zoslib_cflags
-  -q64
-  -qascii
-  -qexportall
-  -qgonumber
-  -qlongname
-  -qlibansi
-  -qfloat=IEEE
-  -qtune=10
-  -qarch=10
-  -qasm
-  -qasmlib=sys1.maclib:sys1.modgen)
+if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
+  list(APPEND zoslib_cflags
+    -march=arch10
+    -mtune=10
+    -fzos-le-char-mode=ascii
+    -fvisibility=default)
+else()
+  list(APPEND zoslib_cflags
+    -q64
+    -qascii
+    -qexportall
+    -qgonumber
+    -qlongname
+    -qlibansi
+    -qfloat=IEEE
+    -qtune=10
+    -qarch=10
+    -qasm
+    -qasmlib=sys1.maclib:sys1.modgen)
+endif()
 
 set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
 
