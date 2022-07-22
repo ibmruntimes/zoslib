@@ -52,7 +52,7 @@ TEST_F(CLIBOverrides, open) {
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
     close(fd);
 
-#if 1 //CHECK_NFS
+#if CHECK_NFS
     const char* file_str = "/gsa/tlbgsa/projects/i/igortest/nodejs_data_file";
     fd = open(file_str, O_CREAT | O_WRONLY, 0777);
     char buff[] = "This is a test";

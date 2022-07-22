@@ -706,6 +706,7 @@ void __memprintf(const char *format, ...) {
   va_end(args);
 
   fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
+}
 
 // C Library Overrides
 //-----------------------------------------------------------------

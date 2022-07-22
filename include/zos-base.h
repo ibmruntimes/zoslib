@@ -379,6 +379,15 @@ __Z_EXPORT int __zfree(void *addr, int len);
 __Z_EXPORT int anon_munmap(void *addr, size_t len);
 
 /**
+ * Check if an LE function is present in the LE vector table
+ * \param [in] addr address to LE function
+ * \param [out] funcname pointer to string that will hold the function name
+ * \param [out] max length of string corresponding to funcname
+ * \return returns 1 if successful, 0 if unsuccessful.
+ */
+int __check_le_func(void *addr, char *funcname, size_t len);
+
+/**
  * Suspend the calling thread until any one of a set of events has occurred
  * or until a specified amount of time has passed.
  * \param [in] secs seconds to suspend

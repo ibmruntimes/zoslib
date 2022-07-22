@@ -2868,16 +2868,16 @@ void __zinit::populateLEFunctionPointers() {
   // LE vector table offset calculated by:
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
-    MAP_LE_FUNC(epoll_create, 0xDAF);
-    MAP_LE_FUNC(epoll_create1, 0xDB0);
-    MAP_LE_FUNC(epoll_ctl, 0xDB1);
-    MAP_LE_FUNC(epoll_wait, 0xDB2);
-    MAP_LE_FUNC(epoll_pwait, 0xDB3);
-    MAP_LE_FUNC(eventfd, 0xDB4);
-    MAP_LE_FUNC(inotify_init, 0xDB8);
-    MAP_LE_FUNC(inotify_init1, 0xDB9);
-    MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
-    MAP_LE_FUNC(inotify_add_watch, 0xDBB);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create, 0, 0xDAF);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create1, 0, 0xDB0);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_ctl, 0, 0xDB1);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_wait, 0, 0xDB2);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_pwait, 0, 0xDB3);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(eventfd, 0, 0xDB4);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init, 0, 0xDB8);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init1, 0, 0xDB9);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_rm_watch, 0, 0xDBC);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_add_watch, 0, 0xDBB);
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(pipe2, __pipe2, 0xDBD);
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(accept4, __accept4, 0xDA8);
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(nanosleep, __nanosleep, 0xE22);
