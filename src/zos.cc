@@ -2856,15 +2856,18 @@ extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
 }
 
 #define MAP_LE_FUNC(func, offset) (func = (typeof(func))((unsigned long*)__get_libvec_base() + (offset<<1)))
+#define CHECK_LE_FUNC(offset) (__check_le_func((void*)((unsigned long*)__get_libvec_base() + (offset<<1)), 0, 0))
+#define MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(func, zoslibfunc, offset) \
+  if (CHECK_LE_FUNC(offset)) \
+    MAP_LE_FUNC(func, offset); \
+  else \
+    func = zoslibfunc;
 
 void __zinit::populateLEFunctionPointers() {
 #if (__EDC_TARGET < 0x42050000)
   // LE vector table offset calculated by:
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
-    MAP_LE_FUNC(clock_gettime, 0xDAD);
-    MAP_LE_FUNC(futimes, 0xDE2);
-    MAP_LE_FUNC(lutimes, 0xDE6);
     MAP_LE_FUNC(epoll_create, 0xDAF);
     MAP_LE_FUNC(epoll_create1, 0xDB0);
     MAP_LE_FUNC(epoll_ctl, 0xDB1);
@@ -2875,10 +2878,13 @@ void __zinit::populateLEFunctionPointers() {
     MAP_LE_FUNC(inotify_init1, 0xDB9);
     MAP_LE_FUNC(inotify_rm_watch, 0xDBC);
     MAP_LE_FUNC(inotify_add_watch, 0xDBB);
-    MAP_LE_FUNC(pipe2, 0xDBD);
-    MAP_LE_FUNC(accept4, 0xDA8);
-    MAP_LE_FUNC(nanosleep, 0xE22);
-    MAP_LE_FUNC(getentropy, 0xE21);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(pipe2, __pipe2, 0xDBD);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(accept4, __accept4, 0xDA8);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(nanosleep, __nanosleep, 0xE22);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(getentropy, __getentropy, 0xE21);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(clock_gettime, __clock_gettime, 0xDAD);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(futimes, __futimes, 0xDE2);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(lutimes, __lutimes, 0xDE6);
   }
   else {
     clock_gettime = __clock_gettime;
@@ -2940,42 +2946,59 @@ extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
   return rv;
 }
 
-extern "C" int __futimes(int fd, const struct timeval tv[2]) {
-  attrib_t atr;
-  memset(&atr, 0, sizeof(atr));
-  atr.att_mtimechg = 1;
-  atr.att_atimechg = 1;
-  atr.att_atime = tv[0].tv_sec;
-  atr.att_mtime = tv[1].tv_sec;
-  return __fchattr(fd, &atr, sizeof(atr));
-}
+extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
+  long fail = 0;
+  void *workreg1;
+  void *workreg2;
+  void *workreg3;
+  __asm(
+    "&i SETA &i+1\n"
+    " llgt %[wrk2],1208 \n"
+    " llgtr %[wrk2],%[wrk2] \n"
+    " nilh  %[wrk2],32767 \n"
+    " lg %[wrk2],88(%[wrk2]) \n"
+    " lg %[wrk2],8(%[wrk2]) \n"
+    " la %[wrk2],872(%[wrk2]) \n" // LE shunt address in wrk2
+    " xgr %[flag],%[flag] \n"     // clear flag
+    " bras %[wrk1],lbl1&i \n" // set wrk1 to point to fail: and branch to lbl1
+    "fail&i lghi %[flag],1 \n"
+    "lbl1&i ltgr %[flag],%[flag] \n" // test flag
+    " brc b'0111',lbl2&i \n"     // if flag is 1(failed) branch to clear shunt
+                                  // lbl2:
+    " stg %[wrk1],0(%[wrk2]) \n" // store label address (failed:) into LE
+                                  // shunt location.
+    " lg %[wrk1],0(%[testptr]) \n"   // test for access violation
+    " lg %[wrk1],8(%[testptr]) \n"   // load second element of function
+                                      // descriptor (i.e. entry point)
+    " lay %[wrk1],-16(0,%[wrk1]) \n" // -16 to access LE prolog.
+    " lgr %[testptr],%[wrk1] \n" // save pointer to prolog in testptr, since
+                                  // testptr is not longer used.
+    " lg %[wrk1],0(%[wrk1]) \n"  // load first 8 bytes into wrk1.
+    " bras %[wrk3],lbl3&i\n" // load signature 0x'00c300c500c500f1' into wrk3,
+                              // branch to lbl3
+    " dc x'00c300c500c500f1'\n"
+    "lbl3&i clg %[wrk1],0(%[wrk3])\n" // compare wrk3 to a wrk1
+    " brc b'0111',fail&i \n"          // not equal, branch to fail label
+    "lbl2&i xgr %[wrk3],%[wrk3] \n"   // exit point: clear wrk3
+    " stg %[wrk3],0(%[wrk2]) \n"      // store 0 back into LE shunt location
+    : [flag] "+r"(fail), [wrk1] "+r"(workreg1), [wrk2] "+r"(workreg2),
+      [wrk3] "+r"(workreg3), [testptr] "+r"(addr)::);
 
-extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
-  int return_value;
-  int return_code;
-  int reason_code;
-
-  __bpxyatt_t attributes;
-  memset(&attributes, 0, sizeof(attributes));
-  memcpy(attributes.att_id, "\xC1\xE3\xE3\x40", 4); // "ATT ".
-  attributes.att_version = 3;
-  attributes.att_atimechg = 1;
-  attributes.att_atime = tv[0].tv_sec;
-  attributes.att_mtimechg = 1;
-  attributes.att_mtime = tv[1].tv_sec;
-
-  // ZOSLIB is built in ASCII, but BPX4LCR wants EBCDIC.
-  char *pathname = _str_a2e(filename);
-
-  __bpx4lcr(strlen(pathname), pathname, sizeof(attributes), &attributes,
-            &return_value, &return_code, &reason_code);
-
-  if (return_value != 0) {
-    errno = return_code;
-    return -1;
+  if (fail == 0 && funcname != 0) {
+    // funcname requested
+    // p should now point to prolog
+    char *ppa1 = (char *)addr + ((int *)addr)[2];
+    unsigned short l = *(unsigned short *)(ppa1 + 0x14);
+    if (l > (len - 1)) {
+      l = len - 1;
+    }
+    memcpy(funcname, ppa1 + 0x16, l);
+    funcname[l] = 0;
+#if ' ' == 0x20
+    __e2a_l(funcname, l);
+#endif
   }
-
-  return 0;
+  return fail == 0;
 }
 
 extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
@@ -2991,32 +3014,3 @@ extern "C" bool __doLogMemoryWarning() {
 }
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
-
-// C Library Extensions
-//-----------------------------------------------------------------
-
-int __pipe(int [2]) asm("pipe");
-int __open(const char *filename, int opts, ...) asm("@@A00144");
-
-extern "C" int __open_ascii(const char *filename, int opts, ...) {
-  int fd;
-  va_list ap;
-  va_start(ap, opts);
-  fd = __open(filename, opts, ap);
-  if (fd && (opts & (O_CREAT|O_WRONLY))) {
-    __chgfdccsid(fd, 819);
-  }
-  va_end(ap);
-  return fd;
-}
-
-extern "C" int __pipe_ascii(int fd[2]) {
-  int ret = __pipe(fd);
-  if (ret < 0) return ret;
-
-  if (__getfdccsid(fd[0]) == 0)
-    __chgfdccsid(fd[0], 819);
-  if (__getfdccsid(fd[1]) == 0)
-    __chgfdccsid(fd[1], 819);
-  return ret;
-}
