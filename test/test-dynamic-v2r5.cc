@@ -1,5 +1,8 @@
 #include "zos.h"
 #include <sys/socket.h>
+#include <sys/epoll.h>
+#include <sys/inotify.h>
+#include <sys/eventfd.h>
 #include <fcntl.h>
 #include "gtest/gtest.h"
 
@@ -63,6 +66,24 @@ TEST_F(DynamicV2R5Temp, futimes) {
   fstat(fileno(temp_fp), &buff);
   EXPECT_EQ(buff.st_atime, 0);
   EXPECT_EQ(buff.st_mtime, 0);
+}
+
+TEST_F(DynamicV2R5Temp, inotify) {
+  if (inotify_init) {
+    inotify_init(); // Should not abort
+  }
+}
+
+TEST_F(DynamicV2R5Temp, epoll) {
+  if (epoll_create) {
+    epoll_create(1); // Should not abort
+  }
+}
+
+TEST_F(DynamicV2R5Temp, eventfd) {
+  if (eventfd) {
+    eventfd(0, 0); // Should not abort
+  }
 }
 
 } // namespace

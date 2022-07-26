@@ -65,23 +65,23 @@
 #endif
 
 #if (__EDC_TARGET < 0x42050000)
-int (*epoll_create)(int);
-int (*epoll_create1)(int);
-int (*epoll_ctl)(int, int, int, struct epoll_event *);
-int (*epoll_wait)(int, struct epoll_event *, int, int);
-int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
-int (*eventfd)(unsigned int initval, int flags);
-int (*inotify_init)(void);
-int (*inotify_init1)(int);
-int (*inotify_add_watch)(int, const char *, uint32_t);
-int (*inotify_rm_watch)(int, int);
-int (*accept4)(int s, struct sockaddr * addr, socklen_t * addrlen, int flags);
-int (*futimes)(int fd, const struct timeval tv[2]);
-int (*lutimes)(const char *filename, const struct timeval tv[2]);
-int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
-int (*pipe2)(int pipefd[2], int flags);
-int (*getentropy)(void *, size_t);
-int (*nanosleep)(const struct timespec*, struct timespec*);
+int (*epoll_create)(int) = 0;
+int (*epoll_create1)(int) = 0;
+int (*epoll_ctl)(int, int, int, struct epoll_event *) = 0;
+int (*epoll_wait)(int, struct epoll_event *, int, int) = 0;
+int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *) = 0;
+int (*eventfd)(unsigned int initval, int flags) = 0;
+int (*inotify_init)(void) = 0;
+int (*inotify_init1)(int) = 0;
+int (*inotify_add_watch)(int, const char *, uint32_t) = 0;
+int (*inotify_rm_watch)(int, int) = 0;
+int (*accept4)(int s, struct sockaddr * addr, socklen_t * addrlen, int flags) = 0;
+int (*futimes)(int fd, const struct timeval tv[2]) = 0;
+int (*lutimes)(const char *filename, const struct timeval tv[2]) = 0;
+int (*clock_gettime)(clockid_t cld_id, struct timespec * tp) = 0;
+int (*pipe2)(int pipefd[2], int flags) = 0;
+int (*getentropy)(void *, size_t) = 0;
+int (*nanosleep)(const struct timespec*, struct timespec*) = 0;
 #endif
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -2855,36 +2855,42 @@ extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
   return 0;
 }
 
+#define PPA_FUNC_LENGTH 256
 #define MAP_LE_FUNC(func, offset) (func = (typeof(func))((unsigned long*)__get_libvec_base() + (offset<<1)))
-#define CHECK_LE_FUNC(offset) (__check_le_func((void*)((unsigned long*)__get_libvec_base() + (offset<<1)), 0, 0))
-#define MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(func, zoslibfunc, offset) \
-  if (CHECK_LE_FUNC(offset)) \
+#define CHECK_LE_FUNC(offset) (__check_le_func((void*)((unsigned long*)__get_libvec_base() + (offset<<1)), ppa_funcname, PPA_FUNC_LENGTH))
+#define MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(func, zoslibfunc, funcstring, offset) \
+  if (CHECK_LE_FUNC(offset) && strcmp(ppa_funcname, funcstring) == 0) { \
     MAP_LE_FUNC(func, offset); \
-  else \
-    func = zoslibfunc;
+  } else if (zoslibfunc) { \
+    func = zoslibfunc; \
+  } else { \
+    fprintf(stderr, "LE function \"%s\" is not enabled on the OS. Please install the corresponding V2R5 APAR to enable it. Application may not function correctly.\n", funcstring); \
+  }
 
 void __zinit::populateLEFunctionPointers() {
 #if (__EDC_TARGET < 0x42050000)
   // LE vector table offset calculated by:
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create, 0, 0xDAF);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create1, 0, 0xDB0);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_ctl, 0, 0xDB1);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_wait, 0, 0xDB2);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_pwait, 0, 0xDB3);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(eventfd, 0, 0xDB4);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init, 0, 0xDB8);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init1, 0, 0xDB9);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_rm_watch, 0, 0xDBC);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_add_watch, 0, 0xDBB);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(pipe2, __pipe2, 0xDBD);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(accept4, __accept4, 0xDA8);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(nanosleep, __nanosleep, 0xE22);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(getentropy, __getentropy, 0xE21);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(clock_gettime, __clock_gettime, 0xDAD);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(futimes, __futimes, 0xDE2);
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(lutimes, __lutimes, 0xDE6);
+    char ppa_funcname[PPA_FUNC_LENGTH] = {0};
+    // APAR XXX
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create, 0, "epoll_create", 0xDAF);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create1, 0, "epoll_create1", 0xDB0);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_ctl, 0, "epoll_ctl", 0xDB1);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_wait, 0, "epoll_wait", 0xDB2);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_pwait, 0, "epoll_pwait", 0xDB3);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(eventfd, 0, "eventfd", 0xDB4);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init, 0, "inotify_init", 0xDB8);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_init1, 0, "inotify_init1", 0xDB9);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_rm_watch, 0, "inotify_rm_watch", 0xDBC);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(inotify_add_watch, 0, "__inotify_add_watch_a", 0xDBB);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(pipe2, __pipe2, "pipe2", 0xDBD);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(accept4, __accept4, "__accept4_a", 0xDA8);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(nanosleep, __nanosleep, "nanosleep", 0xE22);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(getentropy, __getentropy, "getentropy", 0xE21);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(clock_gettime, __clock_gettime, "clock_gettime", 0xDAD);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(futimes, __futimes, "futimes", 0xDE2);
+    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(lutimes, __lutimes, "__lutimes_a", 0xDE6);
   }
   else {
     clock_gettime = __clock_gettime;
@@ -2947,47 +2953,22 @@ extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
 }
 
 extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
-  long fail = 0;
-  void *workreg1;
-  void *workreg2;
-  void *workreg3;
-  __asm(
-    "&i SETA &i+1\n"
-    " llgt %[wrk2],1208 \n"
-    " llgtr %[wrk2],%[wrk2] \n"
-    " nilh  %[wrk2],32767 \n"
-    " lg %[wrk2],88(%[wrk2]) \n"
-    " lg %[wrk2],8(%[wrk2]) \n"
-    " la %[wrk2],872(%[wrk2]) \n" // LE shunt address in wrk2
-    " xgr %[flag],%[flag] \n"     // clear flag
-    " bras %[wrk1],lbl1&i \n" // set wrk1 to point to fail: and branch to lbl1
-    "fail&i lghi %[flag],1 \n"
-    "lbl1&i ltgr %[flag],%[flag] \n" // test flag
-    " brc b'0111',lbl2&i \n"     // if flag is 1(failed) branch to clear shunt
-                                  // lbl2:
-    " stg %[wrk1],0(%[wrk2]) \n" // store label address (failed:) into LE
-                                  // shunt location.
-    " lg %[wrk1],0(%[testptr]) \n"   // test for access violation
-    " lg %[wrk1],8(%[testptr]) \n"   // load second element of function
-                                      // descriptor (i.e. entry point)
-    " lay %[wrk1],-16(0,%[wrk1]) \n" // -16 to access LE prolog.
-    " lgr %[testptr],%[wrk1] \n" // save pointer to prolog in testptr, since
-                                  // testptr is not longer used.
-    " lg %[wrk1],0(%[wrk1]) \n"  // load first 8 bytes into wrk1.
-    " bras %[wrk3],lbl3&i\n" // load signature 0x'00c300c500c500f1' into wrk3,
-                              // branch to lbl3
-    " dc x'00c300c500c500f1'\n"
-    "lbl3&i clg %[wrk1],0(%[wrk3])\n" // compare wrk3 to a wrk1
-    " brc b'0111',fail&i \n"          // not equal, branch to fail label
-    "lbl2&i xgr %[wrk3],%[wrk3] \n"   // exit point: clear wrk3
-    " stg %[wrk3],0(%[wrk2]) \n"      // store 0 back into LE shunt location
-    : [flag] "+r"(fail), [wrk1] "+r"(workreg1), [wrk2] "+r"(workreg2),
-      [wrk3] "+r"(workreg3), [testptr] "+r"(addr)::);
+  // Grab address from function descriptor
+  unsigned long* func_addr = ((unsigned long**)addr)[1];
+  // -2 doublewords to the prolog
+  func_addr = func_addr - 2;
 
-  if (fail == 0 && funcname != 0) {
+  if (__testread(func_addr) != 0)
+    return 0;
+
+  // Make sure it has an entrypoint marker, otherwise fail
+  if (*func_addr != 0x00C300C500C500F1)
+    return 0;
+
+  if (funcname != 0) {
     // funcname requested
     // p should now point to prolog
-    char *ppa1 = (char *)addr + ((int *)addr)[2];
+    char *ppa1 = (char *)func_addr + ((int *)func_addr)[2];
     unsigned short l = *(unsigned short *)(ppa1 + 0x14);
     if (l > (len - 1)) {
       l = len - 1;
@@ -2997,8 +2978,26 @@ extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
 #if ' ' == 0x20
     __e2a_l(funcname, l);
 #endif
+   if (strcmp(funcname, "inotify_init") == 0) {
+     // inotify may have a pre-existing stub, check
+     // the dsa size is not set to the stub size
+     if (*((int*)func_addr+2) == 0x2470)
+       return 0;
+   }
+   else if (strcmp(funcname, "epoll_create") == 0) {
+     // epoll may have a pre-existing stub, check
+     // the dsa size is not set to the stub size
+     if (*((int*)func_addr+2) == 0x23e8)
+       return 0;
+   }
+   else if (strcmp(funcname, "eventfd") == 0) {
+     // eventfd may have a pre-existing stub, check
+     // the dsa size is not set to the stub size
+     if (*((int*)func_addr+2) == 0x23d0)
+       return 0;
+   }
   }
-  return fail == 0;
+  return 1;
 }
 
 extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }

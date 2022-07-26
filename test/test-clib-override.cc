@@ -3,6 +3,7 @@
 
 #include "zos.h"
 #include <fcntl.h>
+#include <sys/inotify.h>
 #include <unistd.h>
 #include "gtest/gtest.h"
 
@@ -91,7 +92,7 @@ TEST_F(CLIBOverrides, socketpair) {
     EXPECT_GE(fd[0], 0);
     EXPECT_GE(fd[1], 0);
     EXPECT_NE(fd[0], fd[1]);
-    if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
+    if (__is_os_level_at_or_above(ZOSLVL_V2R5) && inotify_init) {
       // Auto-convert is enabled to the program CCSID (819)
       EXPECT_EQ(__getfdccsid(fd[0]), 0x10000);
       EXPECT_EQ(__getfdccsid(fd[1]), 0x10000);
