@@ -711,14 +711,10 @@ void __memprintf(const char *format, ...) {
 
 // C Library Overrides
 //-----------------------------------------------------------------
-int __pipe_orig(int [2]);
-#pragma map(__pipe_orig, "pipe")
-int __socketpair_orig(int domain, int type, int protocol, int sv[2]);
-#pragma map(__socketpair_orig, "socketpair")
-int __close_orig(int);
-#pragma map(__close_orig, "close")
-int __open_orig(const char *filename, int opts, ...);
-#pragma map(__open_orig, "@@A00144")
+int __pipe_orig(int [2]) asm("pipe");
+int __socketpair_orig(int domain, int type, int protocol, int sv[2]) asm("socketpair");
+int __close_orig(int) asm("close");
+int __open_orig(const char *filename, int opts, ...) asm("@@A00144");
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;

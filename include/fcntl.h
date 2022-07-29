@@ -33,8 +33,7 @@ int __open_ascii(const char *filename, int opts, ...);
 extern "C" {
 #endif
 
-int open(const char *filename, int opts, ...);
-#pragma map(open, "__open_ascii")
+int open(const char *filename, int opts, ...) asm("__open_ascii");
 
 #if defined(__cplusplus)
 };

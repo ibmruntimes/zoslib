@@ -24,9 +24,7 @@ int __socketpair_ascii(int domain, int type, int protocol, int sv[2]);
 #define socketpair __socketpair_replaced
 #include_next <sys/socket.h>
 #undef socketpair
-int socketpair(int domain, int type, int protocol, int sv[2]);
-#pragma map(socketpair, "__socketpair_ascii")
-
+int socketpair(int domain, int type, int protocol, int sv[2]) asm("__socketpair_ascii");
 #else
 #include_next <sys/socket.h>
 #endif

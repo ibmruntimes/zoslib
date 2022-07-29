@@ -180,8 +180,7 @@ extern "C" char **__get_environ_np(void) {
   return __environ;
 }
 
-int __setenv_a(const char *, const char *, int);
-#pragma map(__setenv_a, "\174\174A00188")
+int __setenv_a(const char *, const char *, int) asm("@@A00188");
 extern "C" void __xfer_env(void) {
   char **start = __get_environ_np();
   int i;
