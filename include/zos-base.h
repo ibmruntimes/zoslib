@@ -30,6 +30,7 @@
 
 #define __ZOS_CC
 
+#include "zos-macros.h"
 #include "zos-bpx.h"
 #include "zos-char-util.h"
 #include "zos-io.h"
@@ -85,32 +86,32 @@ extern "C" {
  * \param [out] tp structure to store the current time to.
  * \return return 0 for success, or -1 for failure.
  */
-int clock_gettime(clockid_t clk_id, struct timespec *tp);
+__Z_EXPORT int clock_gettime(clockid_t clk_id, struct timespec *tp);
 
 /**
  * Get the environ.
  * \return returns pointer to environment list
  */
-char **__get_environ_np(void);
+__Z_EXPORT char **__get_environ_np(void);
 
 /**
  * Convert environment variables from EBCDIC to ASCII.
  */
-void __xfer_env(void);
+__Z_EXPORT void __xfer_env(void);
 
 /**
  * Remove IPC semaphores and shared memory.
  * \param [in] others non-zero value indicates remove IPC not associated
  * with current process.
  */
-void __cleanupipc(int others);
+__Z_EXPORT void __cleanupipc(int others);
 
 /**
  * Retrieves error message from __registerProduct IFAUSAGE macro.
  * \param [in] rc return code from __registerProduct.
  * \return returns error message as C character string.
  */
-const char *getIFAUsageErrorString(unsigned long rc);
+__Z_EXPORT const char *getIFAUsageErrorString(unsigned long rc);
 
 /**
  * Registers product for SMF 89 Type 1 records using IFAUSAGE macro.
@@ -121,27 +122,28 @@ const char *getIFAUsageErrorString(unsigned long rc);
  * \param [in] pid The Product ID (e.g. 5676-SDK)
  * \return returns 0 if successful, non-zero if unsuccessful.
  */
-unsigned long long __registerProduct(const char *major_version,
-                                     const char *product_owner,
-                                     const char *feature_name,
-                                     const char *product_name, const char *pid);
+__Z_EXPORT unsigned long long __registerProduct(const char *major_version,
+                                                const char *product_owner,
+                                                const char *feature_name,
+                                                const char *product_name,
+                                                const char *pid);
 
 /**
  * Get the Thread ID.
  * \return returns the current thread id
  */
-int gettid();
+__Z_EXPORT int gettid();
 
 /**
  * Print backtrace of stack to file descriptor.
  * \param [in] fd file descriptor.
  */
-void __display_backtrace(int fd);
+__Z_EXPORT void __display_backtrace(int fd);
 
 /**
  * Enable or disable abort() from calling display_backtrace(). Default is true.
  */
-void __set_backtrace_on_abort(bool flag);
+__Z_EXPORT void __set_backtrace_on_abort(bool flag);
 
 /**
  * Execute a file.
@@ -152,7 +154,8 @@ void __set_backtrace_on_abort(bool flag);
  * \return if successful, it doesn't return; otherwise, it returns -1 and sets
  *  errno.
  */
-int execvpe(const char *name, char *const argv[], char *const envp[]);
+__Z_EXPORT int execvpe(const char *name, char *const argv[],
+                       char *const envp[]);
 
 /**
  * Generate a backtrace and store into *Buffer.
@@ -160,7 +163,7 @@ int execvpe(const char *name, char *const argv[], char *const envp[]);
  * \param [in] size Maximum number of bytes to store.
  * \return if successful, returns 0, otherwise -1
  */
-int backtrace(void **buffer, int size);
+__Z_EXPORT int backtrace(void **buffer, int size);
 
 /**
  * Generate a backtrace symbols and store into *Buffer.
@@ -168,7 +171,7 @@ int backtrace(void **buffer, int size);
  * \param [in] size Maximum number of bytes to store.
  * \return if successful, an array of strings, otherwise returns NULL.
  */
-char **backtrace_symbols(void *const *buffer, int size);
+__Z_EXPORT char **backtrace_symbols(void *const *buffer, int size);
 
 /**
  * Generate a backtrace symbols and store into *Buffer.
@@ -176,7 +179,7 @@ char **backtrace_symbols(void *const *buffer, int size);
  * \param [in] size Maximum number of bytes to store.
  * \param [in] fd file descriptor.
  */
-void backtrace_symbols_fd(void *const *buffer, int size, int fd);
+__Z_EXPORT void backtrace_symbols_fd(void *const *buffer, int size, int fd);
 
 /**
  * Generates an SVC 13 abend.
@@ -185,7 +188,8 @@ void backtrace_symbols_fd(void *const *buffer, int size, int fd);
  * \param [in] flat_byte Flat Byte.
  * \param [in] plist Parameter list.
  */
-void __abend(int comp_code, unsigned reason_code, int flat_byte, void *plist);
+__Z_EXPORT void __abend(int comp_code, unsigned reason_code, int flat_byte,
+                        void *plist);
 
 /**
  * String case comparision that ignores code page.
@@ -194,7 +198,7 @@ void __abend(int comp_code, unsigned reason_code, int flat_byte, void *plist);
  * \param [in] n - Number of bytes to compare.
  * \return if equal, returns 0, otherwise returns non-zero.
  */
-int strncasecmp_ignorecp(const char *a, const char *b, size_t n);
+__Z_EXPORT int strncasecmp_ignorecp(const char *a, const char *b, size_t n);
 
 /**
  * String case comparision that ignores code page.
@@ -202,18 +206,18 @@ int strncasecmp_ignorecp(const char *a, const char *b, size_t n);
  * \param [in] b - null-terminated character string.
  * \return if equal, returns 0, otherwise returns non-zero.
  */
-int strcasecmp_ignorecp(const char *a, const char *b);
+__Z_EXPORT int strcasecmp_ignorecp(const char *a, const char *b);
 
 /**
  * Indicates if zoslib is in debug mode
  * \return returns current debug mode
  */
-int __indebug(void);
+__Z_EXPORT int __indebug(void);
 
 /**
  * Activates debug mode
  */
-void __setdebug(int);
+__Z_EXPORT void __setdebug(int);
 
 /**
  * Get program argument list of a given process id
@@ -225,7 +229,7 @@ void __setdebug(int);
  * Call free(argv) when done accessing argv.
  * \return On success, returns 0, or -1 on error.
  */
-int __getargcv(int *argc, char ***argv, pid_t pid);
+__Z_EXPORT int __getargcv(int *argc, char ***argv, pid_t pid);
 
 /**
  * Get the executable path of a given process id
@@ -235,25 +239,25 @@ int __getargcv(int *argc, char ***argv, pid_t pid);
  * \param [in] pid - process id to obtain the executable path for
  * \return On success, returns 0, or -1 on error.
  */
-int __getexepath(char *path, int pathlen, pid_t pid);
+__Z_EXPORT int __getexepath(char *path, int pathlen, pid_t pid);
 
 /**
  * Get program argument list of the current process
  * \return returns an array of process arguments
  */
-char **__getargv(void);
+__Z_EXPORT char **__getargv(void);
 
 /**
  * Get program argument count of the current process
  * \return returns count of process arguments
  */
-int __getargc(void);
+__Z_EXPORT int __getargc(void);
 
 /**
  * Get the stack start address for the current thread
  * \return returns the stack start address
  */
-int *__get_stack_start();
+__Z_EXPORT int *__get_stack_start();
 
 /**
  * Iterate to next stack dsa based on current dsa
@@ -261,20 +265,20 @@ int *__get_stack_start();
  * \param [out] si - stack information of next dsa
  * \return returns the next dsa entry in the chain or 0 if not found
  */
-void *__iterate_stack_and_get(void *dsaptr, __stack_info *si);
+__Z_EXPORT void *__iterate_stack_and_get(void *dsaptr, __stack_info *si);
 
 /**
  * Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available
  * \return true if the STFLE instruction is available
  */
-bool __is_stfle_available();
+__Z_EXPORT bool __is_stfle_available();
 
 /**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry
  */
-void *__dlcb_next(void *last);
+__Z_EXPORT void *__dlcb_next(void *last);
 
 /**
  * Get entry name of given dlcb
@@ -283,14 +287,14 @@ void *__dlcb_next(void *last);
  * \param [in] dlcb - current dlcb
  * \return [in] number of bytes written to buf
  */
-int __dlcb_entry_name(char *buf, int size, void *dlcb);
+__Z_EXPORT int __dlcb_entry_name(char *buf, int size, void *dlcb);
 
 /**
  * Get address of dlcb entry
  * \param [in] dlcb - current dlcb
  * \return returns entry address of dlcb
  */
-void *__dlcb_entry_addr(void *dlcb);
+__Z_EXPORT void *__dlcb_entry_addr(void *dlcb);
 
 /**
  * Walk through list of dlcb 
@@ -302,35 +306,40 @@ void *__dlcb_entry_addr(void *dlcb);
  * \return returns whatever value was returned by the last call to callback,
  *  if no dlcb is found, return -1
  */
-int __dlcb_iterate(int (*cb)(char* name, void* addr, void* data), void *data);
+__Z_EXPORT int __dlcb_iterate(int (*cb)(char* name, void* addr, void* data),
+                              void *data);
 
 /**
  * Obtain the mach absolute time
  * \return returns mach absolute time
  */
-unsigned long __mach_absolute_time(void);
+__Z_EXPORT unsigned long __mach_absolute_time(void);
 
 /**
  * Allocate memory in 64-bit virtual storage when size is a megabyte multiple
  * or above 2GB, or in 31-bit storage otherwise, and if none is available,
  * attempt to allocate from 64-bit virtual storage.
  * \param [in] len length in bytes of memory to allocate
- * \param [in] alignment in bytes and applies only to 31-bit storage (64-bit storage is always megabyte-aligned)
- * \return pointer to the beginning of newly allocated memory, or 0 if unsuccessful
+ * \param [in] alignment in bytes and applies only to 31-bit storage (64-bit
+ *             storage is always megabyte-aligned)
+ * \return pointer to the beginning of newly allocated memory, or 0 if
+ *         unsuccessful
  */
-void *__zalloc(size_t len, size_t alignment);
+__Z_EXPORT void *__zalloc(size_t len, size_t alignment);
 
 /**
  * Allocate memory in 64-bit virtual storage when size is a megabyte multiple
- * or above 2GB, or in 31-bit storage (with PAGE_SIZE bytes alignment) otherwise, and
- * if none is available, attempt to allocate from 64-bit virtual storage.
+ * or above 2GB, or in 31-bit storage (with PAGE_SIZE bytes alignment)
+ * otherwise, and if none is available, attempt to allocate from 64-bit virtual
+ * storage.
  * \param [in] _ ignored
  * \param [in] len length in bytes of memory to allocate
- * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful
+ * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if
+ *         unsuccessful
  * \deprecated This function will be removed once mmap is fully functional
  * (e.g. MAP_ANONYMOUS is supported)
  */
-void *anon_mmap(void *_, size_t len);
+__Z_EXPORT void *anon_mmap(void *_, size_t len);
 
 /**
  * Allocate memory (using __zalloc()) and read into it contents of given file
@@ -338,9 +347,11 @@ void *anon_mmap(void *_, size_t len);
  * \param [in] filename filename to read
  * \param [in] fd file descriptor
  * \param [in] offset offset in bytes into the file to read
- * \return pointer to the beginning of newly allocated memory, or 0 if unsuccessful
+ * \return pointer to the beginning of newly allocated memory, or 0 if
+ *         unsuccessful
  */
-void *__zalloc_for_fd(size_t len, const char *filename, int fd, off_t offset);
+__Z_EXPORT void *__zalloc_for_fd(size_t len, const char *filename, int fd,
+                                 off_t offset);
 
 /**
  * Allocate memory (using __zalloc()) and read into it contents of given file
@@ -352,12 +363,13 @@ void *__zalloc_for_fd(size_t len, const char *filename, int fd, off_t offset);
  * \param [in] filename filename to read
  * \param [in] fd file descriptor
  * \param [in] offset offset in bytes into the file to read
- * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful
+ * \return pointer to the beginning of newly allocated memory, or MAP_FAILED if
+ *         unsuccessful
  * \deprecated This function will be removed once mmap is fully functional
- * (e.g. MAP_ANONYMOUS is supported), in which case mapped memory would need to be converted
- * to ASCII if the file contains EBCDIC.
+ * (e.g. MAP_ANONYMOUS is supported), in which case mapped memory would need to
+ * be converted to ASCII if the file contains EBCDIC.
  */
-void *roanon_mmap(void *_, size_t len, int prot, int flags,
+__Z_EXPORT void *roanon_mmap(void *_, size_t len, int prot, int flags,
                   const char *filename, int fd, off_t offset);
 /**
  * Deallocate memory
@@ -365,7 +377,7 @@ void *roanon_mmap(void *_, size_t len, int prot, int flags,
  * \param [in] len length in bytes
  * \return returns 0 if successful, -1 if unsuccessful
  */
-int __zfree(void *addr, int len);
+__Z_EXPORT int __zfree(void *addr, int len);
 
 /**
  * Deallocate memory
@@ -375,7 +387,7 @@ int __zfree(void *addr, int len);
  * \deprecated This function will be removed once mmap is fully functional
  * (e.g. MAP_ANONYMOUS is supported)
  */
-int anon_munmap(void *addr, size_t len);
+__Z_EXPORT int anon_munmap(void *addr, size_t len);
 
 /**
  * Suspend the calling thread until any one of a set of events has occurred
@@ -388,7 +400,7 @@ int anon_munmap(void *addr, size_t len);
  * \param [out] nsecs_rem nanoseconds remaining
  * \return returns 0 if successful, -1 if unsuccessful.
  */
-int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
+__Z_EXPORT int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
                       unsigned int event_list, unsigned int *secs_rem,
                       unsigned int *nsecs_rem);
 
@@ -400,7 +412,7 @@ enum COND_TIME_WAIT_CONSTANTS { CW_INTRPT = 1, CW_CONDVAR = 32 };
  *  parent, and 0 is returned in the child.  On failure, -1 is returned in the
  *  parent, no child process is created, and errno is set appropriately.
  */
-int __fork(void);
+__Z_EXPORT int __fork(void);
 
 /**
  * Fill a buffer with random bytes
@@ -408,18 +420,18 @@ int __fork(void);
  * \param [in] number of random bytes to generate.
  * \return On success, returns 0, or -1 on error.
  */
-int getentropy(void *buffer, size_t length);
+__Z_EXPORT int getentropy(void *buffer, size_t length);
 
 /**
  * Return the LE version as a string in the format of
  * "Product %d%s Version %d Release %d Modification %d" 
  */
-char* __get_le_version(void);
+__Z_EXPORT char* __get_le_version(void);
 
 /**
  * Prints the build version of the library
  */
-void __build_version(void);
+__Z_EXPORT void __build_version(void);
 
 /**
  * Determine the length of a fixed-size string
@@ -427,21 +439,21 @@ void __build_version(void);
  * \param [in] maxlen maximum # of bytes to traverse
  * \return returns the length of the string
  */
-size_t strnlen(const char *str, size_t maxlen);
+__Z_EXPORT size_t strnlen(const char *str, size_t maxlen);
 
 /**
  * Attempts to a close a socket for a period of time
  * \param [in] socket socket handle
  * \param [in] secs number of seconds to attempt the close
  */
-void __tcp_clear_to_close(int socket, unsigned int secs);
+__Z_EXPORT void __tcp_clear_to_close(int socket, unsigned int secs);
 
 /**
  * Returns the overview structure of IPCQPROC
  * \param [out] info address of allocated IPCQPROC structure
  * \return On success, returns 0, or -1 on error.
  */
-int get_ipcs_overview(IPCQPROC *info);
+__Z_EXPORT int get_ipcs_overview(IPCQPROC *info);
 
 /**
  * Prints zoslib help information to specified FILE pointer
@@ -449,7 +461,7 @@ int get_ipcs_overview(IPCQPROC *info);
  * \param [in] title header, specify NULL for default
  * \return On success, returns 0, or < 0 on error.
  */
-int __print_zoslib_help(FILE *fp, const char *title);
+__Z_EXPORT int __print_zoslib_help(FILE *fp, const char *title);
 
 typedef struct __cpu_relax_workarea {
   void *sfaddr;
@@ -457,20 +469,20 @@ typedef struct __cpu_relax_workarea {
 } __crwa_t;
 
 /**TODO(itodorov) - zos: document these interfaces**/
-void __cpu_relax(__crwa_t *);
+__Z_EXPORT void __cpu_relax(__crwa_t *);
 
 /**TODO(itodorov) - zos: document these interfaces **/
-int __testread(const void *location);
-void __tb(void);
+__Z_EXPORT int __testread(const void *location);
+__Z_EXPORT void __tb(void);
 
-notagread_t __get_no_tag_read_behaviour();
-int __get_no_tag_ignore_ccsid1047();
+__Z_EXPORT notagread_t __get_no_tag_read_behaviour();
+__Z_EXPORT int __get_no_tag_ignore_ccsid1047();
 
 #ifdef __cplusplus
 /**
  * Configuration for zoslib library
  */
-typedef struct zoslib_config {
+typedef struct __Z_EXPORT zoslib_config {
   /**
    * String to indicate the envar to be used to toggle IPC cleanup.
    */
@@ -512,20 +524,21 @@ typedef struct zoslib_config {
    * String to indicate the envar to be used to specify the level of details
    * to display when memory is allocated or freed.
    */
-  const char *MEMORY_USAGE_LOG_LEVEL_ENVAR = MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
+  const char *MEMORY_USAGE_LOG_LEVEL_ENVAR =
+              MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
 } zoslib_config_t;
 
 /**
  * Initialize zoslib library
  * \param [in] config struct to configure zoslib.
  */
-void init_zoslib(const zoslib_config_t config = {});
+__Z_EXPORT void init_zoslib(const zoslib_config_t config = {});
 
 #else
 /**
  * Configuration for zoslib library
  */
-typedef struct zoslib_config {
+typedef struct __Z_EXPORT zoslib_config {
   /**
    * string to indicate the envar to be used to toggle IPC cleanup
    */
@@ -573,7 +586,7 @@ typedef struct zoslib_config {
  * Initialize zoslib library
  * \param [in] config struct to configure zoslib.
  */
-void init_zoslib(const zoslib_config_t config);
+__Z_EXPORT void init_zoslib(const zoslib_config_t config);
 
 #endif // __cplusplus
 
@@ -581,7 +594,7 @@ void init_zoslib(const zoslib_config_t config);
  * Initialize the struct used to configure zoslib with default values.
  * \param [in] config struct to configure zoslib.
  */
-void init_zoslib_config(zoslib_config_t *const config);
+__Z_EXPORT void init_zoslib_config(zoslib_config_t *const config);
 
 /**
  * Suspends the execution of the calling thread until either at least the
@@ -590,7 +603,7 @@ void init_zoslib_config(zoslib_config_t *const config);
  *  precision
  * \param [out] rem the remaining time if the call is interrupted
  */
-int nanosleep(const struct timespec *req, struct timespec *rem);
+__Z_EXPORT int nanosleep(const struct timespec *req, struct timespec *rem);
 
 /**
  * Changes the access and modification times of a file in the same way as
@@ -598,56 +611,57 @@ int nanosleep(const struct timespec *req, struct timespec *rem);
  * \param [in] filename the path to file
  * \param [in] tv two structs used to specify the new times
  */
-int __lutimes(const char *filename, const struct timeval tv[2]);
+__Z_EXPORT int __lutimes(const char *filename, const struct timeval tv[2]);
 
 /**
  * Updates the zoslib global variables associated with the zoslib environment
  * variables \param [in] envar environment variable to update, specify NULL to
  * update all \return 0 for success, or -1 for failure
  */
-int __update_envar_settings(const char *envar);
+__Z_EXPORT int __update_envar_settings(const char *envar);
 
 /**
  * Changes the names of one or more of the environment variables zoslib uses
  * \param [in] zoslib_confit_t structure that defines the new environment
  * variable name(s) \return 0 for success, or -1 for failure
  */
-int __update_envar_names(zoslib_config_t *const config);
+__Z_EXPORT int __update_envar_names(zoslib_config_t *const config);
 
 /**
  * Returns true if logging of memory allocation and release is specified.
  */
-bool __doLogMemoryUsage();
+__Z_EXPORT bool __doLogMemoryUsage();
 
 /**
  * Returns the file name, including "stdout" or "stderr", used to log memory
  * allocation and release to.
  */
-char *__getMemoryUsageLogFile();
+__Z_EXPORT char *__getMemoryUsageLogFile();
 
 /**
  * Returns true if all messages from memory allocation and release are being
  * displayed.
  */
-bool __doLogMemoryAll();
+__Z_EXPORT bool __doLogMemoryAll();
 
 /**
  * Returns true if only warnings from memory allocation and release are being
  * displayed. Errors are always included if memory logging in on.
  */
-bool __doLogMemoryWarning();
+__Z_EXPORT bool __doLogMemoryWarning();
 
 /**
  * Tell zoslib that the main process is terminating, for its diagnostics.
+ *
  */
-void __mainTerminating();
+__Z_EXPORT void __mainTerminating();
 
 #ifdef __cplusplus
 }
 #endif
 
 #ifdef __cplusplus
-void init_zoslib_config(zoslib_config_t &config);
+__Z_EXPORT void init_zoslib_config(zoslib_config_t &config);
 
 #include <exception>
 #include <map>
@@ -762,7 +776,7 @@ private:
   void del_instance();
 };
 
-struct __init_zoslib {
+struct __Z_EXPORT __init_zoslib {
   __init_zoslib(const zoslib_config_t &config = {});
 };
 

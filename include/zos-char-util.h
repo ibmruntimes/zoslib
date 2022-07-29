@@ -12,6 +12,8 @@
 #ifndef ZOS_CHAR_UTIL_H_
 #define ZOS_CHAR_UTIL_H_
 
+#include "zos-macros.h"
+
 #include <_Nascii.h>
 #include <sys/types.h>
 
@@ -26,7 +28,7 @@ extern "C" {
  * \param [in] size Number of bytes to convert.
  * \return returns destination string.
  */
-void *_convert_e2a(void *dst, const void *src, size_t size);
+__Z_EXPORT void *_convert_e2a(void *dst, const void *src, size_t size);
 
 /**
  * Convert from ASCII to EBCDIC
@@ -35,7 +37,7 @@ void *_convert_e2a(void *dst, const void *src, size_t size);
  * \param [in] size Number of bytes to convert
  * \return returns destination string.
  */
-void *_convert_a2e(void *dst, const void *src, size_t size);
+__Z_EXPORT void *_convert_a2e(void *dst, const void *src, size_t size);
 
 /**
  * Guess if string is UTF8 (ASCII) or EBCDIC based
@@ -46,7 +48,8 @@ void *_convert_a2e(void *dst, const void *src, size_t size);
  * \return guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise
  *  65535 for BINARY and, if not NULL, errmsg will contain details).
  */
-int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd);
+__Z_EXPORT int __guess_fd_ue(int fd, char *errmsg, size_t er_size,
+                             int is_new_fd);
 
 /**
  * Guess if string is UTF8 (ASCII) or EBCDIC.
@@ -55,7 +58,8 @@ int __guess_fd_ue(int fd, char *errmsg, size_t er_size, int is_new_fd);
  * \return guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise
  *  65535 for BINARY and, if not NULL, errmsg will contain details).
  */
-int __guess_ue(const void *src, size_t size, char *errmsg, size_t er_size);
+__Z_EXPORT int __guess_ue(const void *src, size_t size, char *errmsg,
+                          size_t er_size);
 
 /**
  * Guess if string is ASCII or EBCDIC.
@@ -63,27 +67,26 @@ int __guess_ue(const void *src, size_t size, char *errmsg, size_t er_size);
  * \param [in] size - number of bytes to analyze.
  * \return guessed CCSID.
  */
-int __guess_ae(const void *src, size_t size);
+__Z_EXPORT int __guess_ae(const void *src, size_t size);
 
 /**
  * Convert string from UTF8 to UTF16
  */
-int conv_utf8_utf16(char *, size_t, const char *, size_t);
+__Z_EXPORT int conv_utf8_utf16(char *, size_t, const char *, size_t);
 
 /**
  * Convert string from UTF16 to UTF8.
  */
-int conv_utf16_utf8(char *, size_t, const char *, size_t);
+__Z_EXPORT int conv_utf16_utf8(char *, size_t, const char *, size_t);
 
 #if DEBUG_ONLY
-// TODO(gabylb): should we enable the calls to __dump_title() and ledump()?
 /**
  * Convert from EBCDIC to ASCII in place.
  * \param [out] bufptr Buffer to convert.
  * \param [in] szLen Number of characters to convert.
  * \return number of characters converted, or -1 if unsuccessful.
  */
-size_t __e2a_l(char *bufptr, size_t szLen);
+__Z_EXPORT size_t __e2a_l(char *bufptr, size_t szLen);
 
 /**
  * Convert from ASCII to EBCDIC in place.
@@ -91,21 +94,21 @@ size_t __e2a_l(char *bufptr, size_t szLen);
  * \param [in] szLen Number of characters to convert.
  * \return number of characters converted, or -1 if unsuccessful.
  */
-size_t __a2e_l(char *bufptr, size_t szLen);
+__Z_EXPORT size_t __a2e_l(char *bufptr, size_t szLen);
 
 /**
  * Convert null-terminated string from ASCII to EBCDIC in place.
  * \param [out] string String to convert.
  * \return number of characters converted, or -1 if unsuccessful.
  */
-size_t __e2a_s(char *string);
+__Z_EXPORT size_t __e2a_s(char *string);
 
 /**
  * Convert null-terminate string from EBCDIC to ASCII in place.
  * \param [out] string string to convert.
  * \return number of characters converted, or -1 if unsuccessful.
  */
-size_t __a2e_s(char *string);
+__Z_EXPORT size_t __a2e_s(char *string);
 #endif
 
 /**
@@ -115,8 +118,9 @@ size_t __a2e_s(char *string);
  * \param [in] txtflag - Indicates if ccsid is text.
  * \param [in] on_untagged_only - applies only to untagged
  */
-void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
-                                unsigned char txtflag, int on_untagged_only);
+__Z_EXPORT void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
+                                           unsigned char txtflag,
+                                           int on_untagged_only);
 
 /**
  * Determines if file descriptor needs conversion from EBCDIC to ASCII.
@@ -124,7 +128,7 @@ void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
  * \param [in] fd file descriptor
  * \return returns 1 if file needs conversion, 0 if not.
  */
-int __file_needs_conversion(int fd);
+__Z_EXPORT int __file_needs_conversion(int fd);
 
 /**
  * Determines if file needs conversion from EBCDIC to ASCII.
@@ -132,13 +136,13 @@ int __file_needs_conversion(int fd);
  * \param [in] fd file descriptor
  * \return returns 1 if file needs conversion, 0 if not.
  */
-int __file_needs_conversion_init(const char *name, int fd);
+__Z_EXPORT int __file_needs_conversion_init(const char *name, int fd);
 
 /**
  * Unsets fd attributes
  * \param [in] fd file descriptor
  */
-void __fd_close(int fd);
+__Z_EXPORT void __fd_close(int fd);
 
 #define _str_e2a(_str)                                                         \
   ({                                                                           \
@@ -166,8 +170,8 @@ void __fd_close(int fd);
                : (__ae_thread_swapmode(__AE_ASCII_MODE), (_x),                 \
                   __ae_thread_swapmode(__AE_EBCDIC_MODE), 1))
 
-inline void *__convert_one_to_one(const void *table, void *dst, size_t size,
-                                  const void *src) {
+inline void* __Z_EXPORT __convert_one_to_one(const void *table, void *dst,
+                                             size_t size, const void *src) {
   void *rst = dst;
   __asm volatile(" troo 2,%2,1 \n jo *-4 \n"
                  : "+NR:r3"(size), "+NR:r2"(dst), "+r"(src)
@@ -178,7 +182,7 @@ inline void *__convert_one_to_one(const void *table, void *dst, size_t size,
 
 #ifdef __cplusplus
 
-class __auto_ascii {
+class __Z_EXPORT __auto_ascii {
   int ascii_mode;
 
 public:
@@ -186,7 +190,7 @@ public:
   ~__auto_ascii();
 };
 
-class __conv_off {
+class __Z_EXPORT __conv_off {
   int convert_state;
 
 public:
@@ -196,8 +200,8 @@ public:
 
 #endif // ifdef __cplusplus
 
-inline unsigned strlen_ae(const unsigned char *str, int *code_page, int max_len,
-                          int *ambiguous) {
+inline unsigned strlen_ae(const unsigned char *str, int *code_page,
+                          int max_len, int *ambiguous) {
   static int last_ccsid = 819;
   static const unsigned char _tab_a[256] __attribute__((aligned(8))) = {
       1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

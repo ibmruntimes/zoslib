@@ -11,6 +11,8 @@
 #ifndef ZOS_SEMAPHORE_H_
 #define ZOS_SEMAPHORE_H_
 
+#include "zos-macros.h"
+
 #include <errno.h>
 #include <inttypes.h>
 #include <pthread.h>
@@ -51,16 +53,16 @@ extern "C" {
 #endif
 
 /**TODO(itodorov) - zos: document these interfaces**/
-int __sem_init(__sem_t *s0, int shared, unsigned int val);
-int __sem_post(__sem_t *s0);
-int __sem_trywait(__sem_t *s0);
-int __sem_timedwait(__sem_t *s0, const struct timespec *abs_timeout);
-int __sem_wait(__sem_t *s0);
-int __sem_getvalue(__sem_t *s0, int *sval);
-int __sem_destroy(__sem_t *s0);
+__Z_EXPORT int __sem_init(__sem_t *s0, int shared, unsigned int val);
+__Z_EXPORT int __sem_post(__sem_t *s0);
+__Z_EXPORT int __sem_trywait(__sem_t *s0);
+__Z_EXPORT int __sem_timedwait(__sem_t *s0, const struct timespec *abs_timeout);
+__Z_EXPORT int __sem_wait(__sem_t *s0);
+__Z_EXPORT int __sem_getvalue(__sem_t *s0, int *sval);
+__Z_EXPORT int __sem_destroy(__sem_t *s0);
 
-unsigned int atomic_dec(volatile unsigned int *loc);
-unsigned int atomic_inc(volatile unsigned int *loc);
+__Z_EXPORT unsigned int atomic_dec(volatile unsigned int *loc);
+__Z_EXPORT unsigned int atomic_inc(volatile unsigned int *loc);
 
 #ifdef __cplusplus
 }

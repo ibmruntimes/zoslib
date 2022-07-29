@@ -9,11 +9,13 @@
 #ifndef ZOS_SETLIBPATH_H_
 #define ZOS_SETLIBPATH_H_
 
+#include "zos-macros.h"
+
 #include <libgen.h>
 #include <sstream>
 #include <sys/ps.h>
 
-class __setlibpath {
+class __Z_EXPORT __setlibpath {
 public:
   __setlibpath() {
     std::vector<char> argv(512, 0);

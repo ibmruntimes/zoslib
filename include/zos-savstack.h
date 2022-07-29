@@ -9,6 +9,8 @@
 #ifndef ZOS_SAVSTACK_H_
 #define ZOS_SAVSTACK_H_
 
+#include "zos-macros.h"
+
 #ifdef __cplusplus
 #include "edcwccwi.h"
 
@@ -31,10 +33,10 @@
 // restore() is called after JS to restore into __LE_SAVSTACK_ASYNC_ADDR the
 // SP saved in the map's key __LE_SAVSTACK_ASYNC_ADDR.
 //
-// restoreAll() is called from a signal handler to restore the SP from each thread
-// into its corresponding __LE_SAVSTACK_ASYNC_ADDR.
+// restoreAll() is called from a signal handler to restore the SP from each
+// thread into its corresponding __LE_SAVSTACK_ASYNC_ADDR.
 
-class LESavStackAsync {
+class __Z_EXPORT LESavStackAsync {
   public:
     static LESavStackAsync& getInstance() {
       static LESavStackAsync instance;

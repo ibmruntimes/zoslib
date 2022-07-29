@@ -12,16 +12,18 @@
 #ifndef ZOS_TLS_H_
 #define ZOS_TLS_H_
 
+#include "zos-macros.h"
+
 #ifdef __cplusplus
 #include <unistd.h>
 
 /**TODO(itodorov) - zos: document these interfaces **/
-struct __tlsanchor;
-struct __tlsanchor *__tlsvaranchor_create(size_t sz);
-void __tlsvaranchor_destroy(struct __tlsanchor *anchor);
-void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *);
+struct __Z_EXPORT __tlsanchor;
+__Z_EXPORT struct __tlsanchor* __tlsvaranchor_create(size_t sz);
+__Z_EXPORT void __tlsvaranchor_destroy(struct __tlsanchor *anchor);
+__Z_EXPORT void* __tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *);
 
-template <typename T> class __tlssim {
+template <typename T> class __Z_EXPORT __tlssim {
   struct __tlsanchor *anchor;
   T v;
 

@@ -14,7 +14,6 @@ config("zoslib_config") {
     "-march=arch10",
     "-mtune=10",
     "-fno-short-enums",
-    "-fvisibility=default",
     "-fzos-le-char-mode=ascii",
   ]
 }

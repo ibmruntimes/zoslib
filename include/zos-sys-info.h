@@ -11,6 +11,8 @@
 #ifndef ZOS_SYS_INFO_H_
 #define ZOS_SYS_INFO_H_
 
+#include "zos-macros.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -92,40 +94,40 @@ extern "C" {
  * Get the number of online CPUs
  * \return returns the number of online CPUs
  */
-int __get_num_online_cpus(void);
+__Z_EXPORT int __get_num_online_cpus(void);
 
 /**
  * Get the number of frames currently available to the system
  * \return returns the number of available frames
  */
-int __get_num_frames(void);
+__Z_EXPORT int __get_num_frames(void);
 
 /**
  * Get the OS level
  * \return the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order)
  */
-oslvl_t __get_os_level(void);
+__Z_EXPORT oslvl_t __get_os_level(void);
 
 /**
  * Check if current OS is at or above a given level
  * \return true if the current OS level is at or above the given level, and
  * false otherwise
  */
-bool __is_os_level_at_or_above(oslvl_t level);
+__Z_EXPORT bool __is_os_level_at_or_above(oslvl_t level);
 
 /**
  * Check if the current z arch includes Vector Extension Facility
  * \return true if Vector Extension Facility instructions are available, and
  * false otherwise
  */
-bool __is_vxf_available();
+__Z_EXPORT bool __is_vxf_available();
 
 /**
  * Check if the current z arch includes Vector Enhancements Facility 1
  * \return true if Vector Enhancements Facility 1 instructions are available,
  * and false otherwise
  */
-bool __is_vef1_available();
+__Z_EXPORT bool __is_vef1_available();
 
 /**
  * Gets the 4 character CPU model of the system, including the null terminating
@@ -135,7 +137,7 @@ bool __is_vef1_available();
  * \param size the size of the buffer
  * \return pointer to the buffer.
  */
-char *__get_cpu_model(char *buffer, size_t size);
+__Z_EXPORT char *__get_cpu_model(char *buffer, size_t size);
 
 #ifdef __cplusplus
 }

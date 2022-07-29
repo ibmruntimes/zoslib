@@ -11,6 +11,8 @@
 #ifndef ZOS_IO_H_
 #define ZOS_IO_H_
 
+#include "zos-macros.h"
+
 #include <stdarg.h>
 #include <sys/types.h>
 
@@ -23,48 +25,48 @@ extern "C" {
  * Prints information about a file descriptor.
  * \param [in] fd file descriptor.
  */
-void __fdinfo(int fd);
+__Z_EXPORT void __fdinfo(int fd);
 
-void __perror(const char *str);
-int __dpoll(void *array, unsigned int count, int timeout);
-ssize_t __write(int fd, const void *buffer, size_t sz);
-ssize_t __read(int fd, void *buffer, size_t sz);
-int __close(int fd);
-int __open(const char *file, int oflag, int mode);
+__Z_EXPORT void __perror(const char *str);
+__Z_EXPORT int __dpoll(void *array, unsigned int count, int timeout);
+__Z_EXPORT ssize_t __write(int fd, const void *buffer, size_t sz);
+__Z_EXPORT ssize_t __read(int fd, void *buffer, size_t sz);
+__Z_EXPORT int __close(int fd);
+__Z_EXPORT int __open(const char *file, int oflag, int mode);
 #endif // if TRACE_ON
 
 /**
  * Debug Printf.
  * \return returns total number of bytes written to file descriptor
  */
-int dprintf(int fd, const char *, ...);
+__Z_EXPORT int dprintf(int fd, const char *, ...);
 
 /**
  * Variadic Debug Printf.
  * \return returns total number of bytes written to file descriptor
  */
-int vdprintf(int fd, const char *, va_list ap);
+__Z_EXPORT int vdprintf(int fd, const char *, va_list ap);
 
 /**
  * Dump to console.
  */
-void __dump(int fd, const void *addr, size_t len, size_t bw);
+__Z_EXPORT void __dump(int fd, const void *addr, size_t len, size_t bw);
 
 /**
  * Dump title to console.
  */
-void __dump_title(int fd, const void *addr, size_t len, size_t bw, const char *,
-                  ...);
+__Z_EXPORT void __dump_title(int fd, const void *addr, size_t len, size_t bw,
+                             const char *, ...);
 
 /**
  * Print given buffer to MVS Console.
  */
-void __console(const void *p_in, int len_i);
+__Z_EXPORT void __console(const void *p_in, int len_i);
 
 /**
  * Print formatted data to MVS Console.
  */
-int __console_printf(const char *fmt, ...);
+__Z_EXPORT int __console_printf(const char *fmt, ...);
 
 /**
  * Finds file in a given path
@@ -74,8 +76,8 @@ int __console_printf(const char *fmt, ...);
  * \param [in] file file to search
  * \return returns non-zero if successful, 0 if not found.
  */
-int __find_file_in_path(char *out, int size, const char *envvar,
-                        const char *file);
+__Z_EXPORT int __find_file_in_path(char *out, int size, const char *envvar,
+                                   const char *file);
 
 /**
  * Change file descriptor to CCSID.
@@ -83,14 +85,14 @@ int __find_file_in_path(char *out, int size, const char *envvar,
  * \param [in] ccsid CCSID.
  * \return returns 0 if successful, or -1 on failure.
  */
-int __chgfdccsid(int fd, unsigned short ccsid);
+__Z_EXPORT int __chgfdccsid(int fd, unsigned short ccsid);
 
 /**
  * Get file descriptor CCSID.
  * \param [in] fd file descriptor.
  * \return returns file descriptors ccsid.
  */
-int __getfdccsid(int fd);
+__Z_EXPORT int __getfdccsid(int fd);
 
 /**
  * Set file descriptor to the provided CCSID.
@@ -98,14 +100,14 @@ int __getfdccsid(int fd);
  * \param [in] t_ccsid CCSID.
  * \return returns 0 if successful, or -1 on failure.
  */
-int __setfdccsid(int fd, int t_ccsid);
+__Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
 
 /**
  * Logs memory allocation and release to the file name specified
  * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
  * \param [in] same as C's printf() parameters
  */
-void __memprintf(const char *format, ...);
+__Z_EXPORT void __memprintf(const char *format, ...);
 
 #ifdef __cplusplus
 }

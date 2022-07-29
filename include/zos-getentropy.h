@@ -1,10 +1,12 @@
 #ifndef __ZOS_GET_ENTROPY_H_
 #define __ZOS_GET_ENTROPY_H_
 
+#include "zos-macros.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int getentropy(void* buffer, size_t length);
+__Z_EXPORT int getentropy(void* buffer, size_t length);
 #ifdef __cplusplus
 }
 #endif

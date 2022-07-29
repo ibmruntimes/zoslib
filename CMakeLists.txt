@@ -38,7 +38,6 @@ list(APPEND zoslib_defines
   _OPEN_SYS_FILE_EXT=1
   _OPEN_SYS_SOCK_IPV6
   PATH_MAX=1024
-  __static_assert=static_assert
   _UNIX03_SOURCE
   _UNIX03_THREADS
   _UNIX03_WITHDRAWN
@@ -55,8 +54,8 @@ if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
   list(APPEND zoslib_cflags
     -march=arch10
     -mtune=10
-    -fzos-le-char-mode=ascii
-    -fvisibility=default)
+    -fno-short-enums
+    -fzos-le-char-mode=ascii)
 else()
   list(APPEND zoslib_cflags
     -q64
