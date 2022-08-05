@@ -2862,8 +2862,6 @@ extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
     MAP_LE_FUNC(func, offset); \
   } else if (zoslibfunc) { \
     func = zoslibfunc; \
-  } else { \
-    fprintf(stderr, "LE function \"%s\" is not enabled on the OS. Please install the corresponding V2R5 APAR to enable it. Application may not function correctly.\n", funcstring); \
   }
 
 void __zinit::populateLEFunctionPointers() {
@@ -2872,7 +2870,6 @@ void __zinit::populateLEFunctionPointers() {
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
     char ppa_funcname[PPA_FUNC_LENGTH] = {0};
-    // APAR XXX
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create, 0, "epoll_create", 0xDAF);
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_create1, 0, "epoll_create1", 0xDB0);
     MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(epoll_ctl, 0, "epoll_ctl", 0xDB1);
@@ -2993,6 +2990,18 @@ extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
      // eventfd may have a pre-existing stub, check
      // the dsa size is not set to the stub size
      if (*((int*)func_addr+2) == 0x23d0)
+       return 0;
+   }
+   else if (strcmp(funcname, "pipe2") == 0) {
+     // pipe2 may have a pre-existing stub, check
+     // the dsa size is not set to the stub size
+     if (*((int*)func_addr+2) == 0x2580)
+       return 0;
+   }
+   else if (strcmp(funcname, "__accept4_a") == 0) {
+     // __accept4_a may have a pre-existing stub, check
+     // the dsa size is not set to the stub size
+     if (*((int*)func_addr+2) == 0x2510)
        return 0;
    }
   }

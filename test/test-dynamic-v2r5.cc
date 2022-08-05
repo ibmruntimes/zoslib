@@ -4,6 +4,8 @@
 #include <sys/inotify.h>
 #include <sys/eventfd.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <time.h>
 #include "gtest/gtest.h"
 
 namespace {
