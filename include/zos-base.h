@@ -77,6 +77,7 @@ typedef struct __stack_info {
 } __stack_info;
 
 #ifdef __cplusplus
+#include <bitset>
 extern "C" {
 #endif
 
@@ -779,6 +780,46 @@ private:
 struct __Z_EXPORT __init_zoslib {
   __init_zoslib(const zoslib_config_t &config = {});
 };
+
+/**
+ * Subtract 1 from the given bitset.
+ * \param [in] bitset
+ * \param [out] bitset - 1
+ * \return bitset - 1.
+ */
+template <std::size_t N> __Z_EXPORT std::bitset<N>
+                                    __subtractOne(std::bitset<N> bs) {
+  // Flip bits from rightmost bit till and including the first 1:
+  for (int i=0; i<bs.size(); i++) {
+    if (bs[i]) {
+      bs[i] = 0b0;
+      break;
+    } else {
+      bs[i] = 0b1;
+    }
+  }
+  return bs;
+}
+
+/**
+ * Add 1 to the given bitset.
+ * \param [in] bitset
+ * \param [out] bitset + 1
+ * \return bitset + 1.
+ */
+template <std::size_t N> __Z_EXPORT std::bitset<N>
+                                    __addOne(std::bitset<N> bs) {
+  // Flip bits from rightmost bit till and including the first 0:
+  for (int i=0; i<bs.size(); i++) {
+    if (!bs[i]) {
+      bs[i] = 0b1;
+      break;
+    } else {
+      bs[i] = 0b0;
+    }
+  }
+  return bs;
+}
 
 #endif // __cplusplus
 #endif // ZOS_BASE_H_
