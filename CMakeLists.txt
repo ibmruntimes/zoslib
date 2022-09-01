@@ -53,7 +53,7 @@ list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
   list(APPEND zoslib_cflags
     -march=arch10
-    -mtune=10
+    -mtune=arch10
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 else()

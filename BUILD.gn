@@ -12,7 +12,7 @@ config("zoslib_config") {
   ]
   cflags = [
     "-march=arch10",
-    "-mtune=10",
+    "-mtune=arch10",
     "-fno-short-enums",
     "-fzos-le-char-mode=ascii",
   ]
