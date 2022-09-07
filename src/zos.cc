@@ -2752,6 +2752,8 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   config->UNTAGGED_READ_MODE_CCSID1047_ENVAR =
       UNTAGGED_READ_MODE_CCSID1047_DEFAULT;
+  config->MEMORY_USAGE_LOG_FILE_ENVAR = MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT;
+  config->MEMORY_USAGE_LOG_LEVEL_ENVAR = MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
 }
 
 extern "C" void init_zoslib(const zoslib_config_t config) {
