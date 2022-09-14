@@ -6,7 +6,7 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-                   ??=ifndef __edcwccwi
+                   #ifndef __edcwccwi
                    #define __edcwccwi 1
                    #pragma nomargins nosequence
                    #pragma checkout(suspend)
@@ -612,4 +612,4 @@ struct __event1_s {
 #endif
 
                    #pragma checkout(resume)
-                   ??=endif /* __edcwccwi */
+                   #endif /* __edcwccwi */

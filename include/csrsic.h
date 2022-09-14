@@ -11,7 +11,7 @@
 #define __CSRSI
 
 // TODO(gabylb): disable for Woz clang till it supports OS linkage:
-// extern "OS" ??< - error: unknown linkage language
+// extern "OS" { - error: unknown linkage language
 #if defined(__ibmxl__)
 
 /*********************************************************************
@@ -83,7 +83,7 @@ typedef int  CSRSIReturnCode;
  *********************************************************************/
 
 #ifdef __cplusplus
-   extern "OS" ??<
+   extern "OS" {
 #else
   #pragma linkage(CSRSI_calltype,OS)
 #endif
@@ -98,51 +98,51 @@ extern CSRSI_calltype CSRSI;
 
 
 #ifdef __cplusplus
-   ??>
+   }
 #endif
 
 #ifndef __cplusplus
 #define csrsi_byaddr(Request, Flen, Fptr, Rcptr)                    \
-??<                                                                 \
+{                                                                 \
  ((struct CSRSI_PSA*) 0) ->                                         \
                    CSRSI_cvt->CSRSI_cvtcsrt->CSRSI_addr             \
            (Request,Flen,Fptr,Rcptr);                               \
-??>;
+};
 #endif
 
-struct CSRSI_CSRT ??<
-   unsigned char CSRSI_csrt_filler1  ??(48??);
+struct CSRSI_CSRT {
+   unsigned char CSRSI_csrt_filler1  [48];
    CSRSI_calltype* CSRSI_addr;
-??>;
+};
 
-struct CSRSI_CVT ??<
-   unsigned char CSRSI_cvt_filler1  ??(116??);
-  struct ??<
+struct CSRSI_CVT {
+   unsigned char CSRSI_cvt_filler1  [116];
+  struct {
     int CSRSI_cvtdcb_rsvd1 : 4;      /* Not needed                   */
     int CSRSI_cvtosext : 1;          /* If on, indicates that the
                     CVTOSLVL fields are valid                        */
     int CSRSI_cvtdcb_rsvd2 : 3;      /* Not needed                   */
-         ??> CSRSI_cvtdcb;
-   unsigned char CSRSI_cvt_filler2  ??(427??);
+         } CSRSI_cvtdcb;
+   unsigned char CSRSI_cvt_filler2  [427];
    struct CSRSI_CSRT * CSRSI_cvtcsrt;
-   unsigned char CSRSI_cvt_filler3  ??(716??);
+   unsigned char CSRSI_cvt_filler3  [716];
    unsigned char CSRSI_cvtoslv0;
    unsigned char CSRSI_cvtoslv1;
    unsigned char CSRSI_cvtoslv2;
    unsigned char CSRSI_cvtoslv3;
-  struct ??<
+  struct {
     int CSRSI_cvtcsrsi : 1;          /* If on, indicates that the
                                         CSRSI service is available   */
     int CSRSI_cvtoslv1_rsvd1 : 7;    /* Not needed                   */
-         ??> CSRSI_cvtoslv4;
-   unsigned char CSRSI_cvt_filler4 ??(11??);        /*               */
-??>;
+         } CSRSI_cvtoslv4;
+   unsigned char CSRSI_cvt_filler4 [11];        /*               */
+};
 
 
-struct CSRSI_PSA ??<
-   char CSRSI_psa_filler??(16??);
+struct CSRSI_PSA {
+   char CSRSI_psa_filler[16];
    struct CSRSI_CVT* CSRSI_cvt;
-??>;
+};
 
 /*  End of CSRSI Header                                              */
 
@@ -153,9 +153,9 @@ struct CSRSI_PSA ??<
 /* information is requested                                          */
 /*********************************************************************/
 
-typedef struct ??<
-  unsigned char  _filler1??(32??);  /* Reserved                  @H1A*/
-  unsigned char  si11v1cpcmanufacturer??(16??); /*
+typedef struct {
+  unsigned char  _filler1[32];  /* Reserved                  @H1A*/
+  unsigned char  si11v1cpcmanufacturer[16]; /*
                                        The 16-character (0-9
                                        or uppercase A-Z) EBCDIC name
                                        of the manufacturer of the V1
@@ -163,11 +163,11 @@ typedef struct ??<
                                        left-justified with trailing
                                        blank characters if necessary.
                                                                  @H1A*/
-  unsigned char  si11v1cpctype??(4??); /* The 4-character (0-9) EBCDIC
+  unsigned char  si11v1cpctype[4]; /* The 4-character (0-9) EBCDIC
                                        type identifier of the V1 CPC.
                                                                  @H1A*/
-  unsigned char  _filler2??(12??);  /* Reserved                  @H1A*/
-  unsigned char  si11v1cpcmodelcapident??(16??); /*
+  unsigned char  _filler2[12];  /* Reserved                  @H1A*/
+  unsigned char  si11v1cpcmodelcapident[16]; /*
                                        The 16-character (0-9 or
                                        uppercase A-Z) EBCDIC model
                                        capacity identifier of the
@@ -178,7 +178,7 @@ typedef struct ??<
                                        si11v1cpcmodel1 is zero, this
                                        field also represents the
                                        model                     @H2C*/
-  unsigned char  si11v1cpcsequencecode??(16??); /*
+  unsigned char  si11v1cpcsequencecode[16]; /*
                                        The 16-character (0-9
                                        or uppercase A-Z) EBCDIC
                                        sequence code of the V1 CPC.
@@ -186,7 +186,7 @@ typedef struct ??<
                                        right-justified with leading
                                        EBCDIC zeroes if necessary.
                                                                  @H1A*/
-  unsigned char  si11v1cpcplantofmanufacture??(4??); /* The 4-character
+  unsigned char  si11v1cpcplantofmanufacture[4]; /* The 4-character
                                        (0-9 or uppercase A-Z) EBCDIC
                                        plant code that identifies the
                                        plant of manufacture for the
@@ -194,7 +194,7 @@ typedef struct ??<
                                        left-justified with trailing
                                        blank characters if necessary.
                                                                  @H1A*/
-  unsigned char  si11v1cpcmodel1??(16??); /* The 16-character (0-9 or
+  unsigned char  si11v1cpcmodel1[16]; /* The 16-character (0-9 or
                                        uppercase A-Z) EBCDIC model
                                        identifier of the configuration.
                                        The identifier is left-justified
@@ -205,8 +205,8 @@ typedef struct ??<
                                        field represents both the
                                        model-capacity identifier
                                        and the model.            @H2A*/
-  unsigned char  _filler3??(3980??); /* Reserved                 @H1A*/
-??> si11v1;
+  unsigned char  _filler3[3980]; /* Reserved                 @H1A*/
+} si11v1;
 
   #define si11v1cpcmodel si11v1cpcmodelcapident
 
@@ -215,7 +215,7 @@ typedef struct ??<
 /* is requested about the set of CPUs                                */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   unsigned int   si22v1format : 8;  /* A 1-byte value. When the
                                        value is 1, the ACCOffset field
                                        is valid                  @L1A*/
@@ -229,8 +229,8 @@ typedef struct ??<
                                        within the SI22V1area, and is
                                        mapped by si22v1alt)
                                                                  @L1A*/
-  unsigned char  _filler1??(24??);  /* Reserved                  @H3C*/
-  unsigned char si22v1secondarycpucapability??(4??); /*
+  unsigned char  _filler1[24];  /* Reserved                  @H3C*/
+  unsigned char si22v1secondarycpucapability[4]; /*
                                        An unsigned binary integer that,
                                        when not zero, specifies a
                                        secondary capability that may be
@@ -252,7 +252,7 @@ typedef struct ??<
                                        the same capability, as
                                        specified by the CPU capability.
                                                                  @H3A*/
-  unsigned char  si22v1cpucapability??(4??); /*
+  unsigned char  si22v1cpucapability[4]; /*
                                        An unsigned binary integer
                                        that specifies the capability
                                        of one of the CPUs contained
@@ -314,13 +314,13 @@ typedef struct ??<
                                        the standby or configured
                                        state through manually
                                        initiated actions         @H1A*/
-  struct ??<
-    unsigned char  _si22v1mpcpucapaf??(2??); /* Each individual
+  struct {
+    unsigned char  _si22v1mpcpucapaf[2]; /* Each individual
                                        adjustment factor.        @H1A*/
-    unsigned char  _filler2??(4050??);
-  ??> si22v1mpcpucapafs;               /* This field is valid only
+    unsigned char  _filler2[4050];
+  } si22v1mpcpucapafs;               /* This field is valid only
                                   when si22v1format is 0         @L1A*/
-??> si22v1;
+} si22v1;
 
 #define si22v1mpcpucapaf  si22v1mpcpucapafs._si22v1mpcpucapaf
 
@@ -330,7 +330,7 @@ typedef struct ??<
 /* of one.                                                           */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   unsigned int   si22v1altcpucapability;  /* A 32-bit unsigned binary
                                   integer that specifies the announced
                                   capability of one of the CPUs in the
@@ -347,14 +347,14 @@ typedef struct ??<
                                   the configuraiton have the same
                                   alternate capability.
                                                                  @L1A*/
-  struct ??<
-    unsigned char _si22v1altmpcpucapaf??(2??); /* Each individual
+  struct {
+    unsigned char _si22v1altmpcpucapaf[2]; /* Each individual
                                   adjustment factor. Note that the
                                   leading underscore in the name is
                                   to allow use of a #define that
                                   is below.                      @L1A*/
-    unsigned char  _filler2??(4050??);
-  ??> si22v1altmpcpucapafs;       /*
+    unsigned char  _filler2[4050];
+  } si22v1altmpcpucapafs;       /*
                                   A series of contiguous 2-byte fields,
                                   each containing a 16-bit unsigned
                                   binary integer which is an adjustment
@@ -378,7 +378,7 @@ typedef struct ??<
                                   CPUs in the configurd state that is
                                   more than that for the preceding
                                   field.                         @L1A*/
-??> si22v1alt;                                                /* @L1A*/
+} si22v1alt;                                                /* @L1A*/
 
 #define si22v1altmpcpucapaf  si22v1altmpcpucapafs._si22v1altmpcpucapaf
 
@@ -387,8 +387,8 @@ typedef struct ??<
 /* is requested about the set of CPUs                                */
 /*********************************************************************/
 
-typedef struct ??<
-  unsigned char  _filler1??(32??);  /* Reserved                  @H1A*/
+typedef struct {
+  unsigned char  _filler1[32];  /* Reserved                  @H1A*/
   unsigned int   si22v2cpcnumber                 : 16; /* A 2-byte
                                        unsigned integer
                                        which is the number of
@@ -398,7 +398,7 @@ typedef struct ??<
                                        the same logical-partition
                                        hypervisor                @H1A*/
   unsigned char  _filler2;          /* Reserved                  @H1A*/
-  struct ??<
+  struct {
     unsigned int   _si22v2lcpudedicated           : 1; /*
                                        When one, indicates that
                                        one or more of the logical
@@ -446,7 +446,7 @@ typedef struct ??<
                                        is unlimited.             @H1A*/
     unsigned int   _filler3                        : 5; /* Reserved
                                                                  @H1A*/
-  ??> si22v2lcpuc;                  /* Characteristics           @H1A*/
+  } si22v2lcpuc;                  /* Characteristics           @H1A*/
   unsigned int   si22v2totallcpucount            : 16; /*
                                        A 2-byte unsigned
                                        integer that specifies the
@@ -503,13 +503,13 @@ typedef struct ??<
                                        the standby or configured
                                        state through manually
                                        initiated actions         @H1A*/
-  unsigned char  si22v2cpcname??(8??);  /*
+  unsigned char  si22v2cpcname[8];  /*
                                        The 8-character EBCDIC name of
                                        this V2 CPC. The name is
                                        left-justified with trailing
                                        blank characters if necessary.
                                                                  @H1A*/
-  unsigned char  si22v2cpccapabilityaf??(4??); /* Capability Adjustment
+  unsigned char  si22v2cpccapabilityaf[4]; /* Capability Adjustment
                                        Factor (CAF). An unsigned
                                        binary integer of 1000 or
                                        less. The adjustment factor
@@ -521,13 +521,13 @@ typedef struct ??<
                                        V1-CPC capability is
                                        determined by dividing the CAF
                                        value by 1000.            @H1A*/
-  unsigned char  si22v2lparorigin??(8??); /* A 64-bit unsigned binary
+  unsigned char  si22v2lparorigin[8]; /* A 64-bit unsigned binary
                                        integer, called a logical
                                        partition origin, which
                                        represents the relocation-zone
                                        origin of the logical
                                        partition.                @L3C*/
-  unsigned char  _filler4??(8??);   /* Reserved                  @L3C*/
+  unsigned char  _filler4[8];   /* Reserved                  @L3C*/
   unsigned int   si22v2dedicatedlcpucount        : 16; /*
                                        A 2-byte unsigned
                                        binary integer that specifies
@@ -546,8 +546,8 @@ typedef struct ??<
                                        V1 CPUs. (See the description
                                        of bit si22v2lcpushared.)
                                                                  @H1A*/
-  unsigned char  _filler5??(4020??); /* Reserved                 @H1A*/
-??> si22v2;
+  unsigned char  _filler5[4020]; /* Reserved                 @H1A*/
+} si22v2;
 
 #define si22v2lcpudedicated       si22v2lcpuc._si22v2lcpudedicated
 #define si22v2lcpushared          si22v2lcpuc._si22v2lcpushared
@@ -558,8 +558,8 @@ typedef struct ??<
 /* si22v3 data.                                                      */
 /*********************************************************************/
 
-typedef struct ??<
-  unsigned char  _filler1??(4??);   /* Reserved                  @H1A*/
+typedef struct {
+  unsigned char  _filler1[4];   /* Reserved                  @H1A*/
   unsigned int   si22v3dbtotallcpucount            : 16; /*
                                        A 2-byte unsigned
                                        binary integer that specifies
@@ -617,12 +617,12 @@ typedef struct ??<
                                        the standby or configured
                                        state through manually
                                        initiated actions         @H1A*/
-  unsigned char  si22v3dbcpcname??(8??); /* The 8-character EBCDIC name
+  unsigned char  si22v3dbcpcname[8]; /* The 8-character EBCDIC name
                                        of this V3 CPC. The name is
                                        left-justified with trailing
                                        blank characters if necessary.
                                                                  @H1A*/
-  unsigned char  si22v3dbcpccaf??(4??); /* A 4-byte unsigned binary
+  unsigned char  si22v3dbcpccaf[4]; /* A 4-byte unsigned binary
                                         integer that specifies an
                                         adjustment factor. The
                                         adjustment factor specifies
@@ -632,7 +632,7 @@ typedef struct ??<
                                         CPC by the
                                         virtual-machine-hypervisor
                                         program.                 @H1A*/
-  unsigned char  si22v3dbvmhpidentifier??(16??); /* The 16-character
+  unsigned char  si22v3dbvmhpidentifier[16]; /* The 16-character
                                        EBCDIC identifier of the
                                        virtual-machine-hypervisor
                                        program that provides this V3
@@ -643,17 +643,17 @@ typedef struct ??<
                                        left-justified with trailing
                                        blank characters if necessary.
                                                                  @H1A*/
-  unsigned char  _filler2??(24??);  /* Reserved                  @H1A*/
-??> si22v3db;
+  unsigned char  _filler2[24];  /* Reserved                  @H1A*/
+} si22v3db;
 /*********************************************************************/
 /* si22v3 represents the output for a V3 CPC when information        */
 /* is requested about the set of CPUs                                */
 /*********************************************************************/
 
-typedef struct ??<
-  unsigned char  _filler1??(28??);  /* Reserved                  @H1A*/
-  unsigned char  _filler2??(3??);   /* Reserved                  @H1A*/
-  struct ??<
+typedef struct {
+  unsigned char  _filler1[28];  /* Reserved                  @H1A*/
+  unsigned char  _filler2[3];   /* Reserved                  @H1A*/
+  struct {
       unsigned int   _filler3                : 4; /* Reserved
                                                                  @H1A*/
       unsigned int   _si22v3dbcount          : 4; /*
@@ -663,12 +663,12 @@ typedef struct ??<
                                        to 8) of V3-CPC description
                                        blocks that are stored in the
                                        si22v3dbe array.          @H1A*/
-  ??> si22v3dbcountfield;           /*                           @H1A*/
-  si22v3db  si22v3dbe??(8??);    /* Array of entries. Only the number
+  } si22v3dbcountfield;           /*                           @H1A*/
+  si22v3db  si22v3dbe[8];    /* Array of entries. Only the number
                                     indicated by si22v3dbcount
                                     are valid                    @H1A*/
-  unsigned char  _filler5??(3552??); /* Reserved                 @H1A*/
-??> si22v3;
+  unsigned char  _filler5[3552]; /* Reserved                 @H1A*/
+} si22v3;
 
 #define si22v3dbcount      si22v3dbcountfield._si22v3dbcount
 
@@ -678,11 +678,11 @@ typedef struct ??<
 /* part of the information returned on every CSRSI request.          */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   char           si00cpcvariety;    /* SI00CPCVariety_V1CPC_MACHINE,
                                        SI00CPCVariety_V2CPC_LPAR, or
                                        SI00CPCVariety_V3CPC_VM   @H1A*/
-    struct ??<
+    struct {
                int   _si00validsi11v1  : 1; /* si11v1 was requested and
                                    the information returned is valid
                                                                  @H1A*/
@@ -696,23 +696,23 @@ typedef struct ??<
                                    the information returned is valid
                                                                  @H1A*/
                int   _filler1          : 4; /* Reserved          @H1A*/
-    ??> si00validityflags;
-  unsigned char  _filler2??(2??);   /* Reserved                  @H1A*/
-  unsigned char  si00pccacpid??(12??); /* PCCACPID value for this CPU
+    } si00validityflags;
+  unsigned char  _filler2[2];   /* Reserved                  @H1A*/
+  unsigned char  si00pccacpid[12]; /* PCCACPID value for this CPU
                                                                  @H1A*/
-  unsigned char  si00pccacpua??(2??); /* PCCACPUA value for this CPU
+  unsigned char  si00pccacpua[2]; /* PCCACPUA value for this CPU
                                                                  @H1A*/
-  unsigned char  si00pccacafm??(2??); /* PCCACAFM value for this CPU.
+  unsigned char  si00pccacafm[2]; /* PCCACAFM value for this CPU.
                                          This has information only
                                          about CPUs 0-15         @L2C*/
-  unsigned char  _filler3??(4??);   /* Reserved                  @H1A*/
-  unsigned char  si00lastupdatetimestamp??(8??); /* Time of last STSI
+  unsigned char  _filler3[4];   /* Reserved                  @H1A*/
+  unsigned char  si00lastupdatetimestamp[8]; /* Time of last STSI
                                        update, via STCK          @H1A*/
-  unsigned char  si00pcca_cpu_address_mask??(8??); /*
+  unsigned char  si00pcca_cpu_address_mask[8]; /*
                             PCCA_CPU_Address_Mask value for this CPU
                                                                  @L2A*/
-  unsigned char  _filler4??(24??);  /* Reserved                  @L2C*/
-??> si00;
+  unsigned char  _filler4[24];  /* Reserved                  @L2C*/
+} si00;
 
 #define si00validsi11v1         si00validityflags._si00validsi11v1
 #define si00validsi22v1         si00validityflags._si00validsi22v1
@@ -724,21 +724,21 @@ typedef struct ??<
 /* data is requested                                                 */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv1si00;                                    /* Area mapped by
                                        struct si00               @H1A*/
   si11v1 siv1si11v1;                                    /* Area
                                        mapped by struct si11v1   @H1A*/
   si22v1 siv1si22v1;                                    /* Area
                                        mapped by struct si22v1   @H1A*/
-??> siv1;
+} siv1;
 
 /*********************************************************************/
 /* siv1v2 represents the information returned when V1CPC_MACHINE     */
 /* data and V2CPC_LPAR data is requested                             */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv1v2si00;                                  /* Area mapped by
                                        by struct si00            @H1A*/
   si11v1 siv1v2si11v1;                                    /* Area
@@ -747,14 +747,14 @@ typedef struct ??<
                                        mapped by struct si22v2   @H1A*/
   si22v2 siv1v2si22v2;                                    /* Area
                                        mapped by struct si22v2   @H1A*/
-??> siv1v2;
+} siv1v2;
 
 /*********************************************************************/
 /* siv1v2v3 represents the information returned when V1CPC_MACHINE   */
 /* data, V2CPC_LPAR data and V3CPC_VM data is requested              */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv1v2v3si00;                                    /* Area
                                        mapped by struct si00     @H1A*/
   si11v1 siv1v2v3si11v1;                                    /* Area
@@ -765,14 +765,14 @@ typedef struct ??<
                                        mapped by struct si22v2   @H1A*/
   si22v3 siv1v2v3si22v3;                                    /* Area
                                        mapped by struct si22v3   @H1A*/
-??> siv1v2v3;
+} siv1v2v3;
 
 /*********************************************************************/
 /* siv1v3 represents the information returned when V1CPC_MACHINE     */
 /* data and V3CPC_VM data is requested                               */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv1v3si00;                                    /* Area mapped
                                        by struct si00            @H1A*/
   si11v1 siv1v3si11v1;                                    /* Area
@@ -781,45 +781,45 @@ typedef struct ??<
                                        mapped by struct si22v1   @H1A*/
   si22v3 siv1v3si22v3;                                    /* Area
                                        mapped by struct si22v3   @H1A*/
-??> siv1v3;
+} siv1v3;
 
 /*********************************************************************/
 /* siv2 represents the information returned when V2CPC_LPAR          */
 /* data is requested                                                 */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv2si00;                    /* Area mapped by
                                        struct si00               @H1A*/
   si22v2 siv2si22v2;                /* Area
                                        mapped by struct si22v2   @H1A*/
-??> siv2;
+} siv2;
 
 /*********************************************************************/
 /* siv2v3 represents the information returned when V2CPC_LPAR        */
 /* and V3CPC_VM data is requested                                    */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv2v3si00;                  /* Area mapped
                                        by struct si00            @H1A*/
   si22v2 siv2v3si22v2;              /* Area
                                        mapped by struct si22v2   @H1A*/
   si22v3 siv2v3si22v3;              /* Area
                                        mapped by struct si22v3   @H1A*/
-??> siv2v3;
+} siv2v3;
 
 /*********************************************************************/
 /* siv3 represents the information returned when V3CPC_VM            */
 /* data is requested                                                 */
 /*********************************************************************/
 
-typedef struct ??<
+typedef struct {
   si00 siv3si00;                    /* Area mapped by
                                        struct si00               @H1A*/
   si22v3 siv3si22v3;                /* Area
                                        mapped by struct si22v3   @H1A*/
-??> siv3;
+} siv3;
 
 
 /*********************************************************************
