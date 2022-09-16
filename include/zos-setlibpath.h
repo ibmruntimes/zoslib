@@ -45,6 +45,7 @@ public:
         std::ostringstream libpath;
         libpath << getenv("LIBPATH");
         libpath << ":" << &parent[0] << "/lib.target/";
+        libpath << ":" << &parent[0] << "/lib/";
         libpath << ":" << &parent2[0] << "/lib/";
         setenv("LIBPATH", libpath.str().c_str(), 1);
         break;
