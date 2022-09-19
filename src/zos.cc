@@ -990,8 +990,8 @@ extern "C" unsigned long __mach_absolute_time(void) {
 //------------------------------------------accounting for memory allocation
 // begin
 
-static const int kMegaByte = 1024 * 1024;
-static const int kGigaByte = 1024 * 1024 * 1024;
+static const size_t kMegaByte = 1024 * 1024;
+static const size_t kGigaByte = 1024 * 1024 * 1024;
 
 static int mem_account(void) {
   static int res = -1;
@@ -1295,11 +1295,11 @@ public:
     }
   }
 #if __USE_IARV64
-  void *alloc_seg(int segs) {
+  void *alloc_seg(size_t segs) {
     long long rc, reason;
     std::lock_guard<std::mutex> guard(access_lock);
     void *p = __iarv64_alloc(segs, xttoken, &rc, &reason);
-    size_t size = (unsigned long)(segs * kMegaByte);
+    size_t size = segs * kMegaByte;
     if (p) {
       unsigned long k = (unsigned long)p;
       cache[k] = size;
