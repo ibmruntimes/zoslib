@@ -269,12 +269,6 @@ __Z_EXPORT int *__get_stack_start();
 __Z_EXPORT void *__iterate_stack_and_get(void *dsaptr, __stack_info *si);
 
 /**
- * Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available
- * \return true if the STFLE instruction is available
- */
-__Z_EXPORT bool __is_stfle_available();
-
-/**
  * Get next dlcb entry
  * \param [in] last - previous dlcb entry
  * \return [in] returns next dlcb entry

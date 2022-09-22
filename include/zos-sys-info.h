@@ -116,6 +116,12 @@ __Z_EXPORT oslvl_t __get_os_level(void);
 __Z_EXPORT bool __is_os_level_at_or_above(oslvl_t level);
 
 /**
+ * Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available
+ * \return true if the STFLE instruction is available
+ */
+__Z_EXPORT bool __is_stfle_available();
+
+/**
  * Check if the current z arch includes Vector Extension Facility
  * \return true if Vector Extension Facility instructions are available, and
  * false otherwise
