@@ -854,5 +854,7 @@ template <std::size_t N> __Z_EXPORT std::bitset<N>
   return bs;
 }
 
+__zinit* __get_instance();
+
 #endif // __cplusplus
 #endif // ZOS_BASE_H_
