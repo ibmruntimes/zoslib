@@ -9,6 +9,8 @@
 #ifndef ZOS_FCNTL_H_
 #define ZOS_FCNTL_H_
 
+#include "zos-macros.h"
+
 #define __XPLAT 1
 
 #if defined(__cplusplus)
@@ -17,7 +19,7 @@ extern "C" {
 /**
  * Same as C open but tags new files as ASCII (819)
  */
-int __open_ascii(const char *filename, int opts, ...);
+__Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
 #if defined(__cplusplus)
 };
 #endif
@@ -33,7 +35,7 @@ int __open_ascii(const char *filename, int opts, ...);
 extern "C" {
 #endif
 
-int open(const char *filename, int opts, ...) asm("__open_ascii");
+__Z_EXPORT extern int open(const char *filename, int opts, ...) asm("__open_ascii");
 
 #if defined(__cplusplus)
 };

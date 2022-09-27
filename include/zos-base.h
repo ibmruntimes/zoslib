@@ -418,7 +418,7 @@ __Z_EXPORT int __fork(void);
  * \param [in] number of random bytes to generate.
  * \return On success, returns 0, or -1 on error.
  */
-__Z_EXPORT int getentropy(void *buffer, size_t length);
+__Z_EXPORT int __getentropy(void *buffer, size_t length);
 
 /**
  * Return the LE version as a string in the format of

@@ -11,6 +11,8 @@
 
 #define __XPLAT 1
 
+#include "zos-macros.h"
+
 #if (__EDC_TARGET < 0x42050000)
 
 #include <sys/types.h>
@@ -62,11 +64,11 @@ struct epoll_event {
 #pragma pack(reset)
 #endif
 
-extern int (*epoll_create)(int);
-extern int (*epoll_create1)(int);
-extern int (*epoll_ctl)(int, int, int, struct epoll_event *);
-extern int (*epoll_wait)(int, struct epoll_event *, int, int);
-extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
+__Z_EXPORT extern int (*epoll_create)(int);
+__Z_EXPORT extern int (*epoll_create1)(int);
+__Z_EXPORT extern int (*epoll_ctl)(int, int, int, struct epoll_event *);
+__Z_EXPORT extern int (*epoll_wait)(int, struct epoll_event *, int, int);
+__Z_EXPORT extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
 
 #if defined(__cplusplus)
 };

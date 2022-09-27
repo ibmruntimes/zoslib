@@ -12,6 +12,7 @@
 #define __XPLAT 1
 
 #if (__EDC_TARGET < 0x42050000)
+#include "zos-macros.h"
 #include_next <time.h>
 
 #if defined(__cplusplus)
@@ -31,8 +32,8 @@ typedef enum {
  * \param [out] tp structure to store the current time to.  
  * \return return 0 for success, or -1 for failure.
  */
-extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
-extern int (*nanosleep)(const struct timespec*, struct timespec*);
+__Z_EXPORT extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
+__Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 };
 #endif

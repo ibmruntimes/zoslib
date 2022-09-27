@@ -10,6 +10,7 @@
 #define ZOS_SYS_EVENTFD_H_
 
 #define __XPLAT 1
+#include "zos-macros.h"
 
 #if (__EDC_TARGET < 0x42050000)
 #define EFD_SEMAPHORE 0x00002000
@@ -26,7 +27,7 @@ extern "C" {
  * \param [in] flags behaviour flags for event fd
  * \return returns a fd for success, or -1 for failure.
  */
-extern int (*eventfd)(unsigned int initval, int flags);
+__Z_EXPORT extern int (*eventfd)(unsigned int initval, int flags);
 
 #if defined(__cplusplus)
 };

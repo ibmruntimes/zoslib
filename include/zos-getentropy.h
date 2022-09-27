@@ -6,7 +6,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-__Z_EXPORT int getentropy(void* buffer, size_t length);
+__Z_EXPORT int __getentropy(void* buffer, size_t length);
 #ifdef __cplusplus
 }
 #endif

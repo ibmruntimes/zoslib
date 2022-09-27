@@ -10,6 +10,7 @@
 #define ZOS_SYS_INOTIFY_H_
 
 #define __XPLAT 1
+#include "zos-macros.h"
 
 #if (__EDC_TARGET < 0x42050000)
 
@@ -70,11 +71,11 @@ struct inotify_event {
   char        name[];
 };
 
-extern int (*inotify_init)(void);
-extern int (*inotify_init1)(int);
-extern int (*inotify_add_watch)(int, const char *,
+__Z_EXPORT extern int (*inotify_init)(void);
+__Z_EXPORT extern int (*inotify_init1)(int);
+__Z_EXPORT extern int (*inotify_add_watch)(int, const char *,
                                     uint32_t);
-extern int (*inotify_rm_watch)(int, int);
+__Z_EXPORT extern int (*inotify_rm_watch)(int, int);
 
 #if defined(__cplusplus)
 };

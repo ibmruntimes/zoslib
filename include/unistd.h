@@ -10,12 +10,13 @@
 #define ZOS_UNISTD_H_
 
 #define __XPLAT 1
+#include "zos-macros.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-int __pipe_ascii(int [2]);
-int __close(int);
+__Z_EXPORT int __pipe_ascii(int [2]);
+__Z_EXPORT int __close(int);
 #if defined(__cplusplus)
 };
 #endif
@@ -35,15 +36,15 @@ extern "C" {
 #endif
 
 #if (__EDC_TARGET < 0x42050000)
-extern int (*pipe2)(int pipefd[2], int flags);
-extern int (*getentropy)(void *, size_t);
+__Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
+__Z_EXPORT extern int (*getentropy)(void *, size_t);
 #endif
 
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
-int pipe(int [2]) asm("__pipe_ascii");
-int close(int) asm("__close");
+__Z_EXPORT int pipe(int [2]) asm("__pipe_ascii");
+__Z_EXPORT int close(int) asm("__close");
 
 #if defined(__cplusplus)
 };
@@ -53,8 +54,8 @@ int close(int) asm("__close");
 #include_next <unistd.h>
 
 #if (__EDC_TARGET < 0x42050000)
-extern int (*pipe2)(int pipefd[2], int flags);
-extern int (*getentropy)(void *, size_t);
+__Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
+__Z_EXPORT extern int (*getentropy)(void *, size_t);
 #endif 
 
 #endif
