@@ -76,14 +76,6 @@ extern "C" {
 #endif
 
 /**
- * Get current time of clock.
- * \param [in] clk_id Clock id.
- * \param [out] tp structure to store the current time to.
- * \return return 0 for success, or -1 for failure.
- */
-__Z_EXPORT int __clock_gettime(clockid_t clk_id, struct timespec *tp);
-
-/**
  * Get the environ.
  * \return returns pointer to environment list
  */

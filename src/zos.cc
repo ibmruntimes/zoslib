@@ -14,6 +14,7 @@
 #define _OPEN_MSGQ_EXT 1
 #define __ZOS_CC
 #include "edcwccwi.h"
+#include "zos-getentropy.h"
 #include "zos-base.h"
 
 #include <_Ccsid.h>
@@ -1727,7 +1728,7 @@ extern "C" void __tb(void) {
   }
 }
 
-extern "C" int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
+static int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
   unsigned long long value;
   __stckf(&value);
   tp->tv_sec = (value / 4096000000UL) - 2208988800UL;
@@ -2816,7 +2817,7 @@ extern "C" int __pipe2(int pipefd[2], int flags) {
   return 0;
 }
 
-extern "C" int __futimes(int fd, const struct timeval tv[2]) {
+static int __futimes(int fd, const struct timeval tv[2]) {
   attrib_t atr;
   memset(&atr, 0, sizeof(atr));
   atr.att_mtimechg = 1;
@@ -2826,7 +2827,7 @@ extern "C" int __futimes(int fd, const struct timeval tv[2]) {
   return __fchattr(fd, &atr, sizeof(atr));
 }
 
-extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
+static int __lutimes(const char *filename, const struct timeval tv[2]) {
   int return_value;
   int return_code;
   int reason_code;
