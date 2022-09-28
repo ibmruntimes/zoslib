@@ -438,15 +438,51 @@ int conv_utf16_utf8(char *out, size_t outsize, const char *in, size_t insize) {
   return utf16_to_8.conv(out, outsize, in, insize);
 }
 
+struct IntHash {
+  size_t operator()(const int &n) const { return n * 0x54edcfac64d7d667L; }
+};
+
+typedef unsigned long fd_attribute;
+
+typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
+
+class fdAttributeCache {
+  std::unordered_map<int, fd_attribute, IntHash> cache;
+  std::mutex access_lock;
+
+public:
+  fd_attribute get_attribute(int fd) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cursor_t c = cache.find(fd);
+    if (c != cache.end()) {
+      return c->second;
+    }
+    return 0;
+  }
+  void set_attribute(int fd, fd_attribute attr) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache[fd] = attr;
+  }
+  void unset_attribute(int fd) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache.erase(fd);
+  }
+  void clear(void) {
+    std::lock_guard<std::mutex> guard(access_lock);
+    cache.clear();
+  }
+};
+
+fdAttributeCache fdcache;
+
 void __fd_close(int fd) { 
-  if (__get_instance())
-    __get_instance()->fdcache.unset_attribute(fd);
+  fdcache.unset_attribute(fd);
 }
 
 int __file_needs_conversion(int fd) {
   if (__get_no_tag_read_behaviour() == __NO_TAG_READ_STRICT)
     return 0;
-  unsigned long attr = __get_instance()->fdcache.get_attribute(fd);
+  unsigned long attr = fdcache.get_attribute(fd);
   if (attr == 0x0000000000020000UL) {
     return 1;
   }
@@ -468,7 +504,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
   if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
     return 0;
   if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
-    __get_instance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
+    fdcache.set_attribute(fd, 0x0000000000020000UL);
     return 1;
   }
   if (lseek(fd, 1, SEEK_SET) == 1 && lseek(fd, 0, SEEK_SET) == 0) {
@@ -497,7 +533,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
                        "EBCDIC characters\n");
           }
         }
-        __get_instance()->fdcache.set_attribute(fd, 0x0000000000020000UL);
+        fdcache.set_attribute(fd, 0x0000000000020000UL);
         return 1;
       }
     }       // cnt > 8

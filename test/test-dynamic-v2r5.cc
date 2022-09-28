@@ -17,7 +17,6 @@ TEST(DynamicV2R5, clock_gettime) {
   system("sleep 1");
   EXPECT_EQ(clock_gettime( CLOCK_REALTIME, &stop), 0);
   EXPECT_GT(stop.tv_sec, start.tv_sec);
-  EXPECT_GT(stop.tv_nsec, start.tv_nsec);
 }
 
 class DynamicV2R5Temp : public ::testing::Test {
