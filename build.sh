@@ -99,15 +99,13 @@ fi
 ! test -d build && echo "build: directory doesn't exist." && exit -1
 pushd build
 
-cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DBUILD_SHARED_LIBS=${SHARED}
+cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DBUILD_SHARED_LIBS=${SHARED} -DCMAKE_INSTALL_PREFIX=${SCRIPT_DIR}/install
 cmake --build . --target install
-
-! test -d ../install && mv install .. || /bin/cp -R install/* ../install/ && /bin/rm -rf install
 
 popd
 
 if [[ "${RUN_TESTS}" == "ON" ]]; then
   export GTEST_OUTPUT="xml:zoslib.xml"
-  [[ "$SHARED" == "ON" ]] && export LIBPATH=`pwd`/install/lib:$LIBPATH
+  [[ "$SHARED" == "ON" ]] && export LIBPATH="${SCRIPT_DIR}/install/lib:$LIBPATH"
   install/bin/$CCTEST
 fi

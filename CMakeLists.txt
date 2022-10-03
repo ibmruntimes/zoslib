@@ -90,11 +90,11 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-    DESTINATION "install/include"
+    DESTINATION "include"
     FILES_MATCHING PATTERN "*")
 
 if(NOT ${BUILD_SHARED_LIBS} MATCHES "OFF")
   install(
     FILES ${CMAKE_BINARY_DIR}/lib/libzoslib.x
-    DESTINATION "install/lib")
+    DESTINATION "lib")
 endif()
