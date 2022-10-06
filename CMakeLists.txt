@@ -11,18 +11,13 @@ cmake_minimum_required(VERSION 3.5)
 
 include_directories(BEFORE include)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 add_subdirectory(src)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
-endif()
-
-if(NOT ${BUILD_SHARED_LIBS} MATCHES "OFF")
-  set_target_properties(zoslib PROPERTIES OUTPUT_NAME "libzoslib")
-  set_target_properties(zoslib PROPERTIES SUFFIX ".so")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING "" FORCE)
@@ -75,10 +70,8 @@ endif()
 
 set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
 
-target_compile_definitions(zoslib PRIVATE ${zoslib_defines})
-target_compile_options(zoslib PRIVATE ${zoslib_cflags})
-
-export(TARGETS zoslib FILE lib/cmake/zoslib/addzoslib.cmake)
+target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
+target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
 
 if(BUILD_TESTING)
   add_subdirectory(test)
@@ -87,14 +80,3 @@ endif()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX "." CACHE PATH "install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-
-install(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-    DESTINATION "include"
-    FILES_MATCHING PATTERN "*")
-
-if(NOT ${BUILD_SHARED_LIBS} MATCHES "OFF")
-  install(
-    FILES ${CMAKE_BINARY_DIR}/lib/libzoslib.x
-    DESTINATION "lib")
-endif()
