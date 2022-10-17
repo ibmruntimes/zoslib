@@ -39,6 +39,17 @@ list(APPEND zoslib_defines
   _XOPEN_SOURCE=600
   _XOPEN_SOURCE_EXTENDED)
 
+if(ENABLE_STATIC_INIT)
+  list(APPEND zoslib_defines
+       ZOSLIB_INITIALIZE)
+endif()
+
+if(ZOSLIB_GENERIC)
+  list(APPEND zoslib_defines
+       ZOSLIB_GENERIC)
+endif()
+
+
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
 endif()

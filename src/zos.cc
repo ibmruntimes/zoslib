@@ -946,7 +946,11 @@ static notagread_t get_no_tag_read_behaviour(const char *envar) {
     return __NO_TAG_READ_DEFAULT;
   } else if (ntr && !strcmp(ntr, "WARN")) {
     return __NO_TAG_READ_DEFAULT_WITHWARNING;
+#if defined(ZOSLIB_GENERIC)
+  } else if (ntr && !strcmp(ntr, "ASCII")) {
+#else
   } else if (ntr && !strcmp(ntr, "V6")) {
+#endif
     return __NO_TAG_READ_V6;
   } else if (ntr && !strcmp(ntr, "STRICT")) {
     return __NO_TAG_READ_STRICT;
@@ -2659,6 +2663,10 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     setenv("_EDC_SUSV3", "1", 1);
   }
 
+  __set_autocvt_on_fd_stream(STDIN_FILENO, 1047, 1, true);
+  __set_autocvt_on_fd_stream(STDOUT_FILENO, 1047, 1, true);
+  __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
+
   populateLEFunctionPointers();
 
   _th = std::get_terminate();
@@ -2687,10 +2695,16 @@ int __zinit::setEnvarHelpMap() {
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("STRICT")),
       "for no explicit conversion of data"));
 
+#if defined(ZOSLIB_GENERIC)
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("ASCII")),
+      "always convert data from CCSID 1047 to CCSID 819"));
+#else
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("V6")),
       "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data "
       "from CCSID 1047 to CCSID 819"));
+#endif
 
   envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("WARN")),
@@ -3022,3 +3036,7 @@ extern "C" bool __doLogMemoryWarning() {
 }
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
+
+#if defined(ZOSLIB_INITIALIZE)
+__init_zoslib __zoslib();
+#endif
