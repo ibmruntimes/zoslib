@@ -3038,5 +3038,5 @@ extern "C" bool __doLogMemoryWarning() {
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
 
 #if defined(ZOSLIB_INITIALIZE)
-__init_zoslib __zoslib();
+__init_zoslib __zoslib;
 #endif
