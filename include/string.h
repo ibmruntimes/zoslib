@@ -15,12 +15,12 @@
 extern "C" {
 #endif
 
-size_t strnlen(const char *, size_t );
-char *strpcpy(char *, const char *);
+_Z_EXPORT size_t strnlen(const char *, size_t );
+_Z_EXPORT char *strpcpy(char *, const char *);
 
-const char *strsignal(int );
-const char *sigdescr_np(int);
-const char *sigabbrev_np(int);
+_Z_EXPORT const char *strsignal(int );
+_Z_EXPORT const char *sigdescr_np(int);
+_Z_EXPORT const char *sigabbrev_np(int);
 
 #ifdef __cplusplus
 }

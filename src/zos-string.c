@@ -110,8 +110,14 @@ const char *sigabbrev_np(int signum) {
 }
 
 size_t strnlen(const char *s, size_t maxlen) {
-  const char *ptr = (const char *)memchr(s, '\0', maxlen);
-  return ptr ? ptr - s : maxlen;
+  char *op1 = (char *)str + maxlen;
+  asm volatile(" SRST %0,%1\n"
+               " jo *-4"
+               : "+r"(op1)
+               : "r"(str), "NR:r0"(0)
+               :);
+  return op1 - str;
+
 }
 
 char *strpcpy(char *dest, const char *src) {
