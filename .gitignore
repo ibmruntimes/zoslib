@@ -7,6 +7,13 @@ Makefile
 install_manifest.txt
 lib/
 *.cmake
+*.dbg
+*.log
+*.pax.Z
+config.success
+test.status
+test/cctest
+test/cctest_a
 
 # Build artifacts
 *.a

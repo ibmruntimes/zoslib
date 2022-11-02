@@ -7,6 +7,8 @@
 ###############################################################################
 
 set(libsrc
+  string.c
+  spawn-zos.cc
   zos-bpx.cc
   zos-char-util.cc
   zos-getentropy.cc
