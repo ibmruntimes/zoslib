@@ -60,7 +60,6 @@ if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -march=arch10
-    -mtune=arch10
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 else()
