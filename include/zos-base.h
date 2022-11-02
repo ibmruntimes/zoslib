@@ -424,14 +424,6 @@ __Z_EXPORT char* __get_le_version(void);
 __Z_EXPORT void __build_version(void);
 
 /**
- * Determine the length of a fixed-size string
- * \param [in] str fixed-size character string
- * \param [in] maxlen maximum # of bytes to traverse
- * \return returns the length of the string
- */
-__Z_EXPORT size_t strnlen(const char *str, size_t maxlen);
-
-/**
  * Attempts to a close a socket for a period of time
  * \param [in] socket socket handle
  * \param [in] secs number of seconds to attempt the close

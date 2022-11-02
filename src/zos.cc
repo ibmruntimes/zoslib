@@ -1779,16 +1779,6 @@ extern "C" void __build_version(void) {
   }
 }
 
-extern "C" size_t strnlen(const char *str, size_t maxlen) {
-  char *op1 = (char *)str + maxlen;
-  asm volatile(" SRST %0,%1\n"
-               " jo *-4"
-               : "+r"(op1)
-               : "r"(str), "NR:r0"(0)
-               :);
-  return op1 - str;
-}
-
 extern "C" void __cpu_relax(__crwa_t *p) {
   // heuristics to avoid excessive CPU spin
   void *r4;
