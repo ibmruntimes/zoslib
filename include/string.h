@@ -6,8 +6,8 @@
 //// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 /////////////////////////////////////////////////////////////////////////////////
 //
-#ifndef _ZOS_STRING_H
-#define _ZOS_STRING_H
+#ifndef ZOS_STRING_H
+#define ZOS_STRING_H
 
 #include_next <string.h>
 
