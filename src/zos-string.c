@@ -109,7 +109,7 @@ const char *sigabbrev_np(int signum) {
   return NULL;
 }
 
-size_t strnlen(const char *s, size_t maxlen) {
+size_t strnlen(const char *str, size_t maxlen) {
   char *op1 = (char *)str + maxlen;
   asm volatile(" SRST %0,%1\n"
                " jo *-4"

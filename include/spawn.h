@@ -9,6 +9,8 @@
 #ifndef ZOS_SPAWN_H
 #define ZOS_SPAWN_H
 
+#include "zos-macros.h"
+
 #include_next <spawn.h>
 
 #ifdef __cplusplus
@@ -32,21 +34,21 @@ typedef struct posix_spawnattr_t {
   short flags;
 } posix_spawnattr_t;
 
-_Z_EXPORT int posix_spawn_file_actions_init(posix_spawn_file_actions_t *);
-_Z_EXPORT int posix_spawn_file_actions_addclose(posix_spawn_file_actions_t *,
+__Z_EXPORT int posix_spawn_file_actions_init(posix_spawn_file_actions_t *);
+__Z_EXPORT int posix_spawn_file_actions_addclose(posix_spawn_file_actions_t *,
                                       int pipe_fd);
-_Z_EXPORT int posix_spawn_file_actions_addopen(posix_spawn_file_actions_t *, int,
+__Z_EXPORT int posix_spawn_file_actions_addopen(posix_spawn_file_actions_t *, int,
                                      const char *, int flags, mode_t);
-_Z_EXPORT int posix_spawn_file_actions_adddup2(posix_spawn_file_actions_t *, int pipe_fd,
+__Z_EXPORT int posix_spawn_file_actions_adddup2(posix_spawn_file_actions_t *, int pipe_fd,
                                      int fd);
-_Z_EXPORT int posix_spawn_file_actions_destroy(posix_spawn_file_actions_t *);
+__Z_EXPORT int posix_spawn_file_actions_destroy(posix_spawn_file_actions_t *);
 
-_Z_EXPORT int posix_spawnattr_init(posix_spawnattr_t *);
-_Z_EXPORT int posix_spawnattr_setsigmask(posix_spawnattr_t *, sigset_t *mask);
-_Z_EXPORT int posix_spawnattr_setflags(posix_spawnattr_t *, short flags);
-_Z_EXPORT int posix_spawnattr_destroy(posix_spawnattr_t *);
+__Z_EXPORT int posix_spawnattr_init(posix_spawnattr_t *);
+__Z_EXPORT int posix_spawnattr_setsigmask(posix_spawnattr_t *, sigset_t *mask);
+__Z_EXPORT int posix_spawnattr_setflags(posix_spawnattr_t *, short flags);
+__Z_EXPORT int posix_spawnattr_destroy(posix_spawnattr_t *);
 
-_Z_EXPORT int posix_spawn(pid_t *pid, const char *cmd,
+__Z_EXPORT int posix_spawn(pid_t *pid, const char *cmd,
                 const posix_spawn_file_actions_t *act,
                 const posix_spawnattr_t *, char *const args[],
                 char *const env[]);

@@ -9,18 +9,20 @@
 #ifndef ZOS_STRING_H
 #define ZOS_STRING_H
 
+#include "zos-macros.h"
+
 #include_next <string.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-_Z_EXPORT size_t strnlen(const char *, size_t );
-_Z_EXPORT char *strpcpy(char *, const char *);
+__Z_EXPORT size_t strnlen(const char *, size_t );
+__Z_EXPORT char *strpcpy(char *, const char *);
 
-_Z_EXPORT const char *strsignal(int );
-_Z_EXPORT const char *sigdescr_np(int);
-_Z_EXPORT const char *sigabbrev_np(int);
+__Z_EXPORT const char *strsignal(int );
+__Z_EXPORT const char *sigdescr_np(int);
+__Z_EXPORT const char *sigabbrev_np(int);
 
 #ifdef __cplusplus
 }
