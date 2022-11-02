@@ -6,8 +6,8 @@
 ////// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _ZOS_SPAWN_H
-#define _ZOS_SPAWN_H
+#ifndef ZOS_SPAWN_H
+#define ZOS_SPAWN_H
 
 #include_next <spawn.h>
 

@@ -7,13 +7,13 @@
 ###############################################################################
 
 set(libsrc
-  string.c
-  spawn-zos.cc
   zos-bpx.cc
   zos-char-util.cc
   zos-getentropy.cc
   zos-io.cc
   zos-semaphore.cc
+  zos-spawn.cc
+  zos-string.c
   zos-sys-info.cc
   zos-tls.cc
   zos.cc
