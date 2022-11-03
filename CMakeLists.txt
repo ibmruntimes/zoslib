@@ -69,6 +69,10 @@ else()
     -qarch=10
     -qasm
     -qasmlib=sys1.maclib:sys1.modgen)
+
+  # For njsc's le/math.h:
+  list(APPEND zoslib_defines
+    __static_assert=static_assert)
 endif()
 
 set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
