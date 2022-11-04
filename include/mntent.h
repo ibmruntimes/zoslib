@@ -2,3 +2,4 @@
   #define __ZOSLIB_MNTENT__ 1
 
   #include <sys/fsstat.h>
+#endif
