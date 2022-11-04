@@ -1,12 +1,14 @@
 #ifndef __ZOSLIB_MOUNT__
   #define __ZOSLIB_MOUNT__ 1
 
+  #include <sys/types.h>
+
   typedef struct { int32_t val[2]; } fsid_t;
 
   #define MFSNAMELEN      15 /* length of fs type name, not inc. nul */
   #define MNAMELEN	     90 /* length of buffer for returned name */
 
-  struct statfs { /* when _DARWIN_FEATURE_64_BIT_INODE is NOT defined */
+  struct statfs { 
     short	 f_otype;    /* type of file system (reserved: zero) */
     short	 f_oflags;   /* copy of mount flags (reserved: zero) */
     long	 f_bsize;    /* fundamental file system block size */
