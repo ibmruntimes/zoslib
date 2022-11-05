@@ -24,7 +24,7 @@ ZOSLIB implements the following:
 ## System Requirements
 
 ZOSLIB is supported on the following z/OS operating systems
-with z/OSÂ® UNIX System Services enabled:
+with z/OS® UNIX System Services enabled:
 
 - z/OS V2R3 with the following PTFs installed:
  - UI61308
