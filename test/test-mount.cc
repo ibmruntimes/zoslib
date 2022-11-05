@@ -5,7 +5,7 @@
 
 namespace {
 
-TEST(SysInfoTest) {
+TEST(MountTest, GetMntInfo) {
   struct statfs* mntbufp;
   int entries = getmntinfo(&mntbufp, MNT_NOWAIT);
   EXPECT_GE(entries, 0);
@@ -20,4 +20,6 @@ TEST(SysInfoTest) {
       EXPECT_GE(typelen, 1);
     }
   } 
+}
 } // namespace
+
