@@ -34,5 +34,5 @@
 	  char	 f_mntfromname[MNAMELEN];  /* mounted file system */
   };
 
-  int getmntinfo(struct statfs **mntbufp, int flags);
+  __Z_EXPORT int getmntinfo(struct statfs **mntbufp, int flags);
 #endif

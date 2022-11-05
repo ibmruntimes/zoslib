@@ -1,17 +1,23 @@
 #include <sys/mount.h>
 #include <stdio.h>
+#include "zos.h"
+#include "gtest/gtest.h"
 
-int main() {
+namespace {
+
+TEST(SysInfoTest) {
   struct statfs* mntbufp;
   int entries = getmntinfo(&mntbufp, MNT_NOWAIT);
+  EXPECT_GE(entries, 0);
   int i;
   if (entries > 0) {
-    printf("%d entries\n", entries);
     for (i=0; i<entries; ++i) {
-      printf("%s mounted at %s, file type %s\n", mntbufp[i].f_mntfromname, mntbufp[i].f_mntonname, mntbufp[i].f_fstypename);
+      size_t fromlen = strlen(mntbufp[i].f_mntfromname);
+      size_t onlen = strlen(mntbufp[i].f_mntonname);
+      size_t typelen = strlen(mntbufp[i].f_fstypename);
+      EXPECT_GE(fromlen, 1);
+      EXPECT_GE(onlen, 1);
+      EXPECT_GE(typelen, 1);
     }
-  } else {
-    printf("rc: %d from getmntinfo\n", entries);
-  }
-  return 0;
-}
+  } 
+} // namespace
