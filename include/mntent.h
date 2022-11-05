@@ -6,8 +6,8 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ZOSLIB_MNTENT__
-#define __ZOSLIB_MNTENT__
+#ifndef ZOS_MNTENT_H_
+#define ZOS_MNTENT_H_
 
 #include <sys/fsstat.h>
 
