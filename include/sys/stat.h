@@ -6,8 +6,8 @@
 ////// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZOS_STAT_H
-#define ZOS_STAT_H
+#ifndef ZOS_SYS_STAT_H
+#define ZOS_SYS_STAT_H
 
 #include_next <sys/stat.h>
 

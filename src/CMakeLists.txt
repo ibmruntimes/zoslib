@@ -17,6 +17,7 @@ set(libsrc
   zos-sys-info.cc
   zos-tls.cc
   zos.cc
+  zos-mount.c
   celquopt.s
 )
 

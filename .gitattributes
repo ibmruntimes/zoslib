@@ -1,0 +1,2 @@
+*.png   git-encoding=BINARY    zos-working-tree-encoding=BINARY binary
+*	text	working-tree-encoding=ISO8859-1
