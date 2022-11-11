@@ -12,6 +12,7 @@
       'target_name': 'zoslib',
       'type': 'static_library',
       'defines': [
+        'ZOSLIB_OVERRIDE_CLIB_SOCKET',
         '_UNIX03_THREADS',
         '_UNIX03_SOURCE',
         '_UNIX03_WITHDRAWN',
