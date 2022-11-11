@@ -11,6 +11,7 @@ config("zoslib_config") {
     "include",
   ]
   cflags = [
+    "-m64",
     "-march=arch10",
     "-mtune=arch10",
     "-fno-short-enums",
@@ -24,6 +25,7 @@ shared_library("zoslib") {
   sources = [
     "include/csrsic.h",
     "include/edcwccwi.h",
+    "include/sys/socket.h",
     "include/zos.h",
     "include/zos-base.h",
     "include/zos-bpx.h",

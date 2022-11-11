@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -705,6 +706,32 @@ void __memprintf(const char *format, ...) {
 
   fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
 }
+
+
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_SOCKET)
+
+int __getsockname_orig(int, struct sockaddr * __restrict__, socklen_t * __restrict__) asm("@@A00409");
+
+int __getsockname_fixed(int sockfd, struct sockaddr * __restrict__ addr,
+                        socklen_t * __restrict__ addrlen) {
+  union {
+    struct sockaddr sa;
+    char tmpbuf[256]; /* because sa_len is unsigned char */
+  } u;
+  socklen_t addr_alloclen = *addrlen;
+
+  memset(&u, 0, sizeof(u));
+  int rc = __getsockname_orig(sockfd, &u.sa, addrlen);
+  if (rc == -1) {
+    return rc;
+  }
+  if (*addrlen > 0) {
+    memcpy(addr, &u.sa, std::min(addr_alloclen, *addrlen));
+  }
+  return 0;
+}
+
+#endif  // ZOSLIB_OVERRIDE_CLIB || ZOSLIB_OVERRIDE_CLIB_SOCKET
 
 #ifdef __cplusplus
 }
