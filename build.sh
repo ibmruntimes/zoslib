@@ -15,7 +15,9 @@ Options:
 -c    Clean build
 -h    Display this message
 -r    Release build (default is Debug)
+-D    Debug build (default)
 -s    Shared libray build (default is Static)
+-S    Static libray build (default)
 -t    Build and run tests
 END
   exit 1
@@ -46,7 +48,7 @@ elif test -z "$CC"; then
 fi
 
 nargs=0
-while getopts "chrst" o; do
+while getopts "chrstDS" o; do
   case "${o}" in
     c) IS_CLEAN=1
        ((nargs++))
@@ -54,8 +56,15 @@ while getopts "chrst" o; do
     r) BLD_TYPE="Release"
        ((nargs++))
        ;;
+    D) BLD_TYPE="Debug"
+       ((nargs++))
+       ;;
     s) SHARED="ON"
        CCTEST=cctest_so
+       ((nargs++))
+       ;;
+    S) SHARED="OFF"
+       CCTEST=cctest_a
        ((nargs++))
        ;;
     t) RUN_TESTS="ON"

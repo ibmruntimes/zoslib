@@ -50,8 +50,11 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
+get_filename_component(COMP ${CMAKE_C_COMPILER} NAME CACHE)
+
+if(${COMP} STREQUAL clang OR ${COMP} STREQUAL ibm-clang64)
   list(APPEND zoslib_cflags
+    -m64
     -march=arch10
     -mtune=arch10
     -fno-short-enums

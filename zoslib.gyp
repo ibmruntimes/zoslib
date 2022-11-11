@@ -27,7 +27,7 @@
         '_ENHANCED_ASCII_EXT=0xFFFFFFFF',
       ],
       'conditions': [
-        [ '"<!(echo $CC)" == "ibm-clang64"', {
+        [ '"<!(echo $CC)" == "clang" or "<!(echo $CC)" == "ibm-clang64"', {
           'cflags': ['-fzos-le-char-mode=ascii', '-Wno-missing-field-initializers']
         }, {
           'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\'']
