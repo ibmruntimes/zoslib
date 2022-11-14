@@ -12,7 +12,7 @@
 #define __XPLAT 1
 #include "zos-macros.h"
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #define EFD_SEMAPHORE 0x00002000
 #define EFD_CLOEXEC   0x00001000
 #define EFD_NONBLOCK  0x00000004
@@ -33,8 +33,6 @@ __Z_EXPORT extern int (*eventfd)(unsigned int initval, int flags);
 };
 #endif
 
-#else //!(__EDC_TARGET < 0x42050000)
-#include_next <sys/eventfd.h>
-#endif
+#endif //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #endif

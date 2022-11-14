@@ -47,6 +47,7 @@ TEST_F(DynamicV2R5Temp, lutimes) {
 #endif
 }
 
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 TEST_F(DynamicV2R5Temp, pipe2) {
   int fd[2];
   int ret = pipe2(fd, O_CLOEXEC | O_NONBLOCK);
@@ -61,6 +62,7 @@ TEST_F(DynamicV2R5Temp, accept4) {
   int ret = accept4(-1, 0, 0, SOCK_NONBLOCK);
   EXPECT_LT(ret, 0);
 }
+#endif
 
 TEST_F(DynamicV2R5Temp, futimes) {
   struct timeval t[]= { { 0, 0 } , { 0, 0 } };
@@ -71,6 +73,7 @@ TEST_F(DynamicV2R5Temp, futimes) {
   EXPECT_EQ(buff.st_mtime, 0);
 }
 
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 TEST_F(DynamicV2R5Temp, inotify) {
   if (inotify_init) {
     inotify_init(); // Should not abort
@@ -88,5 +91,6 @@ TEST_F(DynamicV2R5Temp, eventfd) {
     eventfd(0, 0); // Should not abort
   }
 }
+#endif
 
 } // namespace

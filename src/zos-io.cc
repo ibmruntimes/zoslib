@@ -773,7 +773,7 @@ int __close(int fd) {
 
 int __socketpair_ascii(int domain, int type, int protocol, int sv[2]) {
   int ret = __socketpair_orig(domain, type, protocol, sv);
-  if (__is_os_level_at_or_above(ZOSLVL_V2R5) && inotify_init) {
+  if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
     if (ret < 0 || domain != AF_UNIX)
       return ret;
 

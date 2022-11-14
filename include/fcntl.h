@@ -24,7 +24,7 @@ __Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
 };
 #endif
 
-#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_FCNTL)
+#if defined(ZOSLIB_OVERRIDE_CLIB)
 
 #undef open
 #define open __open_replaced
@@ -41,7 +41,7 @@ __Z_EXPORT extern int open(const char *filename, int opts, ...) asm("__open_asci
 };
 #endif
 
-#else // #if !(defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_FCNTL))
+#else // #if !(defined(ZOSLIB_OVERRIDE_CLIB)
 
 #include_next <fcntl.h>
 

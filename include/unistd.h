@@ -35,11 +35,6 @@ __Z_EXPORT int __close(int);
 extern "C" {
 #endif
 
-#if (__EDC_TARGET < 0x42050000)
-__Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
-__Z_EXPORT extern int (*getentropy)(void *, size_t);
-#endif
-
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
@@ -49,15 +44,24 @@ __Z_EXPORT int close(int) asm("__close");
 #if defined(__cplusplus)
 };
 #endif
-
-#else // #if !(defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD))
+#else
 #include_next <unistd.h>
+#endif
 
-#if (__EDC_TARGET < 0x42050000)
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 __Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
 __Z_EXPORT extern int (*getentropy)(void *, size_t);
-#endif 
+#else
+__Z_EXPORT int pipe2(int pipefd[2], int flags);
+__Z_EXPORT int getentropy(void *, size_t);
+#endif
 
+#if defined(__cplusplus)
+};
 #endif
 
 #endif

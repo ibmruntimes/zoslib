@@ -10,9 +10,9 @@
 #define ZOS_TIME_H_
 
 #define __XPLAT 1
-
-#if (__EDC_TARGET < 0x42050000)
 #include "zos-macros.h"
+
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #include_next <time.h>
 
 #if defined(__cplusplus)
@@ -38,8 +38,33 @@ __Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
 };
 #endif
 
-#else //!(__EDC_TARGET < 0x42050000)
+#else //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+
 #include_next <time.h>
+
+typedef enum {
+  CLOCK_REALTIME,
+  CLOCK_MONOTONIC,
+  CLOCK_HIGHRES,
+  CLOCK_THREAD_CPUTIME_ID
+} clockid_t;
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+__Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
+
+/**
+ * Suspends the execution of the calling thread until either at least the
+ * time specified in *req has elapsed, an event occurs, or a signal arrives.
+ * \param [in] req struct used to specify intervals of time with nanosecond
+ *  precision
+ * \param [out] rem the remaining time if the call is interrupted
+ */
+__Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
+#if defined(__cplusplus)
+};
+#endif
 #endif
 
 #endif

@@ -12,7 +12,7 @@
 #define __XPLAT 1
 #include "zos-macros.h"
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -81,8 +81,6 @@ __Z_EXPORT extern int (*inotify_rm_watch)(int, int);
 };
 #endif
 
-#else //!(__EDC_TARGET < 0x42050000)
-#include_next <sys/inotify.h>
-#endif
+#endif //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #endif

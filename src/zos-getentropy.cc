@@ -68,7 +68,11 @@ static void _slow(int size, void* output) {
   }
 }
 
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 extern "C" int __getentropy(void* output, size_t size) {
+#else
+extern "C" int getentropy(void* output, size_t size) {
+#endif
   char* out = (char*)output;
 #ifdef _LP64
   static int feature = -1;

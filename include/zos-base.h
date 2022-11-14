@@ -579,15 +579,6 @@ __Z_EXPORT void init_zoslib(const zoslib_config_t config);
 __Z_EXPORT void init_zoslib_config(zoslib_config_t *const config);
 
 /**
- * Suspends the execution of the calling thread until either at least the
- * time specified in *req has elapsed, an event occurs, or a signal arrives.
- * \param [in] req struct used to specify intervals of time with nanosecond
- *  precision
- * \param [out] rem the remaining time if the call is interrupted
- */
-__Z_EXPORT int __nanosleep(const struct timespec *req, struct timespec *rem);
-
-/**
  * Updates the zoslib global variables associated with the zoslib environment
  * variables \param [in] envar environment variable to update, specify NULL to
  * update all \return 0 for success, or -1 for failure

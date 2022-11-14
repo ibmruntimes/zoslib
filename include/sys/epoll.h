@@ -13,7 +13,7 @@
 
 #include "zos-macros.h"
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -74,8 +74,6 @@ __Z_EXPORT extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const 
 };
 #endif
 
-#else //!(__EDC_TARGET < 0x42050000)
-#include_next <sys/epoll.h>
-#endif
+#endif //!(__EDC_TARGET < 0x42050000)  && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #endif

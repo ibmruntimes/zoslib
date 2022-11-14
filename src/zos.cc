@@ -65,7 +65,7 @@
 #define dsa() ((unsigned long *)_gdsa())
 #endif
 
-#if (__EDC_TARGET < 0x42050000)
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int (*epoll_create)(int) = 0;
 int (*epoll_create1)(int) = 0;
 int (*epoll_ctl)(int, int, int, struct epoll_event *) = 0;
@@ -1732,7 +1732,11 @@ extern "C" void __tb(void) {
   }
 }
 
-static int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+int __clock_gettime(clockid_t clk_id, struct timespec *tp) {
+#else
+int clock_gettime(clockid_t clk_id, struct timespec *tp) {
+#endif
   unsigned long long value;
   __stckf(&value);
   tp->tv_sec = (value / 4096000000UL) - 2208988800UL;
@@ -2741,6 +2745,7 @@ int __zinit::setEnvarHelpMap() {
   return __update_envar_settings(NULL);
 }
 
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 extern "C" int __accept4(int s, struct sockaddr * addr,
                socklen_t * addrlen, int flags) {
   int fd;
@@ -2773,8 +2778,13 @@ extern "C" int __accept4(int s, struct sockaddr * addr,
 
   return fd;
 }
+#endif
 
-extern "C" int __pipe2(int pipefd[2], int flags) {
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+int __pipe2(int pipefd[2], int flags) {
+#else
+int pipe2(int pipefd[2], int flags) {
+#endif
   int err;
   if ((err = __pipe_ascii(pipefd)) < 0)
     return err;
@@ -2821,7 +2831,11 @@ extern "C" int __pipe2(int pipefd[2], int flags) {
   return 0;
 }
 
-static int __futimes(int fd, const struct timeval tv[2]) {
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+int __futimes(int fd, const struct timeval tv[2]) {
+#else
+int futimes(int fd, const struct timeval tv[2]) {
+#endif
   attrib_t atr;
   memset(&atr, 0, sizeof(atr));
   atr.att_mtimechg = 1;
@@ -2831,7 +2845,11 @@ static int __futimes(int fd, const struct timeval tv[2]) {
   return __fchattr(fd, &atr, sizeof(atr));
 }
 
-static int __lutimes(const char *filename, const struct timeval tv[2]) {
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+int __lutimes(const char *filename, const struct timeval tv[2]) {
+#else
+int lutimes(const char *filename, const struct timeval tv[2]) {
+#endif
   int return_value;
   int return_code;
   int reason_code;
@@ -2870,7 +2888,7 @@ static int __lutimes(const char *filename, const struct timeval tv[2]) {
   }
 
 void __zinit::populateLEFunctionPointers() {
-#if (__EDC_TARGET < 0x42050000)
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
   // LE vector table offset calculated by:
   // cat "//'CEE.SCEELIB(CELQS003)'" | grep "'$FUNCTION_NAME'"
   if (__is_os_level_at_or_above(ZOSLVL_V2R5)) {
@@ -2926,7 +2944,11 @@ extern "C" void init_zoslib(const zoslib_config_t config) {
   __get_instance()->initialize(config);
 }
 
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
+#else
+extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
+#endif
   unsigned secrem;
   unsigned nanorem;
   int rv;

@@ -20,7 +20,7 @@ __Z_EXPORT int __socketpair_ascii(int domain, int type, int protocol, int sv[2])
 };
 #endif
 
-#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_SOCKET)
+#if (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_SOCKET)) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #undef socketpair
 #define socketpair __socketpair_replaced
 #include_next <sys/socket.h>
@@ -30,7 +30,7 @@ __Z_EXPORT int socketpair(int domain, int type, int protocol, int sv[2]) asm("__
 #include_next <sys/socket.h>
 #endif
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #include <sys/types.h>
 
