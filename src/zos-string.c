@@ -65,12 +65,12 @@ enum Sigs {
 
 #define SigInfo(N, D) D
 #pragma convert("IBM-1047")
-static const char *signalTextEBCDIC[] = {
+static char *signalTextEBCDIC[] = {
   SignalList
 };
 #pragma convert(pop)
 #pragma convert("ISO8859-1")
-static const char *signalTextASCII[] = {
+static char *signalTextASCII[] = {
   SignalList
 };
 #pragma convert(pop)
@@ -91,7 +91,7 @@ static const char *signalAbbrevASCII[] = {
 
 #define lookup(arr, n) (__isASCII()? arr##ASCII[n] : arr##EBCDIC[n])
 
-const char *strsignal(int signum) {
+char *strsignal(int signum) {
   if (signum < sigTotal)
     return lookup(signalText,signum);
   errno=EDOM;

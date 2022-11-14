@@ -715,6 +715,7 @@ int __pipe_orig(int [2]) asm("pipe");
 int __socketpair_orig(int domain, int type, int protocol, int sv[2]) asm("socketpair");
 int __close_orig(int) asm("close");
 int __open_orig(const char *filename, int opts, ...) asm("@@A00144");
+int __mkstemp_orig(char *) asm("@@A00184");
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
@@ -760,6 +761,18 @@ int __pipe_ascii(int fd[2]) {
     return __chgfdccsid(fd[1], 819);
 
   return -1;
+}
+
+int __mkstemp_ascii(char * tmpl) {
+  int ret = __mkstemp_orig(tmpl);
+  if (ret < 0)
+    return ret;
+
+  // Default ccsid for new fds should be ASCII (819)
+  if (__chgfdccsid(ret, 819) != 0)
+    return -1;
+
+  return ret;
 }
 
 int __close(int fd) {
