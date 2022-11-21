@@ -58,6 +58,18 @@ __Z_EXPORT extern int (*getentropy)(void *, size_t);
 #else
 __Z_EXPORT int pipe2(int pipefd[2], int flags);
 __Z_EXPORT int getentropy(void *, size_t);
+
+/**
+ * Execute a file.
+ * \param [in] name used to construct a pathname that identifies the new
+ *  process image file.
+ * \param [in] argv an array of character pointers to NULL-terminated strings.
+ * \param [in] envp an array of character pointers to NULL-terminated strings.
+ * \return if successful, it doesn't return; otherwise, it returns -1 and sets
+ *  errno.
+ */
+__Z_EXPORT int execvpe(const char *name, char *const argv[],
+                       char *const envp[]);
 #endif
 
 #if defined(__cplusplus)

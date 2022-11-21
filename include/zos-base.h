@@ -133,18 +133,6 @@ __Z_EXPORT void __display_backtrace(int fd);
 __Z_EXPORT void __set_backtrace_on_abort(bool flag);
 
 /**
- * Execute a file.
- * \param [in] name used to construct a pathname that identifies the new
- *  process image file.
- * \param [in] argv an array of character pointers to NULL-terminated strings.
- * \param [in] envp an array of character pointers to NULL-terminated strings.
- * \return if successful, it doesn't return; otherwise, it returns -1 and sets
- *  errno.
- */
-__Z_EXPORT int execvpe(const char *name, char *const argv[],
-                       char *const envp[]);
-
-/**
  * Generate a backtrace and store into *Buffer.
  * \param [out] buffer Address of location to store backtrace to.
  * \param [in] size Maximum number of bytes to store.

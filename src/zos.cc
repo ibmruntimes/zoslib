@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // Licensed Materials - Property of IBM
 // ZOSLIB
 // (C) Copyright IBM Corp. 2020. All Rights Reserved.
@@ -1504,10 +1504,18 @@ extern "C" int execvpe(const char *name, char *const argv[],
 
   // Get the path we're searching
   int len;
-  if (cur = getenv("PATH"))
+  if (cur = getenv("PATH")) {
     len = strlen(cur);
-  else
-    len = 1;
+  }
+  else {
+    // If PATH is not defined, get the default from confstr
+    len = confstr(_CS_PATH, NULL, 0);
+    if (len) {
+       char *dp = (char*)__alloca (len);
+       confstr (_CS_PATH, dp, len);
+       cur = dp;
+    } else { len = 1; }
+  }
   char path[len + 1];
   if (cur)
     strcpy(path, cur);
