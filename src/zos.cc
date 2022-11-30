@@ -92,7 +92,6 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
-static int shmid_value(void);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -711,34 +710,6 @@ extern "C" int kill(int pid, int sig) {
   if (rv != 0)
     errno = rc;
   return rv;
-}
-
-// overriding LE's fork when linked statically
-extern "C" int __fork(void) {
-  int cnt = __get_instance()->inc_forkcount();
-  int max = __get_instance()->get_forkmax();
-  if (cnt > max) {
-    dprintf(2,
-            "fork(): current count %d is greater than "
-            "__NODEFORKMAX value %d, fork failed\n",
-            cnt, max);
-    errno = EPROCLIM;
-    return -1;
-  }
-#if 0
-  int rc, rn, pid;
-  __bpx4frk(&pid, &rc, &rn);
-  if (-1 == pid) {
-    errno = rc;
-  }
-  return pid;
-#else
-  int pid = fork();
-  if (pid == 0) {
-    __get_instance()->forked(1);
-  }
-  return pid;
-#endif
 }
 
 // Thread entry constants for __getthent():
@@ -2351,29 +2322,6 @@ int __update_envar_settings(const char *envar) {
     }
   }
 
-  if (force_update_all || strcmp(envar, config.FORKMAX_ENVAR) == 0) {
-    char *fm = __getenv_a(config.FORKMAX_ENVAR);
-    if (!fm) {
-      if (0 != zinit_ptr->forkmax && 0 != zinit_ptr->shmid) {
-        zinit_ptr->forkmax = 0;
-        shmdt(zinit_ptr->forkcurr);
-        shmctl(zinit_ptr->shmid, IPC_RMID, 0);
-      }
-    } else {
-      int v = __atoi_a(fm);
-      if (v > 0) {
-        zinit_ptr->forkmax = v;
-        char path[1024];
-        if (0 == getcwd(path, sizeof(path)))
-          strcpy(path, "./");
-        key_t key = ftok(path, 9021);
-        zinit_ptr->shmid = shmget(key, 1024, 0666 | IPC_CREAT);
-        zinit_ptr->forkcurr = (int *)shmat(zinit_ptr->shmid, (void *)0, 0);
-        *(zinit_ptr->forkcurr) = 0;
-      }
-    }
-  }
-
   if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_ENVAR) == 0) {
     no_tag_read_behaviour =
         get_no_tag_read_behaviour(config.UNTAGGED_READ_MODE_ENVAR);
@@ -2585,13 +2533,6 @@ __zinit:: ~__zinit() {
     __ae_autoconvert_state(cvstate);
   }
   __ae_thread_swapmode(mode);
-  if (shmid != 0) {
-    if (__forked) {
-      dec_forkcount();
-    }
-    shmdt(forkcurr);
-    shmctl(shmid, IPC_RMID, 0);
-  }
   ::__cleanupipc(0);
 
   // Don't delete __galloc_info (__Cache), as during exit-time a process may
@@ -2637,9 +2578,6 @@ __init_zoslib::__init_zoslib(const zoslib_config_t &config) {
 
 int __zinit::initialize(const zoslib_config_t &aconfig) {
   memcpy(&config, &aconfig, sizeof(config));
-  forkmax = 0;
-  shmid = 0;
-  __forked = 0;
   __galloc_info = new __Cache;
 
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
@@ -2704,10 +2642,6 @@ int __zinit::setEnvarHelpMap() {
       "number of bytes to scan for CCSID guess heuristics (default: 4096)"));
 
   envarHelpMap.insert(
-      std::make_pair(zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
-                     "set to indicate max number of forks"));
-
-  envarHelpMap.insert(
       std::make_pair(zoslibEnvar(config.IPC_CLEANUP_ENVAR, std::string("")),
                      "set to toggle IPC cleanup"));
 
@@ -2747,7 +2681,6 @@ extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
   config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
-  config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   config->UNTAGGED_READ_MODE_CCSID1047_ENVAR =
