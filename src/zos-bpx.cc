@@ -56,7 +56,7 @@ char *__realpath(const char *path, char *resolved_path) {
    strcpy(ebcdic_path, path);
    __a2e_s(ebcdic_path);
    path_len = strlen(path);
-   if (resolved_path == NULL){
+   if (resolved_path == NULL) {
       resolved_path = (char*) malloc(pathmax_size(path) + 1);
    }
    path_resolved_len=strlen(resolved_path);
@@ -84,8 +84,8 @@ char *__realpath(const char *path, char *resolved_path) {
 
 char *__realpath_orig(const char __restrict__ *path, char __restrict__ *resolved_path) asm("@@A00187");
 
-char *__realpath_extended(const char __restrict__ *path, char __restrict__ *resolved_path){
-   if (resolved_path == NULL){
+char *__realpath_extended(const char __restrict__ *path, char __restrict__ *resolved_path) {
+   if (resolved_path == NULL) {
       resolved_path = (char*) malloc(pathmax_size(path) + 1);
    }
    return __realpath_orig(path, resolved_path);
