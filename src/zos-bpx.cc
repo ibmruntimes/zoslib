@@ -7,13 +7,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "zos-bpx.h"
+#include "zos-base.h"
 
 #define _POSIX_SOURCE
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <stdlib.h>
 #include <mutex>
 
 #ifdef __cplusplus
@@ -33,6 +34,63 @@ char *__ptr32 *__ptr32 __uss_base_address(void) {
   }
   return res;
 }
+
+static ssize_t pathmax_size(const char* path) {
+  ssize_t pathmax;
+
+  pathmax = pathconf(path, _PC_PATH_MAX);
+
+  if (pathmax == -1)
+    pathmax = PATH_MAX;
+
+  return pathmax;
+}
+
+#if TRACE_ON // for debugging use
+
+char *__realpath(const char *path, char *resolved_path) asm("@@A00187");
+char *__realpath(const char *path, char *resolved_path) {
+   void *reg15 = __uss_base_address()[884 / 4]; // BPX4RPH offset is 884
+   int rv, rc, rn, path_len, path_resolved_len;
+   char *ebcdic_path = (char*) malloc(strlen(path) + 1);
+   strcpy(ebcdic_path, path);
+   __a2e_s(ebcdic_path);
+   path_len = strlen(path);
+   if (resolved_path == NULL) {
+      resolved_path = (char*) malloc(pathmax_size(path) + 1);
+   }
+   path_resolved_len=strlen(resolved_path);
+   const void *argv[] = {&path_len, ebcdic_path, &path_resolved_len, resolved_path, &rv, &rc, &rn};
+   __asm volatile(" basr 14,%0\n"
+                  : "+NR:r15"(reg15)
+                  : "NR:r1"(&argv)
+                  : "r0", "r14");
+   free(ebcdic_path);
+   if (-1 == rv) {
+     __console_printf("%s:%s:%d path: %s rval: %d rcode: %d reason: %d\n",
+                       __FILE__, __FUNCTION__, __LINE__, path, rv, rc, rn);
+     errno = rc;
+     return NULL;
+   }
+   __e2a_s(resolved_path);
+   __console_printf("%s:%s:%d path: %s pathresolved: %s length: %d\n",
+                     __FILE__, __FUNCTION__, __LINE__, path, resolved_path, rv);
+   return resolved_path;
+}
+#endif // if TRACE_ON - for debugging use
+
+// C Library Overrides
+//-----------------------------------------------------------------
+
+char *__realpath_orig(const char __restrict__ *path, char __restrict__ *resolved_path) asm("@@A00187");
+
+char *__realpath_extended(const char __restrict__ *path, char __restrict__ *resolved_path) {
+   if (resolved_path == NULL) {
+      resolved_path = (char*) malloc(pathmax_size(path) + 1);
+   }
+   return __realpath_orig(path, resolved_path);
+}
+
 
 void __bpx4kil(int pid, int signal, void *signal_options, int *return_value,
                int *return_code, int *reason_code) {

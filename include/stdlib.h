@@ -15,6 +15,7 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+__Z_EXPORT char *__realpath_extended(const char * __restrict__, char * __restrict__);
 __Z_EXPORT int __mkstemp_ascii(char*);
 #if defined(__cplusplus)
 };
@@ -22,15 +23,22 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 
+#undef realpath
+#define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
 #include_next <stdlib.h>
-#undef mkstemp 
+#undef mkstemp
+#undef realpath
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+/**
+ * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
+ */
+__Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) asm("__realpath_extended");
 /**
  * Same as C mkstemp but tags fd as ASCII (819)
  */
