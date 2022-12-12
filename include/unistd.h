@@ -56,8 +56,6 @@ extern "C" {
 __Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
 __Z_EXPORT extern int (*getentropy)(void *, size_t);
 #else
-__Z_EXPORT int pipe2(int pipefd[2], int flags);
-__Z_EXPORT int getentropy(void *, size_t);
 
 /**
  * Execute a file.

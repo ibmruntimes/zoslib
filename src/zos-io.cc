@@ -9,6 +9,7 @@
 #define _AE_BIMODAL 1
 #include "zos-base.h"
 
+#include <_Ccsid.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -665,6 +666,34 @@ int __setfdccsid(int fd, int t_ccsid) {
   attr.att_filetag.ft_txtflag = (t_ccsid >> 16);
   attr.att_filetag.ft_ccsid = (t_ccsid & 0x0ffff);
   return __fchattr(fd, &attr, sizeof(attr));
+}
+
+int __copyfdccsid(int sourcefd, int destfd) {
+ struct stat src_statsbuf;
+ fstat(sourcefd, &src_statsbuf);
+ return __setfdccsid(destfd,
+  (src_statsbuf.st_tag.ft_txtflag << 16) | src_statsbuf.st_tag.ft_ccsid);
+}
+
+int __setfdbinary(int fd) {
+  return __chgfdccsid(fd, FT_BINARY);
+}
+
+int __setfdtext(int fd) {
+  return __chgfdccsid(fd, 819);
+}
+
+int __disableautocvt(int fd) {
+  struct f_cnvrt req = {SETCVTOFF, 0, 0};
+  fcntl(fd, F_CONTROL_CVT, &req);
+}
+
+int __chgfdcodeset(int fd, char* codeset) {
+  unsigned short ccsid = __toCcsid(codeset);
+  if (!ccsid)
+    return -1;
+
+  return __chgfdccsid(fd, ccsid);
 }
 
 int __getfdccsid(int fd) {

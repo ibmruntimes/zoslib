@@ -2665,6 +2665,11 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     setenv("_EDC_SUSV3", "1", 1);
   }
 
+  tenv = getenv("_BPXK_AUTOCVT");
+  if (!tenv || !*tenv) {
+    setenv("_BPXK_AUTOCVT", "ON", 1);
+  }
+
   __set_autocvt_on_fd_stream(STDIN_FILENO, 1047, 1, true);
   __set_autocvt_on_fd_stream(STDOUT_FILENO, 1047, 1, true);
   __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
@@ -2790,9 +2795,6 @@ extern "C" int __accept4(int s, struct sockaddr * addr,
 
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int __pipe2(int pipefd[2], int flags) {
-#else
-int pipe2(int pipefd[2], int flags) {
-#endif
   int err;
   if ((err = __pipe_ascii(pipefd)) < 0)
     return err;
@@ -2838,6 +2840,7 @@ int pipe2(int pipefd[2], int flags) {
  
   return 0;
 }
+#endif
 
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int __futimes(int fd, const struct timeval tv[2]) {

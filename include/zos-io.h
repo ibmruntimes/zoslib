@@ -88,6 +88,43 @@ __Z_EXPORT int __find_file_in_path(char *out, int size, const char *envvar,
 __Z_EXPORT int __chgfdccsid(int fd, unsigned short ccsid);
 
 /**
+ * Change file descriptor to CCSID from a codeset
+ * \param [in] fd file descriptor.
+ * \param [in] codeset code set
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __chgfdcodeset(int fd, char* codeset);
+
+/**
+ * Change file descriptor to text (819 or controlled via envar)
+ * \param [in] fd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __setfdtext(int fd);
+
+/**
+ * Change file descriptor to binary
+ * \param [in] fd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __setfdbinary(int fd);
+
+/**
+ * Disable auto-conversion on file descriptors
+ * \param [in] fd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __disableautocvt(int fd);
+
+/**
+ * Copy ccsid from source fd to destination fd
+ * \param [in] sourcefd file descriptor.
+ * \param [in] destfd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __copyfdccsid(int sourcefd, int destfd);
+
+/**
  * Get file descriptor CCSID.
  * \param [in] fd file descriptor.
  * \return returns file descriptors ccsid.

@@ -47,7 +47,7 @@ __Z_EXPORT extern int open(const char *filename, int opts, ...) asm("__open_asci
 
 #endif
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #define O_CLOEXEC   0x00001000
 #define O_DIRECT    0x00002000
 #define O_NOFOLLOW  0x00004000
