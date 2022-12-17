@@ -27,7 +27,6 @@ list(APPEND zoslib_defines
   _AE_BIMODAL=1
   _ALL_SOURCE
   _ENHANCED_ASCII_EXT=0xFFFFFFFF
-  _Export=extern
   _LARGE_TIME_API
   _OPEN_MSGQ_EXT
   _OPEN_SYS_FILE_EXT=1
@@ -56,10 +55,10 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
+if(${CMAKE_C_COMPILER} MATCHES ibm-clang64 OR ${CMAKE_C_COMPILER} MATCHES clang)
   list(APPEND zoslib_cflags
     -fgnu-keywords
-    -march=arch10
+    -march=arch14
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 else()
@@ -78,7 +77,7 @@ else()
     -qasmlib=sys1.maclib:sys1.modgen)
 endif()
 
-set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
+#SDP set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
 target_compile_options(libzoslib PRIVATE ${zoslib_cflags})

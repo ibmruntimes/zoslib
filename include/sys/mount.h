@@ -51,7 +51,7 @@ struct statfs {
 __Z_EXPORT int getmntinfo(struct statfs **mntbufp, int flags);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif
