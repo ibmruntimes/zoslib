@@ -18,11 +18,26 @@ set(libsrc
   zos-tls.cc
   zos.cc
   zos-mount.c
-  celquopt.s
 )
 set(zoslib-help zoslib-help.cc)
 
-add_library(libzoslib OBJECT ${libsrc})
+set(CELQUOPT_OBJECT "${CMAKE_CURRENT_BINARY_DIR}/celquopt.s.o")
+set(CELQUOPT_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/celquopt.s")
+set_source_files_properties(${CELQUOPT_OBJECT}
+  PROPERTIES EXTERNAL_OBJECT TRUE GENERATED TRUE
+)
+add_custom_command(OUTPUT ${CELQUOPT_OBJECT}
+COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
+  DEPENDS ${CELQUOPT_SOURCE}
+  COMMENT "Generate celquopt.s.o object"
+  VERBATIM
+)
+add_library(celquopt OBJECT ${CELQUOPT_OBJECT})
+set_target_properties(celquopt PROPERTIES LINKER_LANGUAGE CXX)
+
+
+add_library(libzoslib OBJECT ${libsrc} ${CELQUOPT_OBJECT})
+add_dependencies(libzoslib celquopt)
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)
 add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib>)

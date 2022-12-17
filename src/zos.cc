@@ -54,12 +54,12 @@
 #include <unordered_map>
 #include <vector>
 
-#if !defined(_gdsa) && defined(__llvm__)
+#if defined(__clang__) && !defined(__ibmxl__)
 #define _gdsa __builtin_s390_gdsa
+#else
+extern "builtin" void *_gdsa();
 #endif
 
-#pragma linkage(_gtca, builtin)
-#pragma linkage(_gdsa, builtin)
 
 #ifndef dsa
 #define dsa() ((unsigned long *)_gdsa())
@@ -774,7 +774,12 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
   // See https://www.ibm.com/docs/en/zos/2.4.0?
   //             topic=31-bpxypgth-map-getthent-inputoutput-structure
   // for the structs mapping below.
+#if defined(__clang__) && !defined(__ibmxl__)
+#define __AttrPacked  __attribute__((packed))
+#else
 #pragma pack(1)
+#define __AttrPacked
+#endif
   struct {
     int pid;
     unsigned long thid;
@@ -784,7 +789,7 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
     char loginname[8];
     char flag;
     char len;
-  } input_data;
+  } __AttrPacked input_data;
 
   union {
     struct {
@@ -800,16 +805,19 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
       int offsetCommand;
       int offsetFileData;
       int offsetThread;
-    } output_data;
+    } __AttrPacked output_data;
     char buf[2048];
-  } output_buf;
+  } __AttrPacked output_buf;
 
   struct output_cmd_type {
     char gthe[4];
-    short int len;
+    short int len __AttrPacked;
     char cmd[2048];
-  };
-#pragma pack()
+  } __AttrPacked;
+#if defined(__clang__) && !defined(__ibmxl__)
+#else
+#pragma pack(reset)
+#endif
 
   int input_length;
   int output_length;
@@ -1511,7 +1519,7 @@ extern "C" int execvpe(const char *name, char *const argv[],
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       char *dp = (char*)__alloca (len);
+       char *dp = (char*)alloca (len);
        confstr (_CS_PATH, dp, len);
        cur = dp;
     } else { len = 1; }

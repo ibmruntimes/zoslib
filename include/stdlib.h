@@ -18,7 +18,7 @@ extern "C" {
 __Z_EXPORT char *__realpath_extended(const char * __restrict__, char * __restrict__);
 __Z_EXPORT int __mkstemp_ascii(char*);
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
@@ -54,7 +54,7 @@ __Z_EXPORT int mkstemp(char*) asm("__mkstemp_ascii");
  */
 __Z_EXPORT char* getenv(const char*) asm("@@A00423");
 #if defined(__cplusplus)
-};
+}
 #endif
 #else
 #include_next <stdlib.h>

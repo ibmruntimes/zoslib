@@ -107,7 +107,7 @@ extern CSRSI_calltype CSRSI;
  ((struct CSRSI_PSA*) 0) ->                                         \
                    CSRSI_cvt->CSRSI_cvtcsrt->CSRSI_addr             \
            (Request,Flen,Fptr,Rcptr);                               \
-};
+}
 #endif
 
 struct CSRSI_CSRT {

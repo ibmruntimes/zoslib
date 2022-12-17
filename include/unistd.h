@@ -18,7 +18,7 @@ extern "C" {
 __Z_EXPORT int __pipe_ascii(int [2]);
 __Z_EXPORT int __close(int);
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD)
@@ -42,7 +42,7 @@ __Z_EXPORT int pipe(int [2]) asm("__pipe_ascii");
 __Z_EXPORT int close(int) asm("__close");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 #else
 #include_next <unistd.h>
@@ -71,7 +71,7 @@ __Z_EXPORT int execvpe(const char *name, char *const argv[],
 #endif
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif
