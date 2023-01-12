@@ -63,7 +63,6 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
@@ -609,11 +608,11 @@ static void *_timer(void *parm) {
     sleep(tp->secs);
     t1 = __clock();
   }
-  if (__debug_mode) {
-    dprintf(2, "Sent abort: __NODERUNTIMELIMIT was set to %d\n", tp->secs);
-    raise(SIGABRT);
-  }
-  return 0;
+  __zinit *zinit_ptr = __get_instance();
+  zoslib_config_t &config = zinit_ptr->config;
+  dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
+  raise(SIGABRT);
+  return 0; // avoid compiler warning
 }
 
 extern void __settimelimit(int secs) {
@@ -634,8 +633,6 @@ extern void __settimelimit(int secs) {
   }
   pthread_attr_destroy(&attr);
 }
-extern "C" void __setdebug(int v) { __debug_mode = v; }
-extern "C" int __indebug(void) { return __debug_mode; }
 
 extern "C" void *__dlcb_next(void *last) {
   if (last == 0) {
@@ -2270,10 +2267,6 @@ int __update_envar_settings(const char *envar) {
 
   // Exit early if envar is not a ZOSLIB envar
   if (envar && !zinit_ptr->isValidZOSLIBEnvar(envar)) {
-    if (__debug_mode)
-      dprintf(2,
-              "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n",
-              envar);
     return -1;
   }
 
@@ -2285,15 +2278,6 @@ int __update_envar_settings(const char *envar) {
     char *cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
     if (cu && !memcmp(cu, "1", 2)) {
       __cleanupipc(1);
-    }
-  }
-
-  if (force_update_all || strcmp(envar, config.DEBUG_ENVAR) == 0) {
-    char *dbg = __getenv_a(config.DEBUG_ENVAR);
-    if (!dbg) {
-      __debug_mode = 0;
-    } else if (!memcmp(dbg, "1", 2)) {
-      __debug_mode = 1;
     }
   }
 
@@ -2646,10 +2630,6 @@ int __zinit::setEnvarHelpMap() {
                      "set to toggle IPC cleanup"));
 
   envarHelpMap.insert(
-      std::make_pair(zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
-                     "set to toggle debug ZOSLIB mode"));
-
-  envarHelpMap.insert(
       std::make_pair(zoslibEnvar(config.RUNTIME_LIMIT_ENVAR, std::string("")),
                      "number of seconds to run before zoslib raises a SIGABRT "
                      "signal to terminate"));
@@ -2664,10 +2644,10 @@ int __zinit::setEnvarHelpMap() {
       std::make_pair(zoslibEnvar(config.MEMORY_USAGE_LOG_LEVEL_ENVAR, std::string("")),
                      "set to 1 to display only warnings when memory is "
                      "allocated or freed, and 2 to display all messages; "
-                     "the process started/terminated messages that include "
-                     "memory stats summary, as well as any error message will "
-                     "always be displayed if memory diagnostic messages is "
-                     "enabled"));
+                     "the process started, terminated messages that include "
+                     "memory statistics summary, and any error messages are "
+                     "always displayed if logging of memory diagnostic "
+                     "messages is enabled"));
  
 
   return __update_envar_settings(NULL);
@@ -2679,7 +2659,6 @@ void init_zoslib_config(zoslib_config_t &config) {
 
 extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
-  config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
