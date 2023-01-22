@@ -745,6 +745,7 @@ int __socketpair_orig(int domain, int type, int protocol, int sv[2]) asm("socket
 int __close_orig(int) asm("close");
 int __open_orig(const char *filename, int opts, ...) asm("@@A00144");
 int __mkstemp_orig(char *) asm("@@A00184");
+FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
@@ -778,6 +779,38 @@ int __open_ascii(const char *filename, int opts, ...) {
   }
   va_end(ap);
   return fd;
+}
+
+FILE *__fopen_ascii(const char *filename, const char *mode) {
+  struct stat sb;
+  int is_new_file = stat(filename, &sb) != 0;
+  FILE* fp = __fopen_orig(filename, mode);
+  int old_errno = errno;
+
+  if (fp) {
+    int fd = fileno(fp);
+    if (is_new_file) {
+      __chgfdccsid(fd, 819);
+     errno = old_errno;
+    }
+    // Enable auto-conversion of untagged files
+    else if (S_ISREG(sb.st_mode)) {
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
+          strcmp(mode, "r") == 0) {
+        if (__file_needs_conversion_init(filename, fd)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
+        } else {
+          // fopen tags untagged files, which enables auto-conversion
+          __disableautocvt(fd);
+        }
+      }
+    }
+  }
+  return fp;
 }
 
 int __pipe_ascii(int fd[2]) {
