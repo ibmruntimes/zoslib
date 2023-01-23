@@ -2851,8 +2851,19 @@ int futimes(int fd, const struct timeval tv[2]) {
   memset(&atr, 0, sizeof(atr));
   atr.att_mtimechg = 1;
   atr.att_atimechg = 1;
-  atr.att_atime = tv[0].tv_sec;
-  atr.att_mtime = tv[1].tv_sec;
+  if (tv == NULL)
+  {
+    struct timespec ts;
+    clock_gettime( CLOCK_REALTIME, &ts );
+    atr.att_atime = ts.tv_sec;
+    atr.att_mtime = ts.tv_sec;
+  }
+  else
+  {
+    atr.att_atime = tv[0].tv_sec;
+    atr.att_mtime = tv[1].tv_sec;
+  }   
+
   return __fchattr(fd, &atr, sizeof(atr));
 }
 
