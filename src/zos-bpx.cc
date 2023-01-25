@@ -15,7 +15,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-//SDP#include <mutex>
 
 #ifdef __cplusplus
 extern "C" {

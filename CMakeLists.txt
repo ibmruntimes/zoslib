@@ -77,8 +77,6 @@ else()
     -qasmlib=sys1.maclib:sys1.modgen)
 endif()
 
-#SDP set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
-
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
 target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
 

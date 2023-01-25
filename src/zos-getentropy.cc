@@ -1,4 +1,5 @@
 // Need to compile this file with at least z14 to use PRNO instruction.
+#pragma options("-march=z14 if ibm-clang++64")
 #define _AE_BIMODAL 1
 #ifdef __ibmxl__
 #undef _ENHANCED_ASCII_EXT
