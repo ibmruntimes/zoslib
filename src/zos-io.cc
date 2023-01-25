@@ -695,7 +695,7 @@ int __setfdtext(int fd) {
   return __chgfdccsid(fd, 819);
 }
 
-int __disableautocvt(int fd) {
+void __disableautocvt(int fd) {
   struct f_cnvrt req = {SETCVTOFF, 0, 0};
   fcntl(fd, F_CONTROL_CVT, &req);
 }
