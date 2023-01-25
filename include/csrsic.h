@@ -118,10 +118,10 @@ struct CSRSI_CSRT {
 struct CSRSI_CVT {
    unsigned char CSRSI_cvt_filler1  [116];
   struct {
-    int CSRSI_cvtdcb_rsvd1 : 4;      /* Not needed                   */
-    int CSRSI_cvtosext : 1;          /* If on, indicates that the
+    unsigned int CSRSI_cvtdcb_rsvd1 : 4;      /* Not needed                   */
+    unsigned int CSRSI_cvtosext : 1;          /* If on, indicates that the
                     CVTOSLVL fields are valid                        */
-    int CSRSI_cvtdcb_rsvd2 : 3;      /* Not needed                   */
+    unsigned int CSRSI_cvtdcb_rsvd2 : 3;      /* Not needed                   */
          } CSRSI_cvtdcb;
    unsigned char CSRSI_cvt_filler2  [427];
    struct CSRSI_CSRT * CSRSI_cvtcsrt;
@@ -131,9 +131,9 @@ struct CSRSI_CVT {
    unsigned char CSRSI_cvtoslv2;
    unsigned char CSRSI_cvtoslv3;
   struct {
-    int CSRSI_cvtcsrsi : 1;          /* If on, indicates that the
+    unsigned int CSRSI_cvtcsrsi : 1;          /* If on, indicates that the
                                         CSRSI service is available   */
-    int CSRSI_cvtoslv1_rsvd1 : 7;    /* Not needed                   */
+    unsigned int CSRSI_cvtoslv1_rsvd1 : 7;    /* Not needed                   */
          } CSRSI_cvtoslv4;
    unsigned char CSRSI_cvt_filler4 [11];        /*               */
 };
@@ -683,19 +683,19 @@ typedef struct {
                                        SI00CPCVariety_V2CPC_LPAR, or
                                        SI00CPCVariety_V3CPC_VM   @H1A*/
     struct {
-               int   _si00validsi11v1  : 1; /* si11v1 was requested and
+               unsigned int   _si00validsi11v1  : 1; /* si11v1 was requested and
                                    the information returned is valid
                                                                  @H1A*/
-               int   _si00validsi22v1  : 1; /* si22v2 was requested and
+               unsigned int   _si00validsi22v1  : 1; /* si22v2 was requested and
                                    the information returned is valid
                                                                  @H1A*/
-               int   _si00validsi22v2  : 1; /* si22v2 was requested and
+               unsigned int   _si00validsi22v2  : 1; /* si22v2 was requested and
                                    the information returned is valid
                                                                  @H1A*/
-               int   _si00validsi22v3  : 1; /* si22v3 was requested and
+               unsigned int   _si00validsi22v3  : 1; /* si22v3 was requested and
                                    the information returned is valid
                                                                  @H1A*/
-               int   _filler1          : 4; /* Reserved          @H1A*/
+               unsigned int   _filler1          : 4; /* Reserved          @H1A*/
     } si00validityflags;
   unsigned char  _filler2[2];   /* Reserved                  @H1A*/
   unsigned char  si00pccacpid[12]; /* PCCACPID value for this CPU
