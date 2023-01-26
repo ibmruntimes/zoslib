@@ -695,9 +695,9 @@ int __setfdtext(int fd) {
   return __chgfdccsid(fd, 819);
 }
 
-void __disableautocvt(int fd) {
+int __disableautocvt(int fd) {
   struct f_cnvrt req = {SETCVTOFF, 0, 0};
-  fcntl(fd, F_CONTROL_CVT, &req);
+  return fcntl(fd, F_CONTROL_CVT, &req);
 }
 
 int __chgfdcodeset(int fd, char* codeset) {
