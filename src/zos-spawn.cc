@@ -39,7 +39,11 @@ int posix_spawn_file_actions_init(posix_spawn_file_actions_t* act) {
 }
 
 void printActions(const posix_spawn_file_actions_t* act) {
-  fprintf(stderr, "posix)spawn_file_actions_t:%p:", act);
+  fprintf(stderr, "posix_spawn_file_actions_t:%p:", act);
+  if (!act) {
+    fprintf(stderr, "\n");
+    return;
+  }
   for (const _spawn_actions *p = act->actions; p ; p = p->next) {
     switch (p->op) {
     case op_open:
@@ -177,8 +181,8 @@ int posix_spawn(pid_t *pid, const char *cmd, const posix_spawn_file_actions_t *a
   const short flags_with_actions = POSIX_SPAWN_SETSIGMASK|POSIX_SPAWN_SETSIGDEF|
           POSIX_SPAWN_SETSCHEDPARAM|POSIX_SPAWN_SETSCHEDULER|
           POSIX_SPAWN_SETPGROUP|POSIX_SPAWN_RESETIDS;
-  if ((attr->flags & POSIX_SPAWN_USEVFORK) ||
-      (act->actions==nullptr && !(attr->flags&flags_with_actions)))
+  if (attr && ((attr->flags & POSIX_SPAWN_USEVFORK) ||
+      (act->actions==nullptr && !(attr->flags&flags_with_actions))))
   {
     // Simple fork() with no clean up actions
     *pid = vfork();
@@ -194,36 +198,38 @@ int posix_spawn(pid_t *pid, const char *cmd, const posix_spawn_file_actions_t *a
   if (*pid == 0) {
     // In the child
     int rc = 0;
-    if (attr->flags & POSIX_SPAWN_SETSIGMASK) {
+    if (attr && attr->flags & POSIX_SPAWN_SETSIGMASK) {
       if ((rc=sigprocmask(SIG_SETMASK, attr->mask, 0)) < 0)
         return rc;      
     }
 
-    if (attr->flags & POSIX_SPAWN_SETPGROUP) {
+    if (attr && attr->flags & POSIX_SPAWN_SETPGROUP) {
       if ((rc=setpgid(0, 0)) < 0)
         return rc;
     }
     
-    _spawn_actions *cur = act->actions;
-    for (; cur; cur=cur->next) {
-      switch (cur->op) {
-        case op_close: close(cur->fd); break;
-        case op_open: {
-          int fd = open(cur->open_info.path, cur->open_info.oflags, cur->open_info.mode);
-          if (fd < 0)
-            return fd;
-          if (fd != cur->fd) {
-            if ((rc=dup2(fd, cur->fd)) < 0)
-              return rc;
-            close(fd);
+    if (act) {
+      _spawn_actions *cur = act->actions;
+      for (; cur; cur=cur->next) {
+        switch (cur->op) {
+          case op_close: close(cur->fd); break;
+          case op_open: {
+            int fd = open(cur->open_info.path, cur->open_info.oflags, cur->open_info.mode);
+            if (fd < 0)
+              return fd;
+            if (fd != cur->fd) {
+              if ((rc=dup2(fd, cur->fd)) < 0)
+                return rc;
+              close(fd);
+            }
+            break;
           }
-          break;
+          case op_dup2:
+            if ((rc=dup2(cur->fd, cur->new_fd)) < 0)
+              return rc;
+            break;
+          default: return 127;
         }
-        case op_dup2:
-          if ((rc=dup2(cur->fd, cur->new_fd)) < 0)
-            return rc;
-          break;
-        default: return 127;
       }
     }
   execve(cmd, args, env);
