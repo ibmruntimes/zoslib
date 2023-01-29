@@ -2637,6 +2637,15 @@ __init_zoslib::__init_zoslib(const zoslib_config_t &config) {
   __get_instance()->initialize(config);
 }
 
+static bool get_env_var(const std::string var_name, std::string& value) {
+    const char* var_value = getenv(var_name.c_str());
+    if (var_value == nullptr) {
+        return false;
+    }
+    value = std::string(var_value);
+    return true;
+}
+
 int __zinit::initialize(const zoslib_config_t &aconfig) {
   memcpy(&config, &aconfig, sizeof(config));
   forkmax = 0;
@@ -2670,9 +2679,21 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     setenv("_BPXK_AUTOCVT", "ON", 1);
   }
 
-  __set_autocvt_on_fd_stream(STDIN_FILENO, 1047, 1, true);
-  __set_autocvt_on_fd_stream(STDOUT_FILENO, 1047, 1, true);
-  __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
+  std::string ccsid;
+  if (get_env_var("__STDIN_CCSID", ccsid))
+    __set_autocvt_on_fd_stream(STDIN_FILENO, std::stoul(ccsid), 1, false);
+  else
+    __set_autocvt_on_fd_stream(STDIN_FILENO, 1047, 1, true);
+
+  if (get_env_var("__STDOUT_CCSID", ccsid))
+    __set_autocvt_on_fd_stream(STDOUT_FILENO, std::stoul(ccsid), 1, false);
+  else
+    __set_autocvt_on_fd_stream(STDOUT_FILENO, 1047, 1, true);
+
+  if (get_env_var("__STDERR_CCSID", ccsid))
+    __set_autocvt_on_fd_stream(STDERR_FILENO, std::stoul(ccsid), 1, false);
+  else
+    __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
 
   populateLEFunctionPointers();
 
