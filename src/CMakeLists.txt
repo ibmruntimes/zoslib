@@ -15,6 +15,7 @@ add_library(zoslib
   zos-sys-info.cc
   zos-tls.cc
   zos.cc
+  clib-overrides.cc
   celquopt.s
 )
 install(TARGETS zoslib

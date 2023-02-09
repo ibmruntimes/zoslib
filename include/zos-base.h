@@ -586,29 +586,6 @@ __Z_EXPORT int __update_envar_settings(const char *envar);
 __Z_EXPORT int __update_envar_names(zoslib_config_t *const config);
 
 /**
- * Returns true if logging of memory allocation and release is specified.
- */
-__Z_EXPORT bool __doLogMemoryUsage();
-
-/**
- * Returns the file name, including "stdout" or "stderr", used to log memory
- * allocation and release to.
- */
-__Z_EXPORT char *__getMemoryUsageLogFile();
-
-/**
- * Returns true if all messages from memory allocation and release are being
- * displayed.
- */
-__Z_EXPORT bool __doLogMemoryAll();
-
-/**
- * Returns true if only warnings from memory allocation and release are being
- * displayed. Errors are always included if memory logging in on.
- */
-__Z_EXPORT bool __doLogMemoryWarning();
-
-/**
  * Tell zoslib that the main process is terminating, for its diagnostics.
  *
  */

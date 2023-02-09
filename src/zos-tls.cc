@@ -8,6 +8,7 @@
 
 #define _POSIX_SOURCE
 #include "zos-tls.h"
+#include "zos-io.h"
 
 #include <pthread.h>
 #include <stdlib.h>
@@ -20,10 +21,11 @@ static void _cleanup(void *p) {
 }
 
 static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
-                           const void *initvalue) {
+                           const void *initvalue, void **ppmem) {
   unsigned int initv = 0;
   unsigned int expv;
   unsigned int newv = 1;
+  *ppmem = nullptr;
   expv = 0;
   newv = 1;
   __asm volatile(" cs  %0,%2,%1 \n"
@@ -64,6 +66,7 @@ static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
     memcpy(p, k, sizeof(pthread_key_t));
     pthread_setspecific(*k, p);
     memcpy((char *)p + sizeof(pthread_key_t), initvalue, sz);
+    *ppmem = p;
   }
   return (char *)p + sizeof(pthread_key_t);
 }
@@ -75,6 +78,7 @@ struct __tlsanchor {
   pthread_once_t once;
   pthread_key_t key;
   size_t sz;
+  void *pmem;
 };
 
 struct __tlsanchor *__tlsvaranchor_create(size_t sz) {
@@ -82,14 +86,18 @@ struct __tlsanchor *__tlsvaranchor_create(size_t sz) {
       (struct __tlsanchor *)calloc(1, sizeof(struct __tlsanchor));
   a->once = PTHREAD_ONCE_INIT;
   a->sz = sz;
+  a->pmem = nullptr;
   return a;
 }
 
 void __tlsvaranchor_destroy(struct __tlsanchor *anchor) {
   pthread_key_delete(anchor->key);
+  if (anchor->pmem)
+    free(anchor->pmem);
   free(anchor);
 }
 
 void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *initvalue) {
-  return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue);
+  return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue,
+                       &(anchor->pmem));
 }

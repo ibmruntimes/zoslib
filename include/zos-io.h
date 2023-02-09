@@ -103,11 +103,39 @@ __Z_EXPORT int __getfdccsid(int fd);
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
 
 /**
- * Logs memory allocation and release to the file name specified
- * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
+ * Logs memory diagnostics to the file name specified in the environment variable
+ * zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
  * \param [in] same as C's printf() parameters
  */
 __Z_EXPORT void __memprintf(const char *format, ...);
+
+/**
+ * Returns 1 if logging of memory diagnostics is enabled.
+ */
+__Z_EXPORT int __doLogMemoryUsage();
+
+/**
+ * Returns the file name, including "stdout" or "stderr", used to log memory
+ * diagnostics to.
+ */
+__Z_EXPORT char *__getMemoryUsageLogFile();
+
+/**
+ * Returns the fileno to which memory diagnostics is written (use for
+ * instance in a `__display_backtrace(__getLogMemoryFileNo()); call).
+ */
+__Z_EXPORT int __getLogMemoryFileNo();
+
+/**
+ * Returns 1 if all messages from memory diagnostics are enabled.
+ */
+__Z_EXPORT int __doLogMemoryAll();
+
+/**
+ * Returns 1 if only warnings from memory diagnostics are enabled.
+ * Errors are always included if memory diangostics is enabled.
+ */
+__Z_EXPORT int __doLogMemoryWarning();
 
 #ifdef __cplusplus
 }

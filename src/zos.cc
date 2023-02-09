@@ -44,6 +44,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <exception>
 #include <mutex>
 #include <sstream>
@@ -65,20 +66,15 @@
 
 static char **__argv = nullptr;
 static int __argc = -1;
+static char __gArgsStr[PATH_MAX*2] = "";
 static pthread_t _timer_tid;
 static int *__main_thread_stack_top_address = 0;
 static bool __is_backtrace_on_abort = true;
 static bool __zoslib_terminated = false;
-
-static const char MEMLOG_LEVEL_WARNING = '1';
-static const char MEMLOG_LEVEL_ALL = '2';
-
-static char __gMemoryUsageLogFile[PATH_MAX] = "";
-static bool __gLogMemoryUsage = false;
-static bool __gLogMemoryAll = false;
-static bool __gLogMemoryWarning = false;
-static char __gArgsStr[PATH_MAX*2] = "";
 static bool __gMainTerminating = false;
+static bool __gZoslibInitialized = false;
+static const size_t kMegaByte = 1024 * 1024;
+static const size_t kGigaByte = 1024 * 1024 * 1024;
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -91,9 +87,11 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
-
-#ifndef max
-#define max(a, b) (((a) > (b)) ? (a) : (b))
+extern "C" void update_memlogging(__zinit *, const char *envar, bool memacnt);
+extern "C" void update_memlogging_level(__zinit *, const char *envar);
+#ifdef ZOSLIB_OVERRIDE_CLIB_ALLOCS
+// See comment in src/clib-overrides.cc on __HeapCache static object.
+extern "C" void __displayHeapDebris();
 #endif
 
 static __zinit __instance;
@@ -109,6 +107,7 @@ static inline size_t __round_up(size_t x, size_t m) {
   size_t mod = x % m;
   if (mod == 0) return x;
   if (x < m) return m;
+  assert((x + m - mod) % kMegaByte == 0);
   return x + m - mod;
 }
 
@@ -958,9 +957,6 @@ extern "C" unsigned long __mach_absolute_time(void) {
 //------------------------------------------accounting for memory allocation
 // begin
 
-static const size_t kMegaByte = 1024 * 1024;
-static const size_t kGigaByte = 1024 * 1024 * 1024;
-
 static int mem_account(void) {
   static int res = -1;
   if (-1 == res) {
@@ -1256,7 +1252,7 @@ public:
     std::lock_guard<std::mutex> guard(access_lock);
     cache[k] = (unsigned long)v;
     curmem31 += v;
-    maxmem31 = max(maxmem31, curmem31);
+    maxmem31 = std::max(maxmem31, curmem31);
     if (__doLogMemoryAll()) {
       __memprintf("addr=%p, size=%zu: malloc31 OK (current=%zu, max=%zu)\n",
                   ptr, v, curmem31, maxmem31);
@@ -1272,7 +1268,7 @@ public:
       unsigned long k = (unsigned long)p;
       cache[k] = size;
       curmem64 += size;
-      maxmem64 = max(maxmem64, curmem64);
+      maxmem64 = std::max(maxmem64, curmem64);
       if (__doLogMemoryAll()) {
         __memprintf("addr=%p, size=%zu: iarv64_alloc OK (current=%zu, " \
                     "max=%zu)\n", p, size, curmem64, maxmem64);
@@ -1287,39 +1283,31 @@ public:
   int free_seg(void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     long long rc, reason;
-    rc = __iarv64_free(ptr, xttoken, &reason);
     std::lock_guard<std::mutex> guard(access_lock);
     mem_cursor_t c = cache.find(k);
-    size_t size;
-    if (rc == 0) {
-      if (c != cache.end()) {
-        size = c->second;
+    if (c != cache.end()) {
+      size_t size = c->second;
+      cache.erase(c);
+      rc = __iarv64_free(ptr, xttoken, &reason);
+      if (rc == 0) {
         curmem64 -= size;
-        cache.erase(c);
         if (__doLogMemoryUsage()) {
-          const char *w = size != reqsize ? " INFO: size vs req-size" : "";
-          if (*w && __doLogMemoryAll())
+          const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
+          if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
             __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
                         "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
         }
-      } else if (__doLogMemoryWarning()) {
-        __memprintf("WARNING: addr=%p, req-size=%zu: iarv64_free OK but " \
-                    "address not found in cache (current=%zu)\n",
-                    ptr, reqsize, curmem64);
-      }
-    } else if (__doLogMemoryUsage()) {
-      if (c != cache.end()) {
-        size = c->second;
+      } else if (__doLogMemoryUsage()) {
         __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, rc=%llx, " \
                     "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
                     curmem64);
-      } else {
-        __memprintf("ERROR: addr=%p: iarv64_free failed and address not " \
-                    "found in cache: rc=%llx, reason=%llx (current=%zu)\n",
-                    ptr, rc, reason, curmem64);
       }
+      return rc;
+    } else {
+      __memprintf("ERROR: addr=%p: iarv64_free address not " \
+                  "found in cache (current=%zu)\n", ptr, curmem64);
+      return -1;
     }
-    return rc;
   }
 #else
   void *alloc_seg(int segs) {
@@ -1361,7 +1349,7 @@ public:
       else
         return 0;
     }
-    return 0;
+    return -1;
   }
   void freeptr31(const void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
@@ -1373,14 +1361,12 @@ public:
         const char *w = c->second != reqsize ? " WARNING: size vs req-size" : "";
         if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
           __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
-                    "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
+                      "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
       }
       cache.erase(c);
-    } else {
-      if (__doLogMemoryWarning()) {
-        __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
-                    "in cache\n", ptr, reqsize);
-      }
+    } else if (__doLogMemoryWarning()) {
+      __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
+                  "in cache\n", ptr, reqsize);
     }
   }
   void displayDebris() {
@@ -1412,24 +1398,24 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
     return __get_galloc_info()->alloc_seg(request_size);
   } else {
-    char *p;
+    void *p;
     // The following solution allocates memory 2gb below the bar whose length
     // is a multiple of 8 and whose memory is aligned on a page (4096) boundary.
     // The below solution is similar to:
     // STORAGE OBTAIN,LENGTH=(%2),BNDRY=PAGE,COND=YES,ADDR=(%0),RTCD=(%1),LOC=(31,64)
     len = (len + 7) &(-8);
-
     size_t extra_size = alignment - 1 + sizeof(void *);
 
     // Allocate the required size and a bit extra
     void *mem_default = __malloc31(len + extra_size);
     if (mem_default == NULL) {
+#ifndef ZOSLIB_OVERRIDE_CLIB_ALLOCS
       if (__doLogMemoryUsage()) {
         __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
                    "(current=%zu), will try to allocate from virtual storage\n",
-                   len + extra_size, errno,
-                   __get_galloc_info()->getCurrentMem31());
+                   len + extra_size, errno, __get_galloc_info()->getCurrentMem31());
       }
+#endif
       size_t up_size = __round_up(len + extra_size, kMegaByte);
       size_t request_size = up_size / kMegaByte;
       return __get_galloc_info()->alloc_seg(request_size);
@@ -1439,8 +1425,11 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
                                              extra_size) & ~(alignment - 1));
     mem_aligned[-1] = mem_default;
 
-    p = (char *)mem_aligned;
-    __get_galloc_info()->addptr31(p, len);
+    p = (void *)mem_aligned;
+#ifndef ZOSLIB_OVERRIDE_CLIB_ALLOCS
+    __get_galloc_info()->addptr31(p, len + extra_size);
+    // Otherwise __malloc31_trace calls addptr31().
+#endif
     memset(p, 0, len);
     return p;
   }
@@ -1452,19 +1441,55 @@ void *anon_mmap(void *_, size_t len) {
 }
 
 extern "C" int __zfree(void *addr, int len) {
-  if (__get_galloc_info()->is_rmode64(addr)) {
+  int m = __get_galloc_info()->is_rmode64(addr);
+  if (m == 1) {
     return __get_galloc_info()->free_seg(addr, len);
+  } else if (m == 0) {
+    // Free the original unaligned memory returned by __malloc31.
+    __free31(((void **)addr)[-1], len);
+#ifndef ZOSLIB_OVERRIDE_CLIB_ALLOCS
+    __get_galloc_info()->freeptr31(addr, len);
+#endif
+    return 0;
+  } else if (__doLogMemoryUsage()) {
+    __memprintf("ERROR: addr=%p, size=%zu: address to free not found in " \
+                "cache (current31=%zu, max31=%zu, current64=%zu, max64=%zu)\n",
+                addr, len, 
+                __get_galloc_info()->getCurrentMem31(),
+                __get_galloc_info()->getMaxMem31(),
+                __get_galloc_info()->getCurrentMem64(),
+                __get_galloc_info()->getMaxMem64());
+    // This must be from a partial free which is not supported.
+    __display_backtrace(__getLogMemoryFileNo());
   }
-  // Free the original unaligned memory returned by __malloc31. Since free()
-  // doesn't return a value, simply return 0.
-  free(((void **)addr)[-1]);
-  __get_galloc_info()->freeptr31(addr, len);
   return 0;
 }
 
 int anon_munmap(void *addr, size_t len) {
   return __zfree(addr, len);
 }
+
+#ifdef ZOSLIB_OVERRIDE_CLIB_ALLOCS
+
+void *__malloc31_trace(size_t size) {
+  void *p = __malloc31_orig(size);
+  if (p) {
+    __get_galloc_info()->addptr31(p, size);
+  } else if (__doLogMemoryUsage()) {
+    __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
+                "(current=%zu, max=%zu)\n", size, errno,
+                __get_galloc_info()->getCurrentMem64(),
+                __get_galloc_info()->getMaxMem64());
+  }
+  return p;
+}
+
+void __free31_trace(void *addr, size_t len) {
+    __free_orig(addr);
+    __get_galloc_info()->freeptr31(addr, len);
+}
+
+#endif // ZOSLIB_OVERRIDE_CLIB_ALLOCS
 
 extern "C" int execvpe(const char *name, char *const argv[],
                        char *const envp[]) {
@@ -1689,7 +1714,7 @@ extern "C" int __testread(const void *location) {
                  :
                  : "m"(token)
                  : "r0", "r1", "r15");
-  free(r1);
+  __free31(r1, sizeof(struct espiearg));
   if (state != 1)
     return -1;
   return 0;
@@ -1847,9 +1872,12 @@ extern void __unloadmod(void *mod) {
                  : "=m"(m->load_r15)
                  : "r"(m->modname)
                  : "r0", "r1", "r15");
-  if (m->thptr)
+  if (m->thptr) {
+    // TODO(gabylb): create a __free24() to track 24-bit frees (though
+    // this function isn't currently used at least in Node.js).
     free(m->thptr);
-  free(m);
+  }
+  __free31(m, sizeof(loadmod_t));
 }
 
 #if defined(__ibmxl__)
@@ -1880,7 +1908,7 @@ extern void *__loadmod(const char *name) {
                  : "r"(m->modname)
                  : "r0", "r1", "r15");
   if (m->load_r15) {
-    free(m);
+    __free31(m, sizeof(loadmod_t));
     return 0;
   }
   if ((unsigned long)m->reg15 & 0x0000000080000000UL) {
@@ -1888,6 +1916,8 @@ extern void *__loadmod(const char *name) {
     m->reg13 = m->dsa;
   } else {
     // module is amode-24
+    // TODO(gabylb): create a __malloc24() to track 24-bit allocs (though
+    // this function isn't currently used at least in Node.js).
     thunk24_t *t24 = (thunk24_t *)__malloc24(sizeof(thunk24_t));
     if (!t24) {
       // fail to allocate
@@ -2155,7 +2185,9 @@ unsigned long long __registerProduct(const char *major_version,
   // Load 25 (IFAUSAGE) into reg15 and call via SVC
   asm volatile(" svc 109\n" : "=NR:r15"(ifausage_rc) : "NR:r1"(arg), "NR:r15"(25) :);
 
-  free(arg);
+  __free31(arg->prtoken_addr, sizeof(char *__ptr32));
+  __free31(arg->begtime_addr, sizeof(char *__ptr32));
+  __free31(arg, sizeof(IFAARGS_t));
 
   return ifausage_rc;
 }
@@ -2232,34 +2264,6 @@ int __print_zoslib_help(FILE *fp, const char *title) {
   return 0;
 }
 
-static void update_memlogging(const char *envar) {
-  __zinit *zinit_ptr = __get_instance();
-  if (!zinit_ptr)
-    return;
-  zoslib_config_t &config = zinit_ptr->config;
-
-  char *p;
-  if (envar)
-    strncpy(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
-  else if (p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR))
-    strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
-  else if (mem_account())
-    strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
-
-  if (*__gMemoryUsageLogFile) {
-    __gLogMemoryUsage = true;
-    int len = 0;
-    __gArgsStr[0] = 0;
-    for (int i=0; i<__getargc(); ++i) {
-      strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
-      len += strlen(__argv[i]);
-      __gArgsStr[len++] = ' ';
-      __gArgsStr[len] = 0;
-    }
-  } else
-    __gLogMemoryUsage = false;
-}
-
 int __update_envar_settings(const char *envar) {
   __zinit *zinit_ptr = __get_instance();
   if (!zinit_ptr)
@@ -2318,17 +2322,10 @@ int __update_envar_settings(const char *envar) {
   }
 
   if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0) {
-    update_memlogging(envar);
+    update_memlogging(zinit_ptr, envar, mem_account());
   }
   if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0) {
-    char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
-    if (penv && __doLogMemoryUsage()) {
-      // Errors and start/terminating messages are always displayed.
-      if (*penv == MEMLOG_LEVEL_ALL)
-        __gLogMemoryAll = true;  // display all messages
-      else if (*penv == MEMLOG_LEVEL_WARNING)
-        __gLogMemoryWarning = true; // warnings only
-    }
+    update_memlogging_level(zinit_ptr, envar);
   }
 
   return 0;
@@ -2507,9 +2504,21 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 }
 
 __zinit::__zinit() {
-  update_memlogging(nullptr);
+  update_memlogging(__get_instance(), nullptr, mem_account());
+  update_memlogging_level(__get_instance(), nullptr);
+  int len = 0;
+  __gArgsStr[0] = 0;
+  int argc = __getargc();
+  char **argv = __getargv();
+  for (int i=0; i<argc; ++i) {
+    strncat(__gArgsStr, argv[i], sizeof(__gArgsStr) - len - 1);
+    len += strlen(argv[i]);
+    __gArgsStr[len++] = ' ';
+    __gArgsStr[len] = 0;
+  }
   if (__doLogMemoryUsage())
     __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
+  __gZoslibInitialized = true;
 }
 
 __zinit:: ~__zinit() {
@@ -2537,8 +2546,19 @@ __zinit:: ~__zinit() {
       parentname = (parentname != nullptr) ? parentname + 1 : argv[0]; 
       snprintf(childInfo, sizeof(childInfo), "%s(%d)-CHILD ", parentname, ppid);
     }
+    // argv is for parent process, global __argv is for current process
     if (argv != nullptr)
-      free((char*)argv);
+      free((void*)argv);
+
+    if (__argv != nullptr) {
+      free((void*)__argv);
+      __argv = nullptr;
+    }
+
+#ifdef ZOSLIB_OVERRIDE_CLIB_ALLOCS
+    __displayHeapDebris();
+#endif
+
     const char *leak = __gMainTerminating &&
                        (__get_galloc_info()->getCurrentMem31() != 0 ||
                         __get_galloc_info()->getCurrentMem64() != 0) ?
@@ -2727,16 +2747,5 @@ extern "C" int __lutimes(const char *filename, const struct timeval tv[2]) {
   return 0;
 }
 
-extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
-
-extern "C" void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
-
-extern "C" char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
-
-extern "C" bool __doLogMemoryAll() { return __gLogMemoryAll; }
-
-extern "C" bool __doLogMemoryWarning() {
-  return __gLogMemoryAll || __gLogMemoryWarning;
-}
-
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
+extern "C" bool __isZoslibInitialized() { return __gZoslibInitialized; }

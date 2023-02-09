@@ -27,6 +27,14 @@
         'PATH_MAX=1024',
         '_ENHANCED_ASCII_EXT=0xFFFFFFFF',
       ],
+      'configurations': {
+        'Debug': {
+          'defines': [
+            'ZOSLIB_OVERRIDE_CLIB_ALLOCS',
+            'ZOSLIB_OVERRIDE_CLIB_ALLOCS_PRTSRC',
+          ],
+        },
+      },
       'conditions': [
         [ '"<!(echo $CC)" == "clang" or "<!(echo $CC)" == "ibm-clang64"', {
           'cflags': ['-fzos-le-char-mode=ascii', '-Wno-missing-field-initializers']
@@ -47,6 +55,7 @@
         'src/zos-semaphore.cc',
         'src/zos-sys-info.cc',
         'src/zos-tls.cc',
+        'src/clib-overrides.cc',
         'src/celquopt.s'
       ],
     }

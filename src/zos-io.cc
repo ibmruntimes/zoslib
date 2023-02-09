@@ -19,6 +19,18 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+namespace {
+const char MEMLOG_LEVEL_WARNING = '1';
+const char MEMLOG_LEVEL_ALL = '2';
+
+char __gMemoryUsageLogFile[PATH_MAX] = "";
+bool __gLogMemoryUsage = false;
+bool __gLogMemoryAll = false;
+bool __gLogMemoryWarning = false;
+FILE *fp_memprintf = nullptr;
+bool __gLogMemoryShowPid = true;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,7 +46,7 @@ void __console(const void *p_in, int len_i) {
     unsigned short flags;
     unsigned char msgarea[130];
   } wtob_t;
-  wtob_t *m = (wtob_t *)__malloc31(134);
+  wtob_t *m = (wtob_t *)__malloc31(sizeof(wtob));
   while (len > 126) {
     m->sz = 130;
     m->flags = 0x8000;
@@ -61,7 +73,7 @@ void __console(const void *p_in, int len_i) {
                    : "r"(m)
                    : "r0", "r1", "r15");
   }
-  free(m);
+  __free31(m, sizeof(wtob));
 }
 
 int __console_printf(const char *fmt, ...) {
@@ -678,8 +690,73 @@ int __getfdccsid(int fd) {
   return ccsid;
 }
 
+static void getMemUsageLogFilename(char* outName, const char *nameInEnv,
+                                   size_t maxlen) {
+  std::string str(nameInEnv);
+  size_t s = str.find("%PID%");
+  if (s != std::string::npos) {
+    str.replace(s, 5, std::to_string(getpid()));
+    __gLogMemoryShowPid = false;
+  }
+  s = str.find("%PPID%");
+  if (s != std::string::npos)
+    str.replace(s, 6, std::to_string(getppid()));
+  strncpy(outName, str.c_str(), maxlen);
+}
+
+void update_memlogging(__zinit *zinit_ptr, const char *envar, bool memacnt) {
+  if (!zinit_ptr)
+    return;
+  zoslib_config_t &config = zinit_ptr->config;
+
+  char *p;
+  if (envar)
+    getMemUsageLogFilename(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
+  else if (p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR))
+    getMemUsageLogFilename(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
+  else if (memacnt)
+    strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
+
+  if (*__gMemoryUsageLogFile)
+    __gLogMemoryUsage = true;
+  else
+    __gLogMemoryUsage = false;
+}
+
+void update_memlogging_level(__zinit *zinit_ptr, const char *envar) {
+  if (!zinit_ptr)
+    return;
+  zoslib_config_t &config = zinit_ptr->config;
+
+  char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
+  if (penv && __doLogMemoryUsage()) {
+    // Errors and start/terminating messages are always displayed.
+    if (*penv == MEMLOG_LEVEL_ALL)
+      __gLogMemoryAll = true;  // display all messages
+    else if (*penv == MEMLOG_LEVEL_WARNING)
+      __gLogMemoryWarning = true; // warnings only
+  }
+}
+
+extern "C" int __doLogMemoryUsage() { return __gLogMemoryUsage; }
+
+extern "C" void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
+
+extern "C" char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
+
+extern "C" int __doLogMemoryAll() { return __gLogMemoryAll; }
+
+extern "C" int __doLogMemoryWarning() {
+  return __gLogMemoryAll || __gLogMemoryWarning;
+}
+
 // Defined in zos.cc, no need to expose it:
 extern void __setLogMemoryUsage(bool value);
+
+int __getLogMemoryFileNo() {
+  static int fn = fileno(fp_memprintf);
+  return fn;
+}
 
 void __memprintf(const char *format, ...) {
   if (!__doLogMemoryUsage())
@@ -691,10 +768,12 @@ void __memprintf(const char *format, ...) {
   static const char *fname = __getMemoryUsageLogFile();
   static bool isstderr = !strcmp(fname, "stderr");
   static bool isstdout = !strcmp(fname, "stdout");
-  static FILE *fp = isstderr ? stderr : \
-                    isstdout ? stdout : \
-                    fopen(fname, "a+");
-  if (!fp) {
+  if (!fp_memprintf) {
+    fp_memprintf = isstderr ? stderr : \
+                   isstdout ? stdout : \
+                   fopen(fname, "a+");
+  }
+  if (!fp_memprintf) {
     va_end(args);
     perror(fname);
     __setLogMemoryUsage(false);
@@ -703,8 +782,10 @@ void __memprintf(const char *format, ...) {
   char buf[PATH_MAX*2];
   vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
-
-  fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
+  if (__gLogMemoryShowPid)
+    fprintf(fp_memprintf, "MEM pid=%d tid=%d %s", getpid(), gettid(), buf);
+  else
+    fprintf(fp_memprintf, "tid=%d %s", gettid(), buf);
 }
 
 

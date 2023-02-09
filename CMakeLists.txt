@@ -28,6 +28,8 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE)
 
+get_filename_component(COMP ${CMAKE_C_COMPILER} NAME CACHE)
+
 list(APPEND zoslib_defines
   ZOSLIB_OVERRIDE_CLIB_SOCKET
   _AE_BIMODAL=1
@@ -45,13 +47,19 @@ list(APPEND zoslib_defines
   _XOPEN_SOURCE=600
   _XOPEN_SOURCE_EXTENDED)
 
+if((${CMAKE_BUILD_TYPE} MATCHES "Debug") AND
+   (${COMP} STREQUAL clang OR ${COMP} STREQUAL ibm-clang64))
+  list(APPEND zoslib_defines
+    ZOSLIB_OVERRIDE_CLIB_ALLOCS
+    ZOSLIB_OVERRIDE_CLIB_ALLOCS_PRTSRC
+  )
+endif()
+
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
 endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
-
-get_filename_component(COMP ${CMAKE_C_COMPILER} NAME CACHE)
 
 if(${COMP} STREQUAL clang OR ${COMP} STREQUAL ibm-clang64)
   list(APPEND zoslib_cflags
