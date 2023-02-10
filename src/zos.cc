@@ -107,7 +107,6 @@ static inline size_t __round_up(size_t x, size_t m) {
   size_t mod = x % m;
   if (mod == 0) return x;
   if (x < m) return m;
-  assert((x + m - mod) % kMegaByte == 0);
   return x + m - mod;
 }
 
@@ -1283,31 +1282,36 @@ public:
   int free_seg(void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     long long rc, reason;
-    std::lock_guard<std::mutex> guard(access_lock);
-    mem_cursor_t c = cache.find(k);
-    if (c != cache.end()) {
-      size_t size = c->second;
-      cache.erase(c);
-      rc = __iarv64_free(ptr, xttoken, &reason);
-      if (rc == 0) {
-        curmem64 -= size;
-        if (__doLogMemoryUsage()) {
-          const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
-          if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
-            __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
-                        "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+    {
+      std::lock_guard<std::mutex> guard(access_lock);
+      mem_cursor_t c = cache.find(k);
+      if (c != cache.end()) {
+        size_t size = c->second;
+        cache.erase(c);
+        rc = __iarv64_free(ptr, xttoken, &reason);
+        if (rc == 0) {
+          curmem64 -= size;
+          if (__doLogMemoryUsage()) {
+            const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
+            if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
+              __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
+                          "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+          }
+        } else if (__doLogMemoryUsage()) {
+          __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, " \
+                      "rc=%llx, reason=%llx (current=%zu)\n", ptr, size,
+                      rc, reason, curmem64);
         }
-      } else if (__doLogMemoryUsage()) {
-        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, rc=%llx, " \
-                    "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
-                    curmem64);
+        return rc;
       }
-      return rc;
-    } else {
-      __memprintf("ERROR: addr=%p: iarv64_free address not " \
-                  "found in cache (current=%zu)\n", ptr, curmem64);
-      return -1;
     }
+    if (__doLogMemoryUsage()) {
+      char buf[256];
+      descAddress(ptr, reqsize, buf, sizeof(buf));
+      __memprintf("ERROR: addr=%p: iarv64_free address not found in cache " \
+                  "(current=%zu)%s\n", ptr, curmem64, buf);
+    }
+    return -1;
   }
 #else
   void *alloc_seg(int segs) {
@@ -1353,20 +1357,28 @@ public:
   }
   void freeptr31(const void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
-    std::lock_guard<std::mutex> guard(access_lock);
-    mem_cursor_t c = cache.find(k);
-    if (c != cache.end()) {
-      curmem31 -= c->second;
-      if (__doLogMemoryUsage()) {
-        const char *w = c->second != reqsize ? " WARNING: size vs req-size" : "";
-        if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
-          __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
-                      "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
+    {
+      std::lock_guard<std::mutex> guard(access_lock);
+      mem_cursor_t c = cache.find(k);
+      if (c != cache.end()) {
+        curmem31 -= c->second;
+        if (__doLogMemoryUsage()) {
+          const char *w = c->second != reqsize ? " WARNING: size vs req-size" :
+                                                 "";
+          if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
+            __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
+                        "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31,
+                        w);
+        }
+        cache.erase(c);
+        return;
       }
-      cache.erase(c);
-    } else if (__doLogMemoryWarning()) {
+    }
+    if (__doLogMemoryWarning()) {
+      char buf[256];
+      descAddress(ptr, reqsize, buf, sizeof(buf));
       __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
-                  "in cache\n", ptr, reqsize);
+                  "in cache%s\n", ptr, reqsize, buf);
     }
   }
   void displayDebris() {
@@ -1375,6 +1387,29 @@ public:
       __memprintf("WARNING: addr=%lx, size=%lu: DEBRIS (allocated but not " \
                   "freed)\n", it->first, it->second);
     }
+  }
+  int descAddress(const void *addr, size_t size, char *msgbuf,
+                  size_t msgbuflen) {
+    unsigned long addrl = (unsigned long)addr; 
+    std::lock_guard<std::mutex> guard(access_lock);
+    for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
+      unsigned long addr_end = it->first + it->second;
+      if (addrl >= it->first && addrl < addr_end) {
+        unsigned long offset = addrl - it->first;
+        if ((offset + size) <= it->second) {
+          snprintf(msgbuf, msgbuflen, ": addr=%p, size=%zu found within " \
+                    "addr=%p size=%zu",
+                    addr, size, (void*)it->first, it->second);
+          return 0;
+        }
+        snprintf(msgbuf, msgbuflen, ": addr=%p, size=%zu found but overflows " \
+                  "addr=%p size=%zu",
+                  addr, size, (void*)it->first, it->second);
+        return 1;
+      }
+    }
+    *msgbuf = 0;
+    return -1;
   }
   ~__Cache() {
     // This should never be called as we deliberately don't destroy it.
@@ -1452,15 +1487,21 @@ extern "C" int __zfree(void *addr, int len) {
 #endif
     return 0;
   } else if (__doLogMemoryUsage()) {
-    __memprintf("ERROR: addr=%p, size=%zu: address to free not found in " \
-                "cache (current31=%zu, max31=%zu, current64=%zu, max64=%zu)\n",
-                addr, len, 
-                __get_galloc_info()->getCurrentMem31(),
-                __get_galloc_info()->getMaxMem31(),
-                __get_galloc_info()->getCurrentMem64(),
-                __get_galloc_info()->getMaxMem64());
-    // This must be from a partial free which is not supported.
-    __display_backtrace(__getLogMemoryFileNo());
+    char buf[256];
+    int rc = __get_galloc_info()->descAddress(addr, len, buf, sizeof(buf));
+    if (rc == 0 || rc == 1) {
+      __free31(((void **)addr)[-1], len);
+    } else {
+      __memprintf("ERROR: addr=%p, size=%zu: address to free not found in " \
+                  "cache (current31=%zu, max31=%zu, current64=%zu, " \
+                  "max64=%zu)%s\n", addr, len,
+                  __get_galloc_info()->getCurrentMem31(),
+                  __get_galloc_info()->getMaxMem31(),
+                  __get_galloc_info()->getCurrentMem64(),
+                  __get_galloc_info()->getMaxMem64(), buf);
+      // This must be from a partial free which is not supported.
+      __display_backtrace(__getLogMemoryFileNo());
+    }
   }
   return 0;
 }
