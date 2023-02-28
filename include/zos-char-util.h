@@ -156,7 +156,7 @@ __Z_EXPORT void __fd_close(int fd);
   ({                                                                           \
     const char *src = (const char *)(_str);                                    \
     int len = strlen(src) + 1;                                                 \
-    char tgt[len];                                                             \
+    char* tgt = (char*)alloca(len);                                             \
     (char *)_convert_a2e(tgt, src, len);                                       \
   })
 
