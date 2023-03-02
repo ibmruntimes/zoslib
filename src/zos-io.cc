@@ -783,9 +783,10 @@ void __memprintf(const char *format, ...) {
   vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
   if (__gLogMemoryShowPid)
-    fprintf(fp_memprintf, "MEM pid=%d tid=%d %s", getpid(), gettid(), buf);
+    fprintf(fp_memprintf, "p=%d t=%d %s", getpid(), gettid(), buf);
   else
-    fprintf(fp_memprintf, "tid=%d %s", gettid(), buf);
+    fprintf(fp_memprintf, "t=%d %s", gettid(), buf);
+  fflush(fp_memprintf);
 }
 
 

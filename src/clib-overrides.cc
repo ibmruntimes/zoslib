@@ -59,7 +59,7 @@ public:
     if (__doLogMemoryWarning()) {
       mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        __memprintf("HEAP-WARNING: heap-addr=%p is already in cache with " \
+        __memprintf("HWARN haddr=%p already in cache with " \
                     "size=%zu; new-size=%zu\n",
                     ptr, c->second, v);
       }
@@ -78,7 +78,7 @@ public:
       cache.erase(c);
       return size;
     } else if (__doLogMemoryWarning()) {
-      __memprintf("HEAP-WARNING: heap-addr=%p, free: address not found in " \
+      __memprintf("HWARN free haddr=%p not in " \
                   "cache, returning size of 0\n", ptr);
     }
     return 0u;
@@ -86,8 +86,7 @@ public:
   void displayDebris() {
     if (__doLogMemoryWarning()) {
       for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
-        __memprintf("HEAP-WARNING: heap-addr=%lX, size=%lu: DEBRIS " \
-                    "(allocated but not (yet?) free'd)\n",
+        __memprintf("HDEBRIS haddr=%lX size=%lu\n",
                     it->first, it->second);
       }
     }
@@ -129,17 +128,17 @@ void *__calloc_trace(size_t num, size_t size) {
   }
   void *p = __calloc_orig(num, size);
   if (!p) {
-    __memprintf("ERROR: calloc failed, errno=%d " \
-                "nitems=%zu, size=%zu, total=%zu " \
-                "(curheap=%zu, max=%zu)\n",
+    __memprintf("HERROR calloc failed, errno=%d " \
+                "nitems=%zu size=%zu total=%zu " \
+                "(heap=%zu max=%zu)\n",
                 errno, num, size, num*size,
                 __get_galloc_info()->getCurrentHeap(),
                 __get_galloc_info()->getMaxHeap());
   } else {
     __get_galloc_info()->addptr(p, num*size);
     if (__doLogMemoryAll()) {
-      __memprintf("heap-addr=%p, nitems=%zu, size=%zu (total=%zu): calloc OK " \
-                  "(curheap=%zu, max=%zu)\n",
+      __memprintf("haddr=%p nitems=%zu size=%zu total=%zu calloc OK " \
+                  "(heap=%zu max=%zu)\n",
                   p, num, size, num*size, __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
@@ -154,14 +153,14 @@ void *__malloc_trace(size_t size) {
   }
   void *p = __malloc_orig(size);
   if (!p) {
-    __memprintf("ERROR: size=%zu: malloc failed, errno=%d " \
-                "(curheap=%zu, max=%zu)\n", size, errno,
+    __memprintf("HERROR malloc failed, errno=%d size=%zu " \
+                "(heap=%zu max=%zu)\n", errno, size,
                 __get_galloc_info()->getCurrentHeap(),
                 __get_galloc_info()->getMaxHeap());
   } else {
     __get_galloc_info()->addptr(p, size);
     if (__doLogMemoryAll()) {
-      __memprintf("heap-addr=%p, size=%zu: malloc OK (curheap=%zu, max=%zu)\n",
+      __memprintf("haddr=%p size=%zu malloc OK (heap=%zu max=%zu)\n",
                   p, size, __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
@@ -177,14 +176,14 @@ char *__strdup_trace(const char *ptr) {
   size_t size = strlen(ptr);
   char *p = __strdup_orig(ptr);
   if (!p) {
-    __memprintf("ERROR: size=%zu: strdup failed, errno=%d " \
-                "(curheap=%zu, max=%zu)\n", size, errno,
+    __memprintf("HERROR strdup failed errno=%d size=%zu\n",
+                "(heap=%zu max=%zu)\n", errno, size,
                 __get_galloc_info()->getCurrentHeap(),
                 __get_galloc_info()->getMaxHeap());
   } else {
     __get_galloc_info()->addptr(p, size);
     if (__doLogMemoryAll()) {
-      __memprintf("heap-addr=%p, size=%zu: strdup OK (curheap=%zu, max=%zu)\n",
+      __memprintf("haddr=%p size=%zu strdup OK (heap=%zu max=%zu)\n",
                   p, size, __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
@@ -201,8 +200,8 @@ void *__realloc_trace(void *ptr, size_t new_size) {
   // and NULL is returned.
   if (ptr == nullptr && new_size == 0u) {
     if (__doLogMemoryWarning()) {
-      __memprintf("HEAP-WARNING realloc called with ptr=0 and new-size=0 " \
-                  "(curheap=%zu, max=%zu)\n",
+      __memprintf("HWARN realloc called with ptr=0 new-size=0 " \
+                  "(heap=%zu max=%zu)\n",
                   __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
@@ -211,8 +210,8 @@ void *__realloc_trace(void *ptr, size_t new_size) {
   void *p = __realloc_orig(ptr, new_size);
   if (p == nullptr) {
     if (new_size > 0u) {
-      __memprintf("ERROR: size=%zu: realloc failed, errno=%d " \
-                  "(curheap=%zu, max=%zu)\n", new_size, errno,
+      __memprintf("HERROR realloc failed errno=%d size=%zu " \
+                  "(heap=%zu max=%zu)\n", errno, new_size,
                   __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     } else {
@@ -223,23 +222,23 @@ void *__realloc_trace(void *ptr, size_t new_size) {
       size_t old_size = __get_galloc_info()->freeptr(ptr);
       __get_galloc_info()->addptr(p, new_size);
       if (__doLogMemoryAll()) {
-        __memprintf("heap-addr=%p, size=%zu, old-ptr=%p, old-size=%zu: " \
-                   "realloc OK (curheap=%zu, max=%zu)\n",
+        __memprintf("haddr=%p size=%zu old-ptr=%p old-size=%zu " \
+                   "realloc OK (heap=%zu max=%zu)\n",
                     p, new_size, ptr, old_size,
                     __get_galloc_info()->getCurrentHeap(),
                     __get_galloc_info()->getMaxHeap());
       }
     } else {
-      __memprintf("HEAP-ERROR realloc called with ptr=%p and new-size=0, " \
-                  "but returned %p instead of 0 (curheap=%zu, max=%zu)\n",
+      __memprintf("HERROR realloc called with ptr=%p and new-size=0, " \
+                  "but returned %p instead of 0 (heap=%zu max=%zu)\n",
                   ptr, p, __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
   } else {
     __get_galloc_info()->addptr(p, new_size);
     if (__doLogMemoryAll()) {
-      __memprintf("heap-addr=%p, size=%zu, old-ptr=0, realloc OK "\
-                  "(curheap=%zu, max=%zu)\n",
+      __memprintf("haddr=%p size=%zu old-ptr=0 realloc OK "\
+                  "(heap=%zu max=%zu)\n",
                   p, new_size, __get_galloc_info()->getCurrentHeap(),
                   __get_galloc_info()->getMaxHeap());
     }
@@ -258,7 +257,7 @@ void __free_trace(void *ptr) {
   __free_orig(ptr);
   size_t size = __get_galloc_info()->freeptr(ptr);
   if (__doLogMemoryAll()) {
-    __memprintf("heap-addr=%p, size=%zu: free OK (curheap=%zu, max=%zu)\n",
+    __memprintf("haddr=%p size=%zu free OK (heap=%zu max=%zu)\n",
                 ptr, size, __get_galloc_info()->getCurrentHeap(),
                 __get_galloc_info()->getMaxHeap());
   }

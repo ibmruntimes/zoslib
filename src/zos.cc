@@ -1119,7 +1119,7 @@ static void *__iarv64_alloc(int segs, const char *token,
   if (segs == 0) {
     // process gets killed if __iarv64(&parm,..) is called with parm.xsegments=0
     if (__doLogMemoryWarning()) {
-      __memprintf("WARNING: ignoring request to allocate 0 segments, errno set "
+      __memprintf("VWARN ignoring request to allocate 0 segments, errno set "
                   "to ENOMEM\n");
     }
     errno = ENOMEM; // mimic behaviour of malloc(0)
@@ -1253,7 +1253,7 @@ public:
     curmem31 += v;
     maxmem31 = std::max(maxmem31, curmem31);
     if (__doLogMemoryAll()) {
-      __memprintf("addr=%p, size=%zu: malloc31 OK (current=%zu, max=%zu)\n",
+      __memprintf("addr=%p size=%zu malloc31 OK (m31=%zu, max=%zu)\n",
                   ptr, v, curmem31, maxmem31);
     }
   }
@@ -1269,13 +1269,13 @@ public:
       curmem64 += size;
       maxmem64 = std::max(maxmem64, curmem64);
       if (__doLogMemoryAll()) {
-        __memprintf("addr=%p, size=%zu: iarv64_alloc OK (current=%zu, " \
+        __memprintf("addr=%p size=%zu iarv64_alloc OK (v64=%zu, " \
                     "max=%zu)\n", p, size, curmem64, maxmem64);
       }
     } else if (__doLogMemoryUsage()) {
-      __memprintf("ERROR: size=%zu: iarv64_alloc failed, rc=%llx, " \
-                  "reason=%llx (current=%zu, max=%zu)\n",
-                  size, rc, reason, curmem64, maxmem64);
+      __memprintf("VERROR iarv64_alloc failed rc=%llx, " \
+                  "reason=%llx size=%zu (v64=%zu max=%zu)\n",
+                  rc, reason, size, curmem64, maxmem64);
     }
     return p;
   }
@@ -1292,14 +1292,14 @@ public:
         if (rc == 0) {
           curmem64 -= size;
           if (__doLogMemoryUsage()) {
-            const char *w = size != reqsize ? " WARNING: size vs req-size" : "";
+            const char *w = size != reqsize ? " VWARN size vs req-size" : "";
             if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
-              __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
-                          "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+              __memprintf("addr=%p size=%zu req-size=%zu iarv64_free OK " \
+                          "(v64=%zu)%s\n", ptr, size, reqsize, curmem64, w);
           }
         } else if (__doLogMemoryUsage()) {
-          __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, " \
-                      "rc=%llx, reason=%llx (current=%zu)\n", ptr, size,
+          __memprintf("VERROR addr=%p size=%zu iarv64_free failed " \
+                      "rc=%llx, reason=%llx (v64=%zu)\n", ptr, size,
                       rc, reason, curmem64);
         }
         return rc;
@@ -1308,8 +1308,8 @@ public:
     if (__doLogMemoryUsage()) {
       char buf[256];
       descAddress(ptr, reqsize, buf, sizeof(buf));
-      __memprintf("ERROR: addr=%p: iarv64_free address not found in cache " \
-                  "(current=%zu)%s\n", ptr, curmem64, buf);
+      __memprintf("VERROR iarv64_free addr=%p not found in cache " \
+                  "(v64=%zu)%s\n", ptr, curmem64, buf);
     }
     return -1;
   }
@@ -1363,12 +1363,11 @@ public:
       if (c != cache.end()) {
         curmem31 -= c->second;
         if (__doLogMemoryUsage()) {
-          const char *w = c->second != reqsize ? " WARNING: size vs req-size" :
+          const char *w = c->second != reqsize ? " MWARN size vs req-size" :
                                                  "";
           if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
-            __memprintf("addr=%p, size=%zu, req-size=%zu: free31 OK " \
-                        "(current=%zu)%s\n", ptr, c->second, reqsize, curmem31,
-                        w);
+            __memprintf("addr=%p size=%zu req-size=%zu free31 OK " \
+                        "(m31=%zu)%s\n", ptr, c->second, reqsize, curmem31, w);
         }
         cache.erase(c);
         return;
@@ -1377,15 +1376,14 @@ public:
     if (__doLogMemoryWarning()) {
       char buf[256];
       descAddress(ptr, reqsize, buf, sizeof(buf));
-      __memprintf("WARNING: addr=%p, req-size=%zu free31 OK but not found " \
+      __memprintf("MWARN addr=%p req-size=%zu free31 OK but not found " \
                   "in cache%s\n", ptr, reqsize, buf);
     }
   }
   void displayDebris() {
     // This should only be called during exit-time, so there's no lock.
     for (mem_cursor_t it = cache.begin(); it != cache.end(); ++it) {
-      __memprintf("WARNING: addr=%lx, size=%lu: DEBRIS (allocated but not " \
-                  "freed)\n", it->first, it->second);
+      __memprintf("DEBRIS addr=%lx size=%lu\n", it->first, it->second);
     }
   }
   int descAddress(const void *addr, size_t size, char *msgbuf,
@@ -1446,9 +1444,9 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     if (mem_default == NULL) {
 #ifndef ZOSLIB_OVERRIDE_CLIB_ALLOCS
       if (__doLogMemoryUsage()) {
-        __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
-                   "(current=%zu), will try to allocate from virtual storage\n",
-                   len + extra_size, errno, __get_galloc_info()->getCurrentMem31());
+        __memprintf("MERROR malloc31 failed errno=%d size=%zu " \
+                   "(m31=%zu), will try to allocate from virtual storage\n",
+                   errno, len + extra_size, __get_galloc_info()->getCurrentMem31());
       }
 #endif
       size_t up_size = __round_up(len + extra_size, kMegaByte);
@@ -1492,9 +1490,9 @@ extern "C" int __zfree(void *addr, int len) {
     if (rc == 0 || rc == 1) {
       __free31(((void **)addr)[-1], len);
     } else {
-      __memprintf("ERROR: addr=%p, size=%zu: address to free not found in " \
-                  "cache (current31=%zu, max31=%zu, current64=%zu, " \
-                  "max64=%zu)%s\n", addr, len,
+      __memprintf("ERROR addr=%p size=%zu address to free not found in " \
+                  "cache (m31=%zu, max=%zu, v64=%zu, " \
+                  "max=%zu)%s\n", addr, len,
                   __get_galloc_info()->getCurrentMem31(),
                   __get_galloc_info()->getMaxMem31(),
                   __get_galloc_info()->getCurrentMem64(),
@@ -1517,8 +1515,8 @@ void *__malloc31_trace(size_t size) {
   if (p) {
     __get_galloc_info()->addptr31(p, size);
   } else if (__doLogMemoryUsage()) {
-    __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
-                "(current=%zu, max=%zu)\n", size, errno,
+    __memprintf("MERROR malloc31 failed errno=%d size=%zu " \
+                "(m31=%zu, max=%zu)\n", errno, size,
                 __get_galloc_info()->getCurrentMem64(),
                 __get_galloc_info()->getMaxMem64());
   }
@@ -2605,8 +2603,8 @@ __zinit:: ~__zinit() {
                         __get_galloc_info()->getCurrentMem64() != 0) ?
                         "LEAK: " : "";
      
-    __memprintf("%s%sPROCESS TERMINATING (current31=%zu, max31=%zu, " \
-                "current64=%zu, max64=%zu): %s\n",
+    __memprintf("%s%sPROCESS TERMINATING (m31=%zu, max=%zu, " \
+                "v64=%zu, max=%zu): %s\n",
                 leak, childInfo,
                 __get_galloc_info()->getCurrentMem31(),
                 __get_galloc_info()->getMaxMem31(),
