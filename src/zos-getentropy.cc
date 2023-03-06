@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
+#include <errno.h>
 
 #include "zos-getentropy.h"
 
@@ -23,11 +24,11 @@
 static unsigned char _value(int bit) {
   unsigned long long t0, t1, start;
   int i;
-  asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
+  asm volatile(" la 15,0 \n svc 137\n" ::: "r15", "r6");
   (void) __stckf(&start);
   start = start >> bit;
   for (i = 0; i < 400; ++i) {
-    asm(" la 15,0 \n svc 137\n" ::: "r15", "r6");
+    asm volatile(" la 15,0 \n svc 137\n" ::: "r15", "r6");
     (void) __stckf(&t0);
     t0 = t0 >> bit;
     if ((t0 - start) > 0xfffff) {
@@ -69,6 +70,10 @@ static void _slow(int size, void* output) {
 }
 
 extern "C" int getentropy(void* output, size_t size) {
+  if (size > 257) {
+    errno = EIO;
+    return -1;
+  }
   char* out = (char*)output;
 #ifdef _LP64
   static int feature = -1;
@@ -84,7 +89,7 @@ extern "C" int getentropy(void* output, size_t size) {
   if (feature == -1) {
     if (0x40 & *(char*)(207)) {
       volatile parm_t value = {0, 0};
-      __asm(" prno 8,10\n"
+      asm volatile(" prno 8,10\n"
             " jo *-4\n"
             :
             : "NR:r0"(0), "NR:r1"(&value)
@@ -116,7 +121,7 @@ extern "C" int getentropy(void* output, size_t size) {
   // This will ensure the top half of the register will be
   // cleared.
   long first_operand_length = 0;
-  __asm(" prno 10,2\n"
+  asm volatile(" prno 10,2\n"
         " jo *-4\n"
         : "+NR:r2"(out), "+NR:r3"(size)
         : "NR:r0"(114), "NR:r11"(first_operand_length)

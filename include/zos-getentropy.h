@@ -2,6 +2,7 @@
 #define __ZOS_GET_ENTROPY_H_
 
 #include "zos-macros.h"
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
