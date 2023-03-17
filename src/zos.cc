@@ -2646,6 +2646,97 @@ static bool get_env_var(const std::string var_name, std::string& value) {
     return true;
 }
 
+static int processZOSLIBEnv(char* root_dir) {
+  FILE *fp;
+  char line[PATH_MAX+256];
+
+  std::ostringstream envar_value;
+  envar_value << root_dir << "/.zoslib_env";
+  fp = fopen(envar_value.str().c_str(), "r");
+  if (fp == NULL) {
+    return 1;
+  }
+
+  while (fgets(line, sizeof(line), fp)) {
+    char *name = strtok(line, "|");
+    char *action = strtok(NULL, "|");
+    char *value = strtok(NULL, "\n");
+
+    std::string value_str = value;
+    std::ostringstream value_ostr;
+
+    // Substitute PROJECT_ROOT with root_dir
+    size_t pos = value_str.find("PROJECT_ROOT");
+    if (pos != std::string::npos) {
+      value_ostr << value_str.substr(0, pos) << root_dir << value_str.substr(pos + strlen("PROJECT_ROOT"));
+    } else {
+      value_ostr << value;
+    }
+
+    if (strcmp(action, "prepend") == 0) {
+      std::ostringstream envar_value;
+      envar_value << value_ostr.str() << ":";
+      envar_value << getenv(name);
+#ifdef __DEBUG_ZOSLIB_ENV
+      fprintf(stderr, "prepend: %s=%s\n", name, envar_value.str().c_str());
+#endif
+      if (setenv(name, envar_value.str().c_str(), 1) != 0) {
+        fprintf(stderr, "Error: .zoslib_env: prepending environment variable %s=%s\n", name, value_ostr.str().c_str());
+      }
+    }
+    else if (strcmp(action, "set") == 0) {
+#ifdef __DEBUG_ZOSLIB_ENV
+      fprintf(stderr, "set: %s=%s\n", name, value_ostr.str().c_str());
+#endif
+      if (setenv(name, value_ostr.str().c_str(), 1) != 0) {
+        fprintf(stderr, "Error: .zoslib_env: setting environment variable %s=%s\n", name, value_ostr.str().c_str());
+      }
+    } else if (strcmp(action, "unset") == 0) {
+#ifdef __DEBUG_ZOSLIB_ENV
+      fprintf(stderr, "unset: %s\n", name);
+#endif
+      if (unsetenv(name) != 0) {
+        fprintf(stderr, "Error: .zoslib_env: unsetting environment variable %s\n", name);
+      }
+    } else {
+      fprintf(stderr, "Error: .zoslib_env: unknown action: %s\n", action);
+    }
+  }
+
+  fclose(fp);
+  return 0;
+}
+
+static void setProcessEnvars() {
+  std::vector<char> argv(512, 0);
+  std::vector<char> directory(512, 0);
+  W_PSPROC buf;
+  int token = 0;
+  pid_t mypid = getpid();
+  memset(&buf, 0, sizeof(buf));
+  buf.ps_pathlen = argv.size();
+  buf.ps_pathptr = &argv[0];
+  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+    // Found our process
+    if (buf.ps_pid == mypid) {
+
+      // Resolve path to find true location of executable
+      if (realpath(&argv[0], &directory[0]) == NULL)
+        break;
+
+      // Get executable directory
+      dirname(&directory[0]);
+
+      // Get parent directory
+      std::vector<char> parent(directory.begin(), directory.end());
+      dirname(&parent[0]);
+
+      processZOSLIBEnv(reinterpret_cast<char*> (&parent[0]));
+      break;
+    }
+  }
+}
+
 int __zinit::initialize(const zoslib_config_t &aconfig) {
   memcpy(&config, &aconfig, sizeof(config));
   forkmax = 0;
@@ -2674,10 +2765,20 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     setenv("_EDC_SUSV3", "1", 1);
   }
 
-  tenv = getenv("_BPXK_AUTOCVT");
-  if (!tenv || !*tenv) {
-    setenv("_BPXK_AUTOCVT", "ON", 1);
+  std::string runopts;
+  if (get_env_var("_CEE_RUNOPTS", runopts)) {
+    std::ostringstream value_ostr;
+    value_ostr << runopts << " FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)";
+    setenv("_CEE_RUNOPTS", value_ostr.str().c_str(), 1);
+  } 
+  else {
+    setenv("_CEE_RUNOPTS", "FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)", 1);
   }
+  
+  setenv("_BPXK_AUTOCVT", "ON", 1);
+  setenv("_TAG_REDIR_IN", "txt", 1);
+  setenv("_TAG_REDIR_OUT", "txt", 1);
+  setenv("_TAG_REDIR_ERR", "txt", 1);
 
   std::string ccsid;
   if (get_env_var("__STDIN_CCSID", ccsid))
@@ -2694,6 +2795,8 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __set_autocvt_on_fd_stream(STDERR_FILENO, std::stoul(ccsid), 1, false);
   else
     __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
+
+  setProcessEnvars();
 
   populateLEFunctionPointers();
 

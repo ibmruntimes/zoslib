@@ -20,11 +20,14 @@ set(libsrc
   zos-mount.c
   celquopt.s
 )
+set(zoslib-help zoslib-help.cc)
 
 add_library(libzoslib OBJECT ${libsrc})
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)
 add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib>)
+add_executable(zoslib-help ${zoslib-help})
+target_link_libraries(zoslib-help libzoslib)
 
 set_target_properties(zoslib_a PROPERTIES OUTPUT_NAME zoslib)
 
@@ -32,6 +35,11 @@ install(
     DIRECTORY ${PROJECT_BINARY_DIR}/lib/
     DESTINATION "lib"
     FILES_MATCHING PATTERN "*")
+
+install(
+    DIRECTORY ${PROJECT_BINARY_DIR}/src/
+    DESTINATION "bin"
+    FILES_MATCHING PATTERN "zoslib-help")
 
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/include/
