@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 /**
- * Same as C open but tags new files as ASCII (819)
+ * Same as C mkfifo but tags FIFO special files as ASCII (819)
  */
 __Z_EXPORT extern int __mkfifo_ascii(const char *pathname, mode_t mode);
 
