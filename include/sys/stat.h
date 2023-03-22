@@ -11,6 +11,8 @@
 
 #include "zos-macros.h"
 
+typedef int mode_t;
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
