@@ -2646,66 +2646,7 @@ static bool get_env_var(const std::string var_name, std::string& value) {
     return true;
 }
 
-static int processZOSLIBEnv(char* root_dir) {
-  FILE *fp;
-  char line[PATH_MAX+256];
-
-  std::ostringstream envar_value;
-  envar_value << root_dir << "/.zoslib_env";
-  fp = fopen(envar_value.str().c_str(), "r");
-  if (fp == NULL) {
-    return 1;
-  }
-
-  while (fgets(line, sizeof(line), fp)) {
-    char *name = strtok(line, "|");
-    char *action = strtok(NULL, "|");
-    char *value = strtok(NULL, "\n");
-
-    std::string value_str = value;
-    std::ostringstream value_ostr;
-
-    // Substitute PROJECT_ROOT with root_dir
-    size_t pos = value_str.find("PROJECT_ROOT");
-    if (pos != std::string::npos) {
-      value_ostr << value_str.substr(0, pos) << root_dir << value_str.substr(pos + strlen("PROJECT_ROOT"));
-    } else {
-      value_ostr << value;
-    }
-
-    if (strcmp(action, "prepend") == 0) {
-      std::ostringstream envar_value;
-      envar_value << value_ostr.str() << ":";
-      envar_value << getenv(name);
-#ifdef __DEBUG_ZOSLIB_ENV
-      fprintf(stderr, "prepend: %s=%s\n", name, envar_value.str().c_str());
-#endif
-      if (setenv(name, envar_value.str().c_str(), 1) != 0) {
-        fprintf(stderr, "Error: .zoslib_env: prepending environment variable %s=%s\n", name, value_ostr.str().c_str());
-      }
-    }
-    else if (strcmp(action, "set") == 0) {
-#ifdef __DEBUG_ZOSLIB_ENV
-      fprintf(stderr, "set: %s=%s\n", name, value_ostr.str().c_str());
-#endif
-      if (setenv(name, value_ostr.str().c_str(), 1) != 0) {
-        fprintf(stderr, "Error: .zoslib_env: setting environment variable %s=%s\n", name, value_ostr.str().c_str());
-      }
-    } else if (strcmp(action, "unset") == 0) {
-#ifdef __DEBUG_ZOSLIB_ENV
-      fprintf(stderr, "unset: %s\n", name);
-#endif
-      if (unsetenv(name) != 0) {
-        fprintf(stderr, "Error: .zoslib_env: unsetting environment variable %s\n", name);
-      }
-    } else {
-      fprintf(stderr, "Error: .zoslib_env: unknown action: %s\n", action);
-    }
-  }
-
-  fclose(fp);
-  return 0;
-}
+typedef int (*zoslib_env_hook_func)(char*);
 
 static void setProcessEnvars() {
   std::vector<char> argv(512, 0);
@@ -2731,7 +2672,16 @@ static void setProcessEnvars() {
       std::vector<char> parent(directory.begin(), directory.end());
       dirname(&parent[0]);
 
-      processZOSLIBEnv(reinterpret_cast<char*> (&parent[0]));
+      void* handle = dlopen(0,0);
+      if (handle == 0) {
+        perror("Failed to open executable");
+        return 1;
+      }
+
+      zoslib_env_hook_func zoslib_env_hook_ptr = (zoslib_env_hook_func)dlsym(handle, "zopen_env_hook");
+      if (zoslib_env_hook_ptr != NULL) {
+        zoslib_env_hook_ptr(reinterpret_cast<char*> (&parent[0]));
+      }
       break;
     }
   }
