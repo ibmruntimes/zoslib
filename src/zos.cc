@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // Licensed Materials - Property of IBM
-// ZOSLIB
+// iOSLIB
 // (C) Copyright IBM Corp. 2020. All Rights Reserved.
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -2674,11 +2674,11 @@ static void setProcessEnvars() {
 
       void* handle = dlopen(0,0);
       if (handle == 0) {
-        perror("Failed to open executable");
-        return 1;
+        perror("Failed to dlopen executable");
+        return;
       }
 
-      zoslib_env_hook_func zoslib_env_hook_ptr = (zoslib_env_hook_func)dlsym(handle, "zopen_env_hook");
+      zoslib_env_hook_func zoslib_env_hook_ptr = (zoslib_env_hook_func)dlsym(handle, "zoslib_env_hook");
       if (zoslib_env_hook_ptr != NULL) {
         zoslib_env_hook_ptr(reinterpret_cast<char*> (&parent[0]));
       }
