@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // Licensed Materials - Property of IBM
-// iOSLIB
+// ZOSLIB
 // (C) Copyright IBM Corp. 2020. All Rights Reserved.
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -2724,11 +2724,23 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   else {
     setenv("_CEE_RUNOPTS", "FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)", 1);
   }
-  
-  setenv("_BPXK_AUTOCVT", "ON", 1);
-  setenv("_TAG_REDIR_IN", "txt", 1);
-  setenv("_TAG_REDIR_OUT", "txt", 1);
-  setenv("_TAG_REDIR_ERR", "txt", 1);
+
+  tenv = getenv("_BPXK_AUTOCVT");
+  if (!tenv || !*tenv || strcmp("OFF", tenv) == 0) {
+    setenv("_BPXK_AUTOCVT", "ON", 1);
+  }
+
+  tenv = getenv("_TAG_REDIR_IN");
+  if (!tenv || !*tenv)
+    setenv("_TAG_REDIR_IN", "txt", 1);
+
+  tenv = getenv("_TAG_REDIR_OUT");
+  if (!tenv || !*tenv)
+    setenv("_TAG_REDIR_OUT", "txt", 1);
+
+  tenv = getenv("_TAG_REDIR_ERR");
+  if (!tenv || !*tenv)
+    setenv("_TAG_REDIR_ERR", "txt", 1);
 
   std::string ccsid;
   if (get_env_var("__STDIN_CCSID", ccsid))
