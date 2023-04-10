@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/inotify.h>
+#include <utmpx.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -758,6 +759,29 @@ int __open_orig(const char *filename, int opts, ...) asm("@@A00144");
 int __mkstemp_orig(char *) asm("@@A00184");
 FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
+struct utmpx *__getutxent_orig(void) asm("getutxent");
+
+int __utmpxname_ascii(char * file) {
+  char buf[PATH_MAX];
+  strncpy(buf, file, strlen(file)+1);
+  buf[sizeof(buf)-1] = '\0';
+  __a2e_s(buf);
+
+  return __utmpxname(buf);
+}
+
+struct utmpx *__getutxent_ascii(void) {
+  utmpx* utmpx_ptr = __getutxent_orig(); 
+  if (!utmpx_ptr)
+    return utmpx_ptr;
+
+  __e2a_s(utmpx_ptr->ut_user);
+  __e2a_s(utmpx_ptr->ut_id);
+  __e2a_s(utmpx_ptr->ut_line);
+  __e2a_s(utmpx_ptr->ut_host);
+
+  return utmpx_ptr;
+}
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
