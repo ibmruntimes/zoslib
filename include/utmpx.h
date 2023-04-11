@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 struct utmpx *__getutxent_ascii(void);
-int __utmpxname_ascii(char *);
+__Z_EXPORT int utmpxname(char *);
 
 #if defined(__cplusplus)
 };
@@ -34,7 +34,6 @@ extern "C" {
 #endif
 
 __Z_EXPORT struct utmpx *getutxent(void) asm("__getutxent_ascii");
-__Z_EXPORT int utmpxname(char *) asm("__utmpxname_ascii");
 
 #if defined(__cplusplus)
 };
@@ -42,5 +41,7 @@ __Z_EXPORT int utmpxname(char *) asm("__utmpxname_ascii");
 #else
 #include_next <utmpx.h>
 #endif
+
+#define UTMPX_FILE __UTMPX_FILE
 
 #endif

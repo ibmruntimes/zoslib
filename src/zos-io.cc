@@ -761,10 +761,11 @@ FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
 struct utmpx *__getutxent_orig(void) asm("getutxent");
 
-int __utmpxname_ascii(char * file) {
+int utmpxname(char * file) {
   char buf[PATH_MAX];
-  strncpy(buf, file, strlen(file)+1);
-  buf[sizeof(buf)-1] = '\0';
+  size_t file_len = strnlen(file, PATH_MAX);
+  memcpy(buf, file, file_len);
+  buf[file_len] = '\0';
   __a2e_s(buf);
 
   return __utmpxname(buf);
