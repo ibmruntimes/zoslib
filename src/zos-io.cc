@@ -776,8 +776,8 @@ struct utmpx *__getutxent_ascii(void) {
   if (!utmpx_ptr)
     return utmpx_ptr;
 
-  //TODO: Investigate if it is legal to overwrite the Unix pointer:
-  // Currently converting the string members to ASCII in place.
+  //TODO: Investigate if it is legal to overwrite the data in utmpx struct members:
+  // Currently converting the utmpx string members to ASCII in place.
   __e2a_s(utmpx_ptr->ut_user);
   __e2a_s(utmpx_ptr->ut_id);
   __e2a_s(utmpx_ptr->ut_line);
