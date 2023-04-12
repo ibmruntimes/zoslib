@@ -763,7 +763,7 @@ struct utmpx *__getutxent_orig(void) asm("getutxent");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
-  size_t file_len = strnlen(file, PATH_MAX);
+  size_t file_len = strnlen(file, PATH_MAX - 1);
   memcpy(buf, file, file_len);
   buf[file_len] = '\0';
   __a2e_s(buf);
