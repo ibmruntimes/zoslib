@@ -2738,9 +2738,10 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   if (!tenv || !*tenv)
     setenv("_TAG_REDIR_OUT", "txt", 1);
 
+  /* Causes double conversion when spawning sh */
   tenv = getenv("_TAG_REDIR_ERR");
-  if (!tenv || !*tenv)
-    setenv("_TAG_REDIR_ERR", "txt", 1);
+  if (tenv)
+    unsetenv("_TAG_REDIR_ERR");
 
   std::string ccsid;
   if (get_env_var("__STDIN_CCSID", ccsid))
