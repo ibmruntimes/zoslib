@@ -2730,18 +2730,6 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     setenv("_BPXK_AUTOCVT", "ON", 1);
   }
 
-  tenv = getenv("_TAG_REDIR_IN");
-  if (!tenv || !*tenv)
-    setenv("_TAG_REDIR_IN", "txt", 1);
-
-  tenv = getenv("_TAG_REDIR_OUT");
-  if (!tenv || !*tenv)
-    setenv("_TAG_REDIR_OUT", "txt", 1);
-
-  /* Causes double conversion when spawning sh */
-  tenv = getenv("_TAG_REDIR_ERR");
-  if (tenv)
-    unsetenv("_TAG_REDIR_ERR");
 
   std::string ccsid;
   if (get_env_var("__STDIN_CCSID", ccsid))

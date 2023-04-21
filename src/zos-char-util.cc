@@ -543,18 +543,10 @@ int __file_needs_conversion_init(const char *name, int fd) {
 
 void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
                                 unsigned char txtflag, int on_untagged_only) {
-  struct file_tag tag;
-
-  tag.ft_ccsid = ccsid;
-  tag.ft_txtflag = txtflag;
-  tag.ft_deferred = 0;
-  tag.ft_rsvflags = 0;
-
   struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
 
-  if (!on_untagged_only || (!isatty(fd) && 0 == __getfdccsid(fd))) {
+  if (!on_untagged_only || 0 == __getfdccsid(fd)) {
     fcntl(fd, F_CONTROL_CVT, &req);
-    fcntl(fd, F_SETTAG, &tag);
   }
 }
 
