@@ -42,7 +42,7 @@ install(
     FILES_MATCHING PATTERN "zoslib-help")
 
 add_library(celquopt OBJECT celquopt.s)
-install(FILES $<TARGET_OBJECTS:celquopt> DESTINATION ${PROJECT_BINARY_DIR}/lib)
+install(FILES $<TARGET_OBJECTS:celquopt> DESTINATION "lib")
 
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/include/
