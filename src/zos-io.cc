@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/inotify.h>
+#include <utmpx.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -659,6 +660,17 @@ int __chgfdccsid(int fd, unsigned short ccsid) {
   return __fchattr(fd, &attr, sizeof(attr));
 }
 
+int __chgpathccsid(char* pathname, unsigned short ccsid) {
+  attrib_t attr;
+  memset(&attr, 0, sizeof(attr));
+  attr.att_filetagchg = 1;
+  attr.att_filetag.ft_ccsid = ccsid;
+  if (ccsid != FT_BINARY) {
+    attr.att_filetag.ft_txtflag = 1;
+  }
+  return __chattr(pathname, &attr, sizeof(attr));
+}
+
 int __setfdccsid(int fd, int t_ccsid) {
   attrib_t attr;
   memset(&attr, 0, sizeof(attr));
@@ -746,6 +758,33 @@ int __close_orig(int) asm("close");
 int __open_orig(const char *filename, int opts, ...) asm("@@A00144");
 int __mkstemp_orig(char *) asm("@@A00184");
 FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
+int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
+struct utmpx *__getutxent_orig(void) asm("getutxent");
+
+int utmpxname(char * file) {
+  char buf[PATH_MAX];
+  size_t file_len = strnlen(file, PATH_MAX - 1);
+  memcpy(buf, file, file_len);
+  buf[file_len] = '\0';
+  __a2e_s(buf);
+
+  return __utmpxname(buf);
+}
+
+struct utmpx *__getutxent_ascii(void) {
+  utmpx* utmpx_ptr = __getutxent_orig(); 
+  if (!utmpx_ptr)
+    return utmpx_ptr;
+
+  //TODO: Investigate if it is legal to overwrite the data in utmpx struct members:
+  // Currently converting the utmpx string members to ASCII in place.
+  __e2a_s(utmpx_ptr->ut_user);
+  __e2a_s(utmpx_ptr->ut_id);
+  __e2a_s(utmpx_ptr->ut_line);
+  __e2a_s(utmpx_ptr->ut_host);
+
+  return utmpx_ptr;
+}
 
 int __open_ascii(const char *filename, int opts, ...) {
   va_list ap;
@@ -823,6 +862,15 @@ int __pipe_ascii(int fd[2]) {
     return __chgfdccsid(fd[1], 819);
 
   return -1;
+}
+
+int __mkfifo_ascii(const char *pathname, mode_t mode) {
+  int ret = __mkfifo_orig(pathname, mode);
+  if (ret < 0)
+    return ret;
+
+  __chgpathccsid((char*)pathname, 819);
+  return 0; 
 }
 
 int __mkstemp_ascii(char * tmpl) {

@@ -1,0 +1,67 @@
+.TH ZOSLIB 1 "February 2023" "ZOSLIB"
+
+.SH NAME
+zoslib \- a z/OS C/C++ library
+
+.SH DESCRIPTION
+ZOSLIB is a z/OS C/C++ library. It is an extended implementation of the z/OS LE C Runtime Library. Many open source applications are linked to ZOSLIB. To control its behaviour, you can alter the following environment variabls.
+
+.SH ENVIRONMENT VARIABLES
+.TP
+.B __STDIN_CCSID, __STDOUT_CCSID, __STDERR_CCSID
+Specify the CCSID for the stdio file descriptors. If these environment variables are not set and if the stdio file descriptor represents an untagged tty, it will be set to 1047 by default.
+
+.TP
+.B __MEMORY_USAGE_LOG_LEVEL
+set to 1 to display only warnings when memory is allocated or freed, and 2 to display all messages; the process started/terminated messages that include memory stats summary, as well as any error messages
+
+.TP
+.B __MEMORY_USAGE_LOG_FILE
+name of the log file associated with __MEMORY_USAGE_LOG_LEVEL, including 'stdout' and 'stderr', to which diagnostic messages for memory allocation and release are to be written
+
+.TP
+.B __RUNDEBUG
+set to toggle debug ZOSLIB mode
+
+.TP
+.B __UNTAGGED_READ_MODE=AUTO
+(default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of datawill be read and checked, if it is found to be in CCSID 1047, data is converted
+
+.TP
+.B __UNTAGGED_READ_MODE=ASCII
+always convert data from CCSID 1047 to CCSID 819
+
+.TP
+.B __UNTAGGED_READ_MODE=NO
+changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off
+
+.TP
+.B __UNTAGGED_READ_MODE=STRICT
+for no explicit conversion of data
+
+.TP
+.B __UNTAGGED_READ_MODE=WARN
+for same behavior as "AUTO" but issue a warning if conversion occurs
+
+.TP
+.B __IPC_CLEANUP
+set to toggle IPC cleanup at startup
+
+.SH EXAMPLES
+To set the __UNTAGGED_READ_MODE environment variable to STRICT and disable explicit conversion of data:
+
+.B export __UNTAGGED_READ_MODE=STRICT
+
+This will cause ZOSLIB to not perform any explicit conversion of data for untagged files or files tagged with CCSID 1047 and txtflag turned off.
+
+To set the STDOUT CCSID to 819 (ASCII):
+
+.B export __STDOUT_CCSID=819
+
+This will cause ZOSLIB to tag the stdout file descriptor to 819 and enable auto-conversion.
+
+.SH AUTHOR
+Written by Igor Todorovski.
+
+.SH SEE ALSO
+.BR man (1)
