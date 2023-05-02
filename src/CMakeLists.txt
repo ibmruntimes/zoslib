@@ -33,11 +33,10 @@ COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
   VERBATIM
 )
 
-
-add_library(libzoslib OBJECT ${libsrc} ${CELQUOPT_OBJECT})
+add_library(libzoslib OBJECT ${libsrc})
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)
-add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib>)
+add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib> ${CELQUOPT_OBJECT})
 add_executable(zoslib-help ${zoslib-help})
 target_link_libraries(zoslib-help libzoslib)
 
@@ -53,8 +52,7 @@ install(
     DESTINATION "bin"
     FILES_MATCHING PATTERN "zoslib-help")
 
-add_library(celquopt OBJECT ${CELQUOPT_OBJECT})
-install(FILES $<TARGET_OBJECTS:celquopt> DESTINATION "lib")
+  install(FILES ${CELQUOPT_OBJECT} DESTINATION "lib")
 
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/include/
