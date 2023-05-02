@@ -32,12 +32,9 @@ COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
   COMMENT "Generate celquopt.s.o object"
   VERBATIM
 )
-add_library(celquopt OBJECT ${CELQUOPT_OBJECT})
-set_target_properties(celquopt PROPERTIES LINKER_LANGUAGE CXX)
 
 
 add_library(libzoslib OBJECT ${libsrc} ${CELQUOPT_OBJECT})
-add_dependencies(libzoslib celquopt)
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)
 add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib>)
@@ -56,7 +53,7 @@ install(
     DESTINATION "bin"
     FILES_MATCHING PATTERN "zoslib-help")
 
-add_library(celquopt OBJECT celquopt.s)
+add_library(celquopt OBJECT ${CELQUOPT_OBJECT})
 install(FILES $<TARGET_OBJECTS:celquopt> DESTINATION "lib")
 
 install(
