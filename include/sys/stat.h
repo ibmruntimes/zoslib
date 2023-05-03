@@ -36,7 +36,7 @@ __Z_EXPORT extern int __mkfifo_ascii(const char *pathname, mode_t mode);
 extern "C" {
 #endif
 
-__Z_EXPORT extern int mkfifo(const char *pathname, mode_t mode) asm("__mkfifo_ascii");
+__Z_EXPORT extern int mkfifo(const char *pathname, mode_t mode) __asm("__mkfifo_ascii");
 
 #if defined(__cplusplus)
 };

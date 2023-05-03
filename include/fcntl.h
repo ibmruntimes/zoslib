@@ -35,7 +35,7 @@ __Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
 extern "C" {
 #endif
 
-__Z_EXPORT extern int open(const char *filename, int opts, ...) asm("__open_ascii");
+__Z_EXPORT extern int open(const char *filename, int opts, ...) __asm("__open_ascii");
 
 #if defined(__cplusplus)
 }

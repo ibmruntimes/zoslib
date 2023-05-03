@@ -33,7 +33,7 @@ __Z_EXPORT int utmpxname(char *);
 extern "C" {
 #endif
 
-__Z_EXPORT struct utmpx *getutxent(void) asm("__getutxent_ascii");
+__Z_EXPORT struct utmpx *getutxent(void) __asm("__getutxent_ascii");
 
 #if defined(__cplusplus)
 };
