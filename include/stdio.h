@@ -38,7 +38,7 @@ __Z_EXPORT extern FILE *__fopen_ascii(const char *filename, const char *mode);
 extern "C" {
 #endif
 
-__Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) asm("__fopen_ascii");
+__Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) __asm("__fopen_ascii");
 
 #if defined(__cplusplus)
 };

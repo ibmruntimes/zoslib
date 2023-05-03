@@ -38,8 +38,8 @@ extern "C" {
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
-__Z_EXPORT int pipe(int [2]) asm("__pipe_ascii");
-__Z_EXPORT int close(int) asm("__close");
+__Z_EXPORT int pipe(int [2]) __asm("__pipe_ascii");
+__Z_EXPORT int close(int) __asm("__close");
 
 #if defined(__cplusplus)
 }

@@ -38,11 +38,11 @@ extern "C" {
 /**
  * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
  */
-__Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) asm("__realpath_extended");
+__Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm("__realpath_extended");
 /**
  * Same as C mkstemp but tags fd as ASCII (819)
  */
-__Z_EXPORT int mkstemp(char*) asm("__mkstemp_ascii");
+__Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 
 #if defined(__cplusplus)
 }

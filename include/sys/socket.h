@@ -25,7 +25,7 @@ __Z_EXPORT int __socketpair_ascii(int domain, int type, int protocol, int sv[2])
 #define socketpair __socketpair_replaced
 #include_next <sys/socket.h>
 #undef socketpair
-__Z_EXPORT int socketpair(int domain, int type, int protocol, int sv[2]) asm("__socketpair_ascii");
+__Z_EXPORT int socketpair(int domain, int type, int protocol, int sv[2]) __asm("__socketpair_ascii");
 #else
 #include_next <sys/socket.h>
 #endif
