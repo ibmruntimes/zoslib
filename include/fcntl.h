@@ -24,7 +24,7 @@ __Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
 }
 #endif
 
-#if defined(ZOSLIB_OVERRIDE_CLIB) && !defined(ZOSLIB_NO_OVERRIDE_OPEN)
+#if defined(ZOSLIB_OVERRIDE_CLIB)
 
 #undef open
 #define open __open_replaced
