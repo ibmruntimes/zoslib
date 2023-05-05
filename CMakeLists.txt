@@ -56,13 +56,7 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-if(${CMAKE_C_COMPILER} MATCHES ibm-clang64 OR ${CMAKE_C_COMPILER} MATCHES clang)
-  list(APPEND zoslib_cflags
-    -fgnu-keywords
-    -march=arch14
-    -fno-short-enums
-    -fzos-le-char-mode=ascii)
-else()
+if(${CMAKE_C_COMPILER} MATCHES xlclang)
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -q64
@@ -76,6 +70,12 @@ else()
     -qarch=10
     -qasm
     -qasmlib=sys1.maclib:sys1.modgen)
+else()
+  list(APPEND zoslib_cflags
+    -fgnu-keywords
+    -march=arch14
+    -fno-short-enums
+    -fzos-le-char-mode=ascii)
 endif()
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
