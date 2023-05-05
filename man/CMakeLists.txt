@@ -9,6 +9,9 @@ set(MAN_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 file(MAKE_DIRECTORY "${ASCII_OUTPUT_DIR}")
 file(MAKE_DIRECTORY "${MAN_OUTPUT_DIR}")
 
+
+add_custom_target(man ALL)
+
 # Generate the ASCII formatted text file
 add_custom_command(
   OUTPUT "${ASCII_OUTPUT_DIR}/${INPUT_FILE}.txt"
@@ -21,6 +24,11 @@ add_custom_command(
   OUTPUT "${MAN_OUTPUT_DIR}/${INPUT_FILE}"
   DEPENDS "${ASCII_OUTPUT_DIR}/${INPUT_FILE}.txt"
   COMMAND nroff -man "${ASCII_OUTPUT_DIR}/${INPUT_FILE}.txt" > "${MAN_OUTPUT_DIR}/${INPUT_FILE}"
+)
+
+add_custom_command(
+  TARGET man
+  DEPENDS "${MAN_OUTPUT_DIR}/${INPUT_FILE}"
 )
 
 # Define the install rule for the man page
