@@ -814,6 +814,15 @@ int __open_ascii(const char *filename, int opts, ...) {
           errno = old_errno;
         }
       }
+    } else if (isatty(fd)) {
+      // tty devices need to have auto convert enabled
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
+      }
     }
   }
   va_end(ap);
@@ -846,6 +855,15 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
           // fopen tags untagged files, which enables auto-conversion
           __disableautocvt(fd);
         }
+      }
+    } else if (isatty(fd)) {
+      // tty devices need to have auto convert enabled
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
       }
     }
   }
