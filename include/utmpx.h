@@ -19,7 +19,7 @@ struct utmpx *__getutxent_ascii(void);
 __Z_EXPORT int utmpxname(char *);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UTMPX)
@@ -36,7 +36,7 @@ extern "C" {
 __Z_EXPORT struct utmpx *getutxent(void) __asm("__getutxent_ascii");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 #else
 #include_next <utmpx.h>

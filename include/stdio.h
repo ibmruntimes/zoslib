@@ -24,7 +24,7 @@ extern "C" {
 __Z_EXPORT extern FILE *__fopen_ascii(const char *filename, const char *mode);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB)
@@ -41,7 +41,7 @@ extern "C" {
 __Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) __asm("__fopen_ascii");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #else // #if !(defined(ZOSLIB_OVERRIDE_CLIB)

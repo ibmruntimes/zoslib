@@ -22,7 +22,7 @@ extern "C" {
 __Z_EXPORT extern int __mkfifo_ascii(const char *pathname, mode_t mode);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB)
@@ -39,7 +39,7 @@ extern "C" {
 __Z_EXPORT extern int mkfifo(const char *pathname, mode_t mode) __asm("__mkfifo_ascii");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #else // #if !(defined(ZOSLIB_OVERRIDE_CLIB)
