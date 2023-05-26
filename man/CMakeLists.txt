@@ -10,9 +10,9 @@ file(MAKE_DIRECTORY "${ASCII_OUTPUT_DIR}")
 file(MAKE_DIRECTORY "${MAN_OUTPUT_DIR}")
 
 
-add_custom_target(man ALL
-  DEPENDS "${MAN_OUTPUT_DIR}/${INPUT_FILE}"
-)
+#add_custom_target(man ALL
+#DEPENDS "${MAN_OUTPUT_DIR}/${INPUT_FILE}"
+#)
 
 # Generate the ASCII formatted text file
 add_custom_command(
@@ -30,10 +30,4 @@ add_custom_command(
 
 
 # Define the install rule for the man page
-install(FILES "${MAN_OUTPUT_DIR}/${INPUT_FILE}" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
-
-# Add the man page to the list of targets to be installed
-#install(TARGETS libzoslib DESTINATION "${CMAKE_INSTALL_PREFIX}")
-
-# Add the dependencies to ensure that the man page is generated before installation
-#add_dependencies(libzoslib "${MAN_OUTPUT_DIR}/${INPUT_FILE}")
+#install(FILES "${MAN_OUTPUT_DIR}/${INPUT_FILE}" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
