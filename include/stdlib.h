@@ -23,6 +23,7 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 
+/* Modify function names in header to avoid conflict with new prototypes */
 #undef realpath
 #define realpath __realpath_replaced
 #undef mkstemp
