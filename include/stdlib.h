@@ -27,9 +27,12 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
+#undef getenv
+#define getenv __getenv_replaced
 #include_next <stdlib.h>
 #undef mkstemp
 #undef realpath
+#undef getenv
 
 #if defined(__cplusplus)
 extern "C" {
@@ -44,6 +47,10 @@ __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) asm("_
  */
 __Z_EXPORT int mkstemp(char*) asm("__mkstemp_ascii");
 
+/**
+ * Use __getenv (@@A00423) which copies pointer to a buffer and is retained even after the environment changes
+ */
+__Z_EXPORT char* getenv(const char*) asm("@@A00423");
 #if defined(__cplusplus)
 };
 #endif
