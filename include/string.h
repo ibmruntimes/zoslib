@@ -24,6 +24,11 @@ __Z_EXPORT char *strsignal(int );
 __Z_EXPORT const char *sigdescr_np(int);
 __Z_EXPORT const char *sigabbrev_np(int);
 
+// Linux includes strings.h in string.h, this avoids the 
+// warning - implicitly declaring library function 'strcasecmp'
+// which also causes it to pick up the EBCDIC definition
+#include <strings.h>
+
 #ifdef __cplusplus
 }
 #endif
