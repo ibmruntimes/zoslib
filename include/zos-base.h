@@ -43,7 +43,6 @@
 #define IPC_CLEANUP_ENVAR_DEFAULT "__IPC_CLEANUP"
 #define DEBUG_ENVAR_DEFAULT "__RUNDEBUG"
 #define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT"
-#define FORKMAX_ENVAR_DEFAULT "__FORKMAX"
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
@@ -385,14 +384,6 @@ __Z_EXPORT int __cond_timed_wait(unsigned int secs, unsigned int nsecs,
 enum COND_TIME_WAIT_CONSTANTS { CW_INTRPT = 1, CW_CONDVAR = 32 };
 
 /**
- * Create a child process
- * \return On success, the PID of the child process is returned in the
- *  parent, and 0 is returned in the child.  On failure, -1 is returned in the
- *  parent, no child process is created, and errno is set appropriately.
- */
-__Z_EXPORT int __fork(void);
-
-/**
  * Fill a buffer with random bytes
  * \param [out] buffer to store random bytes to.
  * \param [in] number of random bytes to generate.
@@ -466,10 +457,6 @@ typedef struct __Z_EXPORT zoslib_config {
    */
   const char *RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
   /**
-   * String to indicate the envar to be used to toggle max number of forks.
-   */
-  const char *FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
-  /**
    * String to indicate the envar to be used to toggle ccsid guess buf size in
    * bytes.
    */
@@ -521,10 +508,6 @@ typedef struct __Z_EXPORT zoslib_config {
    * string to indicate the envar to be used to toggle runtime limit
    */
   const char *RUNTIME_LIMIT_ENVAR;
-  /**
-   * string to indicate the envar to be used to toggle max number of forks
-   */
-  const char *FORKMAX_ENVAR;
   /**
    * string to indicate the envar to be used to toggle ccsid guess buf size in
    * bytes
@@ -669,12 +652,8 @@ class __zinit {
   int mode;
   int cvstate;
   std::terminate_handler _th;
-  int __forked;
 
 public:
-  int forkmax;
-  int *forkcurr;
-  int shmid;
   zoslib_config_t config;
   std::map<zoslibEnvar, std::string> envarHelpMap;
 
@@ -686,50 +665,6 @@ public:
   bool isValidZOSLIBEnvar(std::string envar);
   int setEnvarHelpMap(void);
   void populateLEFunctionPointers(void);
-
-  int forked(int newvalue) {
-    int old = __forked;
-    __forked = newvalue;
-    return old;
-  }
-
-  int get_forkmax(void) { return forkmax; }
-
-  int inc_forkcount(void) {
-    if (0 == forkmax || 0 == shmid)
-      return 0;
-    int original;
-    int new_value;
-
-    do {
-      original = *forkcurr;
-      new_value = original + 1;
-      __asm volatile(" cs %0,%2,%1 \n "
-                     : "+r"(original), "+m"(*forkcurr)
-                     : "r"(new_value)
-                     :);
-    } while (original != (new_value - 1));
-    return new_value;
-  }
-  int dec_forkcount(void) {
-    if (0 == forkmax || 0 == shmid)
-      return 0;
-    int original;
-    int new_value;
-
-    do {
-      original = *forkcurr;
-      if (original == 0)
-        return 0;
-      new_value = original - 1;
-      __asm volatile(" cs %0,%2,%1 \n "
-                     : "+r"(original), "+m"(*forkcurr)
-                     : "r"(new_value)
-                     :);
-    } while (original != (new_value - 1));
-    return new_value;
-  }
-  int shmid_value(void) { return shmid; }
 
   void __abort() { _th(); }
 
