@@ -303,7 +303,7 @@ size_t __e2a_l(char *bufptr, size_t szLen) {
   strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
 
   if (ccsid == 819) {
-    if (__indebug() && !am) {
+    if (!am) {
       /*
       __dump_title(2, bufptr, szLen, 16,
                    "Attempt convert from ASCII to ASCII \n");
@@ -328,7 +328,7 @@ size_t __a2e_l(char *bufptr, size_t szLen) {
   strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
 
   if (ccsid == 1047) {
-    if (__indebug() && !am) {
+    if (!am) {
       /*
      __dump_title(2, bufptr, szLen, 16,
                   "Attempt convert from EBCDIC to EBCDIC\n");

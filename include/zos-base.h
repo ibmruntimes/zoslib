@@ -41,7 +41,6 @@
 #include "zos-getentropy.h"
 
 #define IPC_CLEANUP_ENVAR_DEFAULT "__IPC_CLEANUP"
-#define DEBUG_ENVAR_DEFAULT "__RUNDEBUG"
 #define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT"
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
@@ -181,17 +180,6 @@ __Z_EXPORT int strncasecmp_ignorecp(const char *a, const char *b, size_t n);
  * \return if equal, returns 0, otherwise returns non-zero.
  */
 __Z_EXPORT int strcasecmp_ignorecp(const char *a, const char *b);
-
-/**
- * Indicates if zoslib is in debug mode
- * \return returns current debug mode
- */
-__Z_EXPORT int __indebug(void);
-
-/**
- * Activates debug mode
- */
-__Z_EXPORT void __setdebug(int);
 
 /**
  * Get program argument list of a given process id
@@ -449,10 +437,6 @@ typedef struct __Z_EXPORT zoslib_config {
    */
   const char *IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
   /**
-   * String to indicate the envar to be used to toggle debug mode.
-   */
-  const char *DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
-  /**
    * String to indicate the envar to be used to toggle runtime limit.
    */
   const char *RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
@@ -500,10 +484,6 @@ typedef struct __Z_EXPORT zoslib_config {
    * string to indicate the envar to be used to toggle IPC cleanup
    */
   const char *IPC_CLEANUP_ENVAR;
-  /**
-   * string to indicate the envar to be used to toggle debug mode
-   */
-  const char *DEBUG_ENVAR;
   /**
    * string to indicate the envar to be used to toggle runtime limit
    */
