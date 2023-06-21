@@ -2950,9 +2950,7 @@ void init_zoslib_config(zoslib_config_t &config) {
 
 extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
-  config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
-  config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   config->UNTAGGED_READ_MODE_CCSID1047_ENVAR =
