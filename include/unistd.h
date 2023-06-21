@@ -53,9 +53,12 @@ extern "C" {
 #endif
 
 #if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-__Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
-__Z_EXPORT extern int (*getentropy)(void *, size_t);
+__Z_EXPORT int (*pipe2)(int pipefd[2], int flags);
+__Z_EXPORT int (*getentropy)(void *, size_t);
 #else
+#if (__EDC_TARGET < 0x42050000)
+__Z_EXPORT int getentropy(void* buffer, size_t length) __asm("__getentropy");
+#endif
 
 /**
  * Execute a file.
