@@ -82,6 +82,9 @@ endif()
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
 target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
 
+target_compile_definitions(zoslib-help PRIVATE ${zoslib_defines})
+target_compile_options(zoslib-help PRIVATE ${zoslib_cflags})
+
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
