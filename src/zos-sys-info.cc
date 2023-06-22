@@ -21,6 +21,7 @@ static const uint8_t __ZOSLVL_V1R13 = 0x20;
 static const uint8_t __ZOSLVL_V2R3 = 0x10;
 static const uint8_t __ZOSLVL_V2R4 = 0x08;
 static const uint8_t __ZOSLVL_V2R5 = 0x04;
+static const uint8_t __ZOSLVL_V3R1 = 0x02;
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,6 +51,8 @@ oslvl_t __get_os_level(void) {
   // set for the current level and all those before it. There is also the
   // exception for V1R13, which if its bit is set, also has the bits for V2R2
   // and V2R1 set.
+  if (lvl & __ZOSLVL_V3R1)
+    return (oslvl = ZOSLVL_V3R1);
   if (lvl & __ZOSLVL_V2R5)
     return (oslvl = ZOSLVL_V2R5);
   if (lvl & __ZOSLVL_V2R4)

@@ -26,6 +26,7 @@ typedef enum {
   ZOSLVL_V2R3,
   ZOSLVL_V2R4,
   ZOSLVL_V2R5,
+  ZOSLVL_V3R1,
   ZOSLVL_UNKNOWN,
 } oslvl_t;
 
