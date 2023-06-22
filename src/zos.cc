@@ -15,7 +15,7 @@
 #define __ZOS_CC
 #include "edcwccwi.h"
 #include "zos-getentropy.h"
-#include "zos-base.h"
+#include "zos.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
