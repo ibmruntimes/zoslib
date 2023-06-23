@@ -14,7 +14,7 @@
 #include <_Ccsid.h>
 #include <fcntl.h>
 #include <iconv.h>
-#include <mutex>
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -448,31 +448,47 @@ typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
 
 class fdAttributeCache {
   std::unordered_map<int, fd_attribute, IntHash> cache;
-  std::mutex access_lock;
+  pthread_mutex_t access_lock;
 
 public:
-  fd_attribute get_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cursor_t c = cache.find(fd);
-    if (c != cache.end()) {
-      return c->second;
+  fdAttributeCache() {
+    if (pthread_mutex_init(&access_lock, NULL) != 0) {
+      perror("pthread_mutex_init");
+      abort();
     }
-    return 0;
+  }
+  ~fdAttributeCache() {
+    pthread_mutex_destroy(&access_lock);
+  }
+  fd_attribute get_attribute(int fd) {
+    pthread_mutex_lock(&access_lock);
+    cursor_t c = cache.find(fd);
+    fd_attribute a = c != cache.end() ? c->second : 0;
+    pthread_mutex_unlock(&access_lock);
+    return a;
   }
   void set_attribute(int fd, fd_attribute attr) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    pthread_mutex_lock(&access_lock);
     cache[fd] = attr;
+    pthread_mutex_unlock(&access_lock);
   }
   void unset_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    if (fd < 0)
+      return;
+    pthread_mutex_lock(&access_lock);
     cache.erase(fd);
+    pthread_mutex_unlock(&access_lock);
   }
   void clear(void) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    pthread_mutex_lock(&access_lock);
     cache.clear();
+    pthread_mutex_unlock(&access_lock);
   }
 };
 
+#if defined(__clang__) && !defined(__ibmxl__)
+[[clang::no_destroy]]
+#endif
 fdAttributeCache fdcache;
 
 void __fd_close(int fd) { 
