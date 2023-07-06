@@ -11,6 +11,6 @@
 
 #define major(x)    (((unsigned)(x) >> 8) & 0x7f)
 #define minor(x)    ((x) & 0xff)
-#define makedev(maj, min) (unsigned short)(((x) << 8) | ((y) & 0xff))
+#define makedev(x, y) (unsigned short)(((x) << 8) | ((y) & 0xff))
 
 #endif

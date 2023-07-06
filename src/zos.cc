@@ -3152,6 +3152,11 @@ extern "C" bool __doLogMemoryWarning() {
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
 
+//TODO: Implement chdir_long properly, for now call chdir
+extern "C" int chdir_long(char *dir) {
+  return chdir(dir);
+}
+
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;
 #endif
