@@ -22,18 +22,23 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
-
 /* Modify function names in header to avoid conflict with new prototypes */
 #undef realpath
 #define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 #undef getenv
 #define getenv __getenv_replaced
+#endif
+
 #include_next <stdlib.h>
+
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 #undef mkstemp
 #undef realpath
-#undef getenv
 
 #if defined(__cplusplus)
 extern "C" {
@@ -47,17 +52,27 @@ __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm(
  * Same as C mkstemp but tags fd as ASCII (819)
  */
 __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
+#if defined(__cplusplus)
+}
+#endif
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
+#undef getenv
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 /**
  * Replace getenv with the ascii implementation of __getenv (@@A00423) 
    which copies pointer to a buffer and is retained even after the environment changes
  */
 __Z_EXPORT char* getenv(const char*) asm("@@A00423");
+
 #if defined(__cplusplus)
 }
 #endif
-#else
-#include_next <stdlib.h>
 #endif
 
 #endif
