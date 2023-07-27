@@ -208,11 +208,6 @@ extern "C" void __xfer_env(void) {
   }
 }
 
-static void ledump(const char *title) {
-  __auto_ascii _a;
-  __cdump_a((char *)title);
-}
-
 extern "C" int gettid() { return (int)(pthread_self().__ & 0x7fffffff); }
 
 static void init_tf_parms_t(__tf_parms_t *parm, char *pu_name_buf, size_t len1,
