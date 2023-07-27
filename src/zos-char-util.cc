@@ -12,6 +12,7 @@
 #include "zos-io.h"
 
 #include <_Ccsid.h>
+#include <ctest.h>
 #include <fcntl.h>
 #include <iconv.h>
 #include <pthread.h>
@@ -292,6 +293,11 @@ int __guess_ae(const void *src, size_t size) {
   return ccsid;
 }
 
+static void ledump(const char *title) {
+  __auto_ascii _a;
+  __cdump_a((char *)title);
+}
+
 #if DEBUG_ONLY
 size_t __e2a_l(char *bufptr, size_t szLen) {
   int ccsid;
@@ -304,11 +310,9 @@ size_t __e2a_l(char *bufptr, size_t szLen) {
 
   if (ccsid == 819) {
     if (!am) {
-      /*
       __dump_title(2, bufptr, szLen, 16,
                    "Attempt convert from ASCII to ASCII \n");
       ledump((char *)"Attempt convert from ASCII to ASCII");
-      */
       return szLen;
     }
     // return szLen; restore to convert
@@ -329,11 +333,9 @@ size_t __a2e_l(char *bufptr, size_t szLen) {
 
   if (ccsid == 1047) {
     if (!am) {
-      /*
-     __dump_title(2, bufptr, szLen, 16,
-                  "Attempt convert from EBCDIC to EBCDIC\n");
-     ledump((char *)"Attempt convert from EBCDIC to EBCDIC");
-     */
+      __dump_title(2, bufptr, szLen, 16,
+                   "Attempt convert from EBCDIC to EBCDIC\n");
+      ledump((char *)"Attempt convert from EBCDIC to EBCDIC");
       return szLen;
     }
     // return szLen; restore to convert
