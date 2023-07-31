@@ -2933,10 +2933,6 @@ void __zinit::populateLEFunctionPointers() {
     getentropy = __getentropy;
   }
 #endif
-  if (__is_os_level_at_or_above(ZOSLVL_V3R1)) {
-    char ppa_funcname[PPA_FUNC_LENGTH] = {0};
-    MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(getsockname, __getsockname_fixed, "getsockname", 0x34D);
-  }
 }
 
 void init_zoslib_config(zoslib_config_t &config) {
