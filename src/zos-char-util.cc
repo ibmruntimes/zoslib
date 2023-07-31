@@ -488,9 +488,6 @@ public:
   }
 };
 
-#if defined(__clang__) && !defined(__ibmxl__)
-[[clang::no_destroy]]
-#endif
 fdAttributeCache fdcache;
 
 void __fd_close(int fd) { 
