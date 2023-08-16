@@ -104,6 +104,9 @@ static bool __gLogMemoryWarning = false;
 static char __gArgsStr[PATH_MAX*2] = "";
 static bool __gMainTerminating = false;
 
+static int __gMainThreadId = -1;
+static pthread_t __gMainThreadSelf = {-1u};
+
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
 #else
@@ -2480,18 +2483,21 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
 }
 
 int *__get_stack_start() {
-  if (gettid() == 1 && __main_thread_stack_top_address != 0)
+  if (pthread_equal(pthread_self(), __gMainThreadSelf) > 0 &&
+      __main_thread_stack_top_address != 0) {
     return __main_thread_stack_top_address;
-
+  }
   __stack_info si;
   void *cur_dsa = dsa();
 
   while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
     cur_dsa = si.prev_dsa;
 
-    if ((gettid() == 1 && strcmp(si.entry_name, "CELQINIT") == 0) ||
-        strcmp(si.entry_name, "CELQPCMM") == 0)
+    if ((pthread_equal(pthread_self(), __gMainThreadSelf) > 0 &&
+         strcmp(si.entry_name, "CELQINIT") == 0) ||
+        strcmp(si.entry_name, "CELQPCMM") == 0) {
       return si.stack_addr;
+    }
   }
   return nullptr;
 }
@@ -2512,6 +2518,8 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 }
 
 __zinit::__zinit() {
+  __gMainThreadId = gettid();
+  __gMainThreadSelf = pthread_self();
   update_memlogging(nullptr);
   if (__doLogMemoryUsage())
     __memprintf("PROCESS STARTED: %s\n", __gArgsStr);

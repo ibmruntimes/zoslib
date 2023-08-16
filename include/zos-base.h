@@ -120,6 +120,21 @@ __Z_EXPORT unsigned long long __registerProduct(const char *major_version,
 __Z_EXPORT int gettid();
 
 /**
+ * Get the main Thread ID.
+ * If a process is started with sh -c, main thread id is 0;
+ * if started with bash -c, main thread id is 2;
+ * if started directly from the shell, main thread id is 1.
+ * \return returns the current thread id
+ */
+__Z_EXPORT int __getMainThreadId();
+
+/**
+ * Get the pthread_self() for the main thread.
+ * \return returns the current pthread_self() for main thread
+ */
+__Z_EXPORT pthread_t __getMainThreadSelf();
+
+/**
  * Print backtrace of stack to file descriptor.
  * \param [in] fd file descriptor.
  */
