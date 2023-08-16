@@ -27,10 +27,10 @@
         '_XOPEN_SOURCE_EXTENDED',
       ],
       'conditions': [
-        [ '"<!(echo $CC)" == "clang"', {
-          'cflags': ['-fzos-le-char-mode=ascii', '-fgnu-keywords', '-fno-short-enums']
-        }, {
+        [ '"<!(echo $CC)" == "xlclang"', {
           'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\'']
+        }, {
+          'cflags': ['-fzos-le-char-mode=ascii', '-fgnu-keywords', '-fno-short-enums']
         }],
       ],
       'direct_dependent_settings': {
