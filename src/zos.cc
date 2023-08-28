@@ -1286,39 +1286,31 @@ public:
   int free_seg(void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     long long rc, reason;
-    rc = __iarv64_free(ptr, xttoken, &reason);
-    std::lock_guard<std::mutex> guard(access_lock);
-    mem_cursor_t c = cache.find(k);
-    size_t size;
-    if (rc == 0) {
+    {
+      std::lock_guard<std::mutex> guard(access_lock);
+      mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        size = c->second;
-        curmem64 -= size;
+        size_t size = c->second;
         cache.erase(c);
-        if (__doLogMemoryUsage()) {
-          const char *w = size != reqsize ? " INFO: size vs req-size" : "";
-          if (*w && __doLogMemoryAll())
-            __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
-                        "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+        rc = __iarv64_free(ptr, xttoken, &reason);
+        if (rc == 0) {
+          curmem64 -= size;
+          if (__doLogMemoryUsage()) {
+            const char *w = size != reqsize ? " VWARN size vs req-size" : "";
+            if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
+              __memprintf("addr=%p size=%zu req-size=%zu iarv64_free OK " \
+                          "(v64=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+          }
+        } else if (__doLogMemoryUsage()) {
+          __memprintf("VERROR addr=%p size=%zu iarv64_free failed " \
+                      "rc=%llx, reason=%llx (v64=%zu)\n", ptr, size,
+                      rc, reason, curmem64);
         }
-      } else if (__doLogMemoryWarning()) {
-        __memprintf("WARNING: addr=%p, req-size=%zu: iarv64_free OK but " \
-                    "address not found in cache (current=%zu)\n",
-                    ptr, reqsize, curmem64);
-      }
-    } else if (__doLogMemoryUsage()) {
-      if (c != cache.end()) {
-        size = c->second;
-        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, rc=%llx, " \
-                    "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
-                    curmem64);
-      } else {
-        __memprintf("ERROR: addr=%p: iarv64_free failed and address not " \
-                    "found in cache: rc=%llx, reason=%llx (current=%zu)\n",
-                    ptr, rc, reason, curmem64);
+        return rc;
       }
     }
-    return rc;
+
+    return -1;
   }
 #else
   void *alloc_seg(int segs) {
@@ -1411,7 +1403,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
     return __get_galloc_info()->alloc_seg(request_size);
   } else {
-    char *p;
+    void *p;
     // The following solution allocates memory 2gb below the bar whose length
     // is a multiple of 8 and whose memory is aligned on a page (4096) boundary.
     // The below solution is similar to:
@@ -1438,7 +1430,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
                                              extra_size) & ~(alignment - 1));
     mem_aligned[-1] = mem_default;
 
-    p = (char *)mem_aligned;
+    p = (void *)mem_aligned;
     __get_galloc_info()->addptr31(p, len);
     memset(p, 0, len);
     return p;
