@@ -448,6 +448,10 @@ typedef unsigned long fd_attribute;
 
 typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
 
+// [[clang::no_destroy]] attribute can be set for this, but the attribute is
+// not available for xlclang.
+static bool bfdcache_destroyed = false;
+
 class fdAttributeCache {
   std::unordered_map<int, fd_attribute, IntHash> cache;
   pthread_mutex_t access_lock;
@@ -461,6 +465,7 @@ public:
   }
   ~fdAttributeCache() {
     pthread_mutex_destroy(&access_lock);
+    bfdcache_destroyed = true;
   }
   fd_attribute get_attribute(int fd) {
     pthread_mutex_lock(&access_lock);
@@ -491,7 +496,8 @@ public:
 fdAttributeCache fdcache;
 
 void __fd_close(int fd) { 
-  fdcache.unset_attribute(fd);
+  if (!bfdcache_destroyed)
+    fdcache.unset_attribute(fd);
 }
 
 int __file_needs_conversion(int fd) {
