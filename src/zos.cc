@@ -2955,9 +2955,11 @@ extern "C" void init_zoslib(const zoslib_config_t config) {
 }
 
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
+extern "C" __Z_EXPORT int __nanosleep(const struct timespec *req,
+                                      struct timespec *rem) {
 #else
-extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
+extern "C" __Z_EXPORT int nanosleep(const struct timespec *req,
+                                    struct timespec *rem) {
 #endif
   unsigned secrem;
   unsigned nanorem;
