@@ -1,4 +1,4 @@
-.TH ZOSLIB 1 "February 2023" "ZOSLIB"
+.TH ZOSLIB 1 "September 2023" "ZOSLIB"
 
 .SH NAME
 zoslib \- a z/OS C/C++ library
@@ -12,16 +12,16 @@ ZOSLIB is a z/OS C/C++ library. It is an extended implementation of the z/OS LE 
 Specify the CCSID for the stdio file descriptors. If these environment variables are not set and if the stdio file descriptor represents an untagged tty, it will be set to 1047 by default.
 
 .TP
-.B __MEMORY_USAGE_LOG_LEVEL
-set to 1 to display only warnings when memory is allocated or freed, and 2 to display all messages; the process started/terminated messages that include memory stats summary, as well as any error messages
+.B _ENCODE_FILE_NEW=ISO8859-1
+(Default) New files are created with encoding ISO8859-1 and tagged ISO8859-1.
 
 .TP
-.B __MEMORY_USAGE_LOG_FILE
-name of the log file associated with __MEMORY_USAGE_LOG_LEVEL, including 'stdout' and 'stderr', to which diagnostic messages for memory allocation and release are to be written
+.B _ENCODE_FILE_NEW=IBM-1047
+New files are created with encoding IBM-1047 and tagged IBM-1047.
 
 .TP
-.B __RUNDEBUG
-set to toggle debug ZOSLIB mode
+.B _ENCODE_FILE_NEW=BINARY
+New files are created without translation and are tagged as BINARY.
 
 .TP
 .B __UNTAGGED_READ_MODE=AUTO
@@ -44,8 +44,16 @@ for no explicit conversion of data
 for same behavior as "AUTO" but issue a warning if conversion occurs
 
 .TP
-.B __IPC_CLEANUP
-set to toggle IPC cleanup at startup
+.B __MEMORY_USAGE_LOG_LEVEL
+set to 1 to display only warnings when memory is allocated or freed, and 2 to display all messages; the process started/terminated messages that include memory stats summary, as well as any error messages
+
+.TP
+.B __MEMORY_USAGE_LOG_FILE
+name of the log file associated with __MEMORY_USAGE_LOG_LEVEL, including 'stdout' and 'stderr', to which diagnostic messages for memory allocation and release are to be written
+
+.TP
+.B __RUNDEBUG
+set to toggle debug ZOSLIB mode
 
 .SH EXAMPLES
 To set the __UNTAGGED_READ_MODE environment variable to STRICT and disable explicit conversion of data:
