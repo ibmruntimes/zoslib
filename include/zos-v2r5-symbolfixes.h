@@ -11,7 +11,7 @@
 // This enables builds on >=V2R5 systems when the target is <V2R5
 // Redefines >=V2R5 symbols with _undefined suffix to trigger a linker 
 // error so they are not detected by configure scripts
-#if (__EDC_TARGET < 0x42050000)
+#if (__TARGET_LIB__ < 0x42050000)
 #pragma redefine_extname readlinkat readlinkat_undefined
 #pragma redefine_extname openat openat_undefined
 #pragma redefine_extname linkat linkat_undefined
