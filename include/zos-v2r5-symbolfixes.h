@@ -25,7 +25,7 @@
 #pragma redefine_extname fsstatfs fsstatfs_undefined
 #pragma redefine_extname getline getline_undefined
 #pragma redefine_extname dprintf dprintf_undefined
-#pragma redefine_extname dirfd dirfd_undefine
+#pragma redefine_extname dirfd dirfd_undefined
 #endif
 
 #endif // ZOS_V2R5_FIXUPS_H
