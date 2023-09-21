@@ -83,6 +83,15 @@ __Z_EXPORT int __find_file_in_path(char *out, int size, const char *envvar,
  * Change file descriptor to CCSID.
  * \param [in] fd file descriptor.
  * \param [in] ccsid CCSID.
+ * \param [in] bool indicating if txtflag is on
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __chgfdccsidtxtflag(int fd, unsigned short ccsid, bool txtflag);
+
+/**
+ * Change file descriptor to CCSID.
+ * \param [in] fd file descriptor.
+ * \param [in] ccsid CCSID.
  * \return returns 0 if successful, or -1 on failure.
  */
 __Z_EXPORT int __chgfdccsid(int fd, unsigned short ccsid);

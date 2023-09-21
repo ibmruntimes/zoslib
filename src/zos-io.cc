@@ -27,6 +27,8 @@
 extern "C" {
 #endif
 
+std::unordered_map<std::string, std::pair<unsigned int, bool>> existing_files;
+
 void __console(const void *p_in, int len_i) {
   const unsigned char *p = (const unsigned char *)p_in;
   int len = len_i;
@@ -649,6 +651,18 @@ int __find_file_in_path(char *out, int size, const char *envvar,
   return 0;
 }
 
+int __chgfdccsidtxtflag(int fd, unsigned short ccsid, bool txtflag) {
+  attrib_t attr;
+  memset(&attr, 0, sizeof(attr));
+  attr.att_filetagchg = 1;
+  if (txtflag)
+     attr.att_filetag.ft_txtflag = 1;
+  else
+     attr.att_filetag.ft_txtflag = 0;
+  attr.att_filetag.ft_ccsid = ccsid;
+  return __fchattr(fd, &attr, sizeof(attr));
+}
+
 int __chgfdccsid(int fd, unsigned short ccsid) {
   attrib_t attr;
   memset(&attr, 0, sizeof(attr));
@@ -698,6 +712,62 @@ int __setfdtext(int fd) {
 int __disableautocvt(int fd) {
   struct f_cnvrt req = {SETCVTOFF, 0, 0};
   return fcntl(fd, F_CONTROL_CVT, &req);
+}
+
+int __ccsid_new_file() {
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+
+  if (encode_file_new)
+    if (strcmp(encode_file_new, "IBM-1047") == 0) {
+      ccsid = 1047;
+    } else if (strcmp(encode_file_new, "BINARY") == 0) {
+      // Set the file descriptor to binary mode
+      ccsid = FT_BINARY;
+    }
+
+  return ccsid;
+}
+
+int __tag_new_file_filename(int fd, std::string filename) {
+
+ auto it = existing_files.find(filename);
+ if(it != existing_files.end())
+    {
+        unsigned int ccsid = it->second.first;
+        bool txtflag = it->second.second;
+
+        if (ccsid == FT_UNTAGGED && txtflag)
+        {
+           struct f_cnvrt cvtreq = {SETCVTON, 0, 0x0417};
+           fcntl(fd, F_CONTROL_CVT, &cvtreq);
+           txtflag = false;
+        }
+        else if (ccsid == FT_UNTAGGED && !txtflag)
+        { 
+           __disableautocvt(fd);
+        }
+        int result = __chgfdccsidtxtflag(fd, ccsid, txtflag);
+        return result;
+    }
+
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+
+  if (encode_file_new)
+    if (strcmp(encode_file_new, "IBM-1047") == 0) {
+      ccsid = 1047;
+    } else if (strcmp(encode_file_new, "BINARY") == 0) {
+      // Set the file descriptor to binary mode
+      __setfdbinary(fd);
+      return 0;
+    }
+
+  int result = __chgfdccsid(fd, ccsid);
+
+  return result;
 }
 
 int __tag_new_file(int fd) {
@@ -791,7 +861,7 @@ int utmpxname(char * file) {
 }
 
 struct utmpx *__getutxent_ascii(void) {
-  utmpx* utmpx_ptr = __getutxent_orig(); 
+  utmpx* utmpx_ptr = __getutxent_orig();
   if (!utmpx_ptr)
     return utmpx_ptr;
 
@@ -814,28 +884,55 @@ int __open_ascii(const char *filename, int opts, ...) {
   int fd = __open_orig(filename, opts, perms);
   int old_errno = errno;
 
+  struct file_tag *t = &sb.st_tag;
+
+  if (S_ISREG(sb.st_mode) && (opts & O_RDONLY)) {
+     existing_files.erase(filename);
+     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file())
+     { 
+        if (t->ft_txtflag)
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
+        else
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, false)));            
+     }
+  }
+
   if (fd >= 0) {
-    // Tag new files as ASCII (819)
     if (is_new_file) {
-     __tag_new_file(fd);
+     __tag_new_file_filename(fd, filename);
      /* Calling __chgfdccsid() should not clobber errno. */
      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
-      struct file_tag *t = &sb.st_tag;
-      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
-          (opts & O_RDONLY) != 0) {
+      if (t->ft_ccsid == FT_UNTAGGED && (opts & O_RDONLY) != 0) {
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
+          auto it = existing_files.find(filename);
+          if(it != existing_files.end())
+          {
+             //keep file ccsid 0, but turn on txt conversion
+             //this combination does not exist in 'real life' but it allows
+             //us to distinguise between unconverted and converted untagged files 
+             it->second = std::make_pair(FT_UNTAGGED, true);
+          }
         }
+      }
+      else if (t->ft_ccsid == FT_UNTAGGED && (opts & O_RDONLY) == 0) {
+          auto it = existing_files.find(filename);
+          if(it != existing_files.end())
+             //if untagged with txtflag on, we have to enable conversion
+             if(it->second.second)
+             {
+                struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+                fcntl(fd, F_CONTROL_CVT, &cvtreq);
+             }
       }
     } else if (isatty(fd)) {
       // tty devices need to have auto convert enabled
-      struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
@@ -854,26 +951,56 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   FILE* fp = __fopen_orig(filename, mode);
   int old_errno = errno;
 
+  struct file_tag *t = &sb.st_tag;
+
+  if (S_ISREG(sb.st_mode) && (strcmp(mode, "r") == 0)) {
+     existing_files.erase(filename);
+     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file())
+     {
+        if (t->ft_txtflag)
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
+        else
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, false)));
+     }
+  }
+
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-     __tag_new_file(fd);
+     __tag_new_file_filename(fd, filename);
      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
       struct file_tag *t = &sb.st_tag;
-      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
-          strcmp(mode, "r") == 0) {
+      if (t->ft_ccsid == FT_UNTAGGED && strcmp(mode, "r") == 0) {
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
+          auto it = existing_files.find(filename);
+          if(it != existing_files.end())
+          {
+             //keep file ccsid 0, but turn on txt conversion
+             //this combination does not exist in 'real life' but it allows
+             //us to distinguise between unconverted and converted untagged files
+             it->second = std::make_pair(FT_UNTAGGED, true);
+          }
         } else {
           // fopen tags untagged files, which enables auto-conversion
           __disableautocvt(fd);
         }
+      }
+      else if (t->ft_ccsid == FT_UNTAGGED && strcmp(mode, "r") != 0) {
+          auto it = existing_files.find(filename);
+          if(it != existing_files.end())
+             //if untagged with txtflag off, we have to disable conversion
+             //fopen enables conversion for untagged files by default
+             if(!it->second.second)
+             {
+                __disableautocvt(fd);
+             }
       }
     } else if (isatty(fd)) {
       // tty devices need to have auto convert enabled
@@ -907,7 +1034,7 @@ int __mkfifo_ascii(const char *pathname, mode_t mode) {
     return ret;
 
   __chgpathccsid((char*)pathname, 819);
-  return 0; 
+  return 0;
 }
 
 int __mkstemp_ascii(char * tmpl) {
@@ -938,7 +1065,7 @@ int __socketpair_ascii(int domain, int type, int protocol, int sv[2]) {
     struct f_cnvrt cvtreq = {SETCVTON, 0, 0};
     if (fcntl(sv[0], F_CONTROL_CVT, &cvtreq) == 0)
       return fcntl(sv[1], F_CONTROL_CVT, &cvtreq);
-  } else { 
+  } else {
     return ret;
   }
 

@@ -1,3 +1,4 @@
+
 // Enable CLIB overrides
 #define ZOSLIB_OVERRIDE_CLIB 1
 
@@ -120,6 +121,32 @@ TEST_F(CLIBOverrides, open) {
     EXPECT_EQ(strcmp(buff, buff2), 0);
     free(buff2);
     close(fd);
+
+    // Create an file with _ENCODE_FILE_NEW=IBM-1047 and set mode to  _ENCODE_FILE_NEW=ISO8859-1
+    // This simulates an existing file that should keep its original filetag
+    setenv("_ENCODE_FILE_NEW", "IBM-1047", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    write(fd, buff, sizeof(buff));
+    close(fd);
+
+    setenv("_ENCODE_FILE_NEW", "ISO8859-1", 1);
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    buff2 = (char*)malloc(sizeof(buff));
+    memset(buff2, sizeof(buff), 1);
+    read(fd, buff2, sizeof(buff));
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+    remove(temp_path);
+    //at this point the file should be created as IBM-1047, even though the _ENCODE_FILE_NEW is ISO8859-1
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    close(fd);
+    remove(temp_path);
+
     unsetenv("_ENCODE_FILE_NEW");
 }
 
