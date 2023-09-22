@@ -26,6 +26,14 @@
 #pragma redefine_extname getline getline_undefined
 #pragma redefine_extname dprintf dprintf_undefined
 #pragma redefine_extname dirfd dirfd_undefined
+#pragma redefine_extname fchmodat fchmodat_undefined
+#pragma redefine_extname mkdirat mkdirat_undefined
+#pragma redefine_extname mkfifoat mkfifoat_undefined
+#pragma redefine_extname mknodat mknodat_undefined
+#pragma redefine_extname renameat2 renameat2_undefined
+#pragma redefine_extname futimesat futimesat_undefined
+#pragma redefine_extname fchownat fchownat_undefined
+#pragma redefine_extname strchrnul strchrnul_undefined
 #endif
 
 #endif // ZOS_V2R5_FIXUPS_H
