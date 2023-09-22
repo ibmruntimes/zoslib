@@ -40,6 +40,7 @@
 #pragma redefine_extname fdatasync fdatasync_undefined
 #pragma redefine_extname inotify_init inotify_init_undefined
 #pragma redefine_extname prctl prctl_undefined
+#pragma redefine_extname fstatfs fstatfs_undefined
 #endif
 
 #endif // ZOS_V2R5_FIXUPS_H
