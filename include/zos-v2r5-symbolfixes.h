@@ -34,6 +34,12 @@
 #pragma redefine_extname futimesat futimesat_undefined
 #pragma redefine_extname fchownat fchownat_undefined
 #pragma redefine_extname strchrnul strchrnul_undefined
+#pragma redefine_extname sethostname sethostname_undefined
+#pragma redefine_extname syncfs syncfs_undefined
+#pragma redefine_extname sysinfo sysinfo_undefined
+#pragma redefine_extname fdatasync fdatasync_undefined
+#pragma redefine_extname inotify_init inotify_init_undefined
+#pragma redefine_extname prctl prctl_undefined
 #endif
 
 #endif // ZOS_V2R5_FIXUPS_H
