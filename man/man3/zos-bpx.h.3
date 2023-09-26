@@ -1,4 +1,4 @@
-.TH "include/zos-bpx.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "include/zos-bpx.h" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,6 +6,8 @@ include/zos-bpx.h
 .SH SYNOPSIS
 .br
 .PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
 \fC#include <unistd\&.h>\fP
 .br
 
@@ -34,22 +36,22 @@ include/zos-bpx.h
 
 .in +1c
 .ti -1c
-.RI "char *__ptr32 *__ptr32 \fB__uss_base_address\fP (void)"
+.RI "\fB__Z_EXPORT\fP char *__ptr32 *__ptr32 \fB__uss_base_address\fP (void)"
 .br
 .ti -1c
-.RI "void \fB__bpx4kil\fP (int pid, int signal, void *signal_options, int *return_value, int *return_code, int *reason_code)"
+.RI "\fB__Z_EXPORT\fP void \fB__bpx4kil\fP (int pid, int signal, void *signal_options, int *return_value, int *return_code, int *reason_code)"
 .br
 .ti -1c
-.RI "void \fB__bpx4frk\fP (int *pid, int *return_code, int *reason_code)"
+.RI "\fB__Z_EXPORT\fP void \fB__bpx4frk\fP (int *pid, int *return_code, int *reason_code)"
 .br
 .ti -1c
-.RI "void \fB__bpx4ctw\fP (unsigned int *secs, unsigned int *nsecs, unsigned int *event_list, unsigned int *secs_rem, unsigned int *nsecs_rem, int *return_value, int *return_code, int *reason_code)"
+.RI "\fB__Z_EXPORT\fP void \fB__bpx4ctw\fP (unsigned int *secs, unsigned int *nsecs, unsigned int *event_list, unsigned int *secs_rem, unsigned int *nsecs_rem, int *return_value, int *return_code, int *reason_code)"
 .br
 .ti -1c
-.RI "void \fB__bpx4gth\fP (int *input_length, void **input_address, int *output_length, void **output_address, int *return_value, int *return_code, int *reason_code)"
+.RI "\fB__Z_EXPORT\fP void \fB__bpx4gth\fP (int *input_length, void **input_address, int *output_length, void **output_address, int *return_value, int *return_code, int *reason_code)"
 .br
 .ti -1c
-.RI "void \fB__bpx4lcr\fP (int pathname_length, char *pathname, int attributes_length, \fB__bpxyatt_t\fP *attributes, int *return_value, int *return_code, int *reason_code)"
+.RI "\fB__Z_EXPORT\fP void \fB__bpx4lcr\fP (int pathname_length, char *pathname, int attributes_length, \fB__bpxyatt_t\fP *attributes, int *return_value, int *return_code, int *reason_code)"
 .br
 .in -1c
 .SH "Macro Definition Documentation"
@@ -62,17 +64,17 @@ include/zos-bpx.h
 
 .SH "Function Documentation"
 .PP 
-.SS "void __bpx4ctw (unsigned int * secs, unsigned int * nsecs, unsigned int * event_list, unsigned int * secs_rem, unsigned int * nsecs_rem, int * return_value, int * return_code, int * reason_code)"
+.SS "\fB__Z_EXPORT\fP void __bpx4ctw (unsigned int * secs, unsigned int * nsecs, unsigned int * event_list, unsigned int * secs_rem, unsigned int * nsecs_rem, int * return_value, int * return_code, int * reason_code)"
 
-.SS "void __bpx4frk (int * pid, int * return_code, int * reason_code)"
+.SS "\fB__Z_EXPORT\fP void __bpx4frk (int * pid, int * return_code, int * reason_code)"
 
-.SS "void __bpx4gth (int * input_length, void ** input_address, int * output_length, void ** output_address, int * return_value, int * return_code, int * reason_code)"
+.SS "\fB__Z_EXPORT\fP void __bpx4gth (int * input_length, void ** input_address, int * output_length, void ** output_address, int * return_value, int * return_code, int * reason_code)"
 
-.SS "void __bpx4kil (int pid, int signal, void * signal_options, int * return_value, int * return_code, int * reason_code)"
+.SS "\fB__Z_EXPORT\fP void __bpx4kil (int pid, int signal, void * signal_options, int * return_value, int * return_code, int * reason_code)"
 
-.SS "void __bpx4lcr (int pathname_length, char * pathname, int attributes_length, \fB__bpxyatt_t\fP * attributes, int * return_value, int * return_code, int * reason_code)"
+.SS "\fB__Z_EXPORT\fP void __bpx4lcr (int pathname_length, char * pathname, int attributes_length, \fB__bpxyatt_t\fP * attributes, int * return_value, int * return_code, int * reason_code)"
 
-.SS "char* __ptr32* __ptr32 __uss_base_address (void)"
+.SS "\fB__Z_EXPORT\fP char* __ptr32* __ptr32 __uss_base_address (void)"
 
 .SH "Author"
 .PP 

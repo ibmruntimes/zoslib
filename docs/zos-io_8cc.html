@@ -73,15 +73,14 @@ $(function() {
 <div class="title">zos-io.cc File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="zos-io_8h_source.html">zos-io.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="zos-bpx_8h_source.html">zos-bpx.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="zos-char-util_8h_source.html">zos-char-util.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="zos-base_8h_source.html">zos-base.h</a>&quot;</code><br />
 <code>#include &lt;errno.h&gt;</code><br />
 <code>#include &lt;poll.h&gt;</code><br />
 <code>#include &lt;pthread.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="stdlib_8h_source.html">stdlib.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="string_8h_source.html">string.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="socket_8h_source.html">sys/socket.h</a>&gt;</code><br />
 <code>#include &lt;sys/stat.h&gt;</code><br />
 <code>#include &lt;sys/types.h&gt;</code><br />
 </div><table class="memberdecls">
@@ -112,6 +111,24 @@ Functions</h2></td></tr>
 <tr class="separator:a1a0138d7459e13d4a6f70cce01aab5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5595cb548093b4cba59dbe97ccce1097"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a5595cb548093b4cba59dbe97ccce1097">__getfdccsid</a> (int fd)</td></tr>
 <tr class="separator:a5595cb548093b4cba59dbe97ccce1097"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a643ae22118cade1aa137ead2cff825c6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a643ae22118cade1aa137ead2cff825c6">update_memlogging</a> (__zinit *zinit_ptr, const char *envar, bool memacnt)</td></tr>
+<tr class="separator:a643ae22118cade1aa137ead2cff825c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad297386d7986b5d352d22181e6fac0da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#ad297386d7986b5d352d22181e6fac0da">update_memlogging_level</a> (__zinit *zinit_ptr, const char *envar)</td></tr>
+<tr class="separator:ad297386d7986b5d352d22181e6fac0da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9002203deb272869984474a4a1ea8107"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a9002203deb272869984474a4a1ea8107">__doLogMemoryUsage</a> ()</td></tr>
+<tr class="separator:a9002203deb272869984474a4a1ea8107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51db35989cd4318d166b5b14f1aa3577"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a51db35989cd4318d166b5b14f1aa3577">__setLogMemoryUsage</a> (bool v)</td></tr>
+<tr class="separator:a51db35989cd4318d166b5b14f1aa3577"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4740bf69cfed668a0ed161cab1e9d50e"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a4740bf69cfed668a0ed161cab1e9d50e">__getMemoryUsageLogFile</a> ()</td></tr>
+<tr class="separator:a4740bf69cfed668a0ed161cab1e9d50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb1a1681faf7ab45eeb3ca559b1aec9d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#aeb1a1681faf7ab45eeb3ca559b1aec9d">__doLogMemoryAll</a> ()</td></tr>
+<tr class="separator:aeb1a1681faf7ab45eeb3ca559b1aec9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1200b3e8997fb1e069449a5bd1995624"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a1200b3e8997fb1e069449a5bd1995624">__doLogMemoryWarning</a> ()</td></tr>
+<tr class="separator:a1200b3e8997fb1e069449a5bd1995624"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a679d75369a9ce2f24bf4b051d38030dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#a679d75369a9ce2f24bf4b051d38030dd">__getLogMemoryFileNo</a> ()</td></tr>
+<tr class="separator:a679d75369a9ce2f24bf4b051d38030dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad035862547bbb29aa80c543db60c35b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-io_8cc.html#ad035862547bbb29aa80c543db60c35b6">__memprintf</a> (const char *format,...)</td></tr>
+<tr class="separator:ad035862547bbb29aa80c543db60c35b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a55c845b63ed7450afbd05ada9c9bfded"></a>
@@ -220,6 +237,60 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Print formatted data to MVS Console. </p>
+
+</div>
+</div>
+<a id="aeb1a1681faf7ab45eeb3ca559b1aec9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb1a1681faf7ab45eeb3ca559b1aec9d">&#9670;&nbsp;</a></span>__doLogMemoryAll()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __doLogMemoryAll </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns 1 if all messages from memory diagnostics are enabled. </p>
+
+</div>
+</div>
+<a id="a9002203deb272869984474a4a1ea8107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9002203deb272869984474a4a1ea8107">&#9670;&nbsp;</a></span>__doLogMemoryUsage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __doLogMemoryUsage </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns 1 if logging of memory diagnostics is enabled. </p>
+
+</div>
+</div>
+<a id="a1200b3e8997fb1e069449a5bd1995624"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1200b3e8997fb1e069449a5bd1995624">&#9670;&nbsp;</a></span>__doLogMemoryWarning()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __doLogMemoryWarning </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns 1 if only warnings from memory diagnostics are enabled. Errors are always included if memory diangostics is enabled. </p>
 
 </div>
 </div>
@@ -392,6 +463,76 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a679d75369a9ce2f24bf4b051d38030dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a679d75369a9ce2f24bf4b051d38030dd">&#9670;&nbsp;</a></span>__getLogMemoryFileNo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int __getLogMemoryFileNo </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the fileno to which memory diagnostics is written (use for instance in a `__display_backtrace(<a class="el" href="zos-io_8h.html#af1a98c4f0a0bc946b5619720b86ea86c">__getLogMemoryFileNo()</a>); call). </p>
+
+</div>
+</div>
+<a id="a4740bf69cfed668a0ed161cab1e9d50e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4740bf69cfed668a0ed161cab1e9d50e">&#9670;&nbsp;</a></span>__getMemoryUsageLogFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* __getMemoryUsageLogFile </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the file name, including "stdout" or "stderr", used to log memory diagnostics to. </p>
+
+</div>
+</div>
+<a id="ad035862547bbb29aa80c543db60c35b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad035862547bbb29aa80c543db60c35b6">&#9670;&nbsp;</a></span>__memprintf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __memprintf </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Logs memory diagnostics to the file name specified in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.</p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">same</td><td>as C's printf() parameters </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a1a0138d7459e13d4a6f70cce01aab5c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1a0138d7459e13d4a6f70cce01aab5c8">&#9670;&nbsp;</a></span>__setfdccsid()</h2>
 
@@ -428,6 +569,24 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a51db35989cd4318d166b5b14f1aa3577"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51db35989cd4318d166b5b14f1aa3577">&#9670;&nbsp;</a></span>__setLogMemoryUsage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __setLogMemoryUsage </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aea1e680b4b559780e2ce0ea587dbd77f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aea1e680b4b559780e2ce0ea587dbd77f">&#9670;&nbsp;</a></span>dprintf()</h2>
 
@@ -460,6 +619,68 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Debug Printf. </p><dl class="section return"><dt>Returns</dt><dd>returns total number of bytes written to file descriptor </dd></dl>
+
+</div>
+</div>
+<a id="a643ae22118cade1aa137ead2cff825c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a643ae22118cade1aa137ead2cff825c6">&#9670;&nbsp;</a></span>update_memlogging()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void update_memlogging </td>
+          <td>(</td>
+          <td class="paramtype">__zinit *&#160;</td>
+          <td class="paramname"><em>zinit_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>envar</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>memacnt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad297386d7986b5d352d22181e6fac0da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad297386d7986b5d352d22181e6fac0da">&#9670;&nbsp;</a></span>update_memlogging_level()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void update_memlogging_level </td>
+          <td>(</td>
+          <td class="paramtype">__zinit *&#160;</td>
+          <td class="paramname"><em>zinit_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>envar</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

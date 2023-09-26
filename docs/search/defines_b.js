@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['xstr_1402',['XSTR',['../zos_8cc.html#afd0d88bc7a3fb393df04cdd260c553b3',1,'zos.cc']]]
+  ['zoscpu_5fmodel_5flength_1407',['ZOSCPU_MODEL_LENGTH',['../zos-sys-info_8h.html#a616ad85d89ea210132ae785bf6013e6e',1,'zos-sys-info.h']]]
 ];

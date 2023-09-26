@@ -75,6 +75,7 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="zos-sys-info_8h_source.html">zos-sys-info.h</a>&quot;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="string_8h_source.html">string.h</a>&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -93,8 +94,47 @@ Functions</h2></td></tr>
 <tr class="separator:aaabf39b1027a0ddb9a5677b13cd7d710"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace9343312e3d85eeddebe558b070e280"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8cc.html#ace9343312e3d85eeddebe558b070e280">__is_vef1_available</a> ()</td></tr>
 <tr class="separator:ace9343312e3d85eeddebe558b070e280"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ffb150cc449ba0c8ed8560841117501"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-sys-info_8cc.html#a4ffb150cc449ba0c8ed8560841117501">__get_cpu_model</a> (char *buffer, size_t size)</td></tr>
+<tr class="separator:a4ffb150cc449ba0c8ed8560841117501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a4ffb150cc449ba0c8ed8560841117501"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ffb150cc449ba0c8ed8560841117501">&#9670;&nbsp;</a></span>__get_cpu_model()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* __get_cpu_model </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the 4 character CPU model of the system, including the null terminating character. Truncated if buffer size is too small.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>pointer to the buffer where the cpu model is to be stored </td></tr>
+    <tr><td class="paramname">size</td><td>the size of the buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the buffer. </dd></dl>
+
+</div>
+</div>
 <a id="a67eea4362b2e4efb1cfcf07f17eba6f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a67eea4362b2e4efb1cfcf07f17eba6f7">&#9670;&nbsp;</a></span>__get_num_frames()</h2>
 

@@ -1,38 +1,51 @@
 \hypertarget{zos-io_8h}{}\doxysection{include/zos-\/io.h File Reference}
 \label{zos-io_8h}\index{include/zos-\/io.h@{include/zos-\/io.h}}
+{\ttfamily \#include \char`\"{}zos-\/macros.\+h\char`\"{}}\newline
 {\ttfamily \#include $<$stdarg.\+h$>$}\newline
 {\ttfamily \#include $<$sys/types.\+h$>$}\newline
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{zos-io_8h_a026e3bd38da37deab59c4e07acde8adb}{dprintf}} (int fd, const char $\ast$,...)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a272c85d92f0e56306c802f2690aaaffd}{dprintf}} (int fd, const char $\ast$,...)
 \item 
-int \mbox{\hyperlink{zos-io_8h_a66333e20c4800e4c908fc5beca574649}{vdprintf}} (int fd, const char $\ast$, va\+\_\+list ap)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a875b400635cb99db3e76bb883f7d262b}{vdprintf}} (int fd, const char $\ast$, va\+\_\+list ap)
 \item 
-void \mbox{\hyperlink{zos-io_8h_aaaaab11cdfe715e251c58cdc01c9c3d6}{\+\_\+\+\_\+dump}} (int fd, const void $\ast$addr, size\+\_\+t len, size\+\_\+t bw)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \mbox{\hyperlink{zos-io_8h_a2ba70128930d372004581abe64a8513e}{\+\_\+\+\_\+dump}} (int fd, const void $\ast$addr, size\+\_\+t len, size\+\_\+t bw)
 \item 
-void \mbox{\hyperlink{zos-io_8h_a94b4b66cdaac370339f2123b2a2f48a4}{\+\_\+\+\_\+dump\+\_\+title}} (int fd, const void $\ast$addr, size\+\_\+t len, size\+\_\+t bw, const char $\ast$,...)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \mbox{\hyperlink{zos-io_8h_abcd3f09d8b7dfa33cd4493716e82be74}{\+\_\+\+\_\+dump\+\_\+title}} (int fd, const void $\ast$addr, size\+\_\+t len, size\+\_\+t bw, const char $\ast$,...)
 \item 
-void \mbox{\hyperlink{zos-io_8h_a9246a29963da978c92f1300f8f154cf5}{\+\_\+\+\_\+console}} (const void $\ast$p\+\_\+in, int len\+\_\+i)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \mbox{\hyperlink{zos-io_8h_a51b4f60371ba8341bd30d7321ce79d23}{\+\_\+\+\_\+console}} (const void $\ast$p\+\_\+in, int len\+\_\+i)
 \item 
-int \mbox{\hyperlink{zos-io_8h_aa111e065a77c2a74c9dc6309266ca7b7}{\+\_\+\+\_\+console\+\_\+printf}} (const char $\ast$fmt,...)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a7b181c25d7da3bd69e337f2f6bf9bc08}{\+\_\+\+\_\+console\+\_\+printf}} (const char $\ast$fmt,...)
 \item 
-int \mbox{\hyperlink{zos-io_8h_af5ecc7b9285446eb69449a33bff8eec5}{\+\_\+\+\_\+find\+\_\+file\+\_\+in\+\_\+path}} (char $\ast$out, int size, const char $\ast$envvar, const char $\ast$file)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_aab312074fb23d3ae440d1c09ca46fbfd}{\+\_\+\+\_\+find\+\_\+file\+\_\+in\+\_\+path}} (char $\ast$out, int size, const char $\ast$envvar, const char $\ast$file)
 \item 
-int \mbox{\hyperlink{zos-io_8h_a6c79250963a5848440a39bb4b71d56b6}{\+\_\+\+\_\+chgfdccsid}} (int fd, unsigned short ccsid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a1c3d3b02625cc8820471361ce1805014}{\+\_\+\+\_\+chgfdccsid}} (int fd, unsigned short ccsid)
 \item 
-int \mbox{\hyperlink{zos-io_8h_a5595cb548093b4cba59dbe97ccce1097}{\+\_\+\+\_\+getfdccsid}} (int fd)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a13d5c3f46759eb194d8638d2624aab57}{\+\_\+\+\_\+getfdccsid}} (int fd)
 \item 
-int \mbox{\hyperlink{zos-io_8h_a1a0138d7459e13d4a6f70cce01aab5c8}{\+\_\+\+\_\+setfdccsid}} (int fd, int t\+\_\+ccsid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_acd4a4e1439b5554046e81b5d66a9bf89}{\+\_\+\+\_\+setfdccsid}} (int fd, int t\+\_\+ccsid)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \mbox{\hyperlink{zos-io_8h_a581cbac2fda93ae0b74b6346b56a5c70}{\+\_\+\+\_\+memprintf}} (const char $\ast$format,...)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a8263c7019ebccf81faf48a3c6c5ab117}{\+\_\+\+\_\+do\+Log\+Memory\+Usage}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} char $\ast$ \mbox{\hyperlink{zos-io_8h_a83d40a642089211c677d898e5c8201f2}{\+\_\+\+\_\+get\+Memory\+Usage\+Log\+File}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_af1a98c4f0a0bc946b5619720b86ea86c}{\+\_\+\+\_\+get\+Log\+Memory\+File\+No}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_ae1116e6c9be1c1fd0fa807e98a136bac}{\+\_\+\+\_\+do\+Log\+Memory\+All}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-io_8h_a87cc72dda43e2ae21890729e9da94d9c}{\+\_\+\+\_\+do\+Log\+Memory\+Warning}} ()
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{zos-io_8h_a6c79250963a5848440a39bb4b71d56b6}\label{zos-io_8h_a6c79250963a5848440a39bb4b71d56b6}} 
+\mbox{\Hypertarget{zos-io_8h_a1c3d3b02625cc8820471361ce1805014}\label{zos-io_8h_a1c3d3b02625cc8820471361ce1805014}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_chgfdccsid@{\_\_chgfdccsid}}
 \index{\_\_chgfdccsid@{\_\_chgfdccsid}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_chgfdccsid()}{\_\_chgfdccsid()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+chgfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{unsigned short}]{ccsid }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+chgfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{unsigned short}]{ccsid }\end{DoxyParamCaption})}
 
 Change file descriptor to C\+C\+S\+ID. 
 \begin{DoxyParams}[1]{Parameters}
@@ -44,35 +57,53 @@ Change file descriptor to C\+C\+S\+ID.
 \begin{DoxyReturn}{Returns}
 returns 0 if successful, or -\/1 on failure. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-io_8h_a9246a29963da978c92f1300f8f154cf5}\label{zos-io_8h_a9246a29963da978c92f1300f8f154cf5}} 
+\mbox{\Hypertarget{zos-io_8h_a51b4f60371ba8341bd30d7321ce79d23}\label{zos-io_8h_a51b4f60371ba8341bd30d7321ce79d23}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_console@{\_\_console}}
 \index{\_\_console@{\_\_console}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_console()}{\_\_console()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+console (\begin{DoxyParamCaption}\item[{const void $\ast$}]{p\+\_\+in,  }\item[{int}]{len\+\_\+i }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \+\_\+\+\_\+console (\begin{DoxyParamCaption}\item[{const void $\ast$}]{p\+\_\+in,  }\item[{int}]{len\+\_\+i }\end{DoxyParamCaption})}
 
-Print given buffer to M\+VS Console. \mbox{\Hypertarget{zos-io_8h_aa111e065a77c2a74c9dc6309266ca7b7}\label{zos-io_8h_aa111e065a77c2a74c9dc6309266ca7b7}} 
+Print given buffer to M\+VS Console. \mbox{\Hypertarget{zos-io_8h_a7b181c25d7da3bd69e337f2f6bf9bc08}\label{zos-io_8h_a7b181c25d7da3bd69e337f2f6bf9bc08}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_console\_printf@{\_\_console\_printf}}
 \index{\_\_console\_printf@{\_\_console\_printf}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_console\_printf()}{\_\_console\_printf()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+console\+\_\+printf (\begin{DoxyParamCaption}\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+console\+\_\+printf (\begin{DoxyParamCaption}\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
 
-Print formatted data to M\+VS Console. \mbox{\Hypertarget{zos-io_8h_aaaaab11cdfe715e251c58cdc01c9c3d6}\label{zos-io_8h_aaaaab11cdfe715e251c58cdc01c9c3d6}} 
+Print formatted data to M\+VS Console. \mbox{\Hypertarget{zos-io_8h_ae1116e6c9be1c1fd0fa807e98a136bac}\label{zos-io_8h_ae1116e6c9be1c1fd0fa807e98a136bac}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_doLogMemoryAll@{\_\_doLogMemoryAll}}
+\index{\_\_doLogMemoryAll@{\_\_doLogMemoryAll}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryAll()}{\_\_doLogMemoryAll()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+do\+Log\+Memory\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if all messages from memory diagnostics are enabled. \mbox{\Hypertarget{zos-io_8h_a8263c7019ebccf81faf48a3c6c5ab117}\label{zos-io_8h_a8263c7019ebccf81faf48a3c6c5ab117}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_doLogMemoryUsage@{\_\_doLogMemoryUsage}}
+\index{\_\_doLogMemoryUsage@{\_\_doLogMemoryUsage}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryUsage()}{\_\_doLogMemoryUsage()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+do\+Log\+Memory\+Usage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if logging of memory diagnostics is enabled. \mbox{\Hypertarget{zos-io_8h_a87cc72dda43e2ae21890729e9da94d9c}\label{zos-io_8h_a87cc72dda43e2ae21890729e9da94d9c}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_doLogMemoryWarning@{\_\_doLogMemoryWarning}}
+\index{\_\_doLogMemoryWarning@{\_\_doLogMemoryWarning}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryWarning()}{\_\_doLogMemoryWarning()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+do\+Log\+Memory\+Warning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if only warnings from memory diagnostics are enabled. Errors are always included if memory diangostics is enabled. \mbox{\Hypertarget{zos-io_8h_a2ba70128930d372004581abe64a8513e}\label{zos-io_8h_a2ba70128930d372004581abe64a8513e}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_dump@{\_\_dump}}
 \index{\_\_dump@{\_\_dump}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_dump()}{\_\_dump()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+dump (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const void $\ast$}]{addr,  }\item[{size\+\_\+t}]{len,  }\item[{size\+\_\+t}]{bw }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \+\_\+\+\_\+dump (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const void $\ast$}]{addr,  }\item[{size\+\_\+t}]{len,  }\item[{size\+\_\+t}]{bw }\end{DoxyParamCaption})}
 
-Dump to console. \mbox{\Hypertarget{zos-io_8h_a94b4b66cdaac370339f2123b2a2f48a4}\label{zos-io_8h_a94b4b66cdaac370339f2123b2a2f48a4}} 
+Dump to console. \mbox{\Hypertarget{zos-io_8h_abcd3f09d8b7dfa33cd4493716e82be74}\label{zos-io_8h_abcd3f09d8b7dfa33cd4493716e82be74}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_dump\_title@{\_\_dump\_title}}
 \index{\_\_dump\_title@{\_\_dump\_title}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_dump\_title()}{\_\_dump\_title()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+dump\+\_\+title (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const void $\ast$}]{addr,  }\item[{size\+\_\+t}]{len,  }\item[{size\+\_\+t}]{bw,  }\item[{const char $\ast$}]{,  }\item[{}]{... }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \+\_\+\+\_\+dump\+\_\+title (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const void $\ast$}]{addr,  }\item[{size\+\_\+t}]{len,  }\item[{size\+\_\+t}]{bw,  }\item[{const char $\ast$}]{,  }\item[{}]{... }\end{DoxyParamCaption})}
 
-Dump title to console. \mbox{\Hypertarget{zos-io_8h_af5ecc7b9285446eb69449a33bff8eec5}\label{zos-io_8h_af5ecc7b9285446eb69449a33bff8eec5}} 
+Dump title to console. \mbox{\Hypertarget{zos-io_8h_aab312074fb23d3ae440d1c09ca46fbfd}\label{zos-io_8h_aab312074fb23d3ae440d1c09ca46fbfd}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_find\_file\_in\_path@{\_\_find\_file\_in\_path}}
 \index{\_\_find\_file\_in\_path@{\_\_find\_file\_in\_path}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_find\_file\_in\_path()}{\_\_find\_file\_in\_path()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+find\+\_\+file\+\_\+in\+\_\+path (\begin{DoxyParamCaption}\item[{char $\ast$}]{out,  }\item[{int}]{size,  }\item[{const char $\ast$}]{envvar,  }\item[{const char $\ast$}]{file }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+find\+\_\+file\+\_\+in\+\_\+path (\begin{DoxyParamCaption}\item[{char $\ast$}]{out,  }\item[{int}]{size,  }\item[{const char $\ast$}]{envvar,  }\item[{const char $\ast$}]{file }\end{DoxyParamCaption})}
 
 Finds file in a given path 
 \begin{DoxyParams}[1]{Parameters}
@@ -88,11 +119,11 @@ Finds file in a given path
 \begin{DoxyReturn}{Returns}
 returns non-\/zero if successful, 0 if not found. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-io_8h_a5595cb548093b4cba59dbe97ccce1097}\label{zos-io_8h_a5595cb548093b4cba59dbe97ccce1097}} 
+\mbox{\Hypertarget{zos-io_8h_a13d5c3f46759eb194d8638d2624aab57}\label{zos-io_8h_a13d5c3f46759eb194d8638d2624aab57}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_getfdccsid@{\_\_getfdccsid}}
 \index{\_\_getfdccsid@{\_\_getfdccsid}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_getfdccsid()}{\_\_getfdccsid()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+getfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+getfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
 
 Get file descriptor C\+C\+S\+ID. 
 \begin{DoxyParams}[1]{Parameters}
@@ -102,11 +133,34 @@ Get file descriptor C\+C\+S\+ID.
 \begin{DoxyReturn}{Returns}
 returns file descriptors ccsid. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-io_8h_a1a0138d7459e13d4a6f70cce01aab5c8}\label{zos-io_8h_a1a0138d7459e13d4a6f70cce01aab5c8}} 
+\mbox{\Hypertarget{zos-io_8h_af1a98c4f0a0bc946b5619720b86ea86c}\label{zos-io_8h_af1a98c4f0a0bc946b5619720b86ea86c}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_getLogMemoryFileNo@{\_\_getLogMemoryFileNo}}
+\index{\_\_getLogMemoryFileNo@{\_\_getLogMemoryFileNo}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_getLogMemoryFileNo()}{\_\_getLogMemoryFileNo()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+get\+Log\+Memory\+File\+No (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns the fileno to which memory diagnostics is written (use for instance in a \`{}\+\_\+\+\_\+display\+\_\+backtrace(\mbox{\hyperlink{zos-io_8h_af1a98c4f0a0bc946b5619720b86ea86c}{\+\_\+\+\_\+get\+Log\+Memory\+File\+No()}}); call). \mbox{\Hypertarget{zos-io_8h_a83d40a642089211c677d898e5c8201f2}\label{zos-io_8h_a83d40a642089211c677d898e5c8201f2}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_getMemoryUsageLogFile@{\_\_getMemoryUsageLogFile}}
+\index{\_\_getMemoryUsageLogFile@{\_\_getMemoryUsageLogFile}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_getMemoryUsageLogFile()}{\_\_getMemoryUsageLogFile()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} char$\ast$ \+\_\+\+\_\+get\+Memory\+Usage\+Log\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns the file name, including \char`\"{}stdout\char`\"{} or \char`\"{}stderr\char`\"{}, used to log memory diagnostics to. \mbox{\Hypertarget{zos-io_8h_a581cbac2fda93ae0b74b6346b56a5c70}\label{zos-io_8h_a581cbac2fda93ae0b74b6346b56a5c70}} 
+\index{zos-\/io.h@{zos-\/io.h}!\_\_memprintf@{\_\_memprintf}}
+\index{\_\_memprintf@{\_\_memprintf}!zos-\/io.h@{zos-\/io.h}}
+\doxysubsubsection{\texorpdfstring{\_\_memprintf()}{\_\_memprintf()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} void \+\_\+\+\_\+memprintf (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+Logs memory diagnostics to the file name specified in the environment variable zoslib\+\_\+config\+\_\+t.\+M\+E\+M\+O\+R\+Y\+\_\+\+U\+S\+A\+G\+E\+\_\+\+L\+O\+G\+\_\+\+F\+I\+L\+E\+\_\+\+E\+N\+V\+AR.
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em same} & as C\textquotesingle{}s printf() parameters \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{zos-io_8h_acd4a4e1439b5554046e81b5d66a9bf89}\label{zos-io_8h_acd4a4e1439b5554046e81b5d66a9bf89}} 
 \index{zos-\/io.h@{zos-\/io.h}!\_\_setfdccsid@{\_\_setfdccsid}}
 \index{\_\_setfdccsid@{\_\_setfdccsid}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{\_\_setfdccsid()}{\_\_setfdccsid()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+setfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{int}]{t\+\_\+ccsid }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+setfdccsid (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{int}]{t\+\_\+ccsid }\end{DoxyParamCaption})}
 
 Set file descriptor to the provided C\+C\+S\+ID. 
 \begin{DoxyParams}[1]{Parameters}
@@ -118,20 +172,20 @@ Set file descriptor to the provided C\+C\+S\+ID.
 \begin{DoxyReturn}{Returns}
 returns 0 if successful, or -\/1 on failure. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-io_8h_a026e3bd38da37deab59c4e07acde8adb}\label{zos-io_8h_a026e3bd38da37deab59c4e07acde8adb}} 
+\mbox{\Hypertarget{zos-io_8h_a272c85d92f0e56306c802f2690aaaffd}\label{zos-io_8h_a272c85d92f0e56306c802f2690aaaffd}} 
 \index{zos-\/io.h@{zos-\/io.h}!dprintf@{dprintf}}
 \index{dprintf@{dprintf}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{dprintf()}{dprintf()}}
-{\footnotesize\ttfamily int dprintf (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const char $\ast$}]{,  }\item[{}]{... }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int dprintf (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const char $\ast$}]{,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 Debug Printf. \begin{DoxyReturn}{Returns}
 returns total number of bytes written to file descriptor 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-io_8h_a66333e20c4800e4c908fc5beca574649}\label{zos-io_8h_a66333e20c4800e4c908fc5beca574649}} 
+\mbox{\Hypertarget{zos-io_8h_a875b400635cb99db3e76bb883f7d262b}\label{zos-io_8h_a875b400635cb99db3e76bb883f7d262b}} 
 \index{zos-\/io.h@{zos-\/io.h}!vdprintf@{vdprintf}}
 \index{vdprintf@{vdprintf}!zos-\/io.h@{zos-\/io.h}}
 \doxysubsubsection{\texorpdfstring{vdprintf()}{vdprintf()}}
-{\footnotesize\ttfamily int vdprintf (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const char $\ast$}]{,  }\item[{va\+\_\+list}]{ap }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int vdprintf (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const char $\ast$}]{,  }\item[{va\+\_\+list}]{ap }\end{DoxyParamCaption})}
 
 Variadic Debug Printf. \begin{DoxyReturn}{Returns}
 returns total number of bytes written to file descriptor 

@@ -29,6 +29,7 @@
 {\ttfamily \#include $<$sys/time.\+h$>$}\newline
 {\ttfamily \#include $<$time.\+h$>$}\newline
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
 {\ttfamily \#include $<$exception$>$}\newline
 {\ttfamily \#include $<$mutex$>$}\newline
 {\ttfamily \#include $<$sstream$>$}\newline
@@ -86,17 +87,15 @@ struct \mbox{\hyperlink{struct_i_f_a_a_r_g_s}{I\+F\+A\+A\+R\+GS}}
 \item 
 \#define \mbox{\hyperlink{zos_8cc_acae2f65902c16940098f568e744c0c62}{D\+E\+F\+A\+U\+L\+T\+\_\+\+B\+U\+I\+L\+D\+\_\+\+S\+T\+R\+I\+NG}}~  \char`\"{}v\char`\"{} X\+S\+TR(\mbox{\hyperlink{zos_8h_aa9e8f3bb466bb421d13913df7aeaa20c}{M\+A\+J\+O\+R\+\_\+\+V\+E\+R\+S\+I\+ON}}) \char`\"{}.\char`\"{} \mbox{\hyperlink{zos_8cc_afd0d88bc7a3fb393df04cdd260c553b3}{X\+S\+TR}}(\mbox{\hyperlink{zos_8h_a320988aa2655ee094f3a34a52da10831}{M\+I\+N\+O\+R\+\_\+\+V\+E\+R\+S\+I\+ON}}) \char`\"{}.\char`\"{} \mbox{\hyperlink{zos_8cc_afd0d88bc7a3fb393df04cdd260c553b3}{X\+S\+TR}}(\mbox{\hyperlink{zos_8h_aed5f6b4b087292b1f6579952fc7c14eb}{P\+A\+T\+C\+H\+\_\+\+V\+E\+R\+S\+I\+ON}})
 \item 
-\#define \mbox{\hyperlink{zos_8cc_affe776513b24d84b39af8ab0930fef7f}{max}}(a,  b)~(((a) $>$ (b)) ? (a) \+: (b))
-\item 
 \#define \mbox{\hyperlink{zos_8cc_a7f6f9e879c9fc403a2575aeb0da2cfc0}{P\+G\+T\+H\+\_\+\+C\+U\+R\+R\+E\+NT}}~1
 \item 
 \#define \mbox{\hyperlink{zos_8cc_a316704bcbd14679b33ab2d29311a226c}{P\+G\+T\+H\+A\+C\+O\+M\+M\+A\+N\+D\+L\+O\+NG}}~1
 \item 
 \#define \mbox{\hyperlink{zos_8cc_a5341b5cf9721b7a737fa7591980130fe}{\+\_\+\+\_\+\+U\+S\+E\+\_\+\+I\+A\+R\+V64}}~1
 \item 
-\#define \mbox{\hyperlink{zos_8cc_a43f4122f7ec8bf89b907cb979526f6f2}{C\+SG}}(\+\_\+op1,  \+\_\+op2,  \+\_\+op3)~  \+\_\+\+\_\+asm(\char`\"{} csg \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)
+\#define \mbox{\hyperlink{zos_8cc_a43f4122f7ec8bf89b907cb979526f6f2}{C\+SG}}(\+\_\+op1,  \+\_\+op2,  \+\_\+op3)~  \+\_\+\+\_\+asm volatile(\char`\"{} csg \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)
 \item 
-\#define \mbox{\hyperlink{zos_8cc_afc142f9df9111f9c380cb333bbc3a166}{CS}}(\+\_\+op1,  \+\_\+op2,  \+\_\+op3)~  \+\_\+\+\_\+asm(\char`\"{} cs \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)
+\#define \mbox{\hyperlink{zos_8cc_afc142f9df9111f9c380cb333bbc3a166}{CS}}(\+\_\+op1,  \+\_\+op2,  \+\_\+op3)~  \+\_\+\+\_\+asm volatile(\char`\"{} cs \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)
 \end{DoxyCompactItemize}
 \doxysubsection*{Typedefs}
 \begin{DoxyCompactItemize}
@@ -148,9 +147,11 @@ typedef struct \mbox{\hyperlink{struct_i_f_a_a_r_g_s}{I\+F\+A\+A\+R\+GS}} \mbox{
 \item 
 void \mbox{\hyperlink{zos_8cc_a94042c9c134f84c2b0828cc9bf990acf}{\+\_\+\+\_\+set\+\_\+ccsid\+\_\+guess\+\_\+buf\+\_\+size}} (int nbytes)
 \item 
-char $\ast$$\ast$ \mbox{\hyperlink{zos_8cc_af533310fcdfe17eb1d68114bfc33a1a6}{\+\_\+\+\_\+get\+\_\+environ\+\_\+np}} (void)
+void \mbox{\hyperlink{zos_8cc_a06fecdf3f31ef107e60dff87b4db827a}{update\+\_\+memlogging}} (\+\_\+\+\_\+zinit $\ast$, const char $\ast$envar, bool memacnt)
 \item 
-unsigned int \mbox{\hyperlink{zos_8cc_a685f6f3de90ad3900f57aebbe637b766}{\+\_\+\+\_\+zsync\+\_\+val\+\_\+compare\+\_\+and\+\_\+swap32}} (volatile unsigned int $\ast$\+\_\+\+\_\+p, unsigned int \+\_\+\+\_\+comp\+Val, unsigned int \+\_\+\+\_\+exch\+Val)
+void \mbox{\hyperlink{zos_8cc_a72fc0f97b48cd29ca52376154ffd2048}{update\+\_\+memlogging\+\_\+level}} (\+\_\+\+\_\+zinit $\ast$, const char $\ast$envar)
+\item 
+char $\ast$$\ast$ \mbox{\hyperlink{zos_8cc_af533310fcdfe17eb1d68114bfc33a1a6}{\+\_\+\+\_\+get\+\_\+environ\+\_\+np}} (void)
 \item 
 int \mbox{\hyperlink{zos_8cc_abe4300c3c9bba7985cb7d7f49e5c874e}{\+\_\+\+\_\+setenv\+\_\+a}} (const char $\ast$, const char $\ast$, int)
 \item 
@@ -166,7 +167,7 @@ void \mbox{\hyperlink{zos_8cc_ae93bfd4b259fdb4eb75ece87198cbac9}{backtrace\+\_\+
 \item 
 void \mbox{\hyperlink{zos_8cc_adaadac4f341edd6973a413370bbcd382}{\+\_\+\+\_\+display\+\_\+backtrace}} (int fd)
 \item 
-void \mbox{\hyperlink{zos_8cc_a356023b7241042bab4058771953f109b}{\+\_\+\+\_\+abend}} (int comp\+\_\+code, unsigned reason\+\_\+code, int flat\+\_\+byte, void $\ast$\mbox{\hyperlink{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}{plist}})
+void \mbox{\hyperlink{zos_8cc_a356023b7241042bab4058771953f109b}{\+\_\+\+\_\+abend}} (int comp\+\_\+code, unsigned reason\+\_\+code, int flat\+\_\+byte, void $\ast$plist)
 \item 
 int \mbox{\hyperlink{zos_8cc_a918f854781ebfd2e2b8208e5ac8a5639}{strcasecmp\+\_\+ignorecp}} (const char $\ast$a, const char $\ast$b)
 \item 
@@ -180,15 +181,13 @@ unsigned long \mbox{\hyperlink{zos_8cc_a08b0c5dab33d2c2bb858bf2f82b9d641}{\+\_\+
 \item 
 void \mbox{\hyperlink{zos_8cc_a3a9f8edd020d4b529d5bc6e786d205d6}{\+\_\+\+\_\+settimelimit}} (int secs)
 \item 
-void \mbox{\hyperlink{zos_8cc_ac65f5b2b1095a2c51ee4e2b1f87b9cb0}{\+\_\+\+\_\+setdebug}} (int v)
-\item 
-int \mbox{\hyperlink{zos_8cc_a6d6262268568ca267a869ea8a09f636d}{\+\_\+\+\_\+indebug}} (void)
-\item 
 void $\ast$ \mbox{\hyperlink{zos_8cc_af03baf0b70a27078df7d8501a54a504e}{\+\_\+\+\_\+dlcb\+\_\+next}} (void $\ast$last)
 \item 
 int \mbox{\hyperlink{zos_8cc_af0e953aba19ac06bdf4d1934a409184e}{\+\_\+\+\_\+dlcb\+\_\+entry\+\_\+name}} (char $\ast$buf, int size, void $\ast$dlcb)
 \item 
 void $\ast$ \mbox{\hyperlink{zos_8cc_a53a6a70a1e25ac646020762525af5578}{\+\_\+\+\_\+dlcb\+\_\+entry\+\_\+addr}} (void $\ast$dlcb)
+\item 
+int \mbox{\hyperlink{zos_8cc_aec0b906b3712960e1275fb9829a669ee}{\+\_\+\+\_\+dlcb\+\_\+iterate}} (int($\ast$cb)(char $\ast$, void $\ast$, void $\ast$), void $\ast$data)
 \item 
 void \mbox{\hyperlink{zos_8cc_a8dec7c95227ff149687066cf04029191}{abort}} (void)
 \item 
@@ -197,8 +196,6 @@ void \mbox{\hyperlink{zos_8cc_a669a2def8764ee4faffc13756bb22a00}{\+\_\+\+\_\+set
 int \mbox{\hyperlink{zos_8cc_ae647b7279cea008a3b5785dfb2097891}{\+\_\+\+\_\+cond\+\_\+timed\+\_\+wait}} (unsigned int secs, unsigned int nsecs, unsigned int event\+\_\+list, unsigned int $\ast$secs\+\_\+rem, unsigned int $\ast$nsecs\+\_\+rem)
 \item 
 int \mbox{\hyperlink{zos_8cc_a17629c5f27ae250d924b74b1789e3b27}{kill}} (int pid, int sig)
-\item 
-int \mbox{\hyperlink{zos_8cc_ae93297a3ea73ced0e4e4345d8c41bf03}{\+\_\+\+\_\+fork}} (void)
 \item 
 int \mbox{\hyperlink{zos_8cc_ae84be62539ccfe5bde4bcbe507b7e2e9}{\+\_\+\+\_\+getargcv}} (int $\ast$argc, char $\ast$$\ast$$\ast$argv, pid\+\_\+t pid)
 \item 
@@ -218,7 +215,11 @@ unsigned long \mbox{\hyperlink{zos_8cc_a6319466e3a209b94c3d277245cbd61f7}{\+\_\+
 \item 
 unsigned long \mbox{\hyperlink{zos_8cc_a3f7240d3b2eaa5ff770cf4e54ab3ec44}{getipttoken}} (void)
 \item 
+void $\ast$ \mbox{\hyperlink{zos_8cc_af4914b48e36eb7d1f5f2e5df8152d523}{\+\_\+\+\_\+zalloc}} (size\+\_\+t len, size\+\_\+t alignment)
+\item 
 void $\ast$ \mbox{\hyperlink{zos_8cc_a80836ddd1b6b15678df61b69152bacd5}{anon\+\_\+mmap}} (void $\ast$\+\_\+, size\+\_\+t len)
+\item 
+int \mbox{\hyperlink{zos_8cc_a10b9a6e92c8fa49541b426bec70fbdc3}{\+\_\+\+\_\+zfree}} (void $\ast$addr, int len)
 \item 
 int \mbox{\hyperlink{zos_8cc_aa00ab042a596dd63795d3791d34b8d29}{anon\+\_\+munmap}} (void $\ast$addr, size\+\_\+t len)
 \item 
@@ -228,31 +229,11 @@ void \mbox{\hyperlink{zos_8cc_ada82224bee9e0497e00904cded0517db}{\+\_\+\+\_\+ato
 \item 
 int \mbox{\hyperlink{zos_8cc_a023962f5ca109441bd87580ddca08f77}{\+\_\+\+\_\+testread}} (const void $\ast$location)
 \item 
-void \mbox{\hyperlink{zos_8cc_a2f86dbb8a750221aac9022806a618a3d}{Usleep}} (unsigned int msec)
-\item 
-unsigned int \mbox{\hyperlink{zos_8cc_a68bff7004136b886a1d072088c1a7aa9}{atomic\+\_\+dec}} (volatile unsigned int $\ast$loc)
-\item 
-unsigned int \mbox{\hyperlink{zos_8cc_ac276a4ee174620ca6c8c15802dec8ece}{atomic\+\_\+inc}} (volatile unsigned int $\ast$loc)
-\item 
-int \mbox{\hyperlink{zos_8cc_a1384c2247230a3c174fc5f0d2c7a9ad8}{\+\_\+\+\_\+sem\+\_\+init}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, int shared, unsigned int val)
-\item 
-int \mbox{\hyperlink{zos_8cc_aaa9b944d46ae048731ef457bac855fa3}{\+\_\+\+\_\+sem\+\_\+post}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
-\item 
-int \mbox{\hyperlink{zos_8cc_ab645a4486f4249e0f5e24e713199b9ad}{\+\_\+\+\_\+sem\+\_\+trywait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
-\item 
-int \mbox{\hyperlink{zos_8cc_abefbdaf388bed46623de543588fba24b}{\+\_\+\+\_\+sem\+\_\+timedwait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, const struct timespec $\ast$abs\+\_\+timeout)
-\item 
-int \mbox{\hyperlink{zos_8cc_a1adbe1c392115b2ff023ab7dbf605011}{\+\_\+\+\_\+sem\+\_\+wait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
-\item 
-int \mbox{\hyperlink{zos_8cc_a4a493515255bd9d8113483a3d3dd124e}{\+\_\+\+\_\+sem\+\_\+destroy}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
-\item 
-int \mbox{\hyperlink{zos_8cc_a4696c3760dd8a87ed4b5f5079d452609}{\+\_\+\+\_\+sem\+\_\+getvalue}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, int $\ast$sval)
-\item 
 void \mbox{\hyperlink{zos_8cc_aa1ad85ba2714fc321967050989c5fee7}{\+\_\+\+\_\+tb}} (void)
 \item 
 int \mbox{\hyperlink{zos_8cc_a6fa4fcf1ad1f2f62773a03323f08592e}{clock\+\_\+gettime}} (\mbox{\hyperlink{zos-base_8h_a2f9c761af656069fe6fc3df81fa4331a}{clockid\+\_\+t}} clk\+\_\+id, struct timespec $\ast$tp)
 \item 
-int \mbox{\hyperlink{zos_8cc_a2bb68aad8eabbbd2fc645add90de1e21}{getentropy}} (void $\ast$output, size\+\_\+t size)
+char $\ast$ \mbox{\hyperlink{zos_8cc_af1ce284d4bb538c7a8d2d18b7101c1c8}{\+\_\+\+\_\+get\+\_\+le\+\_\+version}} (void)
 \item 
 void \mbox{\hyperlink{zos_8cc_ae6d06ccc8af47e7526ac720d02f29ade}{\+\_\+\+\_\+build\+\_\+version}} (void)
 \item 
@@ -264,39 +245,37 @@ void \mbox{\hyperlink{zos_8cc_a24e641431113c2b6bed09be1492f39c6}{\+\_\+\+\_\+tcp
 \item 
 void \mbox{\hyperlink{zos_8cc_a4e883009c3bf597cb20eedfd427ebef9}{\+\_\+\+\_\+unloadmod}} (void $\ast$mod)
 \item 
-void $\ast$ \mbox{\hyperlink{zos_8cc_a9c67bd32277f8d7d8c4fb725907fa0b9}{\+\_\+\+\_\+loadmod}} (const char $\ast$name)
-\item 
-\mbox{\hyperlink{zos_8cc_a62676a8ce24f4f8c756ebb1ac249f098}{\+\_\+\+\_\+attribute\+\_\+\+\_\+}} ((noinline)) extern long \+\_\+\+\_\+callmod(void $\ast$mod
-\item 
-\mbox{\hyperlink{zos_8cc_a566345c907bfff3d7a7daae086cb9c67}{if}} (!mod) return -\/1
-\item 
-\mbox{\hyperlink{zos_8cc_a08eff0e097503909b4059d3696296bc7}{if}} (m-\/$>$thptr)
-\item 
-const char $\ast$ \mbox{\hyperlink{zos_8cc_a8158b250fec7f3bc47b8396f06229b74}{get\+I\+F\+A\+Usage\+Error\+String}} (unsigned long \mbox{\hyperlink{zos_8cc_a24a75778e4eea3c696ecc59576fe16d1}{rc}})
+const char $\ast$ \mbox{\hyperlink{zos_8cc_a8158b250fec7f3bc47b8396f06229b74}{get\+I\+F\+A\+Usage\+Error\+String}} (unsigned long rc)
 \item 
 unsigned long long \mbox{\hyperlink{zos_8cc_a12c0dd60622e54588c056aef25313df0}{\+\_\+\+\_\+register\+Product}} (const char $\ast$major\+\_\+version, const char $\ast$product\+\_\+owner, const char $\ast$feature\+\_\+name, const char $\ast$product\+\_\+name, const char $\ast$pid)
 \item 
-void $\ast$ \mbox{\hyperlink{zos_8cc_abacb87ed98c22ed1c16d5100e9d8e903}{roanon\+\_\+mmap}} (void $\ast$\+\_\+, size\+\_\+t len, int prot, int flags, const char $\ast$filename, int fildes, off\+\_\+t off)
+void $\ast$ \mbox{\hyperlink{zos_8cc_a05bdf8a57fe7a4fa3af7ad3b39ca000b}{\+\_\+\+\_\+zalloc\+\_\+for\+\_\+fd}} (size\+\_\+t len, const char $\ast$filename, int fd, off\+\_\+t offset)
+\item 
+void $\ast$ \mbox{\hyperlink{zos_8cc_a32c69fa6f4fe558cc2cfd9a9eb93096e}{roanon\+\_\+mmap}} (void $\ast$\+\_\+, size\+\_\+t len, int prot, int flags, const char $\ast$filename, int fd, off\+\_\+t offset)
 \item 
 int \mbox{\hyperlink{zos_8cc_ac597a71375605aa919ffde000a4e9bf9}{\+\_\+\+\_\+print\+\_\+zoslib\+\_\+help}} (F\+I\+LE $\ast$fp, const char $\ast$title)
 \item 
 int \mbox{\hyperlink{zos_8cc_aa888e18935cf53f95aa428892eb8bf2b}{\+\_\+\+\_\+update\+\_\+envar\+\_\+settings}} (const char $\ast$envar)
 \item 
-int \mbox{\hyperlink{zos_8cc_a225a869381eb4dc5cea9557a03133eb6}{\+\_\+\+\_\+update\+\_\+envar\+\_\+names}} (\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} $\ast$const config)
+int \mbox{\hyperlink{zos_8cc_a225a869381eb4dc5cea9557a03133eb6}{\+\_\+\+\_\+update\+\_\+envar\+\_\+names}} (\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} $\ast$const config)
 \item 
 void $\ast$ \mbox{\hyperlink{zos_8cc_a250c0506d840a655a8397156af95b627}{\+\_\+\+\_\+iterate\+\_\+stack\+\_\+and\+\_\+get}} (void $\ast$dsaptr, \mbox{\hyperlink{struct____stack__info}{\+\_\+\+\_\+stack\+\_\+info}} $\ast$si)
 \item 
 int $\ast$ \mbox{\hyperlink{zos_8cc_a645f1113d2f04f5d658ba70a5a5f6921}{\+\_\+\+\_\+get\+\_\+stack\+\_\+start}} ()
 \item 
-void \mbox{\hyperlink{zos_8cc_a07a98c0cfecbb83c41bea035f85af5c0}{init\+\_\+zoslib\+\_\+config}} (\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} \&config)
+void \mbox{\hyperlink{zos_8cc_a07a98c0cfecbb83c41bea035f85af5c0}{init\+\_\+zoslib\+\_\+config}} (\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} \&config)
 \item 
-void \mbox{\hyperlink{zos_8cc_ad08be3bfe25046883b7d3bea7ac88cc2}{init\+\_\+zoslib\+\_\+config}} (\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} $\ast$const config)
+void \mbox{\hyperlink{zos_8cc_ad08be3bfe25046883b7d3bea7ac88cc2}{init\+\_\+zoslib\+\_\+config}} (\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} $\ast$const config)
 \item 
-void \mbox{\hyperlink{zos_8cc_ae823ecb53c5dce05137534f5d14edb11}{init\+\_\+zoslib}} (const \mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} config)
+void \mbox{\hyperlink{zos_8cc_ae823ecb53c5dce05137534f5d14edb11}{init\+\_\+zoslib}} (const \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} config)
 \item 
 int \mbox{\hyperlink{zos_8cc_a1b63fa141b202a0b01cfef8421aa48d6}{nanosleep}} (const struct timespec $\ast$req, struct timespec $\ast$rem)
 \item 
 int \mbox{\hyperlink{zos_8cc_ab972ed38da2c91d02f9e667ba6a29a23}{\+\_\+\+\_\+lutimes}} (const char $\ast$filename, const struct timeval tv\mbox{[}2\mbox{]})
+\item 
+void \mbox{\hyperlink{zos_8cc_a3d1bb33b728ebb3e952e4513b19bdd9e}{\+\_\+\+\_\+main\+Terminating}} ()
+\item 
+bool \mbox{\hyperlink{zos_8cc_acceb6b603161c2317663b8dbed7bfb85}{\+\_\+\+\_\+is\+Zoslib\+Initialized}} ()
 \end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
@@ -304,14 +283,6 @@ int \mbox{\hyperlink{zos_8cc_ab972ed38da2c91d02f9e667ba6a29a23}{\+\_\+\+\_\+luti
 const char $\ast$ \mbox{\hyperlink{zos_8cc_a50c65fa4d98053511f95bc2fefd1aea5}{\+\_\+\+\_\+zoslib\+\_\+version}} = \mbox{\hyperlink{zos_8cc_acae2f65902c16940098f568e744c0c62}{D\+E\+F\+A\+U\+L\+T\+\_\+\+B\+U\+I\+L\+D\+\_\+\+S\+T\+R\+I\+NG}}
 \item 
 char $\ast$$\ast$ \mbox{\hyperlink{zos_8cc_aa006daaf11f1e2e45a6ababaf463212b}{environ}}
-\item 
-void $\ast$ \mbox{\hyperlink{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}{plist}}
-\item 
-long \mbox{\hyperlink{zos_8cc_a24a75778e4eea3c696ecc59576fe16d1}{rc}}
-\item 
-m \mbox{\hyperlink{zos_8cc_a46172c7afd264d87858b72d50d3faf56}{reg1}} = \mbox{\hyperlink{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}{plist}}
-\item 
-\mbox{\hyperlink{zos_8cc_a0544c3fe466e421738dae463968b70ba}{else}}
 \item 
 const char $\ast$ \mbox{\hyperlink{zos_8cc_a219f1b17ffb2a3dc45beabff803c2ddc}{M\+O\+D\+U\+L\+E\+\_\+\+R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+U\+S\+A\+GE}} = \char`\"{}I\+F\+A\+U\+S\+A\+GE\char`\"{}
 \item 
@@ -366,13 +337,13 @@ const char $\ast$ \mbox{\hyperlink{zos_8cc_af535ad823f790786fa91ab9160eda2af}{I\
 \index{zos.cc@{zos.cc}!CS@{CS}}
 \index{CS@{CS}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{CS}{CS}}
-{\footnotesize\ttfamily \#define CS(\begin{DoxyParamCaption}\item[{}]{\+\_\+op1,  }\item[{}]{\+\_\+op2,  }\item[{}]{\+\_\+op3 }\end{DoxyParamCaption})~  \+\_\+\+\_\+asm(\char`\"{} cs \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)}
+{\footnotesize\ttfamily \#define CS(\begin{DoxyParamCaption}\item[{}]{\+\_\+op1,  }\item[{}]{\+\_\+op2,  }\item[{}]{\+\_\+op3 }\end{DoxyParamCaption})~  \+\_\+\+\_\+asm volatile(\char`\"{} cs \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)}
 
 \mbox{\Hypertarget{zos_8cc_a43f4122f7ec8bf89b907cb979526f6f2}\label{zos_8cc_a43f4122f7ec8bf89b907cb979526f6f2}} 
 \index{zos.cc@{zos.cc}!CSG@{CSG}}
 \index{CSG@{CSG}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{CSG}{CSG}}
-{\footnotesize\ttfamily \#define C\+SG(\begin{DoxyParamCaption}\item[{}]{\+\_\+op1,  }\item[{}]{\+\_\+op2,  }\item[{}]{\+\_\+op3 }\end{DoxyParamCaption})~  \+\_\+\+\_\+asm(\char`\"{} csg \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)}
+{\footnotesize\ttfamily \#define C\+SG(\begin{DoxyParamCaption}\item[{}]{\+\_\+op1,  }\item[{}]{\+\_\+op2,  }\item[{}]{\+\_\+op3 }\end{DoxyParamCaption})~  \+\_\+\+\_\+asm volatile(\char`\"{} csg \%0,\%2,\%1 \textbackslash{}n \char`\"{} \+: \char`\"{}+r\char`\"{}(\+\_\+op1), \char`\"{}+m\char`\"{}(\+\_\+op2) \+: \char`\"{}r\char`\"{}(\+\_\+op3) \+:)}
 
 \mbox{\Hypertarget{zos_8cc_acae2f65902c16940098f568e744c0c62}\label{zos_8cc_acae2f65902c16940098f568e744c0c62}} 
 \index{zos.cc@{zos.cc}!DEFAULT\_BUILD\_STRING@{DEFAULT\_BUILD\_STRING}}
@@ -385,12 +356,6 @@ const char $\ast$ \mbox{\hyperlink{zos_8cc_af535ad823f790786fa91ab9160eda2af}{I\
 \index{dsa@{dsa}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{dsa}{dsa}}
 {\footnotesize\ttfamily \#define dsa(\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})~((unsigned long $\ast$)\+\_\+gdsa())}
-
-\mbox{\Hypertarget{zos_8cc_affe776513b24d84b39af8ab0930fef7f}\label{zos_8cc_affe776513b24d84b39af8ab0930fef7f}} 
-\index{zos.cc@{zos.cc}!max@{max}}
-\index{max@{max}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{max}{max}}
-{\footnotesize\ttfamily \#define max(\begin{DoxyParamCaption}\item[{}]{a,  }\item[{}]{b }\end{DoxyParamCaption})~(((a) $>$ (b)) ? (a) \+: (b))}
 
 \mbox{\Hypertarget{zos_8cc_a3acffbd305ee72dcd4593c0d8af64a4f}\label{zos_8cc_a3acffbd305ee72dcd4593c0d8af64a4f}} 
 \index{zos.cc@{zos.cc}!MIN@{MIN}}
@@ -577,12 +542,6 @@ Generates an S\+VC 13 abend.
 \doxysubsubsection{\texorpdfstring{\_\_atomic\_store\_real()}{\_\_atomic\_store\_real()}}
 {\footnotesize\ttfamily void \+\_\+\+\_\+atomic\+\_\+store\+\_\+real (\begin{DoxyParamCaption}\item[{int}]{size,  }\item[{void $\ast$}]{ptr,  }\item[{void $\ast$}]{val,  }\item[{int}]{memorder }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos_8cc_a62676a8ce24f4f8c756ebb1ac249f098}\label{zos_8cc_a62676a8ce24f4f8c756ebb1ac249f098}} 
-\index{zos.cc@{zos.cc}!\_\_attribute\_\_@{\_\_attribute\_\_}}
-\index{\_\_attribute\_\_@{\_\_attribute\_\_}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_attribute\_\_()}{\_\_attribute\_\_()}}
-{\footnotesize\ttfamily \+\_\+\+\_\+attribute\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{(noinline)}]{ }\end{DoxyParamCaption})}
-
 \mbox{\Hypertarget{zos_8cc_ae6d06ccc8af47e7526ac720d02f29ade}\label{zos_8cc_ae6d06ccc8af47e7526ac720d02f29ade}} 
 \index{zos.cc@{zos.cc}!\_\_build\_version@{\_\_build\_version}}
 \index{\_\_build\_version@{\_\_build\_version}!zos.cc@{zos.cc}}
@@ -677,6 +636,12 @@ Get entry name of given dlcb
 \begin{DoxyReturn}{Returns}
 \mbox{[}in\mbox{]} number of bytes written to buf 
 \end{DoxyReturn}
+\mbox{\Hypertarget{zos_8cc_aec0b906b3712960e1275fb9829a669ee}\label{zos_8cc_aec0b906b3712960e1275fb9829a669ee}} 
+\index{zos.cc@{zos.cc}!\_\_dlcb\_iterate@{\_\_dlcb\_iterate}}
+\index{\_\_dlcb\_iterate@{\_\_dlcb\_iterate}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_dlcb\_iterate()}{\_\_dlcb\_iterate()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+dlcb\+\_\+iterate (\begin{DoxyParamCaption}\item[{int($\ast$)(char $\ast$, void $\ast$, void $\ast$)}]{cb,  }\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
 \mbox{\Hypertarget{zos_8cc_af03baf0b70a27078df7d8501a54a504e}\label{zos_8cc_af03baf0b70a27078df7d8501a54a504e}} 
 \index{zos.cc@{zos.cc}!\_\_dlcb\_next@{\_\_dlcb\_next}}
 \index{\_\_dlcb\_next@{\_\_dlcb\_next}!zos.cc@{zos.cc}}
@@ -691,15 +656,6 @@ Get next dlcb entry
 \begin{DoxyReturn}{Returns}
 \mbox{[}in\mbox{]} returns next dlcb entry 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_ae93297a3ea73ced0e4e4345d8c41bf03}\label{zos_8cc_ae93297a3ea73ced0e4e4345d8c41bf03}} 
-\index{zos.cc@{zos.cc}!\_\_fork@{\_\_fork}}
-\index{\_\_fork@{\_\_fork}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_fork()}{\_\_fork()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+fork (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
-
-Create a child process \begin{DoxyReturn}{Returns}
-On success, the P\+ID of the child process is returned in the parent, and 0 is returned in the child. On failure, -\/1 is returned in the parent, no child process is created, and errno is set appropriately. 
-\end{DoxyReturn}
 \mbox{\Hypertarget{zos_8cc_af533310fcdfe17eb1d68114bfc33a1a6}\label{zos_8cc_af533310fcdfe17eb1d68114bfc33a1a6}} 
 \index{zos.cc@{zos.cc}!\_\_get\_environ\_np@{\_\_get\_environ\_np}}
 \index{\_\_get\_environ\_np@{\_\_get\_environ\_np}!zos.cc@{zos.cc}}
@@ -709,7 +665,13 @@ On success, the P\+ID of the child process is returned in the parent, and 0 is r
 Get the environ. \begin{DoxyReturn}{Returns}
 returns pointer to environment list 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a40df718ba2ea9512b2367e1487217057}\label{zos_8cc_a40df718ba2ea9512b2367e1487217057}} 
+\mbox{\Hypertarget{zos_8cc_af1ce284d4bb538c7a8d2d18b7101c1c8}\label{zos_8cc_af1ce284d4bb538c7a8d2d18b7101c1c8}} 
+\index{zos.cc@{zos.cc}!\_\_get\_le\_version@{\_\_get\_le\_version}}
+\index{\_\_get\_le\_version@{\_\_get\_le\_version}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_get\_le\_version()}{\_\_get\_le\_version()}}
+{\footnotesize\ttfamily char$\ast$ \+\_\+\+\_\+get\+\_\+le\+\_\+version (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Return the LE version as a string in the format of \char`\"{}\+Product \%d\%s Version \%d Release \%d Modification \%d\char`\"{} \mbox{\Hypertarget{zos_8cc_a40df718ba2ea9512b2367e1487217057}\label{zos_8cc_a40df718ba2ea9512b2367e1487217057}} 
 \index{zos.cc@{zos.cc}!\_\_get\_no\_tag\_ignore\_ccsid1047@{\_\_get\_no\_tag\_ignore\_ccsid1047}}
 \index{\_\_get\_no\_tag\_ignore\_ccsid1047@{\_\_get\_no\_tag\_ignore\_ccsid1047}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_no\_tag\_ignore\_ccsid1047()}{\_\_get\_no\_tag\_ignore\_ccsid1047()}}
@@ -793,15 +755,12 @@ Get the executable path of a given process id
 \begin{DoxyReturn}{Returns}
 On success, returns 0, or -\/1 on error. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a6d6262268568ca267a869ea8a09f636d}\label{zos_8cc_a6d6262268568ca267a869ea8a09f636d}} 
-\index{zos.cc@{zos.cc}!\_\_indebug@{\_\_indebug}}
-\index{\_\_indebug@{\_\_indebug}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_indebug()}{\_\_indebug()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+indebug (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos_8cc_acceb6b603161c2317663b8dbed7bfb85}\label{zos_8cc_acceb6b603161c2317663b8dbed7bfb85}} 
+\index{zos.cc@{zos.cc}!\_\_isZoslibInitialized@{\_\_isZoslibInitialized}}
+\index{\_\_isZoslibInitialized@{\_\_isZoslibInitialized}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_isZoslibInitialized()}{\_\_isZoslibInitialized()}}
+{\footnotesize\ttfamily bool \+\_\+\+\_\+is\+Zoslib\+Initialized (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Indicates if zoslib is in debug mode \begin{DoxyReturn}{Returns}
-returns current debug mode 
-\end{DoxyReturn}
 \mbox{\Hypertarget{zos_8cc_a250c0506d840a655a8397156af95b627}\label{zos_8cc_a250c0506d840a655a8397156af95b627}} 
 \index{zos.cc@{zos.cc}!\_\_iterate\_stack\_and\_get@{\_\_iterate\_stack\_and\_get}}
 \index{\_\_iterate\_stack\_and\_get@{\_\_iterate\_stack\_and\_get}!zos.cc@{zos.cc}}
@@ -818,12 +777,6 @@ Iterate to next stack dsa based on current dsa
 \begin{DoxyReturn}{Returns}
 returns the next dsa entry in the chain or 0 if not found 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a9c67bd32277f8d7d8c4fb725907fa0b9}\label{zos_8cc_a9c67bd32277f8d7d8c4fb725907fa0b9}} 
-\index{zos.cc@{zos.cc}!\_\_loadmod@{\_\_loadmod}}
-\index{\_\_loadmod@{\_\_loadmod}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_loadmod()}{\_\_loadmod()}}
-{\footnotesize\ttfamily void$\ast$ \+\_\+\+\_\+loadmod (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})}
-
 \mbox{\Hypertarget{zos_8cc_ab972ed38da2c91d02f9e667ba6a29a23}\label{zos_8cc_ab972ed38da2c91d02f9e667ba6a29a23}} 
 \index{zos.cc@{zos.cc}!\_\_lutimes@{\_\_lutimes}}
 \index{\_\_lutimes@{\_\_lutimes}!zos.cc@{zos.cc}}
@@ -846,7 +799,13 @@ Changes the access and modification times of a file in the same way as lutimes, 
 Obtain the mach absolute time \begin{DoxyReturn}{Returns}
 returns mach absolute time 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_ac597a71375605aa919ffde000a4e9bf9}\label{zos_8cc_ac597a71375605aa919ffde000a4e9bf9}} 
+\mbox{\Hypertarget{zos_8cc_a3d1bb33b728ebb3e952e4513b19bdd9e}\label{zos_8cc_a3d1bb33b728ebb3e952e4513b19bdd9e}} 
+\index{zos.cc@{zos.cc}!\_\_mainTerminating@{\_\_mainTerminating}}
+\index{\_\_mainTerminating@{\_\_mainTerminating}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_mainTerminating()}{\_\_mainTerminating()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+main\+Terminating (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Tell zoslib that the main process is terminating, for its diagnostics. \mbox{\Hypertarget{zos_8cc_ac597a71375605aa919ffde000a4e9bf9}\label{zos_8cc_ac597a71375605aa919ffde000a4e9bf9}} 
 \index{zos.cc@{zos.cc}!\_\_print\_zoslib\_help@{\_\_print\_zoslib\_help}}
 \index{\_\_print\_zoslib\_help@{\_\_print\_zoslib\_help}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_print\_zoslib\_help()}{\_\_print\_zoslib\_help()}}
@@ -884,48 +843,6 @@ Registers product for S\+MF 89 Type 1 records using I\+F\+A\+U\+S\+A\+GE macro.
 \begin{DoxyReturn}{Returns}
 returns 0 if successful, non-\/zero if unsuccessful. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a4a493515255bd9d8113483a3d3dd124e}\label{zos_8cc_a4a493515255bd9d8113483a3d3dd124e}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_destroy@{\_\_sem\_destroy}}
-\index{\_\_sem\_destroy@{\_\_sem\_destroy}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_destroy()}{\_\_sem\_destroy()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_a4696c3760dd8a87ed4b5f5079d452609}\label{zos_8cc_a4696c3760dd8a87ed4b5f5079d452609}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_getvalue@{\_\_sem\_getvalue}}
-\index{\_\_sem\_getvalue@{\_\_sem\_getvalue}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_getvalue()}{\_\_sem\_getvalue()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+getvalue (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{int $\ast$}]{sval }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_a1384c2247230a3c174fc5f0d2c7a9ad8}\label{zos_8cc_a1384c2247230a3c174fc5f0d2c7a9ad8}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_init@{\_\_sem\_init}}
-\index{\_\_sem\_init@{\_\_sem\_init}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_init()}{\_\_sem\_init()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{int}]{shared,  }\item[{unsigned int}]{val }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_aaa9b944d46ae048731ef457bac855fa3}\label{zos_8cc_aaa9b944d46ae048731ef457bac855fa3}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_post@{\_\_sem\_post}}
-\index{\_\_sem\_post@{\_\_sem\_post}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_post()}{\_\_sem\_post()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+post (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_abefbdaf388bed46623de543588fba24b}\label{zos_8cc_abefbdaf388bed46623de543588fba24b}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_timedwait@{\_\_sem\_timedwait}}
-\index{\_\_sem\_timedwait@{\_\_sem\_timedwait}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_timedwait()}{\_\_sem\_timedwait()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+timedwait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{const struct timespec $\ast$}]{abs\+\_\+timeout }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_ab645a4486f4249e0f5e24e713199b9ad}\label{zos_8cc_ab645a4486f4249e0f5e24e713199b9ad}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_trywait@{\_\_sem\_trywait}}
-\index{\_\_sem\_trywait@{\_\_sem\_trywait}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_trywait()}{\_\_sem\_trywait()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+trywait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_a1adbe1c392115b2ff023ab7dbf605011}\label{zos_8cc_a1adbe1c392115b2ff023ab7dbf605011}} 
-\index{zos.cc@{zos.cc}!\_\_sem\_wait@{\_\_sem\_wait}}
-\index{\_\_sem\_wait@{\_\_sem\_wait}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_sem\_wait()}{\_\_sem\_wait()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
-
 \mbox{\Hypertarget{zos_8cc_a669a2def8764ee4faffc13756bb22a00}\label{zos_8cc_a669a2def8764ee4faffc13756bb22a00}} 
 \index{zos.cc@{zos.cc}!\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}}
 \index{\_\_set\_backtrace\_on\_abort@{\_\_set\_backtrace\_on\_abort}!zos.cc@{zos.cc}}
@@ -938,13 +855,7 @@ Enable or disable \mbox{\hyperlink{zos_8cc_a8dec7c95227ff149687066cf04029191}{ab
 \doxysubsubsection{\texorpdfstring{\_\_set\_ccsid\_guess\_buf\_size()}{\_\_set\_ccsid\_guess\_buf\_size()}}
 {\footnotesize\ttfamily void \+\_\+\+\_\+set\+\_\+ccsid\+\_\+guess\+\_\+buf\+\_\+size (\begin{DoxyParamCaption}\item[{int}]{nbytes }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos_8cc_ac65f5b2b1095a2c51ee4e2b1f87b9cb0}\label{zos_8cc_ac65f5b2b1095a2c51ee4e2b1f87b9cb0}} 
-\index{zos.cc@{zos.cc}!\_\_setdebug@{\_\_setdebug}}
-\index{\_\_setdebug@{\_\_setdebug}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_setdebug()}{\_\_setdebug()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+setdebug (\begin{DoxyParamCaption}\item[{int}]{ }\end{DoxyParamCaption})}
-
-Activates debug mode \mbox{\Hypertarget{zos_8cc_abe4300c3c9bba7985cb7d7f49e5c874e}\label{zos_8cc_abe4300c3c9bba7985cb7d7f49e5c874e}} 
+\mbox{\Hypertarget{zos_8cc_abe4300c3c9bba7985cb7d7f49e5c874e}\label{zos_8cc_abe4300c3c9bba7985cb7d7f49e5c874e}} 
 \index{zos.cc@{zos.cc}!\_\_setenv\_a@{\_\_setenv\_a}}
 \index{\_\_setenv\_a@{\_\_setenv\_a}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_setenv\_a()}{\_\_setenv\_a()}}
@@ -991,7 +902,7 @@ T\+O\+D\+O(itodorov) -\/ zos\+: document these interfaces \mbox{\Hypertarget{zos
 \index{zos.cc@{zos.cc}!\_\_update\_envar\_names@{\_\_update\_envar\_names}}
 \index{\_\_update\_envar\_names@{\_\_update\_envar\_names}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_update\_envar\_names()}{\_\_update\_envar\_names()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+update\+\_\+envar\+\_\+names (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} $\ast$const}]{config }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily int \+\_\+\+\_\+update\+\_\+envar\+\_\+names (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} $\ast$const}]{config }\end{DoxyParamCaption})}
 
 Changes the names of one or more of the environment variables zoslib uses 
 \begin{DoxyParams}[1]{Parameters}
@@ -1021,12 +932,58 @@ Updates the zoslib global variables associated with the zoslib environment varia
 \doxysubsubsection{\texorpdfstring{\_\_xfer\_env()}{\_\_xfer\_env()}}
 {\footnotesize\ttfamily void \+\_\+\+\_\+xfer\+\_\+env (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
-Convert environment variables from E\+B\+C\+D\+IC to A\+S\+C\+II. \mbox{\Hypertarget{zos_8cc_a685f6f3de90ad3900f57aebbe637b766}\label{zos_8cc_a685f6f3de90ad3900f57aebbe637b766}} 
-\index{zos.cc@{zos.cc}!\_\_zsync\_val\_compare\_and\_swap32@{\_\_zsync\_val\_compare\_and\_swap32}}
-\index{\_\_zsync\_val\_compare\_and\_swap32@{\_\_zsync\_val\_compare\_and\_swap32}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{\_\_zsync\_val\_compare\_and\_swap32()}{\_\_zsync\_val\_compare\_and\_swap32()}}
-{\footnotesize\ttfamily unsigned int \+\_\+\+\_\+zsync\+\_\+val\+\_\+compare\+\_\+and\+\_\+swap32 (\begin{DoxyParamCaption}\item[{volatile unsigned int $\ast$}]{\+\_\+\+\_\+p,  }\item[{unsigned int}]{\+\_\+\+\_\+comp\+Val,  }\item[{unsigned int}]{\+\_\+\+\_\+exch\+Val }\end{DoxyParamCaption})}
+Convert environment variables from E\+B\+C\+D\+IC to A\+S\+C\+II. \mbox{\Hypertarget{zos_8cc_af4914b48e36eb7d1f5f2e5df8152d523}\label{zos_8cc_af4914b48e36eb7d1f5f2e5df8152d523}} 
+\index{zos.cc@{zos.cc}!\_\_zalloc@{\_\_zalloc}}
+\index{\_\_zalloc@{\_\_zalloc}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_zalloc()}{\_\_zalloc()}}
+{\footnotesize\ttfamily void$\ast$ \+\_\+\+\_\+zalloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{len,  }\item[{size\+\_\+t}]{alignment }\end{DoxyParamCaption})}
 
+Allocate memory in 64-\/bit virtual storage when size is a megabyte multiple or above 2GB, or in 31-\/bit storage otherwise, and if none is available, attempt to allocate from 64-\/bit virtual storage. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em len} & length in bytes of memory to allocate \\
+\hline
+\mbox{\texttt{ in}}  & {\em alignment} & in bytes and applies only to 31-\/bit storage (64-\/bit storage is always megabyte-\/aligned) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the beginning of newly allocated memory, or 0 if unsuccessful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos_8cc_a05bdf8a57fe7a4fa3af7ad3b39ca000b}\label{zos_8cc_a05bdf8a57fe7a4fa3af7ad3b39ca000b}} 
+\index{zos.cc@{zos.cc}!\_\_zalloc\_for\_fd@{\_\_zalloc\_for\_fd}}
+\index{\_\_zalloc\_for\_fd@{\_\_zalloc\_for\_fd}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_zalloc\_for\_fd()}{\_\_zalloc\_for\_fd()}}
+{\footnotesize\ttfamily void$\ast$ \+\_\+\+\_\+zalloc\+\_\+for\+\_\+fd (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{len,  }\item[{const char $\ast$}]{filename,  }\item[{int}]{fd,  }\item[{off\+\_\+t}]{offset }\end{DoxyParamCaption})}
+
+Allocate memory (using \mbox{\hyperlink{zos-base_8h_a410857da7a28a4c6ff6ace72cd3daef3}{\+\_\+\+\_\+zalloc()}}) and read into it contents of given file 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em len} & length in bytes of memory to allocate \\
+\hline
+\mbox{\texttt{ in}}  & {\em filename} & filename to read \\
+\hline
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor \\
+\hline
+\mbox{\texttt{ in}}  & {\em offset} & offset in bytes into the file to read \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the beginning of newly allocated memory, or 0 if unsuccessful 
+\end{DoxyReturn}
+\mbox{\Hypertarget{zos_8cc_a10b9a6e92c8fa49541b426bec70fbdc3}\label{zos_8cc_a10b9a6e92c8fa49541b426bec70fbdc3}} 
+\index{zos.cc@{zos.cc}!\_\_zfree@{\_\_zfree}}
+\index{\_\_zfree@{\_\_zfree}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_zfree()}{\_\_zfree()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+zfree (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{int}]{len }\end{DoxyParamCaption})}
+
+Deallocate memory 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em addr} & start address of memory \\
+\hline
+\mbox{\texttt{ in}}  & {\em len} & length in bytes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns 0 if successful, -\/1 if unsuccessful 
+\end{DoxyReturn}
 \mbox{\Hypertarget{zos_8cc_a8dec7c95227ff149687066cf04029191}\label{zos_8cc_a8dec7c95227ff149687066cf04029191}} 
 \index{zos.cc@{zos.cc}!abort@{abort}}
 \index{abort@{abort}!zos.cc@{zos.cc}}
@@ -1039,44 +996,36 @@ Convert environment variables from E\+B\+C\+D\+IC to A\+S\+C\+II. \mbox{\Hyperta
 \doxysubsubsection{\texorpdfstring{anon\_mmap()}{anon\_mmap()}}
 {\footnotesize\ttfamily void$\ast$ anon\+\_\+mmap (\begin{DoxyParamCaption}\item[{void $\ast$}]{\+\_\+,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})}
 
-Generate an anonymous memory map 
+Allocate memory in 64-\/bit virtual storage when size is a megabyte multiple or above 2GB, or in 31-\/bit storage (with P\+A\+G\+E\+\_\+\+S\+I\+ZE bytes alignment) otherwise, and if none is available, attempt to allocate from 64-\/bit virtual storage. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\texttt{ in}}  & {\em \+\_\+} & ignored \\
 \hline
-\mbox{\texttt{ in}}  & {\em len} & length in bytes of memory map \\
+\mbox{\texttt{ in}}  & {\em len} & length in bytes of memory to allocate \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns start address of anonymous memory map 
+pointer to the beginning of newly allocated memory, or M\+A\+P\+\_\+\+F\+A\+I\+L\+ED if unsuccessful 
 \end{DoxyReturn}
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000001}{Deprecated}}]This function will be removed once mmap is fully functional (e.\+g. M\+A\+P\+\_\+\+A\+N\+O\+N\+Y\+M\+O\+US is supported) \end{DoxyRefDesc}
 \mbox{\Hypertarget{zos_8cc_aa00ab042a596dd63795d3791d34b8d29}\label{zos_8cc_aa00ab042a596dd63795d3791d34b8d29}} 
 \index{zos.cc@{zos.cc}!anon\_munmap@{anon\_munmap}}
 \index{anon\_munmap@{anon\_munmap}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{anon\_munmap()}{anon\_munmap()}}
 {\footnotesize\ttfamily int anon\+\_\+munmap (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})}
 
-Deallocates memory map 
+Deallocate memory 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em addr} & start address of memory map \\
+\mbox{\texttt{ in}}  & {\em addr} & start address of memory \\
 \hline
 \mbox{\texttt{ in}}  & {\em len} & length in bytes \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns 0 if successful, -\/1 if unsuccessful. 
+returns 0 if successful, -\/1 if unsuccessful 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a68bff7004136b886a1d072088c1a7aa9}\label{zos_8cc_a68bff7004136b886a1d072088c1a7aa9}} 
-\index{zos.cc@{zos.cc}!atomic\_dec@{atomic\_dec}}
-\index{atomic\_dec@{atomic\_dec}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{atomic\_dec()}{atomic\_dec()}}
-{\footnotesize\ttfamily unsigned int atomic\+\_\+dec (\begin{DoxyParamCaption}\item[{volatile unsigned int $\ast$}]{loc }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_ac276a4ee174620ca6c8c15802dec8ece}\label{zos_8cc_ac276a4ee174620ca6c8c15802dec8ece}} 
-\index{zos.cc@{zos.cc}!atomic\_inc@{atomic\_inc}}
-\index{atomic\_inc@{atomic\_inc}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{atomic\_inc()}{atomic\_inc()}}
-{\footnotesize\ttfamily unsigned int atomic\+\_\+inc (\begin{DoxyParamCaption}\item[{volatile unsigned int $\ast$}]{loc }\end{DoxyParamCaption})}
-
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000003}{Deprecated}}]This function will be removed once mmap is fully functional (e.\+g. M\+A\+P\+\_\+\+A\+N\+O\+N\+Y\+M\+O\+US is supported) \end{DoxyRefDesc}
 \mbox{\Hypertarget{zos_8cc_a3747bea884034d32d4d558872223969e}\label{zos_8cc_a3747bea884034d32d4d558872223969e}} 
 \index{zos.cc@{zos.cc}!backtrace@{backtrace}}
 \index{backtrace@{backtrace}!zos.cc@{zos.cc}}
@@ -1172,22 +1121,6 @@ Returns the overview structure of I\+P\+C\+Q\+P\+R\+OC
 \begin{DoxyReturn}{Returns}
 On success, returns 0, or -\/1 on error. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a2bb68aad8eabbbd2fc645add90de1e21}\label{zos_8cc_a2bb68aad8eabbbd2fc645add90de1e21}} 
-\index{zos.cc@{zos.cc}!getentropy@{getentropy}}
-\index{getentropy@{getentropy}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{getentropy()}{getentropy()}}
-{\footnotesize\ttfamily int getentropy (\begin{DoxyParamCaption}\item[{void $\ast$}]{buffer,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
-
-Fill a buffer with random bytes 
-\begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ out}}  & {\em buffer} & to store random bytes to. \\
-\hline
-\mbox{\texttt{ in}}  & {\em number} & of random bytes to generate. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-On success, returns 0, or -\/1 on error. 
-\end{DoxyReturn}
 \mbox{\Hypertarget{zos_8cc_a8158b250fec7f3bc47b8396f06229b74}\label{zos_8cc_a8158b250fec7f3bc47b8396f06229b74}} 
 \index{zos.cc@{zos.cc}!getIFAUsageErrorString@{getIFAUsageErrorString}}
 \index{getIFAUsageErrorString@{getIFAUsageErrorString}!zos.cc@{zos.cc}}
@@ -1217,23 +1150,11 @@ returns error message as C character string.
 Get the Thread ID. \begin{DoxyReturn}{Returns}
 returns the current thread id 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a566345c907bfff3d7a7daae086cb9c67}\label{zos_8cc_a566345c907bfff3d7a7daae086cb9c67}} 
-\index{zos.cc@{zos.cc}!if@{if}}
-\index{if@{if}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{if()}{if()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{!}]{mod }\end{DoxyParamCaption})}
-
-\mbox{\Hypertarget{zos_8cc_a08eff0e097503909b4059d3696296bc7}\label{zos_8cc_a08eff0e097503909b4059d3696296bc7}} 
-\index{zos.cc@{zos.cc}!if@{if}}
-\index{if@{if}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{if()}{if()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{m-\/$>$}]{thptr }\end{DoxyParamCaption})}
-
 \mbox{\Hypertarget{zos_8cc_ae823ecb53c5dce05137534f5d14edb11}\label{zos_8cc_ae823ecb53c5dce05137534f5d14edb11}} 
 \index{zos.cc@{zos.cc}!init\_zoslib@{init\_zoslib}}
 \index{init\_zoslib@{init\_zoslib}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{init\_zoslib()}{init\_zoslib()}}
-{\footnotesize\ttfamily void init\+\_\+zoslib (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}}}]{config }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void init\+\_\+zoslib (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}}}]{config }\end{DoxyParamCaption})}
 
 Initialize zoslib library 
 \begin{DoxyParams}[1]{Parameters}
@@ -1244,13 +1165,13 @@ Initialize zoslib library
 \index{zos.cc@{zos.cc}!init\_zoslib\_config@{init\_zoslib\_config}}
 \index{init\_zoslib\_config@{init\_zoslib\_config}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{init\_zoslib\_config()}{init\_zoslib\_config()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily void init\+\_\+zoslib\+\_\+config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} \&}]{config }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void init\+\_\+zoslib\+\_\+config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} \&}]{config }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{zos_8cc_ad08be3bfe25046883b7d3bea7ac88cc2}\label{zos_8cc_ad08be3bfe25046883b7d3bea7ac88cc2}} 
 \index{zos.cc@{zos.cc}!init\_zoslib\_config@{init\_zoslib\_config}}
 \index{init\_zoslib\_config@{init\_zoslib\_config}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{init\_zoslib\_config()}{init\_zoslib\_config()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily void init\+\_\+zoslib\+\_\+config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a10670868ce3060c834376eae096982ae}{zoslib\+\_\+config\+\_\+t}} $\ast$const}]{config }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void init\+\_\+zoslib\+\_\+config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\+\_\+config\+\_\+t}} $\ast$const}]{config }\end{DoxyParamCaption})}
 
 Initialize the struct used to configure zoslib with default values. 
 \begin{DoxyParams}[1]{Parameters}
@@ -1276,13 +1197,13 @@ Suspends the execution of the calling thread until either at least the time spec
 \mbox{\texttt{ out}}  & {\em rem} & the remaining time if the call is interrupted \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{zos_8cc_abacb87ed98c22ed1c16d5100e9d8e903}\label{zos_8cc_abacb87ed98c22ed1c16d5100e9d8e903}} 
+\mbox{\Hypertarget{zos_8cc_a32c69fa6f4fe558cc2cfd9a9eb93096e}\label{zos_8cc_a32c69fa6f4fe558cc2cfd9a9eb93096e}} 
 \index{zos.cc@{zos.cc}!roanon\_mmap@{roanon\_mmap}}
 \index{roanon\_mmap@{roanon\_mmap}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{roanon\_mmap()}{roanon\_mmap()}}
-{\footnotesize\ttfamily void$\ast$ roanon\+\_\+mmap (\begin{DoxyParamCaption}\item[{void $\ast$}]{\+\_\+,  }\item[{size\+\_\+t}]{len,  }\item[{int}]{prot,  }\item[{int}]{flags,  }\item[{const char $\ast$}]{filename,  }\item[{int}]{fildes,  }\item[{off\+\_\+t}]{off }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void$\ast$ roanon\+\_\+mmap (\begin{DoxyParamCaption}\item[{void $\ast$}]{\+\_\+,  }\item[{size\+\_\+t}]{len,  }\item[{int}]{prot,  }\item[{int}]{flags,  }\item[{const char $\ast$}]{filename,  }\item[{int}]{fd,  }\item[{off\+\_\+t}]{offset }\end{DoxyParamCaption})}
 
-Generate a read only anonymous memory map for a given file 
+Allocate memory (using \mbox{\hyperlink{zos-base_8h_a410857da7a28a4c6ff6ace72cd3daef3}{\+\_\+\+\_\+zalloc()}}) and read into it contents of given file at the given offset. 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\texttt{ in}}  & {\em \+\_\+} & ignored \\
 \hline
@@ -1294,12 +1215,16 @@ Generate a read only anonymous memory map for a given file
 \hline
 \mbox{\texttt{ in}}  & {\em filename} & filename to read \\
 \hline
-\mbox{\texttt{ in}}  & {\em filedes} & file descriptor \\
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor \\
+\hline
+\mbox{\texttt{ in}}  & {\em offset} & offset in bytes into the file to read \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-returns start address of anonymous memory map 
+pointer to the beginning of newly allocated memory, or M\+A\+P\+\_\+\+F\+A\+I\+L\+ED if unsuccessful 
 \end{DoxyReturn}
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000002}{Deprecated}}]This function will be removed once mmap is fully functional (e.\+g. M\+A\+P\+\_\+\+A\+N\+O\+N\+Y\+M\+O\+US is supported), in which case mapped memory would need to be converted to A\+S\+C\+II if the file contains E\+B\+C\+D\+IC. \end{DoxyRefDesc}
 \mbox{\Hypertarget{zos_8cc_a918f854781ebfd2e2b8208e5ac8a5639}\label{zos_8cc_a918f854781ebfd2e2b8208e5ac8a5639}} 
 \index{zos.cc@{zos.cc}!strcasecmp\_ignorecp@{strcasecmp\_ignorecp}}
 \index{strcasecmp\_ignorecp@{strcasecmp\_ignorecp}!zos.cc@{zos.cc}}
@@ -1350,11 +1275,17 @@ Determine the length of a fixed-\/size string
 \begin{DoxyReturn}{Returns}
 returns the length of the string 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos_8cc_a2f86dbb8a750221aac9022806a618a3d}\label{zos_8cc_a2f86dbb8a750221aac9022806a618a3d}} 
-\index{zos.cc@{zos.cc}!Usleep@{Usleep}}
-\index{Usleep@{Usleep}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{Usleep()}{Usleep()}}
-{\footnotesize\ttfamily void Usleep (\begin{DoxyParamCaption}\item[{unsigned int}]{msec }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos_8cc_a06fecdf3f31ef107e60dff87b4db827a}\label{zos_8cc_a06fecdf3f31ef107e60dff87b4db827a}} 
+\index{zos.cc@{zos.cc}!update\_memlogging@{update\_memlogging}}
+\index{update\_memlogging@{update\_memlogging}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{update\_memlogging()}{update\_memlogging()}}
+{\footnotesize\ttfamily void update\+\_\+memlogging (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+zinit $\ast$}]{,  }\item[{const char $\ast$}]{envar,  }\item[{bool}]{memacnt }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos_8cc_a72fc0f97b48cd29ca52376154ffd2048}\label{zos_8cc_a72fc0f97b48cd29ca52376154ffd2048}} 
+\index{zos.cc@{zos.cc}!update\_memlogging\_level@{update\_memlogging\_level}}
+\index{update\_memlogging\_level@{update\_memlogging\_level}!zos.cc@{zos.cc}}
+\doxysubsubsection{\texorpdfstring{update\_memlogging\_level()}{update\_memlogging\_level()}}
+{\footnotesize\ttfamily void update\+\_\+memlogging\+\_\+level (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+zinit $\ast$}]{,  }\item[{const char $\ast$}]{envar }\end{DoxyParamCaption})}
 
 
 
@@ -1365,31 +1296,6 @@ returns the length of the string
 \doxysubsubsection{\texorpdfstring{\_\_zoslib\_version}{\_\_zoslib\_version}}
 {\footnotesize\ttfamily const char$\ast$ \+\_\+\+\_\+zoslib\+\_\+version = \mbox{\hyperlink{zos_8cc_acae2f65902c16940098f568e744c0c62}{D\+E\+F\+A\+U\+L\+T\+\_\+\+B\+U\+I\+L\+D\+\_\+\+S\+T\+R\+I\+NG}}}
 
-\mbox{\Hypertarget{zos_8cc_a0544c3fe466e421738dae463968b70ba}\label{zos_8cc_a0544c3fe466e421738dae463968b70ba}} 
-\index{zos.cc@{zos.cc}!else@{else}}
-\index{else@{else}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{else}{else}}
-{\footnotesize\ttfamily else}
-
-{\bfseries Initial value\+:}
-\begin{DoxyCode}{0}
-\DoxyCodeLine{\{}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \_\_asm(\textcolor{stringliteral}{"{} LG 1,\%1 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} LG 13,\%2 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} LG 15,\%3 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} SAM31 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} STMH 14,12,72(13)\(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} BASR 14,15 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} LMH  14,12,72(13)\(\backslash\)n"{}} }
-\DoxyCodeLine{                                 }
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} SAM64 \(\backslash\)n"{}}}
-\DoxyCodeLine{          \textcolor{stringliteral}{"{} LGR \%0,15 \(\backslash\)n"{}}}
-\DoxyCodeLine{          : \textcolor{stringliteral}{"{}=r"{}}(\mbox{\hyperlink{zos_8cc_a24a75778e4eea3c696ecc59576fe16d1}{rc}})}
-\DoxyCodeLine{          : \textcolor{stringliteral}{"{}m"{}}(m-\/>reg1), \textcolor{stringliteral}{"{}m"{}}(m-\/>reg13), \textcolor{stringliteral}{"{}m"{}}(m-\/>reg15)}
-\DoxyCodeLine{          : \textcolor{stringliteral}{"{}r1"{}}, \textcolor{stringliteral}{"{}r13"{}}, \textcolor{stringliteral}{"{}r14"{}}, \textcolor{stringliteral}{"{}r15"{}})}
-
-\end{DoxyCode}
 \mbox{\Hypertarget{zos_8cc_aa006daaf11f1e2e45a6ababaf463212b}\label{zos_8cc_aa006daaf11f1e2e45a6ababaf463212b}} 
 \index{zos.cc@{zos.cc}!environ@{environ}}
 \index{environ@{environ}!zos.cc@{zos.cc}}
@@ -1439,28 +1345,4 @@ returns the length of the string
 \index{MODULE\_REGISTER\_USAGE@{MODULE\_REGISTER\_USAGE}!zos.cc@{zos.cc}}
 \doxysubsubsection{\texorpdfstring{MODULE\_REGISTER\_USAGE}{MODULE\_REGISTER\_USAGE}}
 {\footnotesize\ttfamily const char$\ast$ M\+O\+D\+U\+L\+E\+\_\+\+R\+E\+G\+I\+S\+T\+E\+R\+\_\+\+U\+S\+A\+GE = \char`\"{}I\+F\+A\+U\+S\+A\+GE\char`\"{}}
-
-\mbox{\Hypertarget{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}\label{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}} 
-\index{zos.cc@{zos.cc}!plist@{plist}}
-\index{plist@{plist}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{plist}{plist}}
-{\footnotesize\ttfamily void$\ast$ plist}
-
-{\bfseries Initial value\+:}
-\begin{DoxyCode}{0}
-\DoxyCodeLine{\{}
-\DoxyCodeLine{  \mbox{\hyperlink{structloadmod}{loadmod\_t}} *m = (\mbox{\hyperlink{structloadmod}{loadmod\_t}} *)mod}
-
-\end{DoxyCode}
-\mbox{\Hypertarget{zos_8cc_a24a75778e4eea3c696ecc59576fe16d1}\label{zos_8cc_a24a75778e4eea3c696ecc59576fe16d1}} 
-\index{zos.cc@{zos.cc}!rc@{rc}}
-\index{rc@{rc}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{rc}{rc}}
-{\footnotesize\ttfamily return rc}
-
-\mbox{\Hypertarget{zos_8cc_a46172c7afd264d87858b72d50d3faf56}\label{zos_8cc_a46172c7afd264d87858b72d50d3faf56}} 
-\index{zos.cc@{zos.cc}!reg1@{reg1}}
-\index{reg1@{reg1}!zos.cc@{zos.cc}}
-\doxysubsubsection{\texorpdfstring{reg1}{reg1}}
-{\footnotesize\ttfamily m reg1 = \mbox{\hyperlink{zos_8cc_aa3d6614da88c74bd72e5d82aadcbfa68}{plist}}}
 

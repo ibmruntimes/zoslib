@@ -1,4 +1,4 @@
-.TH "src/zos-io.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-io.cc" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,11 +6,7 @@ src/zos-io.cc
 .SH SYNOPSIS
 .br
 .PP
-\fC#include 'zos\-io\&.h'\fP
-.br
-\fC#include 'zos\-bpx\&.h'\fP
-.br
-\fC#include 'zos\-char\-util\&.h'\fP
+\fC#include 'zos\-base\&.h'\fP
 .br
 \fC#include <errno\&.h>\fP
 .br
@@ -23,6 +19,8 @@ src/zos-io.cc
 \fC#include <stdlib\&.h>\fP
 .br
 \fC#include <string\&.h>\fP
+.br
+\fC#include <sys/socket\&.h>\fP
 .br
 \fC#include <sys/stat\&.h>\fP
 .br
@@ -69,6 +67,33 @@ src/zos-io.cc
 .ti -1c
 .RI "int \fB__getfdccsid\fP (int fd)"
 .br
+.ti -1c
+.RI "void \fBupdate_memlogging\fP (__zinit *zinit_ptr, const char *envar, bool memacnt)"
+.br
+.ti -1c
+.RI "void \fBupdate_memlogging_level\fP (__zinit *zinit_ptr, const char *envar)"
+.br
+.ti -1c
+.RI "int \fB__doLogMemoryUsage\fP ()"
+.br
+.ti -1c
+.RI "void \fB__setLogMemoryUsage\fP (bool v)"
+.br
+.ti -1c
+.RI "char * \fB__getMemoryUsageLogFile\fP ()"
+.br
+.ti -1c
+.RI "int \fB__doLogMemoryAll\fP ()"
+.br
+.ti -1c
+.RI "int \fB__doLogMemoryWarning\fP ()"
+.br
+.ti -1c
+.RI "int \fB__getLogMemoryFileNo\fP ()"
+.br
+.ti -1c
+.RI "void \fB__memprintf\fP (const char *format,\&.\&.\&.)"
+.br
 .in -1c
 .SH "Macro Definition Documentation"
 .PP 
@@ -96,6 +121,12 @@ returns 0 if successful, or -1 on failure\&.
 Print given buffer to MVS Console\&. 
 .SS "int __console_printf (const char * fmt,  \&.\&.\&.)"
 Print formatted data to MVS Console\&. 
+.SS "int __doLogMemoryAll ()"
+Returns 1 if all messages from memory diagnostics are enabled\&. 
+.SS "int __doLogMemoryUsage ()"
+Returns 1 if logging of memory diagnostics is enabled\&. 
+.SS "int __doLogMemoryWarning ()"
+Returns 1 if only warnings from memory diagnostics are enabled\&. Errors are always included if memory diangostics is enabled\&. 
 .SS "void __dump (int fd, const void * addr, size_t len, size_t bw)"
 Dump to console\&. 
 .SS "void __dump_title (int fd, const void * addr, size_t len, size_t bw, const char *,  \&.\&.\&.)"
@@ -134,6 +165,19 @@ returns file descriptors ccsid\&.
 .RE
 .PP
 
+.SS "int __getLogMemoryFileNo ()"
+Returns the fileno to which memory diagnostics is written (use for instance in a `__display_backtrace(\fB__getLogMemoryFileNo()\fP); call)\&. 
+.SS "char* __getMemoryUsageLogFile ()"
+Returns the file name, including 'stdout' or 'stderr', used to log memory diagnostics to\&. 
+.SS "void __memprintf (const char * format,  \&.\&.\&.)"
+Logs memory diagnostics to the file name specified in the environment variable zoslib_config_t\&.MEMORY_USAGE_LOG_FILE_ENVAR\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIsame\fP as C's printf() parameters 
+.RE
+.PP
+
 .SS "int __setfdccsid (int fd, int t_ccsid)"
 Set file descriptor to the provided CCSID\&. 
 .PP
@@ -150,6 +194,8 @@ returns 0 if successful, or -1 on failure\&.
 .RE
 .PP
 
+.SS "void __setLogMemoryUsage (bool v)"
+
 .SS "int dprintf (int fd, const char *,  \&.\&.\&.)"
 Debug Printf\&. 
 .PP
@@ -158,6 +204,10 @@ Debug Printf\&.
 returns total number of bytes written to file descriptor 
 .RE
 .PP
+
+.SS "void update_memlogging (__zinit * zinit_ptr, const char * envar, bool memacnt)"
+
+.SS "void update_memlogging_level (__zinit * zinit_ptr, const char * envar)"
 
 .SS "int vdprintf (int fd, const char *, va_list ap)"
 Variadic Debug Printf\&. 

@@ -1,14 +1,13 @@
 \hypertarget{zos-io_8cc}{}\doxysection{src/zos-\/io.cc File Reference}
 \label{zos-io_8cc}\index{src/zos-\/io.cc@{src/zos-\/io.cc}}
-{\ttfamily \#include \char`\"{}zos-\/io.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}zos-\/bpx.\+h\char`\"{}}\newline
-{\ttfamily \#include \char`\"{}zos-\/char-\/util.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}zos-\/base.\+h\char`\"{}}\newline
 {\ttfamily \#include $<$errno.\+h$>$}\newline
 {\ttfamily \#include $<$poll.\+h$>$}\newline
 {\ttfamily \#include $<$pthread.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
 {\ttfamily \#include $<$sys/stat.\+h$>$}\newline
 {\ttfamily \#include $<$sys/types.\+h$>$}\newline
 \doxysubsection*{Macros}
@@ -38,6 +37,24 @@ int \mbox{\hyperlink{zos-io_8cc_a6c79250963a5848440a39bb4b71d56b6}{\+\_\+\+\_\+c
 int \mbox{\hyperlink{zos-io_8cc_a1a0138d7459e13d4a6f70cce01aab5c8}{\+\_\+\+\_\+setfdccsid}} (int fd, int t\+\_\+ccsid)
 \item 
 int \mbox{\hyperlink{zos-io_8cc_a5595cb548093b4cba59dbe97ccce1097}{\+\_\+\+\_\+getfdccsid}} (int fd)
+\item 
+void \mbox{\hyperlink{zos-io_8cc_a643ae22118cade1aa137ead2cff825c6}{update\+\_\+memlogging}} (\+\_\+\+\_\+zinit $\ast$zinit\+\_\+ptr, const char $\ast$envar, bool memacnt)
+\item 
+void \mbox{\hyperlink{zos-io_8cc_ad297386d7986b5d352d22181e6fac0da}{update\+\_\+memlogging\+\_\+level}} (\+\_\+\+\_\+zinit $\ast$zinit\+\_\+ptr, const char $\ast$envar)
+\item 
+int \mbox{\hyperlink{zos-io_8cc_a9002203deb272869984474a4a1ea8107}{\+\_\+\+\_\+do\+Log\+Memory\+Usage}} ()
+\item 
+void \mbox{\hyperlink{zos-io_8cc_a51db35989cd4318d166b5b14f1aa3577}{\+\_\+\+\_\+set\+Log\+Memory\+Usage}} (bool v)
+\item 
+char $\ast$ \mbox{\hyperlink{zos-io_8cc_a4740bf69cfed668a0ed161cab1e9d50e}{\+\_\+\+\_\+get\+Memory\+Usage\+Log\+File}} ()
+\item 
+int \mbox{\hyperlink{zos-io_8cc_aeb1a1681faf7ab45eeb3ca559b1aec9d}{\+\_\+\+\_\+do\+Log\+Memory\+All}} ()
+\item 
+int \mbox{\hyperlink{zos-io_8cc_a1200b3e8997fb1e069449a5bd1995624}{\+\_\+\+\_\+do\+Log\+Memory\+Warning}} ()
+\item 
+int \mbox{\hyperlink{zos-io_8cc_a679d75369a9ce2f24bf4b051d38030dd}{\+\_\+\+\_\+get\+Log\+Memory\+File\+No}} ()
+\item 
+void \mbox{\hyperlink{zos-io_8cc_ad035862547bbb29aa80c543db60c35b6}{\+\_\+\+\_\+memprintf}} (const char $\ast$format,...)
 \end{DoxyCompactItemize}
 
 
@@ -79,7 +96,25 @@ Print given buffer to M\+VS Console. \mbox{\Hypertarget{zos-io_8cc_aa111e065a77c
 \doxysubsubsection{\texorpdfstring{\_\_console\_printf()}{\_\_console\_printf()}}
 {\footnotesize\ttfamily int \+\_\+\+\_\+console\+\_\+printf (\begin{DoxyParamCaption}\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
 
-Print formatted data to M\+VS Console. \mbox{\Hypertarget{zos-io_8cc_aaaaab11cdfe715e251c58cdc01c9c3d6}\label{zos-io_8cc_aaaaab11cdfe715e251c58cdc01c9c3d6}} 
+Print formatted data to M\+VS Console. \mbox{\Hypertarget{zos-io_8cc_aeb1a1681faf7ab45eeb3ca559b1aec9d}\label{zos-io_8cc_aeb1a1681faf7ab45eeb3ca559b1aec9d}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_doLogMemoryAll@{\_\_doLogMemoryAll}}
+\index{\_\_doLogMemoryAll@{\_\_doLogMemoryAll}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryAll()}{\_\_doLogMemoryAll()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+do\+Log\+Memory\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if all messages from memory diagnostics are enabled. \mbox{\Hypertarget{zos-io_8cc_a9002203deb272869984474a4a1ea8107}\label{zos-io_8cc_a9002203deb272869984474a4a1ea8107}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_doLogMemoryUsage@{\_\_doLogMemoryUsage}}
+\index{\_\_doLogMemoryUsage@{\_\_doLogMemoryUsage}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryUsage()}{\_\_doLogMemoryUsage()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+do\+Log\+Memory\+Usage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if logging of memory diagnostics is enabled. \mbox{\Hypertarget{zos-io_8cc_a1200b3e8997fb1e069449a5bd1995624}\label{zos-io_8cc_a1200b3e8997fb1e069449a5bd1995624}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_doLogMemoryWarning@{\_\_doLogMemoryWarning}}
+\index{\_\_doLogMemoryWarning@{\_\_doLogMemoryWarning}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_doLogMemoryWarning()}{\_\_doLogMemoryWarning()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+do\+Log\+Memory\+Warning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns 1 if only warnings from memory diagnostics are enabled. Errors are always included if memory diangostics is enabled. \mbox{\Hypertarget{zos-io_8cc_aaaaab11cdfe715e251c58cdc01c9c3d6}\label{zos-io_8cc_aaaaab11cdfe715e251c58cdc01c9c3d6}} 
 \index{zos-\/io.cc@{zos-\/io.cc}!\_\_dump@{\_\_dump}}
 \index{\_\_dump@{\_\_dump}!zos-\/io.cc@{zos-\/io.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_dump()}{\_\_dump()}}
@@ -125,6 +160,29 @@ Get file descriptor C\+C\+S\+ID.
 \begin{DoxyReturn}{Returns}
 returns file descriptors ccsid. 
 \end{DoxyReturn}
+\mbox{\Hypertarget{zos-io_8cc_a679d75369a9ce2f24bf4b051d38030dd}\label{zos-io_8cc_a679d75369a9ce2f24bf4b051d38030dd}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_getLogMemoryFileNo@{\_\_getLogMemoryFileNo}}
+\index{\_\_getLogMemoryFileNo@{\_\_getLogMemoryFileNo}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_getLogMemoryFileNo()}{\_\_getLogMemoryFileNo()}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+get\+Log\+Memory\+File\+No (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns the fileno to which memory diagnostics is written (use for instance in a \`{}\+\_\+\+\_\+display\+\_\+backtrace(\mbox{\hyperlink{zos-io_8h_af1a98c4f0a0bc946b5619720b86ea86c}{\+\_\+\+\_\+get\+Log\+Memory\+File\+No()}}); call). \mbox{\Hypertarget{zos-io_8cc_a4740bf69cfed668a0ed161cab1e9d50e}\label{zos-io_8cc_a4740bf69cfed668a0ed161cab1e9d50e}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_getMemoryUsageLogFile@{\_\_getMemoryUsageLogFile}}
+\index{\_\_getMemoryUsageLogFile@{\_\_getMemoryUsageLogFile}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_getMemoryUsageLogFile()}{\_\_getMemoryUsageLogFile()}}
+{\footnotesize\ttfamily char$\ast$ \+\_\+\+\_\+get\+Memory\+Usage\+Log\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns the file name, including \char`\"{}stdout\char`\"{} or \char`\"{}stderr\char`\"{}, used to log memory diagnostics to. \mbox{\Hypertarget{zos-io_8cc_ad035862547bbb29aa80c543db60c35b6}\label{zos-io_8cc_ad035862547bbb29aa80c543db60c35b6}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_memprintf@{\_\_memprintf}}
+\index{\_\_memprintf@{\_\_memprintf}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_memprintf()}{\_\_memprintf()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+memprintf (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+Logs memory diagnostics to the file name specified in the environment variable zoslib\+\_\+config\+\_\+t.\+M\+E\+M\+O\+R\+Y\+\_\+\+U\+S\+A\+G\+E\+\_\+\+L\+O\+G\+\_\+\+F\+I\+L\+E\+\_\+\+E\+N\+V\+AR.
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em same} & as C\textquotesingle{}s printf() parameters \\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{zos-io_8cc_a1a0138d7459e13d4a6f70cce01aab5c8}\label{zos-io_8cc_a1a0138d7459e13d4a6f70cce01aab5c8}} 
 \index{zos-\/io.cc@{zos-\/io.cc}!\_\_setfdccsid@{\_\_setfdccsid}}
 \index{\_\_setfdccsid@{\_\_setfdccsid}!zos-\/io.cc@{zos-\/io.cc}}
@@ -141,6 +199,12 @@ Set file descriptor to the provided C\+C\+S\+ID.
 \begin{DoxyReturn}{Returns}
 returns 0 if successful, or -\/1 on failure. 
 \end{DoxyReturn}
+\mbox{\Hypertarget{zos-io_8cc_a51db35989cd4318d166b5b14f1aa3577}\label{zos-io_8cc_a51db35989cd4318d166b5b14f1aa3577}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!\_\_setLogMemoryUsage@{\_\_setLogMemoryUsage}}
+\index{\_\_setLogMemoryUsage@{\_\_setLogMemoryUsage}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_setLogMemoryUsage()}{\_\_setLogMemoryUsage()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+set\+Log\+Memory\+Usage (\begin{DoxyParamCaption}\item[{bool}]{v }\end{DoxyParamCaption})}
+
 \mbox{\Hypertarget{zos-io_8cc_aea1e680b4b559780e2ce0ea587dbd77f}\label{zos-io_8cc_aea1e680b4b559780e2ce0ea587dbd77f}} 
 \index{zos-\/io.cc@{zos-\/io.cc}!dprintf@{dprintf}}
 \index{dprintf@{dprintf}!zos-\/io.cc@{zos-\/io.cc}}
@@ -150,6 +214,18 @@ returns 0 if successful, or -\/1 on failure.
 Debug Printf. \begin{DoxyReturn}{Returns}
 returns total number of bytes written to file descriptor 
 \end{DoxyReturn}
+\mbox{\Hypertarget{zos-io_8cc_a643ae22118cade1aa137ead2cff825c6}\label{zos-io_8cc_a643ae22118cade1aa137ead2cff825c6}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!update\_memlogging@{update\_memlogging}}
+\index{update\_memlogging@{update\_memlogging}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{update\_memlogging()}{update\_memlogging()}}
+{\footnotesize\ttfamily void update\+\_\+memlogging (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+zinit $\ast$}]{zinit\+\_\+ptr,  }\item[{const char $\ast$}]{envar,  }\item[{bool}]{memacnt }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-io_8cc_ad297386d7986b5d352d22181e6fac0da}\label{zos-io_8cc_ad297386d7986b5d352d22181e6fac0da}} 
+\index{zos-\/io.cc@{zos-\/io.cc}!update\_memlogging\_level@{update\_memlogging\_level}}
+\index{update\_memlogging\_level@{update\_memlogging\_level}!zos-\/io.cc@{zos-\/io.cc}}
+\doxysubsubsection{\texorpdfstring{update\_memlogging\_level()}{update\_memlogging\_level()}}
+{\footnotesize\ttfamily void update\+\_\+memlogging\+\_\+level (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+zinit $\ast$}]{zinit\+\_\+ptr,  }\item[{const char $\ast$}]{envar }\end{DoxyParamCaption})}
+
 \mbox{\Hypertarget{zos-io_8cc_ae88ae734739949e2e284efb4f5aaab66}\label{zos-io_8cc_ae88ae734739949e2e284efb4f5aaab66}} 
 \index{zos-\/io.cc@{zos-\/io.cc}!vdprintf@{vdprintf}}
 \index{vdprintf@{vdprintf}!zos-\/io.cc@{zos-\/io.cc}}

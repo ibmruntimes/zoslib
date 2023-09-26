@@ -73,7 +73,8 @@ $(function() {
 <div class="title">zos-char-util.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;_Nascii.h&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="zos-macros_8h_source.html">zos-macros.h</a>&quot;</code><br />
+<code>#include &lt;_Nascii.h&gt;</code><br />
 <code>#include &lt;sys/types.h&gt;</code><br />
 </div>
 <p><a href="zos-char-util_8h_source.html">Go to the source code of this file.</a></p>
@@ -91,30 +92,30 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8b9226967c1d98227eced5eee36301ef"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a8b9226967c1d98227eced5eee36301ef">_convert_e2a</a> (void *dst, const void *src, size_t size)</td></tr>
-<tr class="separator:a8b9226967c1d98227eced5eee36301ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa7f8746a5d3f1ec038b64ae2ff2ca8e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#aaa7f8746a5d3f1ec038b64ae2ff2ca8e">_convert_a2e</a> (void *dst, const void *src, size_t size)</td></tr>
-<tr class="separator:aaa7f8746a5d3f1ec038b64ae2ff2ca8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acccc80c73ea31d4e50ffba89be63662b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#acccc80c73ea31d4e50ffba89be63662b">__guess_fd_ue</a> (int fd, char *errmsg, size_t er_size, int is_new_fd)</td></tr>
-<tr class="separator:acccc80c73ea31d4e50ffba89be63662b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f1aa901e609043fac0cdd29d6e57912"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a8f1aa901e609043fac0cdd29d6e57912">__guess_ue</a> (const void *src, size_t size, char *errmsg, size_t er_size)</td></tr>
-<tr class="separator:a8f1aa901e609043fac0cdd29d6e57912"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd80c9142c65aa99177bf1e5924d0f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#acd80c9142c65aa99177bf1e5924d0f04">__guess_ae</a> (const void *src, size_t size)</td></tr>
-<tr class="separator:acd80c9142c65aa99177bf1e5924d0f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f4ce8765ce0f58fdf6cb6524437ca80"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a7f4ce8765ce0f58fdf6cb6524437ca80">conv_utf8_utf16</a> (char *, size_t, const char *, size_t)</td></tr>
-<tr class="separator:a7f4ce8765ce0f58fdf6cb6524437ca80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a474d14f60847c08d208dbee534f7aeff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a474d14f60847c08d208dbee534f7aeff">conv_utf16_utf8</a> (char *, size_t, const char *, size_t)</td></tr>
-<tr class="separator:a474d14f60847c08d208dbee534f7aeff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a471dc9324e1d385a16614bc1c2171d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a471dc9324e1d385a16614bc1c2171d45">__set_autocvt_on_fd_stream</a> (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)</td></tr>
-<tr class="separator:a471dc9324e1d385a16614bc1c2171d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a828c1d76a7773572f289e210fd94b09f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a828c1d76a7773572f289e210fd94b09f">__file_needs_conversion</a> (int fd)</td></tr>
-<tr class="separator:a828c1d76a7773572f289e210fd94b09f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a690294b495f591280cd4e76006cf86b4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a690294b495f591280cd4e76006cf86b4">__file_needs_conversion_init</a> (const char *name, int fd)</td></tr>
-<tr class="separator:a690294b495f591280cd4e76006cf86b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c9b02f2c32d8ef0621b41b4142c8816"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a1c9b02f2c32d8ef0621b41b4142c8816">__fd_close</a> (int fd)</td></tr>
-<tr class="separator:a1c9b02f2c32d8ef0621b41b4142c8816"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee10908250abca31e597b505e04c7dd3"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#aee10908250abca31e597b505e04c7dd3">__convert_one_to_one</a> (const void *table, void *dst, size_t size, const void *src)</td></tr>
-<tr class="separator:aee10908250abca31e597b505e04c7dd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee51dd7098d9cd8c71a6645da218255c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#aee51dd7098d9cd8c71a6645da218255c">_convert_e2a</a> (void *dst, const void *src, size_t size)</td></tr>
+<tr class="separator:aee51dd7098d9cd8c71a6645da218255c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03af878665a72d49695c97f2d3038c80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a03af878665a72d49695c97f2d3038c80">_convert_a2e</a> (void *dst, const void *src, size_t size)</td></tr>
+<tr class="separator:a03af878665a72d49695c97f2d3038c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a0ba86f64893966f6c9360420deac05"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a6a0ba86f64893966f6c9360420deac05">__guess_fd_ue</a> (int fd, char *errmsg, size_t er_size, int is_new_fd)</td></tr>
+<tr class="separator:a6a0ba86f64893966f6c9360420deac05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a328dd26237923cc9e1131a71d4afff59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a328dd26237923cc9e1131a71d4afff59">__guess_ue</a> (const void *src, size_t size, char *errmsg, size_t er_size)</td></tr>
+<tr class="separator:a328dd26237923cc9e1131a71d4afff59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4829bd3d702aa90209215a2f5463bec7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a4829bd3d702aa90209215a2f5463bec7">__guess_ae</a> (const void *src, size_t size)</td></tr>
+<tr class="separator:a4829bd3d702aa90209215a2f5463bec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cab51f9206b1ea9b7415e75a1206c58"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a6cab51f9206b1ea9b7415e75a1206c58">conv_utf8_utf16</a> (char *, size_t, const char *, size_t)</td></tr>
+<tr class="separator:a6cab51f9206b1ea9b7415e75a1206c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18507342ab509481b6b22cb039d9d5f5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a18507342ab509481b6b22cb039d9d5f5">conv_utf16_utf8</a> (char *, size_t, const char *, size_t)</td></tr>
+<tr class="separator:a18507342ab509481b6b22cb039d9d5f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a18381557d4497088392b1a80422d42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a0a18381557d4497088392b1a80422d42">__set_autocvt_on_fd_stream</a> (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)</td></tr>
+<tr class="separator:a0a18381557d4497088392b1a80422d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd50710d989781cc05cb19f5c3e453e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#acd50710d989781cc05cb19f5c3e453e1">__file_needs_conversion</a> (int fd)</td></tr>
+<tr class="separator:acd50710d989781cc05cb19f5c3e453e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab84ad3db6f48431d2bbec784bcf15297"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#ab84ad3db6f48431d2bbec784bcf15297">__file_needs_conversion_init</a> (const char *name, int fd)</td></tr>
+<tr class="separator:ab84ad3db6f48431d2bbec784bcf15297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d0848c13d85dc2053bb22b63a612ee9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a0d0848c13d85dc2053bb22b63a612ee9">__fd_close</a> (int fd)</td></tr>
+<tr class="separator:a0d0848c13d85dc2053bb22b63a612ee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634a5bfdfea8dc9c75fcb4fcede653bb"><td class="memItemLeft" align="right" valign="top">void *<a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a634a5bfdfea8dc9c75fcb4fcede653bb">__convert_one_to_one</a> (const void *table, void *dst, size_t size, const void *src)</td></tr>
+<tr class="separator:a634a5bfdfea8dc9c75fcb4fcede653bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56fb3389a7d50782f87bee9ffc8b353f"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#a56fb3389a7d50782f87bee9ffc8b353f">strlen_ae</a> (const unsigned char *str, int *code_page, int max_len, int *ambiguous)</td></tr>
 <tr class="separator:a56fb3389a7d50782f87bee9ffc8b353f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc96530f7dcd6ffb06617d800dda4dea"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="zos-char-util_8h.html#acc96530f7dcd6ffb06617d800dda4dea">strlen_e</a> (const unsigned char *str, unsigned size)</td></tr>
@@ -141,8 +142,8 @@ Functions</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">  ({                                                                           \</div>
 <div class="line">    const <span class="keywordtype">char</span> *src = (<span class="keyword">const</span> <span class="keywordtype">char</span> *)(_str);                                    \</div>
 <div class="line">    int len = strlen(src) + 1;                                                 \</div>
-<div class="line">    char *tgt = (<span class="keywordtype">char</span> *)alloca(len);                                           \</div>
-<div class="line">    (<span class="keywordtype">char</span> *)<a class="code" href="zos-char-util_8h.html#aaa7f8746a5d3f1ec038b64ae2ff2ca8e">_convert_a2e</a>(tgt, src, len);                                       \</div>
+<div class="line">    char tgt[len];                                                             \</div>
+<div class="line">    (<span class="keywordtype">char</span> *)<a class="code" href="zos-char-util_8h.html#a03af878665a72d49695c97f2d3038c80">_convert_a2e</a>(tgt, src, len);                                       \</div>
 <div class="line">  })</div>
 </div><!-- fragment -->
 </div>
@@ -165,8 +166,8 @@ Functions</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">  ({                                                                           \</div>
 <div class="line">    const <span class="keywordtype">char</span> *src = (<span class="keyword">const</span> <span class="keywordtype">char</span> *)(_str);                                    \</div>
 <div class="line">    int len = strlen(src) + 1;                                                 \</div>
-<div class="line">    char *tgt = (<span class="keywordtype">char</span> *)alloca(len);                                           \</div>
-<div class="line">    (<span class="keywordtype">char</span> *)<a class="code" href="zos-char-util_8h.html#a8b9226967c1d98227eced5eee36301ef">_convert_e2a</a>(tgt, src, len);                                       \</div>
+<div class="line">    char tgt[len];                                                             \</div>
+<div class="line">    (<span class="keywordtype">char</span> *)<a class="code" href="zos-char-util_8h.html#aee51dd7098d9cd8c71a6645da218255c">_convert_e2a</a>(tgt, src, len);                                       \</div>
 <div class="line">  })</div>
 </div><!-- fragment -->
 </div>
@@ -242,8 +243,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aee10908250abca31e597b505e04c7dd3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee10908250abca31e597b505e04c7dd3">&#9670;&nbsp;</a></span>__convert_one_to_one()</h2>
+<a id="a634a5bfdfea8dc9c75fcb4fcede653bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a634a5bfdfea8dc9c75fcb4fcede653bb">&#9670;&nbsp;</a></span>__convert_one_to_one()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +253,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void* __convert_one_to_one </td>
+          <td class="memname">void* <a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> __convert_one_to_one </td>
           <td>(</td>
           <td class="paramtype">const void *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -290,14 +291,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1c9b02f2c32d8ef0621b41b4142c8816"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c9b02f2c32d8ef0621b41b4142c8816">&#9670;&nbsp;</a></span>__fd_close()</h2>
+<a id="a0d0848c13d85dc2053bb22b63a612ee9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d0848c13d85dc2053bb22b63a612ee9">&#9670;&nbsp;</a></span>__fd_close()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void __fd_close </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void __fd_close </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>fd</em></td><td>)</td>
@@ -314,14 +315,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a828c1d76a7773572f289e210fd94b09f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a828c1d76a7773572f289e210fd94b09f">&#9670;&nbsp;</a></span>__file_needs_conversion()</h2>
+<a id="acd50710d989781cc05cb19f5c3e453e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd50710d989781cc05cb19f5c3e453e1">&#9670;&nbsp;</a></span>__file_needs_conversion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int __file_needs_conversion </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int __file_needs_conversion </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>fd</em></td><td>)</td>
@@ -339,14 +340,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a690294b495f591280cd4e76006cf86b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a690294b495f591280cd4e76006cf86b4">&#9670;&nbsp;</a></span>__file_needs_conversion_init()</h2>
+<a id="ab84ad3db6f48431d2bbec784bcf15297"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab84ad3db6f48431d2bbec784bcf15297">&#9670;&nbsp;</a></span>__file_needs_conversion_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int __file_needs_conversion_init </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int __file_needs_conversion_init </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -375,14 +376,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="acd80c9142c65aa99177bf1e5924d0f04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd80c9142c65aa99177bf1e5924d0f04">&#9670;&nbsp;</a></span>__guess_ae()</h2>
+<a id="a4829bd3d702aa90209215a2f5463bec7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4829bd3d702aa90209215a2f5463bec7">&#9670;&nbsp;</a></span>__guess_ae()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int __guess_ae </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int __guess_ae </td>
           <td>(</td>
           <td class="paramtype">const void *&#160;</td>
           <td class="paramname"><em>src</em>, </td>
@@ -411,14 +412,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="acccc80c73ea31d4e50ffba89be63662b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acccc80c73ea31d4e50ffba89be63662b">&#9670;&nbsp;</a></span>__guess_fd_ue()</h2>
+<a id="a6a0ba86f64893966f6c9360420deac05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a0ba86f64893966f6c9360420deac05">&#9670;&nbsp;</a></span>__guess_fd_ue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int __guess_fd_ue </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int __guess_fd_ue </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>fd</em>, </td>
@@ -458,14 +459,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8f1aa901e609043fac0cdd29d6e57912"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f1aa901e609043fac0cdd29d6e57912">&#9670;&nbsp;</a></span>__guess_ue()</h2>
+<a id="a328dd26237923cc9e1131a71d4afff59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a328dd26237923cc9e1131a71d4afff59">&#9670;&nbsp;</a></span>__guess_ue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int __guess_ue </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int __guess_ue </td>
           <td>(</td>
           <td class="paramtype">const void *&#160;</td>
           <td class="paramname"><em>src</em>, </td>
@@ -506,14 +507,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a471dc9324e1d385a16614bc1c2171d45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a471dc9324e1d385a16614bc1c2171d45">&#9670;&nbsp;</a></span>__set_autocvt_on_fd_stream()</h2>
+<a id="a0a18381557d4497088392b1a80422d42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a18381557d4497088392b1a80422d42">&#9670;&nbsp;</a></span>__set_autocvt_on_fd_stream()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void __set_autocvt_on_fd_stream </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void __set_autocvt_on_fd_stream </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>fd</em>, </td>
@@ -555,14 +556,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aaa7f8746a5d3f1ec038b64ae2ff2ca8e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa7f8746a5d3f1ec038b64ae2ff2ca8e">&#9670;&nbsp;</a></span>_convert_a2e()</h2>
+<a id="a03af878665a72d49695c97f2d3038c80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03af878665a72d49695c97f2d3038c80">&#9670;&nbsp;</a></span>_convert_a2e()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* _convert_a2e </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void* _convert_a2e </td>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>dst</em>, </td>
@@ -598,14 +599,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8b9226967c1d98227eced5eee36301ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b9226967c1d98227eced5eee36301ef">&#9670;&nbsp;</a></span>_convert_e2a()</h2>
+<a id="aee51dd7098d9cd8c71a6645da218255c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee51dd7098d9cd8c71a6645da218255c">&#9670;&nbsp;</a></span>_convert_e2a()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void* _convert_e2a </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> void* _convert_e2a </td>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>dst</em>, </td>
@@ -641,14 +642,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a474d14f60847c08d208dbee534f7aeff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a474d14f60847c08d208dbee534f7aeff">&#9670;&nbsp;</a></span>conv_utf16_utf8()</h2>
+<a id="a18507342ab509481b6b22cb039d9d5f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18507342ab509481b6b22cb039d9d5f5">&#9670;&nbsp;</a></span>conv_utf16_utf8()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int conv_utf16_utf8 </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int conv_utf16_utf8 </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname">, </td>
@@ -682,14 +683,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a7f4ce8765ce0f58fdf6cb6524437ca80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f4ce8765ce0f58fdf6cb6524437ca80">&#9670;&nbsp;</a></span>conv_utf8_utf16()</h2>
+<a id="a6cab51f9206b1ea9b7415e75a1206c58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cab51f9206b1ea9b7415e75a1206c58">&#9670;&nbsp;</a></span>conv_utf8_utf16()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int conv_utf8_utf16 </td>
+          <td class="memname"><a class="el" href="zos-macros_8h.html#aed7e0d9f32e1ea73439ac0386ffaaa8d">__Z_EXPORT</a> int conv_utf8_utf16 </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
           <td class="paramname">, </td>
@@ -808,8 +809,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 </div><!-- contents -->
-<div class="ttc" id="azos-char-util_8h_html_a8b9226967c1d98227eced5eee36301ef"><div class="ttname"><a href="zos-char-util_8h.html#a8b9226967c1d98227eced5eee36301ef">_convert_e2a</a></div><div class="ttdeci">void * _convert_e2a(void *dst, const void *src, size_t size)</div><div class="ttdef"><b>Definition:</b> zos-char-util.cc:210</div></div>
-<div class="ttc" id="azos-char-util_8h_html_aaa7f8746a5d3f1ec038b64ae2ff2ca8e"><div class="ttname"><a href="zos-char-util_8h.html#aaa7f8746a5d3f1ec038b64ae2ff2ca8e">_convert_a2e</a></div><div class="ttdeci">void * _convert_a2e(void *dst, const void *src, size_t size)</div><div class="ttdef"><b>Definition:</b> zos-char-util.cc:221</div></div>
+<div class="ttc" id="azos-char-util_8h_html_a03af878665a72d49695c97f2d3038c80"><div class="ttname"><a href="zos-char-util_8h.html#a03af878665a72d49695c97f2d3038c80">_convert_a2e</a></div><div class="ttdeci">__Z_EXPORT void * _convert_a2e(void *dst, const void *src, size_t size)</div><div class="ttdef"><b>Definition:</b> zos-char-util.cc:220</div></div>
+<div class="ttc" id="azos-char-util_8h_html_aee51dd7098d9cd8c71a6645da218255c"><div class="ttname"><a href="zos-char-util_8h.html#aee51dd7098d9cd8c71a6645da218255c">_convert_e2a</a></div><div class="ttdeci">__Z_EXPORT void * _convert_e2a(void *dst, const void *src, size_t size)</div><div class="ttdef"><b>Definition:</b> zos-char-util.cc:209</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19

@@ -1,4 +1,4 @@
-.TH "include/zos-semaphore.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "include/zos-semaphore.h" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,6 +6,8 @@ include/zos-semaphore.h
 .SH SYNOPSIS
 .br
 .PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
 \fC#include <errno\&.h>\fP
 .br
 \fC#include <inttypes\&.h>\fP
@@ -19,7 +21,10 @@ include/zos-semaphore.h
 
 .in +1c
 .ti -1c
-.RI "struct \fBsem_t\fP"
+.RI "struct \fB__sem\fP"
+.br
+.ti -1c
+.RI "struct \fB__sem_t\fP"
 .br
 .in -1c
 .SS "Macros"
@@ -31,48 +36,114 @@ include/zos-semaphore.h
 .ti -1c
 .RI "#define \fBSEM_FAILED\fP   ((\fBsem_t\fP *)0)"
 .br
+.ti -1c
+.RI "#define \fBsem_t\fP   \fB__sem_t\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_init\fP   \fB__sem_init\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_post\fP   \fB__sem_post\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_trywait\fP   \fB__sem_trywait\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_timedwait\fP   \fB__sem_timedwait\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_wait\fP   \fB__sem_wait\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_getvalue\fP   \fB__sem_getvalue\fP"
+.br
+.ti -1c
+.RI "#define \fBsem_destroy\fP   \fB__sem_destroy\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fB__sem\fP \fB____sem_t\fP"
+.br
 .in -1c
 .SS "Functions"
 
 .in +1c
 .ti -1c
-.RI "int \fBsem_init\fP (\fBsem_t\fP *semid, int pshared, unsigned int value)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_init\fP (\fB__sem_t\fP *s0, int shared, unsigned int val)"
 .br
 .ti -1c
-.RI "int \fBsem_destroy\fP (\fBsem_t\fP *semid)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_post\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_wait\fP (\fBsem_t\fP *semid)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_trywait\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_trywait\fP (\fBsem_t\fP *semid)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_timedwait\fP (\fB__sem_t\fP *s0, const struct timespec *abs_timeout)"
 .br
 .ti -1c
-.RI "int \fBsem_post\fP (\fBsem_t\fP *semid)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_wait\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_timedwait\fP (\fBsem_t\fP *semid, const struct timespec *timeout)"
+.RI "\fB__Z_EXPORT\fP int \fB__sem_getvalue\fP (\fB__sem_t\fP *s0, int *sval)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__sem_destroy\fP (\fB__sem_t\fP *s0)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP unsigned int \fBatomic_dec\fP (volatile unsigned int *loc)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP unsigned int \fBatomic_inc\fP (volatile unsigned int *loc)"
 .br
 .in -1c
 .SH "Macro Definition Documentation"
 .PP 
 .SS "#define __SIZEOF_SEM_T   16"
 
+.SS "#define sem_destroy   \fB__sem_destroy\fP"
+
 .SS "#define SEM_FAILED   ((\fBsem_t\fP *)0)"
+
+.SS "#define sem_getvalue   \fB__sem_getvalue\fP"
+
+.SS "#define sem_init   \fB__sem_init\fP"
+
+.SS "#define sem_post   \fB__sem_post\fP"
+
+.SS "#define sem_t   \fB__sem_t\fP"
+
+.SS "#define sem_timedwait   \fB__sem_timedwait\fP"
+
+.SS "#define sem_trywait   \fB__sem_trywait\fP"
+
+.SS "#define sem_wait   \fB__sem_wait\fP"
+
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fB__sem\fP \fB____sem_t\fP"
 
 .SH "Function Documentation"
 .PP 
-.SS "int sem_destroy (\fBsem_t\fP * semid)"
+.SS "\fB__Z_EXPORT\fP int __sem_destroy (\fB__sem_t\fP * s0)"
 
-.SS "int sem_init (\fBsem_t\fP * semid, int pshared, unsigned int value)"
+.SS "\fB__Z_EXPORT\fP int __sem_getvalue (\fB__sem_t\fP * s0, int * sval)"
 
-.SS "int sem_post (\fBsem_t\fP * semid)"
+.SS "\fB__Z_EXPORT\fP int __sem_init (\fB__sem_t\fP * s0, int shared, unsigned int val)"
+TODO(itodorov) - zos: document these interfaces 
+.SS "\fB__Z_EXPORT\fP int __sem_post (\fB__sem_t\fP * s0)"
 
-.SS "int sem_timedwait (\fBsem_t\fP * semid, const struct timespec * timeout)"
+.SS "\fB__Z_EXPORT\fP int __sem_timedwait (\fB__sem_t\fP * s0, const struct timespec * abs_timeout)"
 
-.SS "int sem_trywait (\fBsem_t\fP * semid)"
+.SS "\fB__Z_EXPORT\fP int __sem_trywait (\fB__sem_t\fP * s0)"
 
-.SS "int sem_wait (\fBsem_t\fP * semid)"
+.SS "\fB__Z_EXPORT\fP int __sem_wait (\fB__sem_t\fP * s0)"
+
+.SS "\fB__Z_EXPORT\fP unsigned int atomic_dec (volatile unsigned int * loc)"
+
+.SS "\fB__Z_EXPORT\fP unsigned int atomic_inc (volatile unsigned int * loc)"
 
 .SH "Author"
 .PP 

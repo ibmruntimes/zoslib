@@ -1,0 +1,41 @@
+.TH "include/zos-getentropy.h" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/zos-getentropy.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBgetentropy\fP (void *buffer, size_t length)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int getentropy (void * buffer, size_t length)"
+Fill a buffer with random bytes 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbuffer\fP to store random bytes to\&. 
+.br
+\fInumber\fP of random bytes to generate\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+On success, returns 0, or -1 on error\&. 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

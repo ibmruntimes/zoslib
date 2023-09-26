@@ -1,4 +1,4 @@
-.TH "__Cache" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "__Cache" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,28 +13,37 @@ __Cache
 .RI "\fB__Cache\fP ()"
 .br
 .ti -1c
-.RI "void \fBaddptr\fP (const void *ptr, size_t v)"
+.RI "size_t \fBgetCurrentMem31\fP ()"
 .br
 .ti -1c
-.RI "bool \fBelligible\fP ()"
+.RI "size_t \fBgetCurrentMem64\fP ()"
 .br
 .ti -1c
-.RI "void * \fBalloc_seg\fP (int segs)"
+.RI "size_t \fBgetMaxMem31\fP ()"
 .br
 .ti -1c
-.RI "int \fBfree_seg\fP (void *ptr)"
+.RI "size_t \fBgetMaxMem64\fP ()"
 .br
 .ti -1c
-.RI "int \fBis_exist_ptr\fP (const void *ptr)"
+.RI "void \fBaddptr31\fP (const void *ptr, size_t v)"
+.br
+.ti -1c
+.RI "void * \fBalloc_seg\fP (size_t segs)"
+.br
+.ti -1c
+.RI "int \fBfree_seg\fP (void *ptr, size_t reqsize)"
 .br
 .ti -1c
 .RI "int \fBis_rmode64\fP (const void *ptr)"
 .br
 .ti -1c
-.RI "void \fBshow\fP (void)"
+.RI "void \fBfreeptr31\fP (const void *ptr, size_t reqsize)"
 .br
 .ti -1c
-.RI "void \fBfreeptr\fP (const void *ptr)"
+.RI "void \fBdisplayDebris\fP ()"
+.br
+.ti -1c
+.RI "int \fBdescAddress\fP (const void *addr, size_t size, char *msgbuf, size_t msgbuflen)"
 .br
 .ti -1c
 .RI "\fB~__Cache\fP ()"
@@ -48,21 +57,27 @@ __Cache
 
 .SH "Member Function Documentation"
 .PP 
-.SS "void __Cache::addptr (const void * ptr, size_t v)\fC [inline]\fP"
+.SS "void __Cache::addptr31 (const void * ptr, size_t v)\fC [inline]\fP"
 
-.SS "void* __Cache::alloc_seg (int segs)\fC [inline]\fP"
+.SS "void* __Cache::alloc_seg (size_t segs)\fC [inline]\fP"
 
-.SS "bool __Cache::elligible ()\fC [inline]\fP"
+.SS "int __Cache::descAddress (const void * addr, size_t size, char * msgbuf, size_t msgbuflen)\fC [inline]\fP"
 
-.SS "int __Cache::free_seg (void * ptr)\fC [inline]\fP"
+.SS "void __Cache::displayDebris ()\fC [inline]\fP"
 
-.SS "void __Cache::freeptr (const void * ptr)\fC [inline]\fP"
+.SS "int __Cache::free_seg (void * ptr, size_t reqsize)\fC [inline]\fP"
 
-.SS "int __Cache::is_exist_ptr (const void * ptr)\fC [inline]\fP"
+.SS "void __Cache::freeptr31 (const void * ptr, size_t reqsize)\fC [inline]\fP"
+
+.SS "size_t __Cache::getCurrentMem31 ()\fC [inline]\fP"
+
+.SS "size_t __Cache::getCurrentMem64 ()\fC [inline]\fP"
+
+.SS "size_t __Cache::getMaxMem31 ()\fC [inline]\fP"
+
+.SS "size_t __Cache::getMaxMem64 ()\fC [inline]\fP"
 
 .SS "int __Cache::is_rmode64 (const void * ptr)\fC [inline]\fP"
-
-.SS "void __Cache::show (void)\fC [inline]\fP"
 
 
 .SH "Author"

@@ -1,4 +1,4 @@
-.TH "__tlsanchor" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "__tlsanchor" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -18,12 +18,17 @@ __tlsanchor
 .ti -1c
 .RI "size_t \fBsz\fP"
 .br
+.ti -1c
+.RI "void * \fBpmem\fP"
+.br
 .in -1c
 .SH "Member Data Documentation"
 .PP 
 .SS "pthread_key_t __tlsanchor::key"
 
 .SS "pthread_once_t __tlsanchor::once"
+
+.SS "void* __tlsanchor::pmem"
 
 .SS "size_t __tlsanchor::sz"
 

@@ -1,5 +1,6 @@
 \hypertarget{zos-semaphore_8h}{}\doxysection{include/zos-\/semaphore.h File Reference}
 \label{zos-semaphore_8h}\index{include/zos-\/semaphore.h@{include/zos-\/semaphore.h}}
+{\ttfamily \#include \char`\"{}zos-\/macros.\+h\char`\"{}}\newline
 {\ttfamily \#include $<$errno.\+h$>$}\newline
 {\ttfamily \#include $<$inttypes.\+h$>$}\newline
 {\ttfamily \#include $<$pthread.\+h$>$}\newline
@@ -7,29 +8,58 @@
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-struct \mbox{\hyperlink{structsem__t}{sem\+\_\+t}}
+struct \mbox{\hyperlink{struct____sem}{\+\_\+\+\_\+sem}}
+\item 
+struct \mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
 \#define \mbox{\hyperlink{zos-semaphore_8h_a57db768aa087f9542a39faf667924c50}{\+\_\+\+\_\+\+S\+I\+Z\+E\+O\+F\+\_\+\+S\+E\+M\+\_\+T}}~16
 \item 
-\#define \mbox{\hyperlink{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}{S\+E\+M\+\_\+\+F\+A\+I\+L\+ED}}~((\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$)0)
+\#define \mbox{\hyperlink{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}{S\+E\+M\+\_\+\+F\+A\+I\+L\+ED}}~((\mbox{\hyperlink{zos-semaphore_8h_ab41e0251d1181d4d91b70a583a372ef2}{sem\+\_\+t}} $\ast$)0)
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_ab41e0251d1181d4d91b70a583a372ef2}{sem\+\_\+t}}~\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a9e3e15e5f3e2ada2784a36ee981362d0}{sem\+\_\+init}}~\mbox{\hyperlink{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}{\+\_\+\+\_\+sem\+\_\+init}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a3332edc5f187c7416f3fd04e39d93ceb}{sem\+\_\+post}}~\mbox{\hyperlink{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}{\+\_\+\+\_\+sem\+\_\+post}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a6845798adf33ea33e31e4fecbce5cdf7}{sem\+\_\+trywait}}~\mbox{\hyperlink{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}{\+\_\+\+\_\+sem\+\_\+trywait}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_ac540de0f78d82e15db0169ce0fad2b72}{sem\+\_\+timedwait}}~\mbox{\hyperlink{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}{\+\_\+\+\_\+sem\+\_\+timedwait}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a87677047d05ba860a93baef06d1eaa35}{sem\+\_\+wait}}~\mbox{\hyperlink{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}{\+\_\+\+\_\+sem\+\_\+wait}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_ab024316e38016dc71067b68ef0350488}{sem\+\_\+getvalue}}~\mbox{\hyperlink{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}{\+\_\+\+\_\+sem\+\_\+getvalue}}
+\item 
+\#define \mbox{\hyperlink{zos-semaphore_8h_a3c30a5e52c5b8ff2901ca4c0fcb57f08}{sem\+\_\+destroy}}~\mbox{\hyperlink{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}{\+\_\+\+\_\+sem\+\_\+destroy}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{struct____sem}{\+\_\+\+\_\+sem}} \mbox{\hyperlink{zos-semaphore_8h_a0d00354d3f691022e7fcf2b503cb07b6}{\+\_\+\+\_\+\+\_\+\+\_\+sem\+\_\+t}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}{sem\+\_\+init}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid, int pshared, unsigned int value)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}{\+\_\+\+\_\+sem\+\_\+init}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, int shared, unsigned int val)
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}{sem\+\_\+destroy}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}{\+\_\+\+\_\+sem\+\_\+post}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}{sem\+\_\+wait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}{\+\_\+\+\_\+sem\+\_\+trywait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}{sem\+\_\+trywait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}{\+\_\+\+\_\+sem\+\_\+timedwait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, const struct timespec $\ast$abs\+\_\+timeout)
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}{sem\+\_\+post}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}{\+\_\+\+\_\+sem\+\_\+wait}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
 \item 
-int \mbox{\hyperlink{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}{sem\+\_\+timedwait}} (\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$semid, const struct timespec $\ast$timeout)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}{\+\_\+\+\_\+sem\+\_\+getvalue}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0, int $\ast$sval)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \mbox{\hyperlink{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}{\+\_\+\+\_\+sem\+\_\+destroy}} (\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$s0)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} unsigned int \mbox{\hyperlink{zos-semaphore_8h_aea3d63442c2349f01c2d5fbd2e4ad362}{atomic\+\_\+dec}} (volatile unsigned int $\ast$loc)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} unsigned int \mbox{\hyperlink{zos-semaphore_8h_a2cd48fa20ce600ff881f7fa99aaf41b5}{atomic\+\_\+inc}} (volatile unsigned int $\ast$loc)
 \end{DoxyCompactItemize}
 
 
@@ -40,48 +70,123 @@ int \mbox{\hyperlink{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}{sem\+\_
 \doxysubsubsection{\texorpdfstring{\_\_SIZEOF\_SEM\_T}{\_\_SIZEOF\_SEM\_T}}
 {\footnotesize\ttfamily \#define \+\_\+\+\_\+\+S\+I\+Z\+E\+O\+F\+\_\+\+S\+E\+M\+\_\+T~16}
 
+\mbox{\Hypertarget{zos-semaphore_8h_a3c30a5e52c5b8ff2901ca4c0fcb57f08}\label{zos-semaphore_8h_a3c30a5e52c5b8ff2901ca4c0fcb57f08}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_destroy@{sem\_destroy}}
+\index{sem\_destroy@{sem\_destroy}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_destroy}{sem\_destroy}}
+{\footnotesize\ttfamily \#define sem\+\_\+destroy~\mbox{\hyperlink{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}{\+\_\+\+\_\+sem\+\_\+destroy}}}
+
 \mbox{\Hypertarget{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}\label{zos-semaphore_8h_a2ef55dcb46a51cb0f879f4c1724bdded}} 
 \index{zos-\/semaphore.h@{zos-\/semaphore.h}!SEM\_FAILED@{SEM\_FAILED}}
 \index{SEM\_FAILED@{SEM\_FAILED}!zos-\/semaphore.h@{zos-\/semaphore.h}}
 \doxysubsubsection{\texorpdfstring{SEM\_FAILED}{SEM\_FAILED}}
-{\footnotesize\ttfamily \#define S\+E\+M\+\_\+\+F\+A\+I\+L\+ED~((\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$)0)}
+{\footnotesize\ttfamily \#define S\+E\+M\+\_\+\+F\+A\+I\+L\+ED~((\mbox{\hyperlink{zos-semaphore_8h_ab41e0251d1181d4d91b70a583a372ef2}{sem\+\_\+t}} $\ast$)0)}
+
+\mbox{\Hypertarget{zos-semaphore_8h_ab024316e38016dc71067b68ef0350488}\label{zos-semaphore_8h_ab024316e38016dc71067b68ef0350488}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_getvalue@{sem\_getvalue}}
+\index{sem\_getvalue@{sem\_getvalue}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_getvalue}{sem\_getvalue}}
+{\footnotesize\ttfamily \#define sem\+\_\+getvalue~\mbox{\hyperlink{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}{\+\_\+\+\_\+sem\+\_\+getvalue}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a9e3e15e5f3e2ada2784a36ee981362d0}\label{zos-semaphore_8h_a9e3e15e5f3e2ada2784a36ee981362d0}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_init@{sem\_init}}
+\index{sem\_init@{sem\_init}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_init}{sem\_init}}
+{\footnotesize\ttfamily \#define sem\+\_\+init~\mbox{\hyperlink{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}{\+\_\+\+\_\+sem\+\_\+init}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a3332edc5f187c7416f3fd04e39d93ceb}\label{zos-semaphore_8h_a3332edc5f187c7416f3fd04e39d93ceb}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_post@{sem\_post}}
+\index{sem\_post@{sem\_post}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_post}{sem\_post}}
+{\footnotesize\ttfamily \#define sem\+\_\+post~\mbox{\hyperlink{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}{\+\_\+\+\_\+sem\+\_\+post}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_ab41e0251d1181d4d91b70a583a372ef2}\label{zos-semaphore_8h_ab41e0251d1181d4d91b70a583a372ef2}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_t@{sem\_t}}
+\index{sem\_t@{sem\_t}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_t}{sem\_t}}
+{\footnotesize\ttfamily \#define sem\+\_\+t~\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_ac540de0f78d82e15db0169ce0fad2b72}\label{zos-semaphore_8h_ac540de0f78d82e15db0169ce0fad2b72}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_timedwait@{sem\_timedwait}}
+\index{sem\_timedwait@{sem\_timedwait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_timedwait}{sem\_timedwait}}
+{\footnotesize\ttfamily \#define sem\+\_\+timedwait~\mbox{\hyperlink{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}{\+\_\+\+\_\+sem\+\_\+timedwait}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a6845798adf33ea33e31e4fecbce5cdf7}\label{zos-semaphore_8h_a6845798adf33ea33e31e4fecbce5cdf7}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_trywait@{sem\_trywait}}
+\index{sem\_trywait@{sem\_trywait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_trywait}{sem\_trywait}}
+{\footnotesize\ttfamily \#define sem\+\_\+trywait~\mbox{\hyperlink{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}{\+\_\+\+\_\+sem\+\_\+trywait}}}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a87677047d05ba860a93baef06d1eaa35}\label{zos-semaphore_8h_a87677047d05ba860a93baef06d1eaa35}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_wait@{sem\_wait}}
+\index{sem\_wait@{sem\_wait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{sem\_wait}{sem\_wait}}
+{\footnotesize\ttfamily \#define sem\+\_\+wait~\mbox{\hyperlink{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}{\+\_\+\+\_\+sem\+\_\+wait}}}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{zos-semaphore_8h_a0d00354d3f691022e7fcf2b503cb07b6}\label{zos-semaphore_8h_a0d00354d3f691022e7fcf2b503cb07b6}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_\_\_sem\_t@{\_\_\_\_sem\_t}}
+\index{\_\_\_\_sem\_t@{\_\_\_\_sem\_t}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_\_\_sem\_t}{\_\_\_\_sem\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct____sem}{\+\_\+\+\_\+sem}} \mbox{\hyperlink{zos-semaphore_8h_a0d00354d3f691022e7fcf2b503cb07b6}{\+\_\+\+\_\+\+\_\+\+\_\+sem\+\_\+t}}}
 
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}\label{zos-semaphore_8h_a805b225885a048e81d9353d5ba889ac3}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_destroy@{sem\_destroy}}
-\index{sem\_destroy@{sem\_destroy}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_destroy()}{sem\_destroy()}}
-{\footnotesize\ttfamily int sem\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}\label{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_destroy@{\_\_sem\_destroy}}
+\index{\_\_sem\_destroy@{\_\_sem\_destroy}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_destroy()}{\_\_sem\_destroy()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}\label{zos-semaphore_8h_adb6183f037741b30b2ec5c9dca3e1385}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_init@{sem\_init}}
-\index{sem\_init@{sem\_init}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_init()}{sem\_init()}}
-{\footnotesize\ttfamily int sem\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid,  }\item[{int}]{pshared,  }\item[{unsigned int}]{value }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}\label{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_getvalue@{\_\_sem\_getvalue}}
+\index{\_\_sem\_getvalue@{\_\_sem\_getvalue}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_getvalue()}{\_\_sem\_getvalue()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+getvalue (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{int $\ast$}]{sval }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}\label{zos-semaphore_8h_af5637fe0b731c83a9468aeb8548a98dc}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_post@{sem\_post}}
-\index{sem\_post@{sem\_post}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_post()}{sem\_post()}}
-{\footnotesize\ttfamily int sem\+\_\+post (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}\label{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_init@{\_\_sem\_init}}
+\index{\_\_sem\_init@{\_\_sem\_init}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_init()}{\_\_sem\_init()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{int}]{shared,  }\item[{unsigned int}]{val }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}\label{zos-semaphore_8h_a3e9518d388d27b5ccad19fd7436c0d65}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_timedwait@{sem\_timedwait}}
-\index{sem\_timedwait@{sem\_timedwait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_timedwait()}{sem\_timedwait()}}
-{\footnotesize\ttfamily int sem\+\_\+timedwait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid,  }\item[{const struct timespec $\ast$}]{timeout }\end{DoxyParamCaption})}
+T\+O\+D\+O(itodorov) -\/ zos\+: document these interfaces \mbox{\Hypertarget{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}\label{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_post@{\_\_sem\_post}}
+\index{\_\_sem\_post@{\_\_sem\_post}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_post()}{\_\_sem\_post()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+post (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}\label{zos-semaphore_8h_a4bc8159607450586a40d9871bb2c3006}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_trywait@{sem\_trywait}}
-\index{sem\_trywait@{sem\_trywait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_trywait()}{sem\_trywait()}}
-{\footnotesize\ttfamily int sem\+\_\+trywait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}\label{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_timedwait@{\_\_sem\_timedwait}}
+\index{\_\_sem\_timedwait@{\_\_sem\_timedwait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_timedwait()}{\_\_sem\_timedwait()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+timedwait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0,  }\item[{const struct timespec $\ast$}]{abs\+\_\+timeout }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}\label{zos-semaphore_8h_a4c17aae6e654bee46c77d967416fef53}} 
-\index{zos-\/semaphore.h@{zos-\/semaphore.h}!sem\_wait@{sem\_wait}}
-\index{sem\_wait@{sem\_wait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
-\doxysubsubsection{\texorpdfstring{sem\_wait()}{sem\_wait()}}
-{\footnotesize\ttfamily int sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsem__t}{sem\+\_\+t}} $\ast$}]{semid }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}\label{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_trywait@{\_\_sem\_trywait}}
+\index{\_\_sem\_trywait@{\_\_sem\_trywait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_trywait()}{\_\_sem\_trywait()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+trywait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}\label{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!\_\_sem\_wait@{\_\_sem\_wait}}
+\index{\_\_sem\_wait@{\_\_sem\_wait}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sem\_wait()}{\_\_sem\_wait()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} int \+\_\+\+\_\+sem\+\_\+wait (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct____sem__t}{\+\_\+\+\_\+sem\+\_\+t}} $\ast$}]{s0 }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_aea3d63442c2349f01c2d5fbd2e4ad362}\label{zos-semaphore_8h_aea3d63442c2349f01c2d5fbd2e4ad362}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!atomic\_dec@{atomic\_dec}}
+\index{atomic\_dec@{atomic\_dec}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{atomic\_dec()}{atomic\_dec()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} unsigned int atomic\+\_\+dec (\begin{DoxyParamCaption}\item[{volatile unsigned int $\ast$}]{loc }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{zos-semaphore_8h_a2cd48fa20ce600ff881f7fa99aaf41b5}\label{zos-semaphore_8h_a2cd48fa20ce600ff881f7fa99aaf41b5}} 
+\index{zos-\/semaphore.h@{zos-\/semaphore.h}!atomic\_inc@{atomic\_inc}}
+\index{atomic\_inc@{atomic\_inc}!zos-\/semaphore.h@{zos-\/semaphore.h}}
+\doxysubsubsection{\texorpdfstring{atomic\_inc()}{atomic\_inc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+E\+X\+P\+O\+RT}} unsigned int atomic\+\_\+inc (\begin{DoxyParamCaption}\item[{volatile unsigned int $\ast$}]{loc }\end{DoxyParamCaption})}
 

@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['plist_1083',['plist',['../zos_8cc.html#aa3d6614da88c74bd72e5d82aadcbfa68',1,'zos.cc']]],
+  ['pcca_1081',['pcca',['../struct_z_o_s_p_c_c_a.html#ac47f04a5b45ebde8e1cf0dc96f1af283',1,'ZOSPCCA']]],
+  ['pccavt_1082',['pccavt',['../struct_z_o_s_c_v_t.html#a000409dbe825093f62dd18a5291878e4',1,'ZOSCVT']]],
+  ['pmem_1083',['pmem',['../struct____tlsanchor.html#aee4fc7d04be70fb0d2595e82092ea300',1,'__tlsanchor']]],
   ['pool_1084',['pool',['../struct_z_o_s_r_c_e.html#af2331cd9ce9a344c703eb1b668ab2499',1,'ZOSRCE']]],
   ['prefix_1085',['prefix',['../struct_i_f_a_a_r_g_s.html#a5d7f9430e07dd5f2ea0492685c6db8df',1,'IFAARGS']]],
   ['prev_5fdsa_1086',['prev_dsa',['../struct____stack__info.html#a0d720f84ee66fbfb1a2fe76b5779153f',1,'__stack_info']]],

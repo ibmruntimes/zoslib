@@ -1,4 +1,4 @@
-.TH "include/zos-char-util.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "include/zos-char-util.h" 3 "Wed May 17 2023" "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,6 +6,8 @@ include/zos-char-util.h
 .SH SYNOPSIS
 .br
 .PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
 \fC#include <_Nascii\&.h>\fP
 .br
 \fC#include <sys/types\&.h>\fP
@@ -31,40 +33,40 @@ include/zos-char-util.h
 
 .in +1c
 .ti -1c
-.RI "void * \fB_convert_e2a\fP (void *dst, const void *src, size_t size)"
+.RI "\fB__Z_EXPORT\fP void * \fB_convert_e2a\fP (void *dst, const void *src, size_t size)"
 .br
 .ti -1c
-.RI "void * \fB_convert_a2e\fP (void *dst, const void *src, size_t size)"
+.RI "\fB__Z_EXPORT\fP void * \fB_convert_a2e\fP (void *dst, const void *src, size_t size)"
 .br
 .ti -1c
-.RI "int \fB__guess_fd_ue\fP (int fd, char *errmsg, size_t er_size, int is_new_fd)"
+.RI "\fB__Z_EXPORT\fP int \fB__guess_fd_ue\fP (int fd, char *errmsg, size_t er_size, int is_new_fd)"
 .br
 .ti -1c
-.RI "int \fB__guess_ue\fP (const void *src, size_t size, char *errmsg, size_t er_size)"
+.RI "\fB__Z_EXPORT\fP int \fB__guess_ue\fP (const void *src, size_t size, char *errmsg, size_t er_size)"
 .br
 .ti -1c
-.RI "int \fB__guess_ae\fP (const void *src, size_t size)"
+.RI "\fB__Z_EXPORT\fP int \fB__guess_ae\fP (const void *src, size_t size)"
 .br
 .ti -1c
-.RI "int \fBconv_utf8_utf16\fP (char *, size_t, const char *, size_t)"
+.RI "\fB__Z_EXPORT\fP int \fBconv_utf8_utf16\fP (char *, size_t, const char *, size_t)"
 .br
 .ti -1c
-.RI "int \fBconv_utf16_utf8\fP (char *, size_t, const char *, size_t)"
+.RI "\fB__Z_EXPORT\fP int \fBconv_utf16_utf8\fP (char *, size_t, const char *, size_t)"
 .br
 .ti -1c
-.RI "void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+.RI "\fB__Z_EXPORT\fP void \fB__set_autocvt_on_fd_stream\fP (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
 .br
 .ti -1c
-.RI "int \fB__file_needs_conversion\fP (int fd)"
+.RI "\fB__Z_EXPORT\fP int \fB__file_needs_conversion\fP (int fd)"
 .br
 .ti -1c
-.RI "int \fB__file_needs_conversion_init\fP (const char *name, int fd)"
+.RI "\fB__Z_EXPORT\fP int \fB__file_needs_conversion_init\fP (const char *name, int fd)"
 .br
 .ti -1c
-.RI "void \fB__fd_close\fP (int fd)"
+.RI "\fB__Z_EXPORT\fP void \fB__fd_close\fP (int fd)"
 .br
 .ti -1c
-.RI "void * \fB__convert_one_to_one\fP (const void *table, void *dst, size_t size, const void *src)"
+.RI "void *\fB__Z_EXPORT\fP \fB__convert_one_to_one\fP (const void *table, void *dst, size_t size, const void *src)"
 .br
 .ti -1c
 .RI "unsigned \fBstrlen_ae\fP (const unsigned char *str, int *code_page, int max_len, int *ambiguous)"
@@ -85,7 +87,7 @@ include/zos-char-util.h
   ({                                                                           \
     const char *src = (const char *)(_str);                                    \
     int len = strlen(src) + 1;                                                 \
-    char *tgt = (char *)alloca(len);                                           \
+    char tgt[len];                                                             \
     (char *)_convert_a2e(tgt, src, len);                                       \
   })
 .fi
@@ -96,7 +98,7 @@ include/zos-char-util.h
   ({                                                                           \
     const char *src = (const char *)(_str);                                    \
     int len = strlen(src) + 1;                                                 \
-    char *tgt = (char *)alloca(len);                                           \
+    char tgt[len];                                                             \
     (char *)_convert_e2a(tgt, src, len);                                       \
   })
 .fi
@@ -120,9 +122,9 @@ include/zos-char-util.h
 .PP 
 .SS "const unsigned char __ibm1047_iso88591 [256] __attribute__ ((aligned(8)))"
 
-.SS "void* __convert_one_to_one (const void * table, void * dst, size_t size, const void * src)\fC [inline]\fP"
+.SS "void* \fB__Z_EXPORT\fP __convert_one_to_one (const void * table, void * dst, size_t size, const void * src)\fC [inline]\fP"
 
-.SS "void __fd_close (int fd)"
+.SS "\fB__Z_EXPORT\fP void __fd_close (int fd)"
 Unsets fd attributes 
 .PP
 \fBParameters\fP
@@ -131,7 +133,7 @@ Unsets fd attributes
 .RE
 .PP
 
-.SS "int __file_needs_conversion (int fd)"
+.SS "\fB__Z_EXPORT\fP int __file_needs_conversion (int fd)"
 Determines if file descriptor needs conversion from EBCDIC to ASCII\&. Call __file_needs_conversion_init first before calling this function\&. 
 .PP
 \fBParameters\fP
@@ -145,7 +147,7 @@ returns 1 if file needs conversion, 0 if not\&.
 .RE
 .PP
 
-.SS "int __file_needs_conversion_init (const char * name, int fd)"
+.SS "\fB__Z_EXPORT\fP int __file_needs_conversion_init (const char * name, int fd)"
 Determines if file needs conversion from EBCDIC to ASCII\&. 
 .PP
 \fBParameters\fP
@@ -161,7 +163,7 @@ returns 1 if file needs conversion, 0 if not\&.
 .RE
 .PP
 
-.SS "int __guess_ae (const void * src, size_t size)"
+.SS "\fB__Z_EXPORT\fP int __guess_ae (const void * src, size_t size)"
 Guess if string is ASCII or EBCDIC\&. 
 .PP
 \fBParameters\fP
@@ -177,7 +179,7 @@ guessed CCSID\&.
 .RE
 .PP
 
-.SS "int __guess_fd_ue (int fd, char * errmsg, size_t er_size, int is_new_fd)"
+.SS "\fB__Z_EXPORT\fP int __guess_fd_ue (int fd, char * errmsg, size_t er_size, int is_new_fd)"
 Guess if string is UTF8 (ASCII) or EBCDIC based on the first CCSID_GUESS_BUF_SIZE_ENVAR of the file associated with the given fd\&. CCSID_GUESS_BUF_SIZE_ENVAR is default at 4KB\&. 
 .PP
 \fBParameters\fP
@@ -191,7 +193,7 @@ guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if
 .RE
 .PP
 
-.SS "int __guess_ue (const void * src, size_t size, char * errmsg, size_t er_size)"
+.SS "\fB__Z_EXPORT\fP int __guess_ue (const void * src, size_t size, char * errmsg, size_t er_size)"
 Guess if string is UTF8 (ASCII) or EBCDIC\&. 
 .PP
 \fBParameters\fP
@@ -207,7 +209,7 @@ guessed CCSID (819 for UTF8, 1047 for EBCDIC; otherwise 65535 for BINARY and, if
 .RE
 .PP
 
-.SS "void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
+.SS "\fB__Z_EXPORT\fP void __set_autocvt_on_fd_stream (int fd, unsigned short ccsid, unsigned char txtflag, int on_untagged_only)"
 Sets file descriptor to auto convert\&. 
 .PP
 \fBParameters\fP
@@ -222,7 +224,7 @@ Sets file descriptor to auto convert\&.
 .RE
 .PP
 
-.SS "void* _convert_a2e (void * dst, const void * src, size_t size)"
+.SS "\fB__Z_EXPORT\fP void* _convert_a2e (void * dst, const void * src, size_t size)"
 Convert from ASCII to EBCDIC 
 .PP
 \fBParameters\fP
@@ -240,7 +242,7 @@ returns destination string\&.
 .RE
 .PP
 
-.SS "void* _convert_e2a (void * dst, const void * src, size_t size)"
+.SS "\fB__Z_EXPORT\fP void* _convert_e2a (void * dst, const void * src, size_t size)"
 Convert from EBCDIC to ASCII\&. 
 .PP
 \fBParameters\fP
@@ -258,9 +260,9 @@ returns destination string\&.
 .RE
 .PP
 
-.SS "int conv_utf16_utf8 (char *, size_t, const char *, size_t)"
+.SS "\fB__Z_EXPORT\fP int conv_utf16_utf8 (char *, size_t, const char *, size_t)"
 Convert string from UTF16 to UTF8\&. 
-.SS "int conv_utf8_utf16 (char *, size_t, const char *, size_t)"
+.SS "\fB__Z_EXPORT\fP int conv_utf8_utf16 (char *, size_t, const char *, size_t)"
 Convert string from UTF8 to UTF16 
 .SS "unsigned strlen_ae (const unsigned char * str, int * code_page, int max_len, int * ambiguous)\fC [inline]\fP"
 
