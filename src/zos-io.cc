@@ -709,6 +709,11 @@ int __setfdtext(int fd) {
   return __chgfdccsid(fd, 819);
 }
 
+int __enableautocvt(int fd) {
+  struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+  return fcntl(fd, F_CONTROL_CVT, &cvtreq);
+}
+
 int __disableautocvt(int fd) {
   struct f_cnvrt req = {SETCVTOFF, 0, 0};
   return fcntl(fd, F_CONTROL_CVT, &req);
@@ -730,22 +735,19 @@ int __ccsid_new_file() {
   return ccsid;
 }
 
+// New files that were previously opened with the same name should retain filetag
 int __tag_new_file_filename(int fd, std::string filename) {
 
  auto it = existing_files.find(filename);
- if(it != existing_files.end())
-    {
+ if(it != existing_files.end()) {
         unsigned int ccsid = it->second.first;
         bool txtflag = it->second.second;
 
-        if (ccsid == FT_UNTAGGED && txtflag)
-        {
-           struct f_cnvrt cvtreq = {SETCVTON, 0, 0x0417};
-           fcntl(fd, F_CONTROL_CVT, &cvtreq);
+        if (ccsid == FT_UNTAGGED && txtflag) {
+           __enableautocvt(fd);
            txtflag = false;
         }
-        else if (ccsid == FT_UNTAGGED && !txtflag)
-        { 
+        else if (ccsid == FT_UNTAGGED && !txtflag) {
            __disableautocvt(fd);
         }
         int result = __chgfdccsidtxtflag(fd, ccsid, txtflag);
@@ -886,10 +888,10 @@ int __open_ascii(const char *filename, int opts, ...) {
 
   struct file_tag *t = &sb.st_tag;
 
+  // every RDONLY open we (re)determine filetags
   if (S_ISREG(sb.st_mode) && (opts & O_RDONLY)) {
      existing_files.erase(filename);
-     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file())
-     { 
+     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file()) {
         if (t->ft_txtflag)
            existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
         else
@@ -907,13 +909,11 @@ int __open_ascii(const char *filename, int opts, ...) {
     else if (S_ISREG(sb.st_mode)) {
       if (t->ft_ccsid == FT_UNTAGGED && (opts & O_RDONLY) != 0) {
         if (__file_needs_conversion_init(filename, fd)) {
-          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          __enableautocvt(fd);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
           auto it = existing_files.find(filename);
-          if(it != existing_files.end())
-          {
+          if(it != existing_files.end()) {
              //keep file ccsid 0, but turn on txt conversion
              //this combination does not exist in 'real life' but it allows
              //us to distinguise between unconverted and converted untagged files 
@@ -925,17 +925,14 @@ int __open_ascii(const char *filename, int opts, ...) {
           auto it = existing_files.find(filename);
           if(it != existing_files.end())
              //if untagged with txtflag on, we have to enable conversion
-             if(it->second.second)
-             {
-                struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-                fcntl(fd, F_CONTROL_CVT, &cvtreq);
+             if(it->second.second) {
+                __enableautocvt(fd);
              }
       }
     } else if (isatty(fd)) {
       // tty devices need to have auto convert enabled
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
-          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          __enableautocvt(fd);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
       }
@@ -953,10 +950,10 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
 
   struct file_tag *t = &sb.st_tag;
 
+  // every RDONLY open we (re)determine filetags
   if (S_ISREG(sb.st_mode) && (strcmp(mode, "r") == 0)) {
      existing_files.erase(filename);
-     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file())
-     {
+     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file()) {
         if (t->ft_txtflag)
            existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
         else
@@ -975,16 +972,14 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
       struct file_tag *t = &sb.st_tag;
       if (t->ft_ccsid == FT_UNTAGGED && strcmp(mode, "r") == 0) {
         if (__file_needs_conversion_init(filename, fd)) {
-          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          __enableautocvt(fd);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
           auto it = existing_files.find(filename);
-          if(it != existing_files.end())
-          {
-             //keep file ccsid 0, but turn on txt conversion
-             //this combination does not exist in 'real life' but it allows
-             //us to distinguise between unconverted and converted untagged files
+          if(it != existing_files.end()) {
+             // keep file ccsid 0, but turn on txt conversion
+             // this combination does not exist in 'real life' but it allows
+             // us to distinguise between unconverted and converted untagged files
              it->second = std::make_pair(FT_UNTAGGED, true);
           }
         } else {
@@ -995,10 +990,9 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
       else if (t->ft_ccsid == FT_UNTAGGED && strcmp(mode, "r") != 0) {
           auto it = existing_files.find(filename);
           if(it != existing_files.end())
-             //if untagged with txtflag off, we have to disable conversion
-             //fopen enables conversion for untagged files by default
-             if(!it->second.second)
-             {
+             // if untagged with txtflag off, we have to disable conversion
+             // fopen enables conversion for untagged files by default
+             if(!it->second.second) {
                 __disableautocvt(fd);
              }
       }
@@ -1006,8 +1000,7 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
       // tty devices need to have auto convert enabled
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
-          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
-          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          __enableautocvt(fd);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
       }
