@@ -11,6 +11,7 @@
 
 //TODO(itodorov) - zos: workaround for nanosleep WoZ conflict, revisit
 // once WoZ allow overriding or LE provides a nanosleep definition
+#include <time.h>
 #define nanosleep cpp_nanosleep
 #include_next <__threading_support>
 #undef nanosleep
