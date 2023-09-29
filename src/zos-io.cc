@@ -23,6 +23,8 @@
 #include <sys/inotify.h>
 #include <utmpx.h>
 
+static FILE *fp_memprintf = NULL;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -721,6 +723,11 @@ int __getfdccsid(int fd) {
   return ccsid;
 }
 
+int __getLogMemoryFileNo() {
+  static int fn = fileno(fp_memprintf);
+  return fn;
+}
+
 // Defined in zos.cc, no need to expose it:
 extern void __setLogMemoryUsage(bool value);
 
@@ -734,10 +741,12 @@ void __memprintf(const char *format, ...) {
   static const char *fname = __getMemoryUsageLogFile();
   static bool isstderr = !strcmp(fname, "stderr");
   static bool isstdout = !strcmp(fname, "stdout");
-  static FILE *fp = isstderr ? stderr : \
-                    isstdout ? stdout : \
-                    fopen(fname, "a+");
-  if (!fp) {
+  if (!fp_memprintf) {
+    fp_memprintf = isstderr ? stderr : \
+                   isstdout ? stdout : \
+                   fopen(fname, "a+");
+  }
+  if (!fp_memprintf) {
     va_end(args);
     perror(fname);
     __setLogMemoryUsage(false);
@@ -746,8 +755,9 @@ void __memprintf(const char *format, ...) {
   char buf[PATH_MAX*2];
   vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
-
-  fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
+  fprintf(fp_memprintf, "p=%d t=%d %s", getpid(), gettid(), buf);
+  if (fp_memprintf != stderr)
+    fflush(fp_memprintf);
 }
 
 // C Library Overrides

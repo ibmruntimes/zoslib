@@ -140,6 +140,12 @@ __Z_EXPORT int __getfdccsid(int fd);
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
 
 /**
+ * Returns the fileno to which memory diagnostics is written (use for
+ * instance in a `__display_backtrace(__getLogMemoryFileNo());` call).
+ */
+__Z_EXPORT int __getLogMemoryFileNo();
+
+/**
  * Logs memory allocation and release to the file name specified
  * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
  * \param [in] same as C's printf() parameters

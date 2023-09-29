@@ -1466,35 +1466,37 @@ extern "C" int execvpe(const char *name, char *const argv[],
   int lp, ln;
   const char *p;
   int eacces = 0, etxtbsy = 0;
-  char *bp, *cur;
+  char *dp = NULL, *cur;
 
   // Get the path we're searching
   int len;
-  if (cur = getenv("PATH")) {
+  if ((cur = getenv("PATH")) != NULL) {
     len = strlen(cur);
-  }
-  else {
+  } else {
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       char *dp = (char*)alloca (len);
-       confstr (_CS_PATH, dp, len);
-       cur = dp;
-    } else { len = 1; }
+       dp = (char*)malloc(len + 1);
+       if (dp == NULL)
+         return errno ? errno : ENOMEM;
+    } else
+       len = 1;
   }
   char path[len + 1];
-  if (cur)
-    strcpy(path, cur);
+  char buf[len + strlen(name) + 2];
+  char *bp = buf;
+
+  if (dp != NULL) {
+    strncpy(path, dp, sizeof(path));
+    free(dp);
+  } else if (cur != NULL)
+    strncpy(path, cur, sizeof(path));
   else {
     path[0] = ':';
     path[1] = '\0';
-    cur = path;
   }
 
-  char buf[len + strlen(name) + 2];
-  bp = buf;
-
-  while (cur != NULL) {
+  for (cur = path; cur != NULL;) {
     p = cur;
     if ((cur = strchr(cur, ':')) != NULL)
       *cur++ = '\0';
@@ -2876,17 +2878,52 @@ int lutimes(const char *filename, const struct timeval tv[2]) {
   attributes.att_mtime = tv[1].tv_sec;
 
   // ZOSLIB is built in ASCII, but BPX4LCR wants EBCDIC.
-  char *pathname = _str_a2e(filename);
+  int len = strlen(filename);
+  char pathname[len+1];
+  strncpy(pathname, filename, sizeof(pathname));
+  len = __a2e_s(pathname);
+  if (len <= 0) {
+    perror("__a2e_s");
+    return -1;
+  }
 
-  __bpx4lcr(strlen(pathname), pathname, sizeof(attributes), &attributes,
+  __bpx4lcr(len, pathname, sizeof(attributes), &attributes,
             &return_value, &return_code, &reason_code);
 
   if (return_value != 0) {
     errno = return_code;
+    perror("__bpx4lcr");
     return -1;
   }
 
   return 0;
+}
+
+int __nanosleep(const struct timespec *req, struct timespec *rem) {
+  unsigned secrem;
+  unsigned nanorem;
+  int rv;
+  int err;
+
+  rv = __cond_timed_wait((unsigned int)req->tv_sec, (unsigned int)req->tv_nsec,
+                         (unsigned int)(CW_CONDVAR | CW_INTRPT), &secrem,
+                         &nanorem);
+  err = errno;
+
+  if (rem != NULL && (rv == 0 || err == EINTR)) {
+    rem->tv_nsec = nanorem;
+    rem->tv_sec = secrem;
+  }
+
+  /* Don't clobber errno unless __cond_timed_wait() errored.
+   * Don't leak EAGAIN, that just means the timeout expired.
+   */
+  if (rv == -1 && err == EAGAIN) {
+    errno = 0;
+    rv = 0;
+  }
+
+  return rv;
 }
 
 #define PPA_FUNC_LENGTH 256
@@ -2954,38 +2991,6 @@ extern "C" void init_zoslib(const zoslib_config_t config) {
   __get_instance()->initialize(config);
 }
 
-#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-extern "C" __Z_EXPORT int __nanosleep(const struct timespec *req,
-                                      struct timespec *rem) {
-#else
-extern "C" __Z_EXPORT int nanosleep(const struct timespec *req,
-                                    struct timespec *rem) {
-#endif
-  unsigned secrem;
-  unsigned nanorem;
-  int rv;
-  int err;
-
-  rv = __cond_timed_wait((unsigned int)req->tv_sec, (unsigned int)req->tv_nsec,
-                         (unsigned int)(CW_CONDVAR | CW_INTRPT), &secrem,
-                         &nanorem);
-  err = errno;
-
-  if (rem != NULL && (rv == 0 || err == EINTR)) {
-    rem->tv_nsec = nanorem;
-    rem->tv_sec = secrem;
-  }
-
-  /* Don't clobber errno unless __cond_timed_wait() errored.
-   * Don't leak EAGAIN, that just means the timeout expired.
-   */
-  if (rv == -1 && err == EAGAIN) {
-    errno = 0;
-    rv = 0;
-  }
-
-  return rv;
-}
 
 extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
   // Grab address from function descriptor

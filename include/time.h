@@ -57,11 +57,6 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
 }
 #endif
 
-#if !defined(__cplusplus)
-/*
- * ^ because the compiler's include/c++/v1/__threading_support has a call to
- * nanosleep() which is defined in include/c++/v1/__support/ibm/nanosleep.h.
-*/
 /**
  * Suspends the execution of the calling thread until either at least the
  * time specified in *req has elapsed, an event occurs, or a signal arrives.
@@ -69,7 +64,15 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
  *  precision
  * \param [out] rem the remaining time if the call is interrupted
  */
-__Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
+#if defined(__cplusplus)
+extern "C" {
+#endif
+__Z_EXPORT int __nanosleep(const struct timespec*, struct timespec*);
+#ifndef nanosleep
+__Z_EXPORT int nanosleep(const struct timespec*, struct timespec*) __asm("__nanosleep");
+#endif
+#if defined(__cplusplus)
+}
 #endif
 
 #endif

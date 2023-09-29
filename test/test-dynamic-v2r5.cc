@@ -37,14 +37,12 @@ protected:
 
 
 TEST_F(DynamicV2R5Temp, lutimes) {
-#if 0
   struct timeval t[]= { { 0, 0 } , { 0, 0 } };
   EXPECT_EQ(lutimes(temp_path, t), 0);
   struct stat buff;
   lstat(temp_path, &buff);
   EXPECT_EQ(buff.st_atime, 0);
   EXPECT_EQ(buff.st_mtime, 0);
-#endif
 }
 
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
@@ -58,10 +56,12 @@ TEST_F(DynamicV2R5Temp, pipe2) {
   close(fd[1]);
 }
 
+#ifdef _OE_SOCKETS
 TEST_F(DynamicV2R5Temp, accept4) {
   int ret = accept4(-1, 0, 0, SOCK_NONBLOCK);
   EXPECT_LT(ret, 0);
 }
+#endif
 #endif
 
 TEST_F(DynamicV2R5Temp, futimes) {
