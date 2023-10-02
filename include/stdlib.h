@@ -52,12 +52,23 @@ __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
  * Replace getenv with the ascii implementation of __getenv (@@A00423) 
    which copies pointer to a buffer and is retained even after the environment changes
  */
-__Z_EXPORT char* getenv(const char*) asm("@@A00423");
+__Z_EXPORT char* getenv(const char*) __asm("@@A00423");
 #if defined(__cplusplus)
 }
 #endif
 #else
 #include_next <stdlib.h>
+#endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+/**
+ * C mkdtemp implementation
+ */
+__Z_EXPORT char *mkdtemp(char *templ);
+#if defined(__cplusplus)
+}
 #endif
 
 #endif

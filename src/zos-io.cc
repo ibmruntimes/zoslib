@@ -920,6 +920,37 @@ int __mkstemp_ascii(char * tmpl) {
   return ret;
 }
 
+char *mkdtemp(char *templ) {
+  size_t len = strlen(templ);
+  int retries = 10;  // Number of retries to generate a unique directory name
+
+  // Check that the templ ends with "XXXXXX" as required
+  if (len < 6 || strcmp(templ + len - 6, "XXXXXX") != 0) {
+    errno = EINVAL;
+    return NULL;
+  }
+
+  while (retries--) {
+    // Generate a random string to replace "XXXXXX" in the templ
+    for (size_t i = len - 6; i < len; i++) {
+      templ[i] = 'a' + rand() % 26;
+    }
+
+    // Attempt to create the directory
+    if (mkdir(templ, 0700) == 0) {
+      return templ;
+    }
+
+    // If mkdir failed, check if it was due to a collision with an existing directory
+    if (errno != EEXIST) {
+      return NULL;
+    }
+  }
+
+  // If all retries fail, return NULL
+  return NULL;
+}
+
 int __close(int fd) {
   int ret = __close_orig(fd);
   if (ret < 0)
