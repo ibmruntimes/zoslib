@@ -651,6 +651,7 @@ int __find_file_in_path(char *out, int size, const char *envvar,
   return 0;
 }
 
+// set the ccsid and txtflag on the file, txtflag can also be off indicating mixed data
 int __chgfdccsidtxtflag(int fd, unsigned short ccsid, bool txtflag) {
   attrib_t attr;
   memset(&attr, 0, sizeof(attr));
@@ -735,24 +736,34 @@ int __ccsid_new_file() {
   return ccsid;
 }
 
-// New files that were previously opened with the same name should retain filetag
+// New files that were previously opened with the same name should remain untagged or 
+// keep their original ccsid and txtflag if different from the default
 int __tag_new_file_filename(int fd, std::string filename) {
 
- auto it = existing_files.find(filename);
- if(it != existing_files.end()) {
-        unsigned int ccsid = it->second.first;
-        bool txtflag = it->second.second;
+  // If a file is found (iterator not at end) then it had non default ccsid or txtflag or
+  // was untagged
+  auto it = existing_files.find(filename);
+  if(it != existing_files.end()) {
+    unsigned int ccsid = it->second.first;
+    bool txtflag = it->second.second;
 
-        if (ccsid == FT_UNTAGGED && txtflag) {
-           __enableautocvt(fd);
-           txtflag = false;
-        }
-        else if (ccsid == FT_UNTAGGED && !txtflag) {
-           __disableautocvt(fd);
-        }
-        int result = __chgfdccsidtxtflag(fd, ccsid, txtflag);
-        return result;
+    // an untagged file with txtflag was heuristically found to be ebcdic and
+    // should thus have autoconversion. 
+    if (ccsid == FT_UNTAGGED && txtflag) {
+        __enableautocvt(fd);
+        // we not disable txtflag, as it should not actually be set. It was
+        // just an indication for us the untagged file contained ebcdic data
+        txtflag = false;
     }
+    // an untagged file without txtflag was heuristically found to be ascii and
+    // should thus not have autoconversion
+    else if (ccsid == FT_UNTAGGED && !txtflag) {
+        __disableautocvt(fd);
+    }
+    // set the cached filetag and txtflag or leave untagged (ccsid = 0)
+    int result = __chgfdccsidtxtflag(fd, ccsid, txtflag);
+    return result;
+  }
 
   char* encode_file_new = getenv("_ENCODE_FILE_NEW");
 
@@ -888,18 +899,24 @@ int __open_ascii(const char *filename, int opts, ...) {
 
   struct file_tag *t = &sb.st_tag;
 
-  // every RDONLY open we (re)determine filetags
-  if (S_ISREG(sb.st_mode) && (opts & O_RDONLY)) {
-     existing_files.erase(filename);
-     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file()) {
-        if (t->ft_txtflag)
-           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
-        else
-           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, false)));            
-     }
-  }
-
   if (fd >= 0) {
+    // we need the full path
+    filename = __realpath_extended(filename, NULL);
+    // every RDONLY open we (re)determine filetags
+    if (S_ISREG(sb.st_mode) && (opts & O_RDONLY)) {
+     existing_files.erase(filename);
+     // if file ccsid doesn't match new file default or if it has the txtflag off
+     // it should be cached, except when it is FT_BINARY which always has the txtflag off
+     if (t->ft_ccsid != __ccsid_new_file() || 
+         !t->ft_ccsid == FT_BINARY && !t->ft_txtflag) {
+        if (t->ft_txtflag) {
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
+        }
+        else {
+           existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, false)));
+        }            
+     }
+    }
     if (is_new_file) {
      __tag_new_file_filename(fd, filename);
      /* Calling __chgfdccsid() should not clobber errno. */
@@ -950,19 +967,23 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
 
   struct file_tag *t = &sb.st_tag;
 
-  // every RDONLY open we (re)determine filetags
-  if (S_ISREG(sb.st_mode) && (strcmp(mode, "r") == 0)) {
+  if (fp) {
+    int fd = fileno(fp);
+    filename = __realpath_extended(filename, NULL);
+    // every RDONLY open we (re)determine filetags
+    if (S_ISREG(sb.st_mode) && (strcmp(mode, "r") == 0)) {
      existing_files.erase(filename);
-     if (t->ft_ccsid == FT_UNTAGGED || t->ft_ccsid != __ccsid_new_file()) {
+     // if file ccsid doesn't match new file default or if it has the txtflag off
+     // it should be cached, except when it is FT_BINARY which always has the txtflag off
+     if (t->ft_ccsid != __ccsid_new_file() ||
+         !t->ft_ccsid == FT_BINARY && !t->ft_txtflag) {
         if (t->ft_txtflag)
            existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, true)));
         else
            existing_files.insert(std::make_pair(filename, std::make_pair(t->ft_ccsid, false)));
-     }
-  }
+       }
+    }
 
-  if (fp) {
-    int fd = fileno(fp);
     if (is_new_file) {
      __tag_new_file_filename(fd, filename);
      errno = old_errno;
