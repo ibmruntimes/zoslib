@@ -865,14 +865,12 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
           strcmp(mode, "r") == 0) {
+        __disableautocvt(fd); // disable z/OS autocvt on untagged file and use our heuristic
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
-        } else {
-          // fopen tags untagged files, which enables auto-conversion
-          __disableautocvt(fd);
         }
       }
     } else if (isatty(fd)) {
