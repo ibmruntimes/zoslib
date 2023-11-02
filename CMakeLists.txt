@@ -79,6 +79,7 @@ else()
     -fgnu-keywords
     -m64
     -march=arch10
+    -mzos-target=zosv2r4
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 endif()
