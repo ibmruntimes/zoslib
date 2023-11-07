@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['oslvl_5ft_1323',['oslvl_t',['../zos-sys-info_8h.html#adbc37c8430939d1f676d7d6d1fd282aa',1,'zos-sys-info.h']]]
+  ['notagread_5ft_0',['notagread_t',['../zos-base_8h.html#a4d65477a2027e37093b5fa7e4574fe04',1,'zos-base.h']]]
 ];

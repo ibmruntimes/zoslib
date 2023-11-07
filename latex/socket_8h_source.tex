@@ -1,0 +1,60 @@
+\doxysection{socket.\+h}
+\hypertarget{socket_8h_source}{}\label{socket_8h_source}\index{include/sys/socket.h@{include/sys/socket.h}}
+\mbox{\hyperlink{socket_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_SOCKET\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_SOCKET\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00016\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{socket_8h_acb6c6f6a49271cf73e16f001aaf4d4e9}{\_\_socketpair\_ascii}}(\textcolor{keywordtype}{int}\ domain,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ protocol,\ \textcolor{keywordtype}{int}\ sv[2]);}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00020\ \}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#if\ (defined(ZOSLIB\_OVERRIDE\_CLIB)\ ||\ defined(ZOSLIB\_OVERRIDE\_CLIB\_SOCKET))\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#undef\ socketpair}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ socketpair\ \_\_socketpair\_replaced}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\_next\ <sys/socket.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#undef\ socketpair}}
+\DoxyCodeLine{00028\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ socketpair(\textcolor{keywordtype}{int}\ domain,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{int}\ protocol,\ \textcolor{keywordtype}{int}\ sv[2])\ \_\_asm(\textcolor{stringliteral}{"{}\_\_socketpair\_ascii"{}});}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\_next\ <sys/socket.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{/*\ epoll\_ctl\ options\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ SOCK\_CLOEXEC\ \ 0x00001000}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ SOCK\_NONBLOCK\ 16}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#ifdef\ \_OE\_SOCKETS}}
+\DoxyCodeLine{00046\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*accept4)(\textcolor{keywordtype}{int}\ s,\ \textcolor{keyword}{struct\ }sockaddr\ *\ addr,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ socklen\_t\ *\ addrlen,\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

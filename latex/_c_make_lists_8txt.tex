@@ -1,2 +1,32 @@
-\hypertarget{_c_make_lists_8txt}{}\doxysection{src/\+C\+Make\+Lists.txt File Reference}
-\label{_c_make_lists_8txt}\index{src/CMakeLists.txt@{src/CMakeLists.txt}}
+\doxysection{src/\+CMake\+Lists.txt File Reference}
+\hypertarget{_c_make_lists_8txt}{}\label{_c_make_lists_8txt}\index{src/CMakeLists.txt@{src/CMakeLists.txt}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_c_make_lists_8txt_ac1f17754c8df165fdc84541cd3636165}{set}} (libsrc zos-\/bpx.\+cc zos-\/char-\/util.\+cc zos-\/getentropy.\+cc zos-\/io.\+cc zos-\/semaphore.\+cc zos-\/spawn.\+cc zos-\/string.\+c zos-\/sys-\/info.\+cc zos-\/tls.\+cc zos.\+cc zos-\/mount.\+c) set(zoslib-\/help zoslib-\/help.\+cc) set(CELQUOPT\+\_\+\+OBJECT "{}\$
+\item 
+celquopt s o \mbox{\hyperlink{_c_make_lists_8txt_a2826834afdbcc9bbe443b9150c6d1ef0}{set}} (CELQUOPT\+\_\+\+SOURCE "{}\$\{CMAKE\+\_\+\+CURRENT\+\_\+\+SOURCE\+\_\+\+DIR\}/celquopt.\+s"{}) set\+\_\+source\+\_\+files\+\_\+properties(\$
+\item 
+PROPERTIES EXTERNAL\+\_\+\+OBJECT TRUE GENERATED TRUE \mbox{\hyperlink{_c_make_lists_8txt_a73e0cd579211025b6574e59c1d83aa78}{add\+\_\+custom\+\_\+command}} (OUTPUT \$\{CELQUOPT\+\_\+\+OBJECT\} COMMAND/bin/as -\/mgoff -\/o \$\{CELQUOPT\+\_\+\+OBJECT\} \$\{CELQUOPT\+\_\+\+SOURCE\} DEPENDS \$\{CELQUOPT\+\_\+\+SOURCE\} COMMENT "{}Generate celquopt.\+s.\+o object"{} VERBATIM) add\+\_\+library(libzoslib OBJECT \$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{_c_make_lists_8txt_a73e0cd579211025b6574e59c1d83aa78}\label{_c_make_lists_8txt_a73e0cd579211025b6574e59c1d83aa78} 
+\index{CMakeLists.txt@{CMakeLists.txt}!add\_custom\_command@{add\_custom\_command}}
+\index{add\_custom\_command@{add\_custom\_command}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{\texorpdfstring{add\_custom\_command()}{add\_custom\_command()}}
+{\footnotesize\ttfamily PROPERTIES EXTERNAL\+\_\+\+OBJECT TRUE GENERATED TRUE add\+\_\+custom\+\_\+command (\begin{DoxyParamCaption}\item[{OUTPUT \$\{CELQUOPT\+\_\+\+OBJECT\} COMMAND/bin/as -\/mgoff -\/o \$\{CELQUOPT\+\_\+\+OBJECT\} \$\{CELQUOPT\+\_\+\+SOURCE\} DEPENDS \$\{CELQUOPT\+\_\+\+SOURCE\} COMMENT "{}Generate celquopt.\+s.\+o object"{}}]{VERBATIM }\end{DoxyParamCaption})}
+
+\Hypertarget{_c_make_lists_8txt_a2826834afdbcc9bbe443b9150c6d1ef0}\label{_c_make_lists_8txt_a2826834afdbcc9bbe443b9150c6d1ef0} 
+\index{CMakeLists.txt@{CMakeLists.txt}!set@{set}}
+\index{set@{set}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{\texorpdfstring{set()}{set()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily celquopt s o set (\begin{DoxyParamCaption}\item[{CELQUOPT\+\_\+\+SOURCE "{}\$\{CMAKE\+\_\+\+CURRENT\+\_\+\+SOURCE\+\_\+\+DIR\}/celquopt.\+s"{}}]{ }\end{DoxyParamCaption})}
+
+\Hypertarget{_c_make_lists_8txt_ac1f17754c8df165fdc84541cd3636165}\label{_c_make_lists_8txt_ac1f17754c8df165fdc84541cd3636165} 
+\index{CMakeLists.txt@{CMakeLists.txt}!set@{set}}
+\index{set@{set}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{\texorpdfstring{set()}{set()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily set (\begin{DoxyParamCaption}\item[{libsrc zos-\/bpx.\+cc zos-\/char-\/util.\+cc zos-\/getentropy.\+cc zos-\/io.\+cc zos-\/semaphore.\+cc zos-\/spawn.\+cc zos-\/string.\+c zos-\/sys-\/info.\+cc zos-\/tls.\+cc zos.\+cc zos-\/mount.}]{c }\end{DoxyParamCaption})}
+

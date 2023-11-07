@@ -1,0 +1,36 @@
+\doxysection{string.\+h}
+\hypertarget{string_8h_source}{}\label{string_8h_source}\index{include/string.h@{include/string.h}}
+\mbox{\hyperlink{string_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_STRING\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_STRING\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\_next\ <string.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{string_8h_aab3692366eb2d2624b6fc7650c089ae0}{strnlen}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{size\_t}\ );}
+\DoxyCodeLine{00021\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{string_8h_a0ffd95b5c925b09ef80069edb2e18927}{strpcpy}}(\textcolor{keywordtype}{char}\ *,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{string_8h_ad5b6525c198b3e0b8bbc9c06e2e37b0e}{strsignal}}(\textcolor{keywordtype}{int}\ );}
+\DoxyCodeLine{00024\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{string_8h_aebc5924c8491e5551b5c3affb57bd9bb}{sigdescr\_np}}(\textcolor{keywordtype}{int});}
+\DoxyCodeLine{00025\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{string_8h_aca1f89de15f27dbb2a168fe7a9b65e87}{sigabbrev\_np}}(\textcolor{keywordtype}{int});}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Linux\ includes\ strings.h\ in\ string.h,\ this\ avoids\ the\ }}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ warning\ -\/\ implicitly\ declaring\ library\ function\ 'strcasecmp'}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ which\ also\ causes\ it\ to\ pick\ up\ the\ EBCDIC\ definition}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <strings.h>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00033\ \}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

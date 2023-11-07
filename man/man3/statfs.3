@@ -1,0 +1,40 @@
+.TH "statfs" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+statfs
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <mount\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "long \fBf_reserved\fP [16]"
+.br
+.ti -1c
+.RI "char \fBf_fstypename\fP [\fBMFSNAMELEN\fP]"
+.br
+.ti -1c
+.RI "char \fBf_mntonname\fP [\fBMNAMELEN\fP]"
+.br
+.ti -1c
+.RI "char \fBf_mntfromname\fP [\fBMNAMELEN\fP]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "char statfs::f_fstypename[\fBMFSNAMELEN\fP]"
+
+.SS "char statfs::f_mntfromname[\fBMNAMELEN\fP]"
+
+.SS "char statfs::f_mntonname[\fBMNAMELEN\fP]"
+
+.SS "long statfs::f_reserved[16]"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

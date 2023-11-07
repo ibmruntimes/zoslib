@@ -1,0 +1,180 @@
+\doxysection{include/spawn.h File Reference}
+\hypertarget{spawn_8h}{}\label{spawn_8h}\index{include/spawn.h@{include/spawn.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{spawn_8h_acaeb1722f464b53521421824f6c6917b}{POSIX\+\_\+\+SPAWN\+\_\+\+SETPGROUP}}~0x02
+\item 
+\#define \mbox{\hyperlink{spawn_8h_a92388e472f8e3d09618a4f637e2a2690}{POSIX\+\_\+\+SPAWN\+\_\+\+SETSIGMASK}}~0x08
+\item 
+\#define \mbox{\hyperlink{spawn_8h_a2555fbb5a95822af1fcc45d2589e03db}{POSIX\+\_\+\+SPAWN\+\_\+\+USEVFORK}}~0x40
+\item 
+\#define \mbox{\hyperlink{spawn_8h_a5916488b8b791ac3fc63ec854cff303b}{POSIX\+\_\+\+SPAWN\+\_\+\+SETSIGDEF}}~0x01
+\item 
+\#define \mbox{\hyperlink{spawn_8h_aa068a29021ea19dc85476b35393d9841}{POSIX\+\_\+\+SPAWN\+\_\+\+SETSCHEDPARAM}}~0x04
+\item 
+\#define \mbox{\hyperlink{spawn_8h_a1c0a55cf4dcda3f295e47db6404a459e}{POSIX\+\_\+\+SPAWN\+\_\+\+SETSCHEDULER}}~0x10
+\item 
+\#define \mbox{\hyperlink{spawn_8h_a95bd34d45996db6ebf7cca56d4e1d41f}{POSIX\+\_\+\+SPAWN\+\_\+\+RESETIDS}}~0x20
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \mbox{\hyperlink{spawn_8h_a5319b0f896f98c66722cc43af303397e}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \mbox{\hyperlink{spawn_8h_a54dfad4f425eee7a10ab2e69a1c6880b}{posix\+\_\+spawnattr\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_a06b5d49e3bca2daa8265e66055c5d64f}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+init}} (\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_afa32abf8af936f063b94d732150282fd}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+addclose}} (\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}, int pipe\+\_\+fd)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_aa91a56a4818cd17fb2b727a638b8ada3}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+addopen}} (\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}, int, const char \texorpdfstring{$\ast$}{*}, int flags, \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_ad8b31fef22a4f114430657ac2fbc0f24}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+adddup2}} (\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}, int pipe\+\_\+fd, int fd)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_ac8ed367d3859ed050ae26300cf43b0c6}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+destroy}} (\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_ac92bc0a79fa00e637d5f75890064455b}{posix\+\_\+spawnattr\+\_\+init}} (\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_a380857e3956732b2b4e0a9a5296c055c}{posix\+\_\+spawnattr\+\_\+setsigmask}} (\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}, sigset\+\_\+t \texorpdfstring{$\ast$}{*}mask)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_ad966c922055c484d89aa79490bf1501d}{posix\+\_\+spawnattr\+\_\+setflags}} (\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}, short flags)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_a6efacb6eeb83b257e8e8af98e814e086}{posix\+\_\+spawnattr\+\_\+destroy}} (\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{spawn_8h_add99420687cf01421fa357071d56df90}{posix\+\_\+spawn}} (pid\+\_\+t \texorpdfstring{$\ast$}{*}pid, const char \texorpdfstring{$\ast$}{*}cmd, const \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}act, const \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}, char \texorpdfstring{$\ast$}{*}const args\mbox{[}$\,$\mbox{]}, char \texorpdfstring{$\ast$}{*}const env\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{spawn_8h_a95bd34d45996db6ebf7cca56d4e1d41f}\label{spawn_8h_a95bd34d45996db6ebf7cca56d4e1d41f} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_RESETIDS@{POSIX\_SPAWN\_RESETIDS}}
+\index{POSIX\_SPAWN\_RESETIDS@{POSIX\_SPAWN\_RESETIDS}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_RESETIDS}{POSIX\_SPAWN\_RESETIDS}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+RESETIDS~0x20}
+
+\Hypertarget{spawn_8h_acaeb1722f464b53521421824f6c6917b}\label{spawn_8h_acaeb1722f464b53521421824f6c6917b} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_SETPGROUP@{POSIX\_SPAWN\_SETPGROUP}}
+\index{POSIX\_SPAWN\_SETPGROUP@{POSIX\_SPAWN\_SETPGROUP}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_SETPGROUP}{POSIX\_SPAWN\_SETPGROUP}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+SETPGROUP~0x02}
+
+\Hypertarget{spawn_8h_aa068a29021ea19dc85476b35393d9841}\label{spawn_8h_aa068a29021ea19dc85476b35393d9841} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_SETSCHEDPARAM@{POSIX\_SPAWN\_SETSCHEDPARAM}}
+\index{POSIX\_SPAWN\_SETSCHEDPARAM@{POSIX\_SPAWN\_SETSCHEDPARAM}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_SETSCHEDPARAM}{POSIX\_SPAWN\_SETSCHEDPARAM}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+SETSCHEDPARAM~0x04}
+
+\Hypertarget{spawn_8h_a1c0a55cf4dcda3f295e47db6404a459e}\label{spawn_8h_a1c0a55cf4dcda3f295e47db6404a459e} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_SETSCHEDULER@{POSIX\_SPAWN\_SETSCHEDULER}}
+\index{POSIX\_SPAWN\_SETSCHEDULER@{POSIX\_SPAWN\_SETSCHEDULER}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_SETSCHEDULER}{POSIX\_SPAWN\_SETSCHEDULER}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+SETSCHEDULER~0x10}
+
+\Hypertarget{spawn_8h_a5916488b8b791ac3fc63ec854cff303b}\label{spawn_8h_a5916488b8b791ac3fc63ec854cff303b} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_SETSIGDEF@{POSIX\_SPAWN\_SETSIGDEF}}
+\index{POSIX\_SPAWN\_SETSIGDEF@{POSIX\_SPAWN\_SETSIGDEF}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_SETSIGDEF}{POSIX\_SPAWN\_SETSIGDEF}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+SETSIGDEF~0x01}
+
+\Hypertarget{spawn_8h_a92388e472f8e3d09618a4f637e2a2690}\label{spawn_8h_a92388e472f8e3d09618a4f637e2a2690} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_SETSIGMASK@{POSIX\_SPAWN\_SETSIGMASK}}
+\index{POSIX\_SPAWN\_SETSIGMASK@{POSIX\_SPAWN\_SETSIGMASK}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_SETSIGMASK}{POSIX\_SPAWN\_SETSIGMASK}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+SETSIGMASK~0x08}
+
+\Hypertarget{spawn_8h_a2555fbb5a95822af1fcc45d2589e03db}\label{spawn_8h_a2555fbb5a95822af1fcc45d2589e03db} 
+\index{spawn.h@{spawn.h}!POSIX\_SPAWN\_USEVFORK@{POSIX\_SPAWN\_USEVFORK}}
+\index{POSIX\_SPAWN\_USEVFORK@{POSIX\_SPAWN\_USEVFORK}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{POSIX\_SPAWN\_USEVFORK}{POSIX\_SPAWN\_USEVFORK}}
+{\footnotesize\ttfamily \#define POSIX\+\_\+\+SPAWN\+\_\+\+USEVFORK~0x40}
+
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{spawn_8h_a5319b0f896f98c66722cc43af303397e}\label{spawn_8h_a5319b0f896f98c66722cc43af303397e} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_t@{posix\_spawn\_file\_actions\_t}}
+\index{posix\_spawn\_file\_actions\_t@{posix\_spawn\_file\_actions\_t}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_t}{posix\_spawn\_file\_actions\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}}}
+
+\Hypertarget{spawn_8h_a54dfad4f425eee7a10ab2e69a1c6880b}\label{spawn_8h_a54dfad4f425eee7a10ab2e69a1c6880b} 
+\index{spawn.h@{spawn.h}!posix\_spawnattr\_t@{posix\_spawnattr\_t}}
+\index{posix\_spawnattr\_t@{posix\_spawnattr\_t}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawnattr\_t}{posix\_spawnattr\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}}}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{spawn_8h_add99420687cf01421fa357071d56df90}\label{spawn_8h_add99420687cf01421fa357071d56df90} 
+\index{spawn.h@{spawn.h}!posix\_spawn@{posix\_spawn}}
+\index{posix\_spawn@{posix\_spawn}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn()}{posix\_spawn()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn (\begin{DoxyParamCaption}\item[{pid\+\_\+t \texorpdfstring{$\ast$}{*}}]{pid,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{cmd,  }\item[{const \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act,  }\item[{const \mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{attr,  }\item[{char \texorpdfstring{$\ast$}{*}const}]{args\mbox{[}$\,$\mbox{]},  }\item[{char \texorpdfstring{$\ast$}{*}const}]{env\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_afa32abf8af936f063b94d732150282fd}\label{spawn_8h_afa32abf8af936f063b94d732150282fd} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_addclose@{posix\_spawn\_file\_actions\_addclose}}
+\index{posix\_spawn\_file\_actions\_addclose@{posix\_spawn\_file\_actions\_addclose}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_addclose()}{posix\_spawn\_file\_actions\_addclose()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+addclose (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act,  }\item[{int}]{pipe\+\_\+fd }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_ad8b31fef22a4f114430657ac2fbc0f24}\label{spawn_8h_ad8b31fef22a4f114430657ac2fbc0f24} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_adddup2@{posix\_spawn\_file\_actions\_adddup2}}
+\index{posix\_spawn\_file\_actions\_adddup2@{posix\_spawn\_file\_actions\_adddup2}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_adddup2()}{posix\_spawn\_file\_actions\_adddup2()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+adddup2 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act,  }\item[{int}]{pipe\+\_\+fd,  }\item[{int}]{fd }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_aa91a56a4818cd17fb2b727a638b8ada3}\label{spawn_8h_aa91a56a4818cd17fb2b727a638b8ada3} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_addopen@{posix\_spawn\_file\_actions\_addopen}}
+\index{posix\_spawn\_file\_actions\_addopen@{posix\_spawn\_file\_actions\_addopen}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_addopen()}{posix\_spawn\_file\_actions\_addopen()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+addopen (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act,  }\item[{int}]{pipe\+\_\+fd,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{path,  }\item[{int}]{flags,  }\item[{\mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}}}]{mode }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_ac8ed367d3859ed050ae26300cf43b0c6}\label{spawn_8h_ac8ed367d3859ed050ae26300cf43b0c6} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_destroy@{posix\_spawn\_file\_actions\_destroy}}
+\index{posix\_spawn\_file\_actions\_destroy@{posix\_spawn\_file\_actions\_destroy}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_destroy()}{posix\_spawn\_file\_actions\_destroy()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_a06b5d49e3bca2daa8265e66055c5d64f}\label{spawn_8h_a06b5d49e3bca2daa8265e66055c5d64f} 
+\index{spawn.h@{spawn.h}!posix\_spawn\_file\_actions\_init@{posix\_spawn\_file\_actions\_init}}
+\index{posix\_spawn\_file\_actions\_init@{posix\_spawn\_file\_actions\_init}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawn\_file\_actions\_init()}{posix\_spawn\_file\_actions\_init()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\+\_\+spawn\+\_\+file\+\_\+actions\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{act }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_a6efacb6eeb83b257e8e8af98e814e086}\label{spawn_8h_a6efacb6eeb83b257e8e8af98e814e086} 
+\index{spawn.h@{spawn.h}!posix\_spawnattr\_destroy@{posix\_spawnattr\_destroy}}
+\index{posix\_spawnattr\_destroy@{posix\_spawnattr\_destroy}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawnattr\_destroy()}{posix\_spawnattr\_destroy()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawnattr\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{attr }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_ac92bc0a79fa00e637d5f75890064455b}\label{spawn_8h_ac92bc0a79fa00e637d5f75890064455b} 
+\index{spawn.h@{spawn.h}!posix\_spawnattr\_init@{posix\_spawnattr\_init}}
+\index{posix\_spawnattr\_init@{posix\_spawnattr\_init}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawnattr\_init()}{posix\_spawnattr\_init()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawnattr\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{attr }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_ad966c922055c484d89aa79490bf1501d}\label{spawn_8h_ad966c922055c484d89aa79490bf1501d} 
+\index{spawn.h@{spawn.h}!posix\_spawnattr\_setflags@{posix\_spawnattr\_setflags}}
+\index{posix\_spawnattr\_setflags@{posix\_spawnattr\_setflags}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawnattr\_setflags()}{posix\_spawnattr\_setflags()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawnattr\+\_\+setflags (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{attr,  }\item[{short}]{flags }\end{DoxyParamCaption})}
+
+\Hypertarget{spawn_8h_a380857e3956732b2b4e0a9a5296c055c}\label{spawn_8h_a380857e3956732b2b4e0a9a5296c055c} 
+\index{spawn.h@{spawn.h}!posix\_spawnattr\_setsigmask@{posix\_spawnattr\_setsigmask}}
+\index{posix\_spawnattr\_setsigmask@{posix\_spawnattr\_setsigmask}!spawn.h@{spawn.h}}
+\doxysubsubsection{\texorpdfstring{posix\_spawnattr\_setsigmask()}{posix\_spawnattr\_setsigmask()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int posix\+\_\+spawnattr\+\_\+setsigmask (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structposix__spawnattr__t}{posix\+\_\+spawnattr\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{attr,  }\item[{sigset\+\_\+t \texorpdfstring{$\ast$}{*}}]{mask }\end{DoxyParamCaption})}
+

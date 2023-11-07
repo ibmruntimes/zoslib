@@ -1,0 +1,137 @@
+.TH "include/spawn.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/spawn.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBposix_spawn_file_actions_t\fP"
+.br
+.ti -1c
+.RI "struct \fBposix_spawnattr_t\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_SETPGROUP\fP   0x02"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_SETSIGMASK\fP   0x08"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_USEVFORK\fP   0x40"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_SETSIGDEF\fP   0x01"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_SETSCHEDPARAM\fP   0x04"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_SETSCHEDULER\fP   0x10"
+.br
+.ti -1c
+.RI "#define \fBPOSIX_SPAWN_RESETIDS\fP   0x20"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBposix_spawn_file_actions_t\fP \fBposix_spawn_file_actions_t\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBposix_spawnattr_t\fP \fBposix_spawnattr_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn_file_actions_init\fP (\fBposix_spawn_file_actions_t\fP *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn_file_actions_addclose\fP (\fBposix_spawn_file_actions_t\fP *, int pipe_fd)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn_file_actions_addopen\fP (\fBposix_spawn_file_actions_t\fP *, int, const char *, int flags, \fBmode_t\fP)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn_file_actions_adddup2\fP (\fBposix_spawn_file_actions_t\fP *, int pipe_fd, int fd)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn_file_actions_destroy\fP (\fBposix_spawn_file_actions_t\fP *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawnattr_init\fP (\fBposix_spawnattr_t\fP *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawnattr_setsigmask\fP (\fBposix_spawnattr_t\fP *, sigset_t *mask)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawnattr_setflags\fP (\fBposix_spawnattr_t\fP *, short flags)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawnattr_destroy\fP (\fBposix_spawnattr_t\fP *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBposix_spawn\fP (pid_t *pid, const char *cmd, const \fBposix_spawn_file_actions_t\fP *act, const \fBposix_spawnattr_t\fP *, char *const args[], char *const env[])"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define POSIX_SPAWN_RESETIDS   0x20"
+
+.SS "#define POSIX_SPAWN_SETPGROUP   0x02"
+
+.SS "#define POSIX_SPAWN_SETSCHEDPARAM   0x04"
+
+.SS "#define POSIX_SPAWN_SETSCHEDULER   0x10"
+
+.SS "#define POSIX_SPAWN_SETSIGDEF   0x01"
+
+.SS "#define POSIX_SPAWN_SETSIGMASK   0x08"
+
+.SS "#define POSIX_SPAWN_USEVFORK   0x40"
+
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fBposix_spawn_file_actions_t\fP \fBposix_spawn_file_actions_t\fP"
+
+.SS "typedef struct \fBposix_spawnattr_t\fP \fBposix_spawnattr_t\fP"
+
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int posix_spawn (pid_t * pid, const char * cmd, const \fBposix_spawn_file_actions_t\fP * act, const \fBposix_spawnattr_t\fP * attr, char *const args[], char *const env[])"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawn_file_actions_addclose (\fBposix_spawn_file_actions_t\fP * act, int pipe_fd)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawn_file_actions_adddup2 (\fBposix_spawn_file_actions_t\fP * act, int pipe_fd, int fd)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawn_file_actions_addopen (\fBposix_spawn_file_actions_t\fP * act, int pipe_fd, const char * path, int flags, \fBmode_t\fP mode)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawn_file_actions_destroy (\fBposix_spawn_file_actions_t\fP * act)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawn_file_actions_init (\fBposix_spawn_file_actions_t\fP * act)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawnattr_destroy (\fBposix_spawnattr_t\fP * attr)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawnattr_init (\fBposix_spawnattr_t\fP * attr)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawnattr_setflags (\fBposix_spawnattr_t\fP * attr, short flags)"
+
+.SS "\fB__Z_EXPORT\fP int posix_spawnattr_setsigmask (\fBposix_spawnattr_t\fP * attr, sigset_t * mask)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

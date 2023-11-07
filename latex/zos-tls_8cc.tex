@@ -1,55 +1,55 @@
-\hypertarget{zos-tls_8cc}{}\doxysection{src/zos-\/tls.cc File Reference}
-\label{zos-tls_8cc}\index{src/zos-\/tls.cc@{src/zos-\/tls.cc}}
-{\ttfamily \#include \char`\"{}zos-\/tls.\+h\char`\"{}}\newline
+\doxysection{src/zos-\/tls.cc File Reference}
+\hypertarget{zos-tls_8cc}{}\label{zos-tls_8cc}\index{src/zos-\/tls.cc@{src/zos-\/tls.cc}}
+{\ttfamily \#include "{}zos-\/tls.\+h"{}}\newline
 {\ttfamily \#include $<$pthread.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
-\doxysubsection*{Classes}
+\doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}}
 \end{DoxyCompactItemize}
-\doxysubsection*{Macros}
+\doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \mbox{\hyperlink{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}{\+\_\+\+P\+O\+S\+I\+X\+\_\+\+S\+O\+U\+R\+CE}}
+\#define \mbox{\hyperlink{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}{\+\_\+\+POSIX\+\_\+\+SOURCE}}
 \end{DoxyCompactItemize}
-\doxysubsection*{Functions}
+\doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} $\ast$ \mbox{\hyperlink{zos-tls_8cc_a86fe6d2b6ea6ee485a9b857dd3e51701}{\+\_\+\+\_\+tlsvaranchor\+\_\+create}} (size\+\_\+t sz)
+struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d}{\+\_\+\+\_\+tlsvaranchor\+\_\+create}} (size\+\_\+t sz)
 \item 
-void \mbox{\hyperlink{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}{\+\_\+\+\_\+tlsvaranchor\+\_\+destroy}} (struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} $\ast$anchor)
+void \mbox{\hyperlink{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}{\+\_\+\+\_\+tlsvaranchor\+\_\+destroy}} (struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*}anchor)
 \item 
-void $\ast$ \mbox{\hyperlink{zos-tls_8cc_a6621a4bbedbe45e1fe719409f7b6a2fe}{\+\_\+\+\_\+tls\+Ptr\+From\+Anchor}} (struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} $\ast$anchor, const void $\ast$initvalue)
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-tls_8cc_a30fdd6916df1f0cdea1f57feab25bfdc}{\+\_\+\+\_\+tls\+Ptr\+From\+Anchor}} (struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*}anchor, const void \texorpdfstring{$\ast$}{*}initvalue)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Macro Definition Documentation}
-\mbox{\Hypertarget{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}\label{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}} 
+\Hypertarget{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1}\label{zos-tls_8cc_ac3d144aa01e765a1fae62ab5491c7cc1} 
 \index{zos-\/tls.cc@{zos-\/tls.cc}!\_POSIX\_SOURCE@{\_POSIX\_SOURCE}}
 \index{\_POSIX\_SOURCE@{\_POSIX\_SOURCE}!zos-\/tls.cc@{zos-\/tls.cc}}
 \doxysubsubsection{\texorpdfstring{\_POSIX\_SOURCE}{\_POSIX\_SOURCE}}
-{\footnotesize\ttfamily \#define \+\_\+\+P\+O\+S\+I\+X\+\_\+\+S\+O\+U\+R\+CE}
+{\footnotesize\ttfamily \#define \+\_\+\+POSIX\+\_\+\+SOURCE}
 
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{zos-tls_8cc_a6621a4bbedbe45e1fe719409f7b6a2fe}\label{zos-tls_8cc_a6621a4bbedbe45e1fe719409f7b6a2fe}} 
+\Hypertarget{zos-tls_8cc_a30fdd6916df1f0cdea1f57feab25bfdc}\label{zos-tls_8cc_a30fdd6916df1f0cdea1f57feab25bfdc} 
 \index{zos-\/tls.cc@{zos-\/tls.cc}!\_\_tlsPtrFromAnchor@{\_\_tlsPtrFromAnchor}}
 \index{\_\_tlsPtrFromAnchor@{\_\_tlsPtrFromAnchor}!zos-\/tls.cc@{zos-\/tls.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_tlsPtrFromAnchor()}{\_\_tlsPtrFromAnchor()}}
-{\footnotesize\ttfamily void$\ast$ \+\_\+\+\_\+tls\+Ptr\+From\+Anchor (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} $\ast$}]{anchor,  }\item[{const void $\ast$}]{initvalue }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+tls\+Ptr\+From\+Anchor (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*}}]{anchor,  }\item[{const void \texorpdfstring{$\ast$}{*}}]{initvalue }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-tls_8cc_a86fe6d2b6ea6ee485a9b857dd3e51701}\label{zos-tls_8cc_a86fe6d2b6ea6ee485a9b857dd3e51701}} 
+\Hypertarget{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d}\label{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d} 
 \index{zos-\/tls.cc@{zos-\/tls.cc}!\_\_tlsvaranchor\_create@{\_\_tlsvaranchor\_create}}
 \index{\_\_tlsvaranchor\_create@{\_\_tlsvaranchor\_create}!zos-\/tls.cc@{zos-\/tls.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_tlsvaranchor\_create()}{\_\_tlsvaranchor\_create()}}
-{\footnotesize\ttfamily struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}}$\ast$ \+\_\+\+\_\+tlsvaranchor\+\_\+create (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{sz }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+tlsvaranchor\+\_\+create (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{sz }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}\label{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}} 
+\Hypertarget{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}\label{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a} 
 \index{zos-\/tls.cc@{zos-\/tls.cc}!\_\_tlsvaranchor\_destroy@{\_\_tlsvaranchor\_destroy}}
 \index{\_\_tlsvaranchor\_destroy@{\_\_tlsvaranchor\_destroy}!zos-\/tls.cc@{zos-\/tls.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_tlsvaranchor\_destroy()}{\_\_tlsvaranchor\_destroy()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+tlsvaranchor\+\_\+destroy (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} $\ast$}]{anchor }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void \+\_\+\+\_\+tlsvaranchor\+\_\+destroy (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{struct____tlsanchor}{\+\_\+\+\_\+tlsanchor}} \texorpdfstring{$\ast$}{*}}]{anchor }\end{DoxyParamCaption})}
 

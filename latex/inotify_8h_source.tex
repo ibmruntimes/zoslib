@@ -1,0 +1,91 @@
+\doxysection{inotify.\+h}
+\hypertarget{inotify_8h_source}{}\label{inotify_8h_source}\index{include/sys/inotify.h@{include/sys/inotify.h}}
+\mbox{\hyperlink{inotify_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_INOTIFY\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_INOTIFY\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ inotify\_init\ options\ */}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ IN\_CLOEXEC\ \ \ \ \ \ 0x00001000}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ IN\_NONBLOCK\ \ \ \ \ 0x00000004}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ inotify\ events\ */}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ IN\_ACCESS\ \ \ \ \ \ \ \ \ \ \ 0x00000001}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ IN\_MODIFY\ \ \ \ \ \ \ \ \ \ \ 0x00000002}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ IN\_ATTRIB\ \ \ \ \ \ \ \ \ \ \ 0x00000004}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ IN\_CLOSE\_WRITE\ \ \ \ \ \ 0x00000008}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ IN\_CLOSE\_NOWRITE\ \ \ \ 0x00000010}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ IN\_OPEN\ \ \ \ \ \ \ \ \ \ \ \ \ 0x00000020}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ IN\_MOVED\_FROM\ \ \ \ \ \ \ 0x00000040}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ IN\_MOVED\_TO\ \ \ \ \ \ \ \ \ 0x00000080}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ IN\_CREATE\ \ \ \ \ \ \ \ \ \ \ 0x00000100}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ IN\_DELETE\ \ \ \ \ \ \ \ \ \ \ 0x00000200}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ IN\_DELETE\_SELF\ \ \ \ \ \ 0x00000400}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ IN\_MOVE\_SELF\ \ \ \ \ \ \ \ 0x00000800}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ Events\ sent\ by\ the\ kernel\ */}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ IN\_UNMOUNT\ \ \ \ \ \ 0x00002000}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ IN\_Q\_OVERFLOW\ \ \ 0x00004000}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ IN\_IGNORED\ \ \ \ \ \ 0x00008000}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/*\ Helper\ events\ */}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ IN\_CLOSE\ \ \ \ \ \ \ \ (IN\_CLOSE\_WRITE\ |\ IN\_CLOSE\_NOWRITE)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ IN\_MOVE\ \ \ \ \ \ \ \ \ (IN\_MOVED\_FROM\ |\ IN\_MOVED\_TO)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ IN\_ALL\_EVENTS\ \ \ (IN\_ACCESS\ |\ IN\_MODIFY\ |\ IN\_ATTRIB\ |\ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IN\_CLOSE\_WRITE\ |\ IN\_CLOSE\_NOWRITE\ |\ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IN\_OPEN\ |\ IN\_MOVED\_FROM\ |\ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IN\_MOVED\_TO\ |\ IN\_CREATE\ |\ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IN\_DELETE\ |\ IN\_DELETE\_SELF\ |\ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ IN\_MOVE\_SELF)}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Special\ flags\ */}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ IN\_ONLYDIR\ \ \ \ \ \ 0x01000000}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ IN\_DONT\_FOLLOW\ \ 0x02000000}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ IN\_EXCL\_UNLINK\ \ 0x04000000}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ IN\_MASK\_CREATE\ \ 0x10000000}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ IN\_MASK\_ADD\ \ \ \ \ 0x20000000}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ IN\_ISDIR\ \ \ \ \ \ \ \ 0x40000000}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ IN\_ONESHOT\ \ \ \ \ \ 0x80000000}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00063\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{struct\ }inotify\_event\ \{}
+\DoxyCodeLine{00067\ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ wd;}
+\DoxyCodeLine{00068\ \ \ uint32\_t\ \ \ \ mask;}
+\DoxyCodeLine{00069\ \ \ uint32\_t\ \ \ \ cookie;}
+\DoxyCodeLine{00070\ \ \ uint32\_t\ \ \ \ len;}
+\DoxyCodeLine{00071\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ name[];}
+\DoxyCodeLine{00072\ \};}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*inotify\_init)(void);}
+\DoxyCodeLine{00075\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*inotify\_init1)(int);}
+\DoxyCodeLine{00076\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*inotify\_add\_watch)(int,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t);}
+\DoxyCodeLine{00078\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*inotify\_rm\_watch)(int,\ int);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif\ }}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

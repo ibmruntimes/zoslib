@@ -1,0 +1,146 @@
+\doxysection{zos-\/bpx.h}
+\hypertarget{zos-bpx_8h_source}{}\label{zos-bpx_8h_source}\index{include/zos-\/bpx.h@{include/zos-\/bpx.h}}
+\mbox{\hyperlink{zos-bpx_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ APIs\ that\ implement\ some\ of\ the\ BPX*\ callable\ services\ for\ compilers}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ that\ don't\ currently\ support\ OS\ linkage\ (as\ Woz);\ for\ details,\ see:}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ https://www.ibm.com/docs/en/zos/2.4.0?topic=reference-\/callable-\/services-\/descriptions}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ ZOS\_BPX\_H\_}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ ZOS\_BPX\_H\_}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifndef\ \_POSIX\_SOURCE}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \_POSIX\_SOURCE}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{unistd_8h}{unistd.h}}>}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____bpxyatt}{\_\_bpxyatt}}\ \{}
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a8a48ce167e8ba3df4073c1181ea9ade8}{att\_id}}[4];\ \ \ \ \textcolor{comment}{/*\ Eye-\/catcher="{}ATT\ "{}\ */}}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordtype}{short}\ \mbox{\hyperlink{struct____bpxyatt_a7ffbb3931eab53a401d92d7aaa32e06b}{att\_version}};\ \textcolor{comment}{/*\ Version\ of\ this\ structure=3\ */}}
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_ad892c2545562c2c05569109f8bc09f69}{att\_res01}}[2];\ \textcolor{comment}{/*\ (reserved)\ */}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{comment}{/*\ ATTSETFLAGS1\ =\ 1\ byte\ */}}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_ad72d19803d2162e2bb027cf20b979bbf}{att\_modechg}}\ :\ 1,\ \ \textcolor{comment}{/*\ X'80'\ 1=Change\ to\ mode\ indicated\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_acb8c7279c24a018bc74b55b2c2d1d062}{att\_ownerchg}}\ :\ 1,\ \textcolor{comment}{/*\ X'40'\ 1=Change\ to\ Owner\ indicated\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ae6de81a859edf8d247daeff595652be7}{att\_setgen}}\ :\ 1,\ \ \ \textcolor{comment}{/*\ X'20'\ 1=Set\ General\ Attributes\ */}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_aaeab1f05a658ecab86424f5c05cabf02}{att\_trunc}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'10'\ 1=Truncate\ Size\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a925694bc42853b4fd2ca49c8ae256ca4}{att\_atimechg}}\ :\ 1,\ \textcolor{comment}{/*\ X'08'\ 1=Change\ the\ Atime\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a5ee4eb881ba8664644949b4f6e77d0b8}{att\_atimetod}}\ :\ 1,\ \textcolor{comment}{/*\ X'04'\ 1=Change\ Atime\ to\ Cur.\ Time\ */}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_af01aac1554456209b63cf951fd6b8c7f}{att\_mtimechg}}\ :\ 1,\ \textcolor{comment}{/*\ X'02'\ 1=Change\ the\ Mtime\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ae3ca44ed2a85eaf842fcd94d41609c96}{att\_mtimetod}}\ :\ 1;\ \textcolor{comment}{/*\ X'01'\ 1=Change\ Mtime\ to\ Cur.\ Time\ */}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \textcolor{comment}{/*\ ATTSETFLAGS2\ =\ 1\ byte\ */}}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a632d40e9bf736765b0ada117a2b9cefb}{att\_maaudit}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'80'\ 1=Modify\ auditor\ audit\ info\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_aaa49238acda8dbc750d78651ea150d50}{att\_muaudit}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'40'\ 1=Modify\ user\ audit\ info\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a250d9bf662729055af27f8f9c8888228}{att\_ctimechg}}\ :\ 1,\ \ \ \textcolor{comment}{/*\ X'20'\ 1=Change\ the\ Ctime\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_aad33df82c61ac31197b171a94d37b22e}{att\_ctimetod}}\ :\ 1,\ \ \ \textcolor{comment}{/*\ X'10'\ 1=Change\ Ctime\ to\ Cur.\ Time\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a7384f11113a724d9322ef0694d96c113}{att\_reftimechg}}\ :\ 1,\ \textcolor{comment}{/*\ X'08'\ 1=Change\ the\ RefTime\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ae82406924e383ab7749680c3aadc1601}{att\_reftimetod}}\ :\ 1,\ \textcolor{comment}{/*\ X'04'\ 1=Change\ RefTime\ to\ Cur.Time\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a9791feee91daff007b35c7f91fb88ef3}{att\_filefmtchg}}\ :\ 1,\ \textcolor{comment}{/*\ X'02'\ 1=Change\ File\ Format\ */}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a7f8b49f1bd2ac91cd7da0dd137215676}{att\_res04}}\ :\ 1;\ \ \ \ \ \ \textcolor{comment}{/*\ X'01'\ (reserved\ flag\ bits)\ */}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \textcolor{comment}{/*\ ATTSETFLAGS3\ =\ 1\ byte\ */}}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_ae6807d61170aeb50bc38dffe9160ff90}{att\_res05}}\ :\ 1,\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ X'80'\ (reserved\ flag\ bits)\ */}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a2c236aeef3aa6138ed455f687ea49e83}{att\_charsetidchg}}\ :\ 1,\ \textcolor{comment}{/*\ X'40'\ 1=Change\ File\ Tag\ */}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a36a5376f6d7dc962d8057baca3cb41be}{att\_lp64times}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'20'\ 1=Use\ 64-\/bit\ time\ values\ */}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_adc7b1fdeaa62930d100e12bd568b6c0b}{att\_seclabelchg}}\ :\ 1;\ \ \textcolor{comment}{/*\ X'10'\ 1=Change\ Seclabel\ */}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a27e0feda5d62b77691a04992acbe6156}{att\_setflags4}};\ \textcolor{comment}{/*\ Reserved\ */}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_ae150ce742985bb535572002b4eee9621}{att\_mode}};\ \textcolor{comment}{/*\ File\ Mode\ */}}
+\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a2eedea34a17538317de36cdcdf6eab30}{att\_uid}};\ \ \textcolor{comment}{/*\ User\ ID\ of\ the\ owner\ of\ the\ file\ \ */}}
+\DoxyCodeLine{00059\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a0a8bbe8dcc8cf9420160d71ec86e1e08}{att\_gid}};\ \ \textcolor{comment}{/*\ Group\ ID\ of\ the\ Group\ of\ the\ file\ */}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \textcolor{comment}{/*\ 3\ bytes\ */}}
+\DoxyCodeLine{00062\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a43b255b20ca5106bdea6518e06263dc7}{att\_opaquemask}}\ :\ 24;\ \textcolor{comment}{/*\ (reserved\ for\ ADSTAR\ use)\ */}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \textcolor{comment}{/*\ ATTVISIBLEMASK\ =\ 1\ byte\ */}}
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_acc3430e9122da239897ecfca1e979474}{att\_visblmaskres}}\ :\ 2,\ \ \ \textcolor{comment}{/*\ (reserved\ for\ visible\ mask\ use)\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a6b9fd8d96e2e7d204379385705398753}{att\_nodelfilesmask}}\ :\ 1,\ \textcolor{comment}{/*\ X'20'\ 1=Files\ should\ not\ be\ deleted\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ae13392690d20700787881ee3199611ec}{att\_sharelibmask}}\ :\ 1,\ \ \ \textcolor{comment}{/*\ X'10'\ 1=Shared\ Library\ Mask\ */}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a0f05d0924367c759dcc3deb1fe32e75c}{att\_noshareasmask}}\ :\ 1,\ \ \textcolor{comment}{/*\ X'08'\ 1=No\ Shareas\ Flag\ Mask\ */}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ab89d77850e45f2eb908dd966a6687cad}{att\_apfauthmask}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'04'\ 1=APF\ Authorized\ Flag\ Mask\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_af6f27760d6434f1f116969176e09fa03}{att\_progctlmask}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'02'\ 1=Prog.\ Control\ Flag\ Mask\ */}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_abbd8c4303304a29e2da061d8a86bfd5b}{att\_visblmskrmain}}\ :\ 1;\ \ \textcolor{comment}{/*\ (reserved\ flag\ mask\ bit)\ */}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \textcolor{comment}{/*\ ATTGENVALUE\ =\ 0\ bytes\ */}}
+\DoxyCodeLine{00074\ \ \ \textcolor{comment}{/*\ 3\ bytes\ */}}
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a57d6b8cba9a7575b550eea444754bb30}{att\_opaque}}\ :\ 24;\ \textcolor{comment}{/*\ (reserved\ for\ ADSTAR\ use)\ */}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00078\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a65319d05c46555dabdde3d4389e76730}{att\_visibleres}}\ :\ 2,\ \textcolor{comment}{/*\ (reserved\ for\ visible\ flag\ use)\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a6017c0d18a65305c2e103f5bdd8761cc}{att\_nodelfiles}}\ :\ 1,\ \textcolor{comment}{/*\ X'20'\ 1=Files\ should\ not\ be\ deleted\ */}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ad8ad1626395b55675eb677736c8644a4}{att\_sharelib}}\ :\ 1,\ \ \ \textcolor{comment}{/*\ X'10'\ 1=Shared\ Library\ Flag\ */}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_af5084e561e92d79f36a5a876df47a7c7}{att\_noshareas}}\ :\ 1,\ \ \textcolor{comment}{/*\ X'08'\ 1=No\ Shareas\ Flag\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_ac615c9f6fea8779897334144dddb09c6}{att\_apfauth}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'04'\ 1=APF\ Authorized\ Flag\ */}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a9625852dad8dc014aa96d176ad2d5432}{att\_progctl}}\ :\ 1,\ \ \ \ \textcolor{comment}{/*\ X'02'\ 1=Program\ Controlled\ Flag\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \mbox{\hyperlink{struct____bpxyatt_a7b66f9958b40bb91b7c4f1bd1bbfa6d8}{att\_visblrmain}}\ :\ 1;\ \textcolor{comment}{/*\ (reserved\ flag\ mask\ bit)\ */}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_adf0f113febebebfe22c809538421846d}{att\_size\_h}};\ \textcolor{comment}{/*\ first\ word\ of\ size\ */}}
+\DoxyCodeLine{00087\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_ac95288f07185cb75a05d6f745bfcb5ac}{att\_size\_l}};\ \textcolor{comment}{/*\ second\ word\ of\ size\ */}}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a3bbf8940c7dfce9042c0ef04a4cc484a}{att\_atime}};\ \ \textcolor{comment}{/*\ Time\ of\ last\ access\ */}}
+\DoxyCodeLine{00089\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a8c5a93bee7cc61ab714bc82b9827bf4e}{att\_mtime}};\ \ \textcolor{comment}{/*\ Time\ of\ last\ data\ modification\ */}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_ac5fbdf9363bfb7c3a0a2d8738ae0c782}{att\_auditoraudit}};\ \textcolor{comment}{/*\ Area\ for\ auditor\ audit\ info\ */}}
+\DoxyCodeLine{00092\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a46bdcaf56567944735337ff70f0d404f}{att\_useraudit}};\ \ \ \ \textcolor{comment}{/*\ Area\ for\ user\ audit\ info\ */}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a575de8caae8d7305132b578d8dcbd594}{att\_ctime}};\ \ \ \textcolor{comment}{/*\ Time\ of\ last\ file\ statuse\ change\ */}}
+\DoxyCodeLine{00095\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a55e764b37850dcc0df502e5c447a20aa}{att\_reftime}};\ \textcolor{comment}{/*\ Reference\ Time\ */}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \textcolor{comment}{/*\ End\ of\ version\ 1\ */}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a5e73158afe71de2180200855078347ec}{att\_filefmt}};\ \ \textcolor{comment}{/*\ File\ Format\ */}}
+\DoxyCodeLine{00100\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a5c2faf4c58d6e5010be3f2576eb708af}{att\_res02}}[3];\ \textcolor{comment}{/*\ (reserved\ for\ expansion)\ */}}
+\DoxyCodeLine{00101\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____bpxyatt_a7ef90bfbf84d7d8b994d5b7332f130a5}{att\_filetag}};\ \ \ \textcolor{comment}{/*\ File\ Tag\ */}}
+\DoxyCodeLine{00102\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_ae3922071d3dffea78234dc29f5b73942}{att\_res03}}[8];\ \textcolor{comment}{/*\ (reserved\ for\ expansion)\ */}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \textcolor{comment}{/*\ End\ of\ version\ 2\ */}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{struct____bpxyatt_a98cdd99d8c57f84cebf4a97418a6a307}{att\_atime64}};\ \ \ \ \ \ \textcolor{comment}{/*\ Time\ of\ last\ access\ */}}
+\DoxyCodeLine{00107\ \ \ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{struct____bpxyatt_acbda83cfd4452fb4b81035d97972a312}{att\_mtime64}};\ \ \ \ \ \ \textcolor{comment}{/*\ Time\ of\ last\ data\ modification\ */}}
+\DoxyCodeLine{00108\ \ \ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{struct____bpxyatt_a2b5b6315eb339e7d09df0afb08591223}{att\_ctime64}};\ \ \ \ \ \ \textcolor{comment}{/*\ Time\ of\ last\ file\ statuse\ change\ */}}
+\DoxyCodeLine{00109\ \ \ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{struct____bpxyatt_a7b1bb7989fd4b19943a00d5d2b972d33}{att\_reftime64}};\ \ \ \ \textcolor{comment}{/*\ Reference\ Time\ */}}
+\DoxyCodeLine{00110\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a61d78d393c16966f0bb7b5085bd65283}{att\_seclabel}}[8];\ \ \textcolor{comment}{/*\ Security\ Label\ */}}
+\DoxyCodeLine{00111\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____bpxyatt_a701c9dbad41dd0c0930abd6d92f7bcbc}{att\_ver3res02}}[8];\ \textcolor{comment}{/*\ (reserved\ for\ expansion)\ */}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \textcolor{comment}{/*\ End\ of\ version\ 3\ */}}
+\DoxyCodeLine{00114\ \}\ \mbox{\hyperlink{zos-bpx_8h_a07a9577d6129da8993206435115f8dc0}{\_\_bpxyatt\_t}};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{/*\ TODO(gabylb):\ zos\ -\/\ document\ */}}
+\DoxyCodeLine{00121\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\_\_ptr32\ *\_\_ptr32\ \mbox{\hyperlink{zos-bpx_8h_af96e4edbd4acd29b5a18fb5614cb4bc7}{\_\_uss\_base\_address}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00122\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-bpx_8h_a96fd787cf711cda1a3ea24dfc21e4890}{\_\_bpx4kil}}(\textcolor{keywordtype}{int}\ pid,\ \textcolor{keywordtype}{int}\ signal,\ \textcolor{keywordtype}{void}\ *signal\_options,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *return\_value,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *return\_code,\ \textcolor{keywordtype}{int}\ *reason\_code);}
+\DoxyCodeLine{00125\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-bpx_8h_a32bb06f3885bc4f31d5a324aa41217ba}{\_\_bpx4frk}}(\textcolor{keywordtype}{int}\ *pid,\ \textcolor{keywordtype}{int}\ *return\_code,\ \textcolor{keywordtype}{int}\ *reason\_code);}
+\DoxyCodeLine{00126\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-bpx_8h_accb914e0597583f6c4e558c156d96ba8}{\_\_bpx4ctw}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *secs,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *nsecs,}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *event\_list,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *secs\_rem,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *nsecs\_rem,\ \textcolor{keywordtype}{int}\ *return\_value,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *return\_code,\ \textcolor{keywordtype}{int}\ *reason\_code);}
+\DoxyCodeLine{00130\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-bpx_8h_ae4b746223524458889ba1e777c3579e3}{\_\_bpx4gth}}(\textcolor{keywordtype}{int}\ *input\_length,\ \textcolor{keywordtype}{void}\ **input\_address,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *output\_length,}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ **output\_address,\ \textcolor{keywordtype}{int}\ *return\_value,}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *return\_code,\ \textcolor{keywordtype}{int}\ *reason\_code);}
+\DoxyCodeLine{00134\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-bpx_8h_af580e6cd4ddb94a38096042cae2cdeeb}{\_\_bpx4lcr}}(\textcolor{keywordtype}{int}\ pathname\_length,\ \textcolor{keywordtype}{char}\ *pathname,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ attributes\_length,\ \mbox{\hyperlink{struct____bpxyatt}{\_\_bpxyatt\_t}}\ *attributes,}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *return\_value,\ \textcolor{keywordtype}{int}\ *return\_code,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *reason\_code);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00140\ \}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_BPX\_H\_}}
+
+\end{DoxyCode}

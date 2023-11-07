@@ -1,4 +1,4 @@
-.TH "src/zos-semaphore.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-semaphore.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,61 +14,68 @@ src/zos-semaphore.cc
 .br
 \fC#include <stdlib\&.h>\fP
 .br
-\fC#include <sys/modes\&.h>\fP
+\fC#include <unistd\&.h>\fP
 .br
 \fC#include <time\&.h>\fP
+.br
+\fC#include <sys/modes\&.h>\fP
 .br
 
 .SS "Functions"
 
 .in +1c
 .ti -1c
-.RI "void \fBassignSemInitializeError\fP ()"
+.RI "unsigned int \fB__zsync_val_compare_and_swap32\fP (volatile unsigned int *__p, unsigned int __compVal, unsigned int __exchVal)"
 .br
 .ti -1c
-.RI "void \fBassignSemDestroyError\fP ()"
+.RI "unsigned int \fBatomic_dec\fP (volatile unsigned int *loc)"
 .br
 .ti -1c
-.RI "void \fBassignSemgetError\fP ()"
+.RI "unsigned int \fBatomic_inc\fP (volatile unsigned int *loc)"
 .br
 .ti -1c
-.RI "void \fBassignSemopErrorCode\fP ()"
+.RI "int \fB__sem_init\fP (\fB__sem_t\fP *s0, int shared, unsigned int val)"
 .br
 .ti -1c
-.RI "int \fBsem_init\fP (\fBsem_t\fP *sem, int pshared, unsigned int value)"
+.RI "int \fB__sem_post\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_destroy\fP (\fBsem_t\fP *sem)"
+.RI "int \fB__sem_trywait\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_wait\fP (\fBsem_t\fP *sem)"
+.RI "int \fB__sem_timedwait\fP (\fB__sem_t\fP *s0, const struct timespec *abs_timeout)"
 .br
 .ti -1c
-.RI "int \fBsem_timedwait\fP (\fBsem_t\fP *sem, const struct timespec *ts)"
+.RI "int \fB__sem_wait\fP (\fB__sem_t\fP *s0)"
 .br
 .ti -1c
-.RI "int \fBsem_post\fP (\fBsem_t\fP *sem)"
+.RI "int \fB__sem_destroy\fP (\fB__sem_t\fP *s0)"
+.br
+.ti -1c
+.RI "int \fB__sem_getvalue\fP (\fB__sem_t\fP *s0, int *sval)"
 .br
 .in -1c
 .SH "Function Documentation"
 .PP 
-.SS "void assignSemDestroyError ()"
+.SS "int __sem_destroy (\fB__sem_t\fP * s0)"
 
-.SS "void assignSemgetError ()"
+.SS "int __sem_getvalue (\fB__sem_t\fP * s0, int * sval)"
 
-.SS "void assignSemInitializeError ()"
+.SS "int __sem_init (\fB__sem_t\fP * s0, int shared, unsigned int val)"
+TODO(itodorov) - zos: document these interfaces 
+.SS "int __sem_post (\fB__sem_t\fP * s0)"
 
-.SS "void assignSemopErrorCode ()"
+.SS "int __sem_timedwait (\fB__sem_t\fP * s0, const struct timespec * abs_timeout)"
 
-.SS "int sem_destroy (\fBsem_t\fP * sem)"
+.SS "int __sem_trywait (\fB__sem_t\fP * s0)"
 
-.SS "int sem_init (\fBsem_t\fP * sem, int pshared, unsigned int value)"
+.SS "int __sem_wait (\fB__sem_t\fP * s0)"
 
-.SS "int sem_post (\fBsem_t\fP * sem)"
+.SS "unsigned int __zsync_val_compare_and_swap32 (volatile unsigned int * __p, unsigned int __compVal, unsigned int __exchVal)"
 
-.SS "int sem_timedwait (\fBsem_t\fP * sem, const struct timespec * ts)"
+.SS "unsigned int atomic_dec (volatile unsigned int * loc)"
 
-.SS "int sem_wait (\fBsem_t\fP * sem)"
+.SS "unsigned int atomic_inc (volatile unsigned int * loc)"
 
 .SH "Author"
 .PP 

@@ -1,0 +1,14 @@
+\chapter{Deprecated List}
+\hypertarget{deprecated}{}\label{deprecated}\index{Deprecated List@{Deprecated List}}
+
+\begin{DoxyRefList}
+\item[Member \doxylink{zos_8cc_adecc3f8804ee3922dfe303e07abd99d6}{anon\+\_\+mmap} (void \texorpdfstring{$\ast$}{*}\+\_\+, size\+\_\+t len)]\label{deprecated__deprecated000001}%
+\Hypertarget{deprecated__deprecated000001}%
+This function will be removed once mmap is fully functional (e.\+g. MAP\+\_\+\+ANONYMOUS is supported)  
+\item[Member \doxylink{zos_8cc_aa00ab042a596dd63795d3791d34b8d29}{anon\+\_\+munmap} (void \texorpdfstring{$\ast$}{*}addr, size\+\_\+t len)]\label{deprecated__deprecated000003}%
+\Hypertarget{deprecated__deprecated000003}%
+This function will be removed once mmap is fully functional (e.\+g. MAP\+\_\+\+ANONYMOUS is supported)  
+\item[Member \doxylink{zos_8cc_a45796cfeb1ecbd8ba79f191fa70cc2e6}{roanon\+\_\+mmap} (void \texorpdfstring{$\ast$}{*}\+\_\+, size\+\_\+t len, int prot, int flags, const char \texorpdfstring{$\ast$}{*}filename, int fd, off\+\_\+t offset)]\label{deprecated__deprecated000002}%
+\Hypertarget{deprecated__deprecated000002}%
+This function will be removed once mmap is fully functional (e.\+g. MAP\+\_\+\+ANONYMOUS is supported), in which case mapped memory would need to be converted to ASCII if the file contains EBCDIC. 
+\end{DoxyRefList}

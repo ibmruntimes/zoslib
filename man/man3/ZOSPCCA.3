@@ -1,0 +1,50 @@
+.TH "ZOSPCCA" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ZOSPCCA
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <zos\-sys\-info\&.h>\fP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "char \fBpcca\fP [4]"
+.br
+.ti -1c
+.RI "char \fBcpu_version\fP [2]"
+.br
+.ti -1c
+.RI "char \fBcpu_lpid\fP [2]"
+.br
+.ti -1c
+.RI "char \fBcpu_serial\fP [4]"
+.br
+.ti -1c
+.RI "char \fBcpu_model\fP [4]"
+.br
+.ti -1c
+.RI "char \fBfiller1\fP [372]"
+.br
+.in -1c
+.SH "Member Data Documentation"
+.PP 
+.SS "char ZOSPCCA::cpu_lpid[2]"
+
+.SS "char ZOSPCCA::cpu_model[4]"
+
+.SS "char ZOSPCCA::cpu_serial[4]"
+
+.SS "char ZOSPCCA::cpu_version[2]"
+
+.SS "char ZOSPCCA::filler1[372]"
+
+.SS "char ZOSPCCA::pcca[4]"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

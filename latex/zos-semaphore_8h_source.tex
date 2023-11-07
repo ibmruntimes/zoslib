@@ -1,0 +1,75 @@
+\doxysection{zos-\/semaphore.h}
+\hypertarget{zos-semaphore_8h_source}{}\label{zos-semaphore_8h_source}\index{include/zos-\/semaphore.h@{include/zos-\/semaphore.h}}
+\mbox{\hyperlink{zos-semaphore_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ APIs\ that\ implement\ POSIX\ semaphores.}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SEMAPHORE\_H\_}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ZOS\_SEMAPHORE\_H\_}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <errno.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <inttypes.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <pthread.h>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <sys/sem.h>}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#if\ \_\_WORDSIZE\ ==\ 64}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_\_SIZEOF\_SEM\_T\ 32}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ \_\_SIZEOF\_SEM\_T\ 16}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ SEM\_FAILED\ ((sem\_t\ *)0)}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____sem}{\_\_sem}}\ \{}
+\DoxyCodeLine{00030\ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____sem_ad87a7b6f3f80c48002605fc838beebfb}{value}};}
+\DoxyCodeLine{00031\ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____sem_a27a2157284bab89fc8d169efde729b8d}{id}};\ \textcolor{comment}{//\ 0\ for\ non\ shared\ (thread),\ pid\ for\ share}}
+\DoxyCodeLine{00032\ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct____sem_aa71310199772ca0a317410503cebcab9}{waitcnt}};}
+\DoxyCodeLine{00033\ \ \ pthread\_mutex\_t\ \mbox{\hyperlink{struct____sem_a293b3726a9615306dbff428fdd703469}{mutex}};}
+\DoxyCodeLine{00034\ \ \ pthread\_cond\_t\ \mbox{\hyperlink{struct____sem_a6af729638f0169a58da5b36753b403b5}{cond}};}
+\DoxyCodeLine{00035\ \}\ \mbox{\hyperlink{zos-semaphore_8h_a0d00354d3f691022e7fcf2b503cb07b6}{\_\_\_\_sem\_t}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00038\ \ \ \mbox{\hyperlink{struct____sem}{\_\_\_\_sem\_t}}\ *\mbox{\hyperlink{struct____sem__t_a9f84b2eb2cf8b0a74abd97d3d31f0b78}{\_s}};}
+\DoxyCodeLine{00039\ \}\ \mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ sem\_t\ \ \ \ \ \ \ \ \ \_\_sem\_t}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ sem\_init\ \ \ \ \ \ \_\_sem\_init}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ sem\_post\ \ \ \ \ \ \_\_sem\_post}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ sem\_trywait\ \ \ \_\_sem\_trywait}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ sem\_timedwait\ \_\_sem\_timedwait}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ sem\_wait\ \ \ \ \ \ \_\_sem\_wait}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ sem\_getvalue\ \ \_\_sem\_getvalue}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ sem\_destroy\ \ \ \_\_sem\_destroy}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00056\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a227e4aabe7dec21219e99c459d355814}{\_\_sem\_init}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0,\ \textcolor{keywordtype}{int}\ shared,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ val);}
+\DoxyCodeLine{00057\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a5a32b4a42989a725fd0f52b8c98e239e}{\_\_sem\_post}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0);}
+\DoxyCodeLine{00058\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a72ade978c08d3202069184d2a5bd4f23}{\_\_sem\_trywait}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0);}
+\DoxyCodeLine{00059\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a3470e9285ca143ce973e36ce359c18a2}{\_\_sem\_timedwait}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ timespec\ *abs\_timeout);}
+\DoxyCodeLine{00060\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_aabc3bd4d982ec9c1c39a2898ec1fffd7}{\_\_sem\_wait}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0);}
+\DoxyCodeLine{00061\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a2b081ade463a8dd20a5da6d6b4964558}{\_\_sem\_getvalue}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0,\ \textcolor{keywordtype}{int}\ *sval);}
+\DoxyCodeLine{00062\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a5a2ed7dace9e0e8606a67203f2ae2071}{\_\_sem\_destroy}}(\mbox{\hyperlink{struct____sem__t}{\_\_sem\_t}}\ *s0);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_aea3d63442c2349f01c2d5fbd2e4ad362}{atomic\_dec}}(\textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *loc);}
+\DoxyCodeLine{00065\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-semaphore_8h_a2cd48fa20ce600ff881f7fa99aaf41b5}{atomic\_inc}}(\textcolor{keyword}{volatile}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *loc);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_SEMAPHORE\_H\_}}
+
+\end{DoxyCode}

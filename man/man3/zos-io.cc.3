@@ -1,4 +1,4 @@
-.TH "src/zos-io.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-io.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,13 +6,13 @@ src/zos-io.cc
 .SH SYNOPSIS
 .br
 .PP
-\fC#include 'zos\-io\&.h'\fP
+\fC#include 'zos\-base\&.h'\fP
 .br
-\fC#include 'zos\-bpx\&.h'\fP
-.br
-\fC#include 'zos\-char\-util\&.h'\fP
+\fC#include <_Ccsid\&.h>\fP
 .br
 \fC#include <errno\&.h>\fP
+.br
+\fC#include <fcntl\&.h>\fP
 .br
 \fC#include <poll\&.h>\fP
 .br
@@ -27,6 +27,12 @@ src/zos-io.cc
 \fC#include <sys/stat\&.h>\fP
 .br
 \fC#include <sys/types\&.h>\fP
+.br
+\fC#include <sys/socket\&.h>\fP
+.br
+\fC#include <sys/inotify\&.h>\fP
+.br
+\fC#include <utmpx\&.h>\fP
 .br
 
 .SS "Macros"
@@ -64,10 +70,88 @@ src/zos-io.cc
 .RI "int \fB__chgfdccsid\fP (int fd, unsigned short ccsid)"
 .br
 .ti -1c
+.RI "int \fB__chgpathccsid\fP (char *pathname, unsigned short ccsid)"
+.br
+.ti -1c
 .RI "int \fB__setfdccsid\fP (int fd, int t_ccsid)"
 .br
 .ti -1c
+.RI "int \fB__copyfdccsid\fP (int sourcefd, int destfd)"
+.br
+.ti -1c
+.RI "int \fB__setfdbinary\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__setfdtext\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__disableautocvt\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__chgfdcodeset\fP (int fd, char *codeset)"
+.br
+.ti -1c
 .RI "int \fB__getfdccsid\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__getLogMemoryFileNo\fP ()"
+.br
+.ti -1c
+.RI "void \fB__setLogMemoryUsage\fP (bool value)"
+.br
+.ti -1c
+.RI "void \fB__memprintf\fP (const char *format,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fB__pipe_orig\fP (int[2]) asm('pipe')"
+.br
+.ti -1c
+.RI "int \fB__socketpair_orig\fP (int domain, int type, int protocol, int sv[2]) asm('socketpair')"
+.br
+.ti -1c
+.RI "int \fB__close_orig\fP (int) asm('close')"
+.br
+.ti -1c
+.RI "int \fB__open_orig\fP (const char *filename, int opts,\&.\&.\&.) asm('@@A00144')"
+.br
+.ti -1c
+.RI "int \fB__mkstemp_orig\fP (char *) asm('@@A00184')"
+.br
+.ti -1c
+.RI "\fBFILE\fP * \fB__fopen_orig\fP (const char *filename, const char *mode) asm('@@A00246')"
+.br
+.ti -1c
+.RI "int \fB__mkfifo_orig\fP (const char *pathname, \fBmode_t\fP mode) asm('@@A00133')"
+.br
+.ti -1c
+.RI "struct utmpx * \fB__getutxent_orig\fP (void) asm('getutxent')"
+.br
+.ti -1c
+.RI "int \fButmpxname\fP (char *file)"
+.br
+.ti -1c
+.RI "struct utmpx * \fB__getutxent_ascii\fP (void)"
+.br
+.ti -1c
+.RI "int \fB__open_ascii\fP (const char *filename, int opts,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "\fBFILE\fP * \fB__fopen_ascii\fP (const char *filename, const char *mode)"
+.br
+.ti -1c
+.RI "int \fB__pipe_ascii\fP (int fd[2])"
+.br
+.ti -1c
+.RI "int \fB__mkfifo_ascii\fP (const char *pathname, \fBmode_t\fP mode)"
+.br
+.ti -1c
+.RI "int \fB__mkstemp_ascii\fP (char *tmpl)"
+.br
+.ti -1c
+.RI "int \fB__close\fP (int fd)"
+.br
+.ti -1c
+.RI "int \fB__socketpair_ascii\fP (int domain, int type, int protocol, int sv[2])"
 .br
 .in -1c
 .SH "Macro Definition Documentation"
@@ -92,13 +176,65 @@ returns 0 if successful, or -1 on failure\&.
 .RE
 .PP
 
+.SS "int __chgfdcodeset (int fd, char * codeset)"
+Change file descriptor to CCSID from a codeset 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.br
+\fIcodeset\fP code set 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
+.SS "int __chgpathccsid (char * pathname, unsigned short ccsid)"
+
+.SS "int __close (int fd)"
+
+.SS "int __close_orig (int)"
+
 .SS "void __console (const void * p_in, int len_i)"
 Print given buffer to MVS Console\&. 
 .SS "int __console_printf (const char * fmt,  \&.\&.\&.)"
 Print formatted data to MVS Console\&. 
+.SS "int __copyfdccsid (int sourcefd, int destfd)"
+Copy ccsid from source fd to destination fd 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsourcefd\fP file descriptor\&. 
+.br
+\fIdestfd\fP file descriptor\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
+.SS "int __disableautocvt (int fd)"
+Disable auto-conversion on file descriptors 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
 .SS "void __dump (int fd, const void * addr, size_t len, size_t bw)"
 Dump to console\&. 
-.SS "void __dump_title (int fd, const void * addr, size_t len, size_t bw, const char *,  \&.\&.\&.)"
+.SS "void __dump_title (int fd, const void * addr, size_t len, size_t bw, const char * format,  \&.\&.\&.)"
 Dump title to console\&. 
 .SS "int __find_file_in_path (char * out, int size, const char * envvar, const char * file)"
 Finds file in a given path 
@@ -120,6 +256,10 @@ returns non-zero if successful, 0 if not found\&.
 .RE
 .PP
 
+.SS "\fBFILE\fP * __fopen_ascii (const char * filename, const char * mode)"
+Same as C open but tags new files as ASCII (819) 
+.SS "\fBFILE\fP * __fopen_orig (const char * filename, const char * mode)"
+
 .SS "int __getfdccsid (int fd)"
 Get file descriptor CCSID\&. 
 .PP
@@ -131,6 +271,51 @@ Get file descriptor CCSID\&.
 \fBReturns\fP
 .RS 4
 returns file descriptors ccsid\&. 
+.RE
+.PP
+
+.SS "int __getLogMemoryFileNo ()"
+Returns the fileno to which memory diagnostics is written (use for instance in a \fC__display_backtrace(__getLogMemoryFileNo());\fP call)\&. 
+.SS "struct utmpx * __getutxent_ascii (void)"
+
+.SS "struct utmpx * __getutxent_orig (void)"
+
+.SS "void __memprintf (const char * format,  \&.\&.\&.)"
+Logs memory allocation and release to the file name specified in the environment variable zoslib_config_t\&.MEMORY_USAGE_LOG_FILE_ENVAR\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsame\fP as C's printf() parameters 
+.RE
+.PP
+
+.SS "int __mkfifo_ascii (const char * pathname, \fBmode_t\fP mode)"
+Same as C mkfifo but tags FIFO special files as ASCII (819) 
+.SS "int __mkfifo_orig (const char * pathname, \fBmode_t\fP mode)"
+
+.SS "int __mkstemp_ascii (char * tmpl)"
+
+.SS "int __mkstemp_orig (char *)"
+
+.SS "int __open_ascii (const char * filename, int opts,  \&.\&.\&.)"
+Same as C open but tags new files as ASCII (819) 
+.SS "int __open_orig (const char * filename, int opts,  \&.\&.\&.)"
+
+.SS "int __pipe_ascii (int fd[2])"
+
+.SS "int __pipe_orig (int[2])"
+
+.SS "int __setfdbinary (int fd)"
+Change file descriptor to binary 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
 .RE
 .PP
 
@@ -150,7 +335,27 @@ returns 0 if successful, or -1 on failure\&.
 .RE
 .PP
 
-.SS "int dprintf (int fd, const char *,  \&.\&.\&.)"
+.SS "int __setfdtext (int fd)"
+Change file descriptor to text (819 or controlled via envar) 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, or -1 on failure\&. 
+.RE
+.PP
+
+.SS "void __setLogMemoryUsage (bool value)\fC [extern]\fP"
+
+.SS "int __socketpair_ascii (int domain, int type, int protocol, int sv[2])"
+
+.SS "int __socketpair_orig (int domain, int type, int protocol, int sv[2])"
+
+.SS "int dprintf (int fd, const char * fmt,  \&.\&.\&.)"
 Debug Printf\&. 
 .PP
 \fBReturns\fP
@@ -159,7 +364,9 @@ returns total number of bytes written to file descriptor
 .RE
 .PP
 
-.SS "int vdprintf (int fd, const char *, va_list ap)"
+.SS "int utmpxname (char * file)"
+
+.SS "int vdprintf (int fd, const char * fmt, va_list ap)"
 Variadic Debug Printf\&. 
 .PP
 \fBReturns\fP

@@ -1,0 +1,118 @@
+\doxysection{zos-\/sys-\/info.h}
+\hypertarget{zos-sys-info_8h_source}{}\label{zos-sys-info_8h_source}\index{include/zos-\/sys-\/info.h@{include/zos-\/sys-\/info.h}}
+\mbox{\hyperlink{zos-sys-info_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ APIs\ that\ obtain\ various\ z/OS\ system\ info.}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_INFO\_H\_}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_INFO\_H\_}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{stdlib_8h}{stdlib.h}}>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{/*\ CPU\ model\ number\ length\ */}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ ZOSCPU\_MODEL\_LENGTH\ 4}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00023\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}{ZOSLVL\_V1R13}}\ =\ 0,}
+\DoxyCodeLine{00024\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}{ZOSLVL\_V2R1}},}
+\DoxyCodeLine{00025\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}{ZOSLVL\_V2R2}},}
+\DoxyCodeLine{00026\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}{ZOSLVL\_V2R3}},}
+\DoxyCodeLine{00027\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}{ZOSLVL\_V2R4}},}
+\DoxyCodeLine{00028\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}{ZOSLVL\_V2R5}},}
+\DoxyCodeLine{00029\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaab486596d7ceed2a79d40ebd466ac5608}{ZOSLVL\_V3R1}},}
+\DoxyCodeLine{00030\ \ \ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}{ZOSLVL\_UNKNOWN}},}
+\DoxyCodeLine{00031\ \}\ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\_t}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ CPU\ Management\ Control\ Table\ (CCT).}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_c_c_t}{ZOSCCT}}\ \{}
+\DoxyCodeLine{00035\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_c_t_a2011d5f917ad319e671ec1e3e818f6ca}{filler}}[110];}
+\DoxyCodeLine{00036\ \ \ uint16\_t\ \mbox{\hyperlink{struct_z_o_s_c_c_t_a485979368f80209baa0062c4d63b3e45}{cpuCount}};\ \textcolor{comment}{//\ Number\ of\ online\ CPUs.}}
+\DoxyCodeLine{00037\ \}\ \mbox{\hyperlink{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}{ZOSCCT\_t}};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ System\ Resources\ Manager\ Control\ Table\ (RMCT).}}
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_r_m_c_t}{ZOSRMCT}}\ \{}
+\DoxyCodeLine{00041\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_r_m_c_t_a4ecb2832e59873f7186540897fe3d236}{name}}[4];}
+\DoxyCodeLine{00042\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_c_c_t}{ZOSCCT}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_r_m_c_t_ac92f27efa32f6edb87f3a021c87cee50}{cct}};}
+\DoxyCodeLine{00043\ \}\ \mbox{\hyperlink{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}{ZOSRMCT\_t}};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ RSM\ Control\ and\ Enumeration\ Area\ (RCE).}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_r_c_e}{ZOSRCE}}\ \{}
+\DoxyCodeLine{00047\ \ \ uint8\_t\ \textcolor{keywordtype}{id}[4];}
+\DoxyCodeLine{00048\ \ \ uint32\_t\ \mbox{\hyperlink{struct_z_o_s_r_c_e_af2331cd9ce9a344c703eb1b668ab2499}{pool}};\ \textcolor{comment}{//\ Number\ of\ frames\ currently\ available\ to\ system.}}
+\DoxyCodeLine{00049\ \}\ \mbox{\hyperlink{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}{ZOSRCE\_t}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{//\ Communications\ Vector\ Table\ (CVT).}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_c_v_t}{ZOSCVT}}\ \{}
+\DoxyCodeLine{00053\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a20b12bade9b4ad6473041e083679b3c5}{filler1}}[604];}
+\DoxyCodeLine{00054\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_r_m_c_t}{ZOSRMCT}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_c_v_t_ac67be1672f02cafd4474d5ade437235b}{rmct}};}
+\DoxyCodeLine{00055\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a0f257213ce473c326adf4fe623afda72}{filler2}}[156];}
+\DoxyCodeLine{00056\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a000409dbe825093f62dd18a5291878e4}{pccavt}};}
+\DoxyCodeLine{00057\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_v_t_ad6ebd91c46eb236dcb994388c36eb4e0}{filler3}}[400];}
+\DoxyCodeLine{00058\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_r_c_e}{ZOSRCE}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a6e96b41565f94d67d9fb657190b3fc60}{rce}};}
+\DoxyCodeLine{00059\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a2217bdb2ce921c0dbba859274f28a254}{filler4}}[92];}
+\DoxyCodeLine{00060\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_c_v_t_a07005e00f938a29607dd856ecc8c0d70}{cvtoslvl}}[16];}
+\DoxyCodeLine{00061\ \}\ \mbox{\hyperlink{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}{ZOSCVT\_t}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ Prefixed\ Save\ Area\ (PSA).}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ Maps\ storage\ starting\ at\ location\ 0.}}
+\DoxyCodeLine{00065\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_p_s_a}{ZOSPSA}}\ \{}
+\DoxyCodeLine{00066\ \ \ uint8\_t\ \mbox{\hyperlink{struct_z_o_s_p_s_a_a89a060e893028859ec91ffde99ac05c6}{filler}}[16];\ \textcolor{comment}{//\ Ignore\ 16\ bytes\ before\ CVT\ pointer.}}
+\DoxyCodeLine{00067\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_c_v_t}{ZOSCVT}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_p_s_a_a1dde6b4c9616de995e8c726e4bf22ee5}{cvt}};}
+\DoxyCodeLine{00068\ \}\ \mbox{\hyperlink{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}{ZOSPSA\_t}};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{//\ Physical\ Configuration\ Communication\ Area\ (PCCA).}}
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ https://www.ibm.com/docs/en/zos/2.4.0?topic=information-\/pcca-\/mapping}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}}\ \{}
+\DoxyCodeLine{00073\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_ac47f04a5b45ebde8e1cf0dc96f1af283}{pcca}}[4];}
+\DoxyCodeLine{00074\ \ \ \textcolor{comment}{//\ Offset\ 4\ is\ PCCACPID\ which\ is\ 12\ bytes\ that\ gets\ broken\ down\ into:}}
+\DoxyCodeLine{00075\ \ \ \textcolor{comment}{//\ https://www.ibm.com/docs/en/tdmffz/5.7?topic=reference-\/determine-\/cpu-\/serial-\/number}}
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_a24dab4a88b20b0485b4b5326c36ec27a}{cpu\_version}}[2];}
+\DoxyCodeLine{00077\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_ae6db4da7e27c0b90cc66f12d1deecda9}{cpu\_lpid}}[2];}
+\DoxyCodeLine{00078\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_aba9682d4790debc4bec393d40e7511ce}{cpu\_serial}}[4];}
+\DoxyCodeLine{00079\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_a057e72698997097d2ff3f0429ff4c944}{cpu\_model}}[4];}
+\DoxyCodeLine{00080\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_a47972f621c061e42faa05b2023900b89}{filler1}}[372];}
+\DoxyCodeLine{00081\ \}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{//\ Physical\ CCA\ Vector\ Table\ (PCCAVT).}}
+\DoxyCodeLine{00084\ \textcolor{comment}{//\ https://www.ibm.com/docs/en/zos/2.4.0?topic=information-\/pccavt-\/mapping}}
+\DoxyCodeLine{00085\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}}\ \{}
+\DoxyCodeLine{00086\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}}\ *\_\_ptr32\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t_ae3d0f2ba81a61ca8e373ba5f6c60132b}{cpu0}};}
+\DoxyCodeLine{00087\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t_a898a8835f134ca06c49b890811ca796f}{filler1}}[252];}
+\DoxyCodeLine{00088\ \}\ \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00098\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-sys-info_8h_aa5b032185971a52a0019e419fe16e9d7}{\_\_get\_num\_online\_cpus}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00104\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-sys-info_8h_ae72c9bd004b2449be517cf9f76e6a5b3}{\_\_get\_num\_frames}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00110\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\_t}}\ \mbox{\hyperlink{zos-sys-info_8h_a220c8f1db216eb16456518afd0fd3b5d}{\_\_get\_os\_level}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00117\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-sys-info_8h_a086526032c2a01da1dd09d8984c1df6e}{\_\_is\_os\_level\_at\_or\_above}}(\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\_t}}\ level);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00123\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-sys-info_8h_a4d056b68d9ae84f237ad47cc21ac142d}{\_\_is\_stfle\_available}}();}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00130\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-sys-info_8h_a9a958577fad869b08f55a33c0c3d75b2}{\_\_is\_vxf\_available}}();}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00137\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-sys-info_8h_a697eddce628001c9c19a6bc1c8c406ed}{\_\_is\_vef1\_available}}();}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00147\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{zos-sys-info_8h_ac91b8c621335afbb2c674a005f3d8281}{\_\_get\_cpu\_model}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00150\ \}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_SYS\_INFO\_H\_}}
+
+\end{DoxyCode}

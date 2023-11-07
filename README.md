@@ -24,19 +24,19 @@ ZOSLIB implements the following:
 ## System Requirements
 
 ZOSLIB is supported on the following z/OS operating systems
-with z/OS® UNIX System Services enabled:
+with z/OS UNIX System Services enabled:
 
 - z/OS V2R3 with the following PTFs installed:
- - UI61308
- - UI61375
- - UI61747
+  - UI61308
+  - UI61375
+  - UI61747
 
 - z/OS V2R4 with the following PTFs installed:
- - UI64830
- - UI64837
- - UI64839
- - UI64940
- - UI65567
+  - UI64830
+  - UI64837
+  - UI64839
+  - UI64940
+  - UI65567
 
 ZOSLIB is supported on the following hardware:
 - IBM z15
@@ -210,7 +210,7 @@ clang++ -fzos-le-char-mode=ascii -I path/to/zoslib/include -L path/to/build/lib 
 
 You should get an output similar to the following:
 ```
-ZOSLIB version: v2.1.0
+ZOSLIB version: v4.0.0
 Generating 2 random values
 Random index: 0
 BC DE CF DE  7 E3 58 3A 4F 22

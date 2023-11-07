@@ -1,0 +1,88 @@
+\doxysection{zos-\/savstack.h}
+\hypertarget{zos-savstack_8h_source}{}\label{zos-savstack_8h_source}\index{include/zos-\/savstack.h@{include/zos-\/savstack.h}}
+\mbox{\hyperlink{zos-savstack_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2022.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SAVSTACK\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SAVSTACK\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{edcwccwi_8h}{edcwccwi.h}}"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ LESavStackAsync}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ https://www.ibm.com/docs/en/zos/2.4.0?topic=applications-\/saving-\/stack-\/pointer}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ Before\ entry\ into\ JS\ code,\ save\ the\ current\ stack\ pointer\ SP\ that's\ stored}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ at\ CEELCA\_SAVSTACK\_ASYNC,\ and\ replace\ it\ with\ a\ pointer\ to\ dynamic\ storage}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ area\ DSA.\ After\ exit\ from\ JS,\ restore\ the\ stack\ pointer\ back\ into}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ CEELCA\_SAVSTACK\_ASYNC.\ This\ class\ keeps\ track\ of\ the\ old\ and\ new\ SPs\ so}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ they\ can\ be\ saved\ and\ restored,\ including\ when\ a\ signal\ occurs.}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ save(x)\ is\ called\ before\ entry\ into\ JS\ to\ save\ x,\ the\ current\ SP\ at}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ address\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR,\ into\ map\_'s\ key\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ restore()\ is\ called\ after\ JS\ to\ restore\ into\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR\ the}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ SP\ saved\ in\ the\ map's\ key\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR.}}
+\DoxyCodeLine{00035\ \textcolor{comment}{//}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ restoreAll()\ is\ called\ from\ a\ signal\ handler\ to\ restore\ the\ SP\ from\ each}}
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ thread\ into\ its\ corresponding\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR.}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{class\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ LESavStackAsync\ \{}
+\DoxyCodeLine{00040\ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{static}\ LESavStackAsync\&\ getInstance()\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \textcolor{keyword}{static}\ LESavStackAsync\ instance;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ instance;}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ save(\textcolor{keywordtype}{void}*\ new\_sp[1])\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(mutex\_);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *old\_sp\ =\ *\_\_LE\_SAVSTACK\_ASYNC\_ADDR;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ *\_\_LE\_SAVSTACK\_ASYNC\_ADDR\ =\ new\_sp;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \textcolor{comment}{//\ Store\ SP\ (r4)\ into\ new\_sp[0]:}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \textcolor{keyword}{asm}(\textcolor{stringliteral}{"{}\ lgr\ \%0,4\(\backslash\)n"{}}\ :\ \textcolor{stringliteral}{"{}=r"{}}(new\_sp[0])::);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ map\_[\_\_LE\_SAVSTACK\_ASYNC\_ADDR]\ =\ old\_sp;}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ restore()\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(mutex\_);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ *\_\_LE\_SAVSTACK\_ASYNC\_ADDR\ =\ map\_[\_\_LE\_SAVSTACK\_ASYNC\_ADDR];}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ map\_.erase(\_\_LE\_SAVSTACK\_ASYNC\_ADDR);}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ restoreAll()\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(mutex\_);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ it\ =\ map\_.cbegin();}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ it\ !=\ map\_.cend();\ )\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ *(it-\/>first)\ =\ it-\/>second;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ it\ =\ map\_.erase(it);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ LESavStackAsync(\textcolor{keyword}{const}\ LESavStackAsync\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00071\ \ \ \ \ LESavStackAsync\&\ operator=(\textcolor{keyword}{const}\ LESavStackAsync\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00072\ \ \ \ \ LESavStackAsync(LESavStackAsync\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00073\ \ \ \ \ LESavStackAsync\&\ operator=(LESavStackAsync\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00076\ \ \ \ \ LESavStackAsync()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ std::map<void\ **,\ void\ *>\ map\_;}
+\DoxyCodeLine{00079\ \ \ \ \ std::mutex\ mutex\_;}
+\DoxyCodeLine{00080\ \};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_cplusplus}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ ZOS\_SAVSTACK\_H\_}}
+
+\end{DoxyCode}

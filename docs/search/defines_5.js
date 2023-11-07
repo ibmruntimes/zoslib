@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ipc_5fcleanup_5fenvar_5fdefault_1375',['IPC_CLEANUP_ENVAR_DEFAULT',['../zos-base_8h.html#a989178e9f01743b2af2111725b2b1eb8',1,'zos-base.h']]]
+  ['lookup_0',['lookup',['../zos-string_8c.html#afe16574dc9e754d107f344d5dcdf18d2',1,'zos-string.c']]]
 ];

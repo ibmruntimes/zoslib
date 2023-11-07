@@ -1,0 +1,57 @@
+\doxysection{stat.\+h}
+\hypertarget{stat_8h_source}{}\label{stat_8h_source}\index{include/sys/stat.h@{include/sys/stat.h}}
+\mbox{\hyperlink{stat_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_STAT\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_STAT\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\_t}};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{stat_8h_af54560301e3b415edf25c53bb2577e69}{\_\_mkfifo\_ascii}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pathname,\ \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\_t}}\ mode);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB)}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#undef\ mkfifo}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ mkfifo\ \_\_mkfifo\_replaced}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\_next\ <sys/stat.h>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#undef\ mkfifo\ }}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ mkfifo(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pathname,\ \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\_t}}\ mode)\ \_\_asm(\textcolor{stringliteral}{"{}\_\_mkfifo\_ascii"{}});}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//\ \#if\ !(defined(ZOSLIB\_OVERRIDE\_CLIB)}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#include\_next\ <sys/stat.h>}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#ifdef\ S\_TYPEISMQ\ \ }}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#undef\ S\_TYPEISMQ}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#undef\ S\_TYPEISSEM}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#undef\ S\_TYPEISSHM\ }}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ S\_TYPEISMQ(\_\_x)\ \ \ (0)\ }\textcolor{comment}{/*\ Test\ for\ a\ message\ queue\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ S\_TYPEISSEM(\_\_x)\ \ (0)\ }\textcolor{comment}{/*\ Test\ for\ a\ semaphore\ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ S\_TYPEISSHM(\_\_x)\ \ (0)\ }\textcolor{comment}{/*\ Test\ for\ a\ shared\ memory\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

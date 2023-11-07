@@ -1,0 +1,62 @@
+.TH "src/zos-mount.c" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-mount.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <sys/types\&.h>\fP
+.br
+\fC#include <mntent\&.h>\fP
+.br
+\fC#include <sys/mount\&.h>\fP
+.br
+\fC#include <sys/mntent\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdint\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB_POSIX_SOURCE\fP"
+.br
+.ti -1c
+.RI "#define \fB_OPEN_SYS\fP"
+.br
+.ti -1c
+.RI "#define \fBNUM_FSTYPE\fP   5"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBgetmntinfo\fP (struct \fBstatfs\fP **statfsp, int flags)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define _OPEN_SYS"
+
+.SS "#define _POSIX_SOURCE"
+
+.SS "#define NUM_FSTYPE   5"
+
+.SH "Function Documentation"
+.PP 
+.SS "int getmntinfo (struct \fBstatfs\fP ** statfsp, int flags)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

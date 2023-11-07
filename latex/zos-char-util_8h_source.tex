@@ -1,0 +1,268 @@
+\doxysection{zos-\/char-\/util.h}
+\hypertarget{zos-char-util_8h_source}{}\label{zos-char-util_8h_source}\index{include/zos-\/char-\/util.h@{include/zos-\/char-\/util.h}}
+\mbox{\hyperlink{zos-char-util_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ APIs\ that\ implement\ Coded\ Character\ Sets\ (ASCII,\ EBCDIC)\ processing\ of}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ strings\ and\ files,\ and\ their\ conversion.}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ ZOS\_CHAR\_UTIL\_H\_}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ ZOS\_CHAR\_UTIL\_H\_}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <\_Nascii.h>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00021\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00031\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-char-util_8h_aa9f798a2a6f7975a7e2b861d8a60c1d3}{\_convert\_e2a}}(\textcolor{keywordtype}{void}\ *dst,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00040\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-char-util_8h_a37b8d5dcbcc80859be372e88977b0d4e}{\_convert\_a2e}}(\textcolor{keywordtype}{void}\ *dst,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00051\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_a6a0ba86f64893966f6c9360420deac05}{\_\_guess\_fd\_ue}}(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{char}\ *errmsg,\ \textcolor{keywordtype}{size\_t}\ er\_size,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ is\_new\_fd);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00061\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_a328dd26237923cc9e1131a71d4afff59}{\_\_guess\_ue}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{char}\ *errmsg,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ er\_size);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00070\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_a4829bd3d702aa90209215a2f5463bec7}{\_\_guess\_ae}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00075\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_a6cab51f9206b1ea9b7415e75a1206c58}{conv\_utf8\_utf16}}(\textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{size\_t},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{size\_t});}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00080\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_a18507342ab509481b6b22cb039d9d5f5}{conv\_utf16\_utf8}}(\textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{size\_t},\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{size\_t});}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#if\ DEBUG\_ONLY}}
+\DoxyCodeLine{00089\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{size\_t}\ \_\_e2a\_l(\textcolor{keywordtype}{char}\ *bufptr,\ \textcolor{keywordtype}{size\_t}\ szLen);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00097\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{size\_t}\ \_\_a2e\_l(\textcolor{keywordtype}{char}\ *bufptr,\ \textcolor{keywordtype}{size\_t}\ szLen);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00104\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{size\_t}\ \_\_e2a\_s(\textcolor{keywordtype}{char}\ *\textcolor{keywordtype}{string});}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00111\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{size\_t}\ \_\_a2e\_s(\textcolor{keywordtype}{char}\ *\textcolor{keywordtype}{string});}
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00121\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-char-util_8h_a0a18381557d4497088392b1a80422d42}{\_\_set\_autocvt\_on\_fd\_stream}}(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{short}\ ccsid,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ txtflag,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ on\_untagged\_only);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00131\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_acd50710d989781cc05cb19f5c3e453e1}{\_\_file\_needs\_conversion}}(\textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00139\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-char-util_8h_ab84ad3db6f48431d2bbec784bcf15297}{\_\_file\_needs\_conversion\_init}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00145\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-char-util_8h_a0d0848c13d85dc2053bb22b63a612ee9}{\_\_fd\_close}}(\textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#define\ \_str\_e2a(\_str)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00148\ \textcolor{preprocessor}{\ \ (\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\ \ \ \ const\ char\ *src\ =\ (const\ char\ *)(\_str);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\ \ \ \ int\ len\ =\ strlen(src)\ +\ 1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\ \ \ \ char\ tgt[len];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\ \ \ \ (char\ *)\_convert\_e2a(tgt,\ src,\ len);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\ \ \})}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#define\ \_str\_a2e(\_str)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\ \ (\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\ \ \ \ const\ char\ *src\ =\ (const\ char\ *)(\_str);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\ \ \ \ int\ len\ =\ strlen(src)\ +\ 1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\ \ \ \ char\ tgt[len];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\ \ \ \ (char\ *)\_convert\_a2e(tgt,\ src,\ len);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\ \ \})}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#define\ AEWRAP(\_rc,\ \_x)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\ \ (\_\_isASCII()\ ?\ ((\_rc)\ =\ (\_x),\ 0)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ (\_\_ae\_thread\_swapmode(\_\_AE\_ASCII\_MODE),\ ((\_rc)\ =\ (\_x)),\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ae\_thread\_swapmode(\_\_AE\_EBCDIC\_MODE),\ 1))}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#define\ AEWRAP\_VOID(\_x)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\ \ (\_\_isASCII()\ ?\ ((\_x),\ 0)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ (\_\_ae\_thread\_swapmode(\_\_AE\_ASCII\_MODE),\ (\_x),\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ae\_thread\_swapmode(\_\_AE\_EBCDIC\_MODE),\ 1))}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{zos-char-util_8h_acf6ab7070d07e2eab9622df71759db92}{\_\_convert\_one\_to\_one}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *table,\ \textcolor{keywordtype}{void}\ *dst,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *src)\ \{}
+\DoxyCodeLine{00175\ \ \ \textcolor{keywordtype}{void}\ *rst\ =\ dst;}
+\DoxyCodeLine{00176\ \ \ \_\_asm\ \textcolor{keyword}{volatile}(\textcolor{stringliteral}{"{}\ troo\ 2,\%2,1\ \(\backslash\)n\ jo\ *-\/4\ \(\backslash\)n"{}}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}+NR:r3"{}}(size),\ \textcolor{stringliteral}{"{}+NR:r2"{}}(dst),\ \textcolor{stringliteral}{"{}+r"{}}(src)}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}NR:r1"{}}(table)}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}r0"{}});}
+\DoxyCodeLine{00180\ \ \ \textcolor{keywordflow}{return}\ rst;}
+\DoxyCodeLine{00181\ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{keyword}{class\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \_\_auto\_ascii\ \{}
+\DoxyCodeLine{00186\ \ \ \textcolor{keywordtype}{int}\ ascii\_mode;}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00189\ \ \ \_\_auto\_ascii();}
+\DoxyCodeLine{00190\ \ \ \string~\_\_auto\_ascii();}
+\DoxyCodeLine{00191\ \};}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{keyword}{class\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \_\_conv\_off\ \{}
+\DoxyCodeLine{00194\ \ \ \textcolor{keywordtype}{int}\ convert\_state;}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00197\ \ \ \_\_conv\_off();}
+\DoxyCodeLine{00198\ \ \ \string~\_\_conv\_off();}
+\DoxyCodeLine{00199\ \};}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{zos-char-util_8h_a56fb3389a7d50782f87bee9ffc8b353f}{strlen\_ae}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *str,\ \textcolor{keywordtype}{int}\ *code\_page,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ max\_len,\ \textcolor{keywordtype}{int}\ *ambiguous)\ \{}
+\DoxyCodeLine{00205\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ last\_ccsid\ =\ 819;}
+\DoxyCodeLine{00206\ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_tab\_a[256]\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((aligned(8)))\ =\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00218\ \ \ \};}
+\DoxyCodeLine{00219\ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_tab\_e[256]\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((aligned(8)))\ =\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 1,}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00231\ \ \ \};}
+\DoxyCodeLine{00232\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ bytes;}
+\DoxyCodeLine{00233\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ code\_out;}
+\DoxyCodeLine{00234\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start;}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ bytes\ =\ max\_len;}
+\DoxyCodeLine{00237\ \ \ code\_out\ =\ 0;}
+\DoxyCodeLine{00238\ \ \ start\ =\ str;}
+\DoxyCodeLine{00239\ \ \ \_\_asm\ \textcolor{keyword}{volatile}(\textcolor{stringliteral}{"{}\ trte\ \%1,\%3,0\(\backslash\)n"{}}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ jo\ *-\/4\(\backslash\)n"{}}}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}+NR:r3"{}}(bytes),\ \textcolor{stringliteral}{"{}+NR:r2"{}}(str),\ \textcolor{stringliteral}{"{}+r"{}}(bytes),\ \textcolor{stringliteral}{"{}+r"{}}(code\_out)}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}NR:r1"{}}(\_tab\_a)}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :);}
+\DoxyCodeLine{00244\ \ \ \textcolor{keywordtype}{unsigned}\ a\_len\ =\ str\ -\/\ start;}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ bytes\ =\ max\_len;}
+\DoxyCodeLine{00247\ \ \ code\_out\ =\ 0;}
+\DoxyCodeLine{00248\ \ \ str\ =\ start;}
+\DoxyCodeLine{00249\ \ \ \_\_asm\ \textcolor{keyword}{volatile}(\textcolor{stringliteral}{"{}\ trte\ \%1,\%3,0\(\backslash\)n"{}}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ jo\ *-\/4\(\backslash\)n"{}}}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}+NR:r3"{}}(bytes),\ \textcolor{stringliteral}{"{}+NR:r2"{}}(str),\ \textcolor{stringliteral}{"{}+r"{}}(bytes),\ \textcolor{stringliteral}{"{}+r"{}}(code\_out)}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}NR:r1"{}}(\_tab\_e)}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :);}
+\DoxyCodeLine{00254\ \ \ \textcolor{keywordtype}{unsigned}\ e\_len\ =\ str\ -\/\ start;}
+\DoxyCodeLine{00255\ \ \ \textcolor{keywordflow}{if}\ (a\_len\ >\ e\_len)\ \{}
+\DoxyCodeLine{00256\ \ \ \ \ *code\_page\ =\ 819;}
+\DoxyCodeLine{00257\ \ \ \ \ last\_ccsid\ =\ 819;}
+\DoxyCodeLine{00258\ \ \ \ \ *ambiguous\ =\ 0;}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keywordflow}{return}\ a\_len;}
+\DoxyCodeLine{00260\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (e\_len\ >\ a\_len)\ \{}
+\DoxyCodeLine{00261\ \ \ \ \ *code\_page\ =\ 1047;}
+\DoxyCodeLine{00262\ \ \ \ \ last\_ccsid\ =\ 1047;}
+\DoxyCodeLine{00263\ \ \ \ \ *ambiguous\ =\ 0;}
+\DoxyCodeLine{00264\ \ \ \ \ \textcolor{keywordflow}{return}\ e\_len;}
+\DoxyCodeLine{00265\ \ \ \}}
+\DoxyCodeLine{00266\ \ \ *code\_page\ =\ last\_ccsid;}
+\DoxyCodeLine{00267\ \ \ *ambiguous\ =\ 1;}
+\DoxyCodeLine{00268\ \ \ \textcolor{keywordflow}{return}\ a\_len;}
+\DoxyCodeLine{00269\ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{zos-char-util_8h_acc96530f7dcd6ffb06617d800dda4dea}{strlen\_e}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *str,\ \textcolor{keywordtype}{unsigned}\ size)\ \{}
+\DoxyCodeLine{00272\ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_tab\_e[256]\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((aligned(8)))\ =\ \{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 1,}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 1,}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,\ 0,\ 1,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 0,\ 1,\ 1,\ 1,\ 1,\ 1,\ 1,}
+\DoxyCodeLine{00284\ \ \ \};}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ bytes\ =\ size;}
+\DoxyCodeLine{00287\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ code\_out\ =\ 0;}
+\DoxyCodeLine{00288\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ *start\ =\ str;}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \_\_asm\ \textcolor{keyword}{volatile}(\textcolor{stringliteral}{"{}\ trte\ \%1,\%3,0\(\backslash\)n"{}}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ jo\ *-\/4\(\backslash\)n"{}}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}+NR:r3"{}}(bytes),\ \textcolor{stringliteral}{"{}+NR:r2"{}}(str),\ \textcolor{stringliteral}{"{}+r"{}}(bytes),\ \textcolor{stringliteral}{"{}+r"{}}(code\_out)}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}NR:r1"{}}(\_tab\_e)}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :);}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \ \ \textcolor{keywordflow}{return}\ str\ -\/\ start;}
+\DoxyCodeLine{00297\ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_\_ibm1047\_iso88591[256]\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((aligned(8)))\ =\ \{}
+\DoxyCodeLine{00300\ \ \ \ \ 0x00,\ 0x01,\ 0x02,\ 0x03,\ 0x9c,\ 0x09,\ 0x86,\ 0x7f,\ 0x97,\ 0x8d,\ 0x8e,\ 0x0b,}
+\DoxyCodeLine{00301\ \ \ \ \ 0x0c,\ 0x0d,\ 0x0e,\ 0x0f,\ 0x10,\ 0x11,\ 0x12,\ 0x13,\ 0x9d,\ 0x0a,\ 0x08,\ 0x87,}
+\DoxyCodeLine{00302\ \ \ \ \ 0x18,\ 0x19,\ 0x92,\ 0x8f,\ 0x1c,\ 0x1d,\ 0x1e,\ 0x1f,\ 0x80,\ 0x81,\ 0x82,\ 0x83,}
+\DoxyCodeLine{00303\ \ \ \ \ 0x84,\ 0x85,\ 0x17,\ 0x1b,\ 0x88,\ 0x89,\ 0x8a,\ 0x8b,\ 0x8c,\ 0x05,\ 0x06,\ 0x07,}
+\DoxyCodeLine{00304\ \ \ \ \ 0x90,\ 0x91,\ 0x16,\ 0x93,\ 0x94,\ 0x95,\ 0x96,\ 0x04,\ 0x98,\ 0x99,\ 0x9a,\ 0x9b,}
+\DoxyCodeLine{00305\ \ \ \ \ 0x14,\ 0x15,\ 0x9e,\ 0x1a,\ 0x20,\ 0xa0,\ 0xe2,\ 0xe4,\ 0xe0,\ 0xe1,\ 0xe3,\ 0xe5,}
+\DoxyCodeLine{00306\ \ \ \ \ 0xe7,\ 0xf1,\ 0xa2,\ 0x2e,\ 0x3c,\ 0x28,\ 0x2b,\ 0x7c,\ 0x26,\ 0xe9,\ 0xea,\ 0xeb,}
+\DoxyCodeLine{00307\ \ \ \ \ 0xe8,\ 0xed,\ 0xee,\ 0xef,\ 0xec,\ 0xdf,\ 0x21,\ 0x24,\ 0x2a,\ 0x29,\ 0x3b,\ 0x5e,}
+\DoxyCodeLine{00308\ \ \ \ \ 0x2d,\ 0x2f,\ 0xc2,\ 0xc4,\ 0xc0,\ 0xc1,\ 0xc3,\ 0xc5,\ 0xc7,\ 0xd1,\ 0xa6,\ 0x2c,}
+\DoxyCodeLine{00309\ \ \ \ \ 0x25,\ 0x5f,\ 0x3e,\ 0x3f,\ 0xf8,\ 0xc9,\ 0xca,\ 0xcb,\ 0xc8,\ 0xcd,\ 0xce,\ 0xcf,}
+\DoxyCodeLine{00310\ \ \ \ \ 0xcc,\ 0x60,\ 0x3a,\ 0x23,\ 0x40,\ 0x27,\ 0x3d,\ 0x22,\ 0xd8,\ 0x61,\ 0x62,\ 0x63,}
+\DoxyCodeLine{00311\ \ \ \ \ 0x64,\ 0x65,\ 0x66,\ 0x67,\ 0x68,\ 0x69,\ 0xab,\ 0xbb,\ 0xf0,\ 0xfd,\ 0xfe,\ 0xb1,}
+\DoxyCodeLine{00312\ \ \ \ \ 0xb0,\ 0x6a,\ 0x6b,\ 0x6c,\ 0x6d,\ 0x6e,\ 0x6f,\ 0x70,\ 0x71,\ 0x72,\ 0xaa,\ 0xba,}
+\DoxyCodeLine{00313\ \ \ \ \ 0xe6,\ 0xb8,\ 0xc6,\ 0xa4,\ 0xb5,\ 0x7e,\ 0x73,\ 0x74,\ 0x75,\ 0x76,\ 0x77,\ 0x78,}
+\DoxyCodeLine{00314\ \ \ \ \ 0x79,\ 0x7a,\ 0xa1,\ 0xbf,\ 0xd0,\ 0x5b,\ 0xde,\ 0xae,\ 0xac,\ 0xa3,\ 0xa5,\ 0xb7,}
+\DoxyCodeLine{00315\ \ \ \ \ 0xa9,\ 0xa7,\ 0xb6,\ 0xbc,\ 0xbd,\ 0xbe,\ 0xdd,\ 0xa8,\ 0xaf,\ 0x5d,\ 0xb4,\ 0xd7,}
+\DoxyCodeLine{00316\ \ \ \ \ 0x7b,\ 0x41,\ 0x42,\ 0x43,\ 0x44,\ 0x45,\ 0x46,\ 0x47,\ 0x48,\ 0x49,\ 0xad,\ 0xf4,}
+\DoxyCodeLine{00317\ \ \ \ \ 0xf6,\ 0xf2,\ 0xf3,\ 0xf5,\ 0x7d,\ 0x4a,\ 0x4b,\ 0x4c,\ 0x4d,\ 0x4e,\ 0x4f,\ 0x50,}
+\DoxyCodeLine{00318\ \ \ \ \ 0x51,\ 0x52,\ 0xb9,\ 0xfb,\ 0xfc,\ 0xf9,\ 0xfa,\ 0xff,\ 0x5c,\ 0xf7,\ 0x53,\ 0x54,}
+\DoxyCodeLine{00319\ \ \ \ \ 0x55,\ 0x56,\ 0x57,\ 0x58,\ 0x59,\ 0x5a,\ 0xb2,\ 0xd4,\ 0xd6,\ 0xd2,\ 0xd3,\ 0xd5,}
+\DoxyCodeLine{00320\ \ \ \ \ 0x30,\ 0x31,\ 0x32,\ 0x33,\ 0x34,\ 0x35,\ 0x36,\ 0x37,\ 0x38,\ 0x39,\ 0xb3,\ 0xdb,}
+\DoxyCodeLine{00321\ \ \ \ \ 0xdc,\ 0xd9,\ 0xda,\ 0x9f\};}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_\_iso88591\_ibm1047[256]\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((aligned(8)))\ =\ \{}
+\DoxyCodeLine{00324\ \ \ \ \ 0x00,\ 0x01,\ 0x02,\ 0x03,\ 0x37,\ 0x2d,\ 0x2e,\ 0x2f,\ 0x16,\ 0x05,\ 0x15,\ 0x0b,}
+\DoxyCodeLine{00325\ \ \ \ \ 0x0c,\ 0x0d,\ 0x0e,\ 0x0f,\ 0x10,\ 0x11,\ 0x12,\ 0x13,\ 0x3c,\ 0x3d,\ 0x32,\ 0x26,}
+\DoxyCodeLine{00326\ \ \ \ \ 0x18,\ 0x19,\ 0x3f,\ 0x27,\ 0x1c,\ 0x1d,\ 0x1e,\ 0x1f,\ 0x40,\ 0x5a,\ 0x7f,\ 0x7b,}
+\DoxyCodeLine{00327\ \ \ \ \ 0x5b,\ 0x6c,\ 0x50,\ 0x7d,\ 0x4d,\ 0x5d,\ 0x5c,\ 0x4e,\ 0x6b,\ 0x60,\ 0x4b,\ 0x61,}
+\DoxyCodeLine{00328\ \ \ \ \ 0xf0,\ 0xf1,\ 0xf2,\ 0xf3,\ 0xf4,\ 0xf5,\ 0xf6,\ 0xf7,\ 0xf8,\ 0xf9,\ 0x7a,\ 0x5e,}
+\DoxyCodeLine{00329\ \ \ \ \ 0x4c,\ 0x7e,\ 0x6e,\ 0x6f,\ 0x7c,\ 0xc1,\ 0xc2,\ 0xc3,\ 0xc4,\ 0xc5,\ 0xc6,\ 0xc7,}
+\DoxyCodeLine{00330\ \ \ \ \ 0xc8,\ 0xc9,\ 0xd1,\ 0xd2,\ 0xd3,\ 0xd4,\ 0xd5,\ 0xd6,\ 0xd7,\ 0xd8,\ 0xd9,\ 0xe2,}
+\DoxyCodeLine{00331\ \ \ \ \ 0xe3,\ 0xe4,\ 0xe5,\ 0xe6,\ 0xe7,\ 0xe8,\ 0xe9,\ 0xad,\ 0xe0,\ 0xbd,\ 0x5f,\ 0x6d,}
+\DoxyCodeLine{00332\ \ \ \ \ 0x79,\ 0x81,\ 0x82,\ 0x83,\ 0x84,\ 0x85,\ 0x86,\ 0x87,\ 0x88,\ 0x89,\ 0x91,\ 0x92,}
+\DoxyCodeLine{00333\ \ \ \ \ 0x93,\ 0x94,\ 0x95,\ 0x96,\ 0x97,\ 0x98,\ 0x99,\ 0xa2,\ 0xa3,\ 0xa4,\ 0xa5,\ 0xa6,}
+\DoxyCodeLine{00334\ \ \ \ \ 0xa7,\ 0xa8,\ 0xa9,\ 0xc0,\ 0x4f,\ 0xd0,\ 0xa1,\ 0x07,\ 0x20,\ 0x21,\ 0x22,\ 0x23,}
+\DoxyCodeLine{00335\ \ \ \ \ 0x24,\ 0x25,\ 0x06,\ 0x17,\ 0x28,\ 0x29,\ 0x2a,\ 0x2b,\ 0x2c,\ 0x09,\ 0x0a,\ 0x1b,}
+\DoxyCodeLine{00336\ \ \ \ \ 0x30,\ 0x31,\ 0x1a,\ 0x33,\ 0x34,\ 0x35,\ 0x36,\ 0x08,\ 0x38,\ 0x39,\ 0x3a,\ 0x3b,}
+\DoxyCodeLine{00337\ \ \ \ \ 0x04,\ 0x14,\ 0x3e,\ 0xff,\ 0x41,\ 0xaa,\ 0x4a,\ 0xb1,\ 0x9f,\ 0xb2,\ 0x6a,\ 0xb5,}
+\DoxyCodeLine{00338\ \ \ \ \ 0xbb,\ 0xb4,\ 0x9a,\ 0x8a,\ 0xb0,\ 0xca,\ 0xaf,\ 0xbc,\ 0x90,\ 0x8f,\ 0xea,\ 0xfa,}
+\DoxyCodeLine{00339\ \ \ \ \ 0xbe,\ 0xa0,\ 0xb6,\ 0xb3,\ 0x9d,\ 0xda,\ 0x9b,\ 0x8b,\ 0xb7,\ 0xb8,\ 0xb9,\ 0xab,}
+\DoxyCodeLine{00340\ \ \ \ \ 0x64,\ 0x65,\ 0x62,\ 0x66,\ 0x63,\ 0x67,\ 0x9e,\ 0x68,\ 0x74,\ 0x71,\ 0x72,\ 0x73,}
+\DoxyCodeLine{00341\ \ \ \ \ 0x78,\ 0x75,\ 0x76,\ 0x77,\ 0xac,\ 0x69,\ 0xed,\ 0xee,\ 0xeb,\ 0xef,\ 0xec,\ 0xbf,}
+\DoxyCodeLine{00342\ \ \ \ \ 0x80,\ 0xfd,\ 0xfe,\ 0xfb,\ 0xfc,\ 0xba,\ 0xae,\ 0x59,\ 0x44,\ 0x45,\ 0x42,\ 0x46,}
+\DoxyCodeLine{00343\ \ \ \ \ 0x43,\ 0x47,\ 0x9c,\ 0x48,\ 0x54,\ 0x51,\ 0x52,\ 0x53,\ 0x58,\ 0x55,\ 0x56,\ 0x57,}
+\DoxyCodeLine{00344\ \ \ \ \ 0x8c,\ 0x49,\ 0xcd,\ 0xce,\ 0xcb,\ 0xcf,\ 0xcc,\ 0xe1,\ 0x70,\ 0xdd,\ 0xde,\ 0xdb,}
+\DoxyCodeLine{00345\ \ \ \ \ 0xdc,\ 0x8d,\ 0x8e,\ 0xdf\};}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00348\ \}}
+\DoxyCodeLine{00349\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_CHAR\_UTIL\_H\_}}
+
+\end{DoxyCode}

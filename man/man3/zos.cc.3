@@ -1,4 +1,4 @@
-.TH "src/zos.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,9 @@ src/zos.cc
 .PP
 \fC#include 'edcwccwi\&.h'\fP
 .br
-\fC#include 'zos\-base\&.h'\fP
+\fC#include 'zos\-getentropy\&.h'\fP
+.br
+\fC#include 'zos\&.h'\fP
 .br
 \fC#include <_Ccsid\&.h>\fP
 .br
@@ -64,6 +66,12 @@ src/zos.cc
 .br
 \fC#include <unistd\&.h>\fP
 .br
+\fC#include <sys/epoll\&.h>\fP
+.br
+\fC#include <sys/eventfd\&.h>\fP
+.br
+\fC#include <sys/inotify\&.h>\fP
+.br
 \fC#include <exception>\fP
 .br
 \fC#include <mutex>\fP
@@ -80,12 +88,6 @@ src/zos.cc
 .in +1c
 .ti -1c
 .RI "struct \fBtimer_parm\fP"
-.br
-.ti -1c
-.RI "struct \fBIntHash\fP"
-.br
-.ti -1c
-.RI "class \fBfdAttributeCache\fP"
 .br
 .ti -1c
 .RI "struct \fBiarv64parm\fP"
@@ -137,7 +139,7 @@ src/zos.cc
 .RI "#define \fB__ZOS_CC\fP"
 .br
 .ti -1c
-.RI "#define \fBdsa\fP()   ((unsigned long *)_gdsa())"
+.RI "#define \fBdsa\fP()   ((unsigned long *)\fB_gdsa\fP())"
 .br
 .ti -1c
 .RI "#define \fBMIN\fP(a,  b)   ((a) < (b) ? (a) : (b))"
@@ -149,7 +151,7 @@ src/zos.cc
 .RI "#define \fBSTRINGIFY\fP(a)   #a"
 .br
 .ti -1c
-.RI "#define \fBDEFAULT_BUILD_STRING\fP     'v' XSTR(\fBMAJOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBMINOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBPATCH_VERSION\fP)"
+.RI "#define \fBDEFAULT_BUILD_STRING\fP     'v' \fBXSTR\fP(\fBMAJOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBMINOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBPATCH_VERSION\fP)"
 .br
 .ti -1c
 .RI "#define \fBmax\fP(a,  b)   (((a) > (b)) ? (a) : (b))"
@@ -161,13 +163,28 @@ src/zos.cc
 .RI "#define \fBPGTHACOMMANDLONG\fP   1"
 .br
 .ti -1c
+.RI "#define \fB__AttrPacked\fP"
+.br
+.ti -1c
 .RI "#define \fB__USE_IARV64\fP   1"
 .br
 .ti -1c
-.RI "#define \fBCSG\fP(_op1,  _op2,  _op3)     __asm(' csg %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
+.RI "#define \fBCSG\fP(_op1,  _op2,  _op3)     __asm volatile(' csg %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
 .br
 .ti -1c
-.RI "#define \fBCS\fP(_op1,  _op2,  _op3)     __asm(' cs %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
+.RI "#define \fBCS\fP(_op1,  _op2,  _op3)     __asm volatile(' cs %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
+.br
+.ti -1c
+.RI "#define \fBPPA_FUNC_LENGTH\fP   256"
+.br
+.ti -1c
+.RI "#define \fBMAP_LE_FUNC\fP(func,  offset)   (func = (typeof(func))((unsigned long*)\fB__get_libvec_base\fP() + (offset<<1)))"
+.br
+.ti -1c
+.RI "#define \fBCHECK_LE_FUNC\fP(offset)   (\fB__check_le_func\fP((void*)((unsigned long*)\fB__get_libvec_base\fP() + (offset<<1)), ppa_funcname, \fBPPA_FUNC_LENGTH\fP))"
+.br
+.ti -1c
+.RI "#define \fBMAP_LE_FUNC_ELSE_ZOSLIB_FUNC\fP(func,  zoslibfunc,  funcstring,  offset)"
 .br
 .in -1c
 .SS "Typedefs"
@@ -175,12 +192,6 @@ src/zos.cc
 .in +1c
 .ti -1c
 .RI "typedef struct \fBtimer_parm\fP \fBtimer_parm_t\fP"
-.br
-.ti -1c
-.RI "typedef unsigned long \fBfd_attribute\fP"
-.br
-.ti -1c
-.RI "typedef std::unordered_map< int, \fBfd_attribute\fP, \fBIntHash\fP >::const_iterator \fBcursor_t\fP"
 .br
 .ti -1c
 .RI "typedef unsigned long \fBvalue_type\fP"
@@ -236,21 +247,27 @@ src/zos.cc
 .ti -1c
 .RI "typedef struct \fBIFAARGS\fP \fBIFAARGS_t\fP"
 .br
+.ti -1c
+.RI "typedef int(* \fBzoslib_env_hook_func\fP) (char *)"
+.br
 .in -1c
 .SS "Functions"
 
 .in +1c
 .ti -1c
+.RI "void * \fB_gdsa\fP ()"
+.br
+.ti -1c
 .RI "void \fB__set_ccsid_guess_buf_size\fP (int nbytes)"
+.br
+.ti -1c
+.RI "__zinit * \fB__get_instance\fP ()"
 .br
 .ti -1c
 .RI "char ** \fB__get_environ_np\fP (void)"
 .br
 .ti -1c
-.RI "unsigned int \fB__zsync_val_compare_and_swap32\fP (volatile unsigned int *__p, unsigned int __compVal, unsigned int __exchVal)"
-.br
-.ti -1c
-.RI "int \fB__setenv_a\fP (const char *, const char *, int)"
+.RI "int \fB__setenv_a\fP (const char *, const char *, int) asm('@@A00188')"
 .br
 .ti -1c
 .RI "void \fB__xfer_env\fP (void)"
@@ -271,7 +288,7 @@ src/zos.cc
 .RI "void \fB__display_backtrace\fP (int fd)"
 .br
 .ti -1c
-.RI "void \fB__abend\fP (int comp_code, unsigned reason_code, int flat_byte, void *\fBplist\fP)"
+.RI "void \fB__abend\fP (int comp_code, unsigned reason_code, int flat_byte, void *plist)"
 .br
 .ti -1c
 .RI "int \fBstrcasecmp_ignorecp\fP (const char *a, const char *b)"
@@ -292,12 +309,6 @@ src/zos.cc
 .RI "void \fB__settimelimit\fP (int secs)"
 .br
 .ti -1c
-.RI "void \fB__setdebug\fP (int v)"
-.br
-.ti -1c
-.RI "int \fB__indebug\fP (void)"
-.br
-.ti -1c
 .RI "void * \fB__dlcb_next\fP (void *last)"
 .br
 .ti -1c
@@ -305,6 +316,9 @@ src/zos.cc
 .br
 .ti -1c
 .RI "void * \fB__dlcb_entry_addr\fP (void *dlcb)"
+.br
+.ti -1c
+.RI "int \fB__dlcb_iterate\fP (int(*cb)(char *, void *, void *), void *data)"
 .br
 .ti -1c
 .RI "void \fBabort\fP (void)"
@@ -317,9 +331,6 @@ src/zos.cc
 .br
 .ti -1c
 .RI "int \fBkill\fP (int pid, int sig)"
-.br
-.ti -1c
-.RI "int \fB__fork\fP (void)"
 .br
 .ti -1c
 .RI "int \fB__getargcv\fP (int *argc, char ***argv, pid_t pid)"
@@ -349,7 +360,13 @@ src/zos.cc
 .RI "unsigned long \fBgetipttoken\fP (void)"
 .br
 .ti -1c
+.RI "void * \fB__zalloc\fP (size_t len, size_t alignment)"
+.br
+.ti -1c
 .RI "void * \fBanon_mmap\fP (void *_, size_t len)"
+.br
+.ti -1c
+.RI "int \fB__zfree\fP (void *addr, int len)"
 .br
 .ti -1c
 .RI "int \fBanon_munmap\fP (void *addr, size_t len)"
@@ -364,49 +381,16 @@ src/zos.cc
 .RI "int \fB__testread\fP (const void *location)"
 .br
 .ti -1c
-.RI "void \fBUsleep\fP (unsigned int msec)"
-.br
-.ti -1c
-.RI "unsigned int \fBatomic_dec\fP (volatile unsigned int *loc)"
-.br
-.ti -1c
-.RI "unsigned int \fBatomic_inc\fP (volatile unsigned int *loc)"
-.br
-.ti -1c
-.RI "int \fB__sem_init\fP (\fB__sem_t\fP *s0, int shared, unsigned int val)"
-.br
-.ti -1c
-.RI "int \fB__sem_post\fP (\fB__sem_t\fP *s0)"
-.br
-.ti -1c
-.RI "int \fB__sem_trywait\fP (\fB__sem_t\fP *s0)"
-.br
-.ti -1c
-.RI "int \fB__sem_timedwait\fP (\fB__sem_t\fP *s0, const struct timespec *abs_timeout)"
-.br
-.ti -1c
-.RI "int \fB__sem_wait\fP (\fB__sem_t\fP *s0)"
-.br
-.ti -1c
-.RI "int \fB__sem_destroy\fP (\fB__sem_t\fP *s0)"
-.br
-.ti -1c
-.RI "int \fB__sem_getvalue\fP (\fB__sem_t\fP *s0, int *sval)"
-.br
-.ti -1c
 .RI "void \fB__tb\fP (void)"
 .br
 .ti -1c
 .RI "int \fBclock_gettime\fP (\fBclockid_t\fP clk_id, struct timespec *tp)"
 .br
 .ti -1c
-.RI "int \fBgetentropy\fP (void *output, size_t size)"
+.RI "char * \fB__get_le_version\fP (void)"
 .br
 .ti -1c
 .RI "void \fB__build_version\fP (void)"
-.br
-.ti -1c
-.RI "size_t \fBstrnlen\fP (const char *str, size_t maxlen)"
 .br
 .ti -1c
 .RI "void \fB__cpu_relax\fP (\fB__crwa_t\fP *p)"
@@ -418,28 +402,19 @@ src/zos.cc
 .RI "void \fB__unloadmod\fP (void *mod)"
 .br
 .ti -1c
-.RI "void * \fB__loadmod\fP (const char *name)"
-.br
-.ti -1c
-.RI "\fB__attribute__\fP ((noinline)) extern long __callmod(void *mod"
-.br
-.ti -1c
-.RI "\fBif\fP (!mod) return \-1"
-.br
-.ti -1c
-.RI "\fBif\fP (m\->thptr)"
-.br
-.ti -1c
-.RI "const char * \fBgetIFAUsageErrorString\fP (unsigned long \fBrc\fP)"
+.RI "const char * \fBgetIFAUsageErrorString\fP (unsigned long rc)"
 .br
 .ti -1c
 .RI "unsigned long long \fB__registerProduct\fP (const char *major_version, const char *product_owner, const char *feature_name, const char *product_name, const char *pid)"
 .br
 .ti -1c
-.RI "void * \fBroanon_mmap\fP (void *_, size_t len, int prot, int flags, const char *filename, int fildes, off_t off)"
+.RI "void * \fB__zalloc_for_fd\fP (size_t len, const char *filename, int fd, off_t offset)"
 .br
 .ti -1c
-.RI "int \fB__print_zoslib_help\fP (FILE *fp, const char *title)"
+.RI "void * \fBroanon_mmap\fP (void *_, size_t len, int prot, int flags, const char *filename, int fd, off_t offset)"
+.br
+.ti -1c
+.RI "int \fB__print_zoslib_help\fP (\fBFILE\fP *fp, const char *title)"
 .br
 .ti -1c
 .RI "int \fB__update_envar_settings\fP (const char *envar)"
@@ -454,6 +429,19 @@ src/zos.cc
 .RI "int * \fB__get_stack_start\fP ()"
 .br
 .ti -1c
+.RI "unsigned long \fB__get_libvec_base\fP ()"
+.br
+.ti -1c
+.RI "int \fBfutimes\fP (int fd, const struct timeval tv[2])"
+.br
+.RI "(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES) "
+.ti -1c
+.RI "int \fBlutimes\fP (const char *filename, const struct timeval tv[2])"
+.br
+.ti -1c
+.RI "int \fB__nanosleep\fP (const struct timespec *req, struct timespec *rem)"
+.br
+.ti -1c
 .RI "void \fBinit_zoslib_config\fP (\fBzoslib_config_t\fP &config)"
 .br
 .ti -1c
@@ -463,10 +451,25 @@ src/zos.cc
 .RI "void \fBinit_zoslib\fP (const \fBzoslib_config_t\fP config)"
 .br
 .ti -1c
-.RI "int \fBnanosleep\fP (const struct timespec *req, struct timespec *rem)"
+.RI "int \fB__check_le_func\fP (void *addr, char *funcname, size_t len)"
 .br
 .ti -1c
-.RI "int \fB__lutimes\fP (const char *filename, const struct timeval tv[2])"
+.RI "bool \fB__doLogMemoryUsage\fP ()"
+.br
+.ti -1c
+.RI "void \fB__setLogMemoryUsage\fP (bool v)"
+.br
+.ti -1c
+.RI "char * \fB__getMemoryUsageLogFile\fP ()"
+.br
+.ti -1c
+.RI "bool \fB__doLogMemoryAll\fP ()"
+.br
+.ti -1c
+.RI "bool \fB__doLogMemoryWarning\fP ()"
+.br
+.ti -1c
+.RI "void \fB__mainTerminating\fP ()"
 .br
 .in -1c
 .SS "Variables"
@@ -479,18 +482,6 @@ src/zos.cc
 .RI "char ** \fBenviron\fP"
 .br
 .ti -1c
-.RI "void * \fBplist\fP"
-.br
-.ti -1c
-.RI "long \fBrc\fP"
-.br
-.ti -1c
-.RI "m \fBreg1\fP = \fBplist\fP"
-.br
-.ti -1c
-.RI "\fBelse\fP"
-.br
-.ti -1c
 .RI "const char * \fBMODULE_REGISTER_USAGE\fP = 'IFAUSAGE'"
 .br
 .ti -1c
@@ -499,6 +490,8 @@ src/zos.cc
 .in -1c
 .SH "Macro Definition Documentation"
 .PP 
+.SS "#define __AttrPacked"
+
 .SS "#define __USE_IARV64   1"
 
 .SS "#define __ZOS_CC"
@@ -513,13 +506,27 @@ src/zos.cc
 
 .SS "#define _XOPEN_SOURCE   600"
 
-.SS "#define CS(_op1, _op2, _op3)     __asm(' cs %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
+.SS "#define CHECK_LE_FUNC(offset)   (\fB__check_le_func\fP((void*)((unsigned long*)\fB__get_libvec_base\fP() + (offset<<1)), ppa_funcname, \fBPPA_FUNC_LENGTH\fP))"
 
-.SS "#define CSG(_op1, _op2, _op3)     __asm(' csg %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
+.SS "#define CS(_op1, _op2, _op3)     __asm volatile(' cs %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
 
-.SS "#define DEFAULT_BUILD_STRING     'v' XSTR(\fBMAJOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBMINOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBPATCH_VERSION\fP)"
+.SS "#define CSG(_op1, _op2, _op3)     __asm volatile(' csg %0,%2,%1 \\n ' : '+r'(_op1), '+m'(_op2) : 'r'(_op3) :)"
 
-.SS "#define dsa()   ((unsigned long *)_gdsa())"
+.SS "#define DEFAULT_BUILD_STRING     'v' \fBXSTR\fP(\fBMAJOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBMINOR_VERSION\fP) '\&.' \fBXSTR\fP(\fBPATCH_VERSION\fP)"
+
+.SS "#define dsa()   ((unsigned long *)\fB_gdsa\fP())"
+
+.SS "#define MAP_LE_FUNC(func, offset)   (func = (typeof(func))((unsigned long*)\fB__get_libvec_base\fP() + (offset<<1)))"
+
+.SS "#define MAP_LE_FUNC_ELSE_ZOSLIB_FUNC(func, zoslibfunc, funcstring, offset)"
+\fBValue:\fP.PP
+.nf
+  if (CHECK_LE_FUNC(offset) && strcmp(ppa_funcname, funcstring) == 0) { \\
+    MAP_LE_FUNC(func, offset); \\
+  } else if (zoslibfunc) { \\
+    func = zoslibfunc; \\
+  }
+.fi
 
 .SS "#define max(a, b)   (((a) > (b)) ? (a) : (b))"
 
@@ -529,16 +536,14 @@ src/zos.cc
 
 .SS "#define PGTHACOMMANDLONG   1"
 
+.SS "#define PPA_FUNC_LENGTH   256"
+
 .SS "#define STRINGIFY(a)   #a"
 
 .SS "#define XSTR(a)   \fBSTRINGIFY\fP(a)"
 
 .SH "Typedef Documentation"
 .PP 
-.SS "typedef std::unordered_map<int, \fBfd_attribute\fP, \fBIntHash\fP>::const_iterator \fBcursor_t\fP"
-
-.SS "typedef unsigned long \fBfd_attribute\fP"
-
 .SS "typedef struct \fBIFAARGS\fP \fBIFAARGS_t\fP"
 
 .SS "typedef char IfaedFeatureName[16]"
@@ -569,13 +574,15 @@ src/zos.cc
 
 .SS "typedef struct \fBloadmod\fP \fBloadmod_t\fP"
 
-.SS "typedef std::unordered_map<\fBkey_type\fP, \fBvalue_type\fP, \fB__hash_func\fP>::const_iterator \fBmem_cursor_t\fP"
+.SS "typedef std::unordered_map<\fBkey_type\fP,\fBvalue_type\fP,\fB__hash_func\fP>::const_iterator \fBmem_cursor_t\fP"
 
 .SS "typedef struct \fBthunk24\fP \fBthunk24_t\fP"
 
 .SS "typedef struct \fBtimer_parm\fP \fBtimer_parm_t\fP"
 
 .SS "typedef unsigned long \fBvalue_type\fP"
+
+.SS "typedef int(* zoslib_env_hook_func) (char *)"
 
 .SH "Function Documentation"
 .PP 
@@ -596,10 +603,26 @@ Generates an SVC 13 abend\&.
 
 .SS "void __atomic_store_real (int size, void * ptr, void * val, int memorder)"
 
-.SS "__attribute__ ((noinline))"
-
 .SS "void __build_version (void)"
 Prints the build version of the library 
+.SS "int __check_le_func (void * addr, char * funcname, size_t len)"
+Check if an LE function is present in the LE vector table 
+.PP
+\fBParameters\fP
+.RS 4
+\fIaddr\fP address to LE function 
+.br
+\fIfuncname\fP pointer to string that will hold the function name 
+.br
+\fImax\fP length of string corresponding to funcname 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 1 if successful, 0 if unsuccessful\&. 
+.RE
+.PP
+
 .SS "void __cleanupipc (int others)"
 Remove IPC semaphores and shared memory\&. 
 .PP
@@ -633,7 +656,7 @@ returns 0 if successful, -1 if unsuccessful\&.
 .RE
 .PP
 
-.SS "void __cpu_relax (\fB__crwa_t\fP *)"
+.SS "void __cpu_relax (\fB__crwa_t\fP * p)"
 TODO(itodorov) - zos: document these interfaces 
 .SS "void __display_backtrace (int fd)"
 Print backtrace of stack to file descriptor\&. 
@@ -644,7 +667,7 @@ Print backtrace of stack to file descriptor\&.
 .RE
 .PP
 
-.SS "void* __dlcb_entry_addr (void * dlcb)"
+.SS "void * __dlcb_entry_addr (void * dlcb)"
 Get address of dlcb entry 
 .PP
 \fBParameters\fP
@@ -676,7 +699,9 @@ Get entry name of given dlcb
 .RE
 .PP
 
-.SS "void* __dlcb_next (void * last)"
+.SS "int __dlcb_iterate (int(*)(char *, void *, void *) cb, void * data)"
+
+.SS "void * __dlcb_next (void * last)"
 Get next dlcb entry 
 .PP
 \fBParameters\fP
@@ -690,16 +715,13 @@ Get next dlcb entry
 .RE
 .PP
 
-.SS "int __fork (void)"
-Create a child process 
-.PP
-\fBReturns\fP
-.RS 4
-On success, the PID of the child process is returned in the parent, and 0 is returned in the child\&. On failure, -1 is returned in the parent, no child process is created, and errno is set appropriately\&. 
-.RE
-.PP
-
-.SS "char** __get_environ_np (void)"
+.SS "bool __doLogMemoryAll ()"
+Returns true if all messages from memory allocation and release are being displayed\&. 
+.SS "bool __doLogMemoryUsage ()"
+Returns true if logging of memory allocation and release is specified\&. 
+.SS "bool __doLogMemoryWarning ()"
+Returns true if only warnings from memory allocation and release are being displayed\&. Errors are always included if memory logging in on\&. 
+.SS "char ** __get_environ_np (void)"
 Get the environ\&. 
 .PP
 \fBReturns\fP
@@ -708,11 +730,24 @@ returns pointer to environment list
 .RE
 .PP
 
+.SS "__zinit * __get_instance ()"
+
+.SS "char * __get_le_version (void)"
+Return the LE version as a string in the format of 'Product %d%s Version %d Release %d Modification %d' 
+.SS "unsigned long __get_libvec_base (void)"
+Gets the LE libvec base address 
+.PP
+\fBReturns\fP
+.RS 4
+libvec base address 
+.RE
+.PP
+
 .SS "int __get_no_tag_ignore_ccsid1047 ()"
 
 .SS "\fBnotagread_t\fP __get_no_tag_read_behaviour ()"
 
-.SS "int* __get_stack_start ()"
+.SS "int * __get_stack_start ()"
 Get the stack start address for the current thread 
 .PP
 \fBReturns\fP
@@ -753,7 +788,7 @@ On success, returns 0, or -1 on error\&.
 .RE
 .PP
 
-.SS "char** __getargv (void)"
+.SS "char ** __getargv (void)"
 Get program argument list of the current process 
 .PP
 \fBReturns\fP
@@ -762,7 +797,7 @@ returns an array of process arguments
 .RE
 .PP
 
-.SS "char** __getargv_a (void)"
+.SS "char ** __getargv_a (void)"
 
 .SS "int __getexepath (char * path, int pathlen, pid_t pid)"
 Get the executable path of a given process id 
@@ -782,16 +817,9 @@ On success, returns 0, or -1 on error\&.
 .RE
 .PP
 
-.SS "int __indebug (void)"
-Indicates if zoslib is in debug mode 
-.PP
-\fBReturns\fP
-.RS 4
-returns current debug mode 
-.RE
-.PP
-
-.SS "void* __iterate_stack_and_get (void * dsaptr, \fB__stack_info\fP * si)"
+.SS "char * __getMemoryUsageLogFile ()"
+Returns the file name, including 'stdout' or 'stderr', used to log memory allocation and release to\&. 
+.SS "void * __iterate_stack_and_get (void * dsaptr, \fB__stack_info\fP * si)"
 Iterate to next stack dsa based on current dsa 
 .PP
 \fBParameters\fP
@@ -807,19 +835,6 @@ returns the next dsa entry in the chain or 0 if not found
 .RE
 .PP
 
-.SS "void* __loadmod (const char * name)"
-
-.SS "int __lutimes (const char * filename, const struct timeval tv[2])"
-Changes the access and modification times of a file in the same way as lutimes, with the difference that microsecond precision is not supported\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIfilename\fP the path to file 
-.br
-\fItv\fP two structs used to specify the new times 
-.RE
-.PP
-
 .SS "unsigned long __mach_absolute_time (void)"
 Obtain the mach absolute time 
 .PP
@@ -829,7 +844,20 @@ returns mach absolute time
 .RE
 .PP
 
-.SS "int __print_zoslib_help (FILE * fp, const char * title)"
+.SS "void __mainTerminating ()"
+Tell zoslib that the main process is terminating, for its diagnostics\&. 
+.SS "int __nanosleep (const struct timespec * req, struct timespec * rem)"
+Suspends the execution of the calling thread until either at least the time specified in *req has elapsed, an event occurs, or a signal arrives\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIreq\fP struct used to specify intervals of time with nanosecond precision 
+.br
+\fIrem\fP the remaining time if the call is interrupted 
+.RE
+.PP
+
+.SS "int __print_zoslib_help (\fBFILE\fP * fp, const char * title)"
 Prints zoslib help information to specified FILE pointer 
 .PP
 \fBParameters\fP
@@ -867,29 +895,15 @@ returns 0 if successful, non-zero if unsuccessful\&.
 .RE
 .PP
 
-.SS "int __sem_destroy (\fB__sem_t\fP * s0)"
-
-.SS "int __sem_getvalue (\fB__sem_t\fP * s0, int * sval)"
-
-.SS "int __sem_init (\fB__sem_t\fP * s0, int shared, unsigned int val)"
-
-.SS "int __sem_post (\fB__sem_t\fP * s0)"
-
-.SS "int __sem_timedwait (\fB__sem_t\fP * s0, const struct timespec * abs_timeout)"
-
-.SS "int __sem_trywait (\fB__sem_t\fP * s0)"
-
-.SS "int __sem_wait (\fB__sem_t\fP * s0)"
-
 .SS "void __set_backtrace_on_abort (bool flag)"
 Enable or disable \fBabort()\fP from calling display_backtrace()\&. Default is true\&. 
 .SS "void __set_ccsid_guess_buf_size (int nbytes)"
 
-.SS "void __setdebug (int)"
-Activates debug mode 
 .SS "int __setenv_a (const char *, const char *, int)"
 
-.SS "void __settimelimit (int secs)"
+.SS "void __setLogMemoryUsage (bool v)"
+
+.SS "void __settimelimit (int secs)\fC [extern]\fP"
 
 .SS "void __tb (void)"
 
@@ -906,7 +920,7 @@ Attempts to a close a socket for a period of time
 
 .SS "int __testread (const void * location)"
 TODO(itodorov) - zos: document these interfaces 
-.SS "void __unloadmod (void * mod)"
+.SS "void __unloadmod (void * mod)\fC [extern]\fP"
 
 .SS "int __update_envar_names (\fBzoslib_config_t\fP *const config)"
 Changes the names of one or more of the environment variables zoslib uses 
@@ -938,45 +952,103 @@ Updates the zoslib global variables associated with the zoslib environment varia
 
 .SS "void __xfer_env (void)"
 Convert environment variables from EBCDIC to ASCII\&. 
-.SS "unsigned int __zsync_val_compare_and_swap32 (volatile unsigned int * __p, unsigned int __compVal, unsigned int __exchVal)"
-
-.SS "void abort (void)"
-
-.SS "void* anon_mmap (void * _, size_t len)"
-Generate an anonymous memory map 
+.SS "void * __zalloc (size_t len, size_t alignment)"
+Allocate memory in 64-bit virtual storage when size is a megabyte multiple or above 2GB, or in 31-bit storage otherwise, and if none is available, attempt to allocate from 64-bit virtual storage\&. 
 .PP
 \fBParameters\fP
 .RS 4
-\fI_\fP ignored 
+\fIlen\fP length in bytes of memory to allocate 
 .br
-\fIlen\fP length in bytes of memory map 
+\fIalignment\fP in bytes and applies only to 31-bit storage (64-bit storage is always megabyte-aligned) 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-returns start address of anonymous memory map 
+pointer to the beginning of newly allocated memory, or 0 if unsuccessful 
 .RE
 .PP
 
-.SS "int anon_munmap (void * addr, size_t len)"
-Deallocates memory map 
+.SS "void * __zalloc_for_fd (size_t len, const char * filename, int fd, off_t offset)"
+Allocate memory (using \fB__zalloc()\fP) and read into it contents of given file 
 .PP
 \fBParameters\fP
 .RS 4
-\fIaddr\fP start address of memory map 
+\fIlen\fP length in bytes of memory to allocate 
+.br
+\fIfilename\fP filename to read 
+.br
+\fIfd\fP file descriptor 
+.br
+\fIoffset\fP offset in bytes into the file to read 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+pointer to the beginning of newly allocated memory, or 0 if unsuccessful 
+.RE
+.PP
+
+.SS "int __zfree (void * addr, int len)"
+Deallocate memory 
+.PP
+\fBParameters\fP
+.RS 4
+\fIaddr\fP start address of memory 
 .br
 \fIlen\fP length in bytes 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-returns 0 if successful, -1 if unsuccessful\&. 
+returns 0 if successful, -1 if unsuccessful 
 .RE
 .PP
 
-.SS "unsigned int atomic_dec (volatile unsigned int * loc)"
+.SS "void * _gdsa ()"
 
-.SS "unsigned int atomic_inc (volatile unsigned int * loc)"
+.SS "void abort (void)"
+
+.SS "void * anon_mmap (void * _, size_t len)"
+Allocate memory in 64-bit virtual storage when size is a megabyte multiple or above 2GB, or in 31-bit storage (with PAGE_SIZE bytes alignment) otherwise, and if none is available, attempt to allocate from 64-bit virtual storage\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI_\fP ignored 
+.br
+\fIlen\fP length in bytes of memory to allocate 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful 
+.RE
+.PP
+\fBDeprecated\fP
+.RS 4
+This function will be removed once mmap is fully functional (e\&.g\&. MAP_ANONYMOUS is supported) 
+.RE
+.PP
+
+.SS "int anon_munmap (void * addr, size_t len)"
+Deallocate memory 
+.PP
+\fBParameters\fP
+.RS 4
+\fIaddr\fP start address of memory 
+.br
+\fIlen\fP length in bytes 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+returns 0 if successful, -1 if unsuccessful 
+.RE
+.PP
+\fBDeprecated\fP
+.RS 4
+This function will be removed once mmap is fully functional (e\&.g\&. MAP_ANONYMOUS is supported) 
+.RE
+.PP
 
 .SS "int backtrace (void ** buffer, int size)"
 Generate a backtrace and store into *Buffer\&. 
@@ -994,7 +1066,7 @@ if successful, returns 0, otherwise -1
 .RE
 .PP
 
-.SS "char** backtrace_symbols (void *const * buffer, int size)"
+.SS "char ** backtrace_symbols (void *const * buffer, int size)"
 Generate a backtrace symbols and store into *Buffer\&. 
 .PP
 \fBParameters\fP
@@ -1024,20 +1096,6 @@ Generate a backtrace symbols and store into *Buffer\&.
 .PP
 
 .SS "int clock_gettime (\fBclockid_t\fP clk_id, struct timespec * tp)"
-Get current time of clock\&. 
-.PP
-\fBParameters\fP
-.RS 4
-\fIclk_id\fP Clock id\&. 
-.br
-\fItp\fP structure to store the current time to\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-return 0 for success, or -1 for failure\&. 
-.RE
-.PP
 
 .SS "int execvpe (const char * name, char *const argv[], char *const envp[])"
 Execute a file\&. 
@@ -1057,6 +1115,24 @@ if successful, it doesn't return; otherwise, it returns -1 and sets errno\&.
 .RE
 .PP
 
+.SS "int futimes (int fd, const struct timeval tv[2])"
+
+.PP
+(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES) Changes the access and modification times of a file 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfd\fP file descriptor to modify 
+.br
+\fItv\fP timeval structure containing new time 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+return 0 for success, or -1 for failure\&. 
+.RE
+.PP
+
 .SS "int get_ipcs_overview (IPCQPROC * info)"
 Returns the overview structure of IPCQPROC 
 .PP
@@ -1071,23 +1147,7 @@ On success, returns 0, or -1 on error\&.
 .RE
 .PP
 
-.SS "int getentropy (void * buffer, size_t length)"
-Fill a buffer with random bytes 
-.PP
-\fBParameters\fP
-.RS 4
-\fIbuffer\fP to store random bytes to\&. 
-.br
-\fInumber\fP of random bytes to generate\&. 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-On success, returns 0, or -1 on error\&. 
-.RE
-.PP
-
-.SS "const char* getIFAUsageErrorString (unsigned long rc)"
+.SS "const char * getIFAUsageErrorString (unsigned long rc)"
 Retrieves error message from __registerProduct IFAUSAGE macro\&. 
 .PP
 \fBParameters\fP
@@ -1112,10 +1172,6 @@ returns the current thread id
 .RE
 .PP
 
-.SS "if (! mod)"
-
-.SS "if (m\-> thptr)"
-
 .SS "void init_zoslib (const \fBzoslib_config_t\fP config)"
 Initialize zoslib library 
 .PP
@@ -1138,19 +1194,24 @@ Initialize the struct used to configure zoslib with default values\&.
 
 .SS "int kill (int pid, int sig)"
 
-.SS "int nanosleep (const struct timespec * req, struct timespec * rem)"
-Suspends the execution of the calling thread until either at least the time specified in *req has elapsed, an event occurs, or a signal arrives\&. 
+.SS "int lutimes (const char * filename, const struct timeval tv[2])"
+Changes the access and modification times of a file 
 .PP
 \fBParameters\fP
 .RS 4
-\fIreq\fP struct used to specify intervals of time with nanosecond precision 
+\fIfilename\fP file path to modify 
 .br
-\fIrem\fP the remaining time if the call is interrupted 
+\fItv\fP timeval structure containing new time 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+return 0 for success, or -1 for failure\&. 
 .RE
 .PP
 
-.SS "void* roanon_mmap (void * _, size_t len, int prot, int flags, const char * filename, int fildes, off_t off)"
-Generate a read only anonymous memory map for a given file 
+.SS "void * roanon_mmap (void * _, size_t len, int prot, int flags, const char * filename, int fd, off_t offset)"
+Allocate memory (using \fB__zalloc()\fP) and read into it contents of given file at the given offset\&. 
 .PP
 \fBParameters\fP
 .RS 4
@@ -1164,12 +1225,19 @@ Generate a read only anonymous memory map for a given file
 .br
 \fIfilename\fP filename to read 
 .br
-\fIfiledes\fP file descriptor 
+\fIfd\fP file descriptor 
+.br
+\fIoffset\fP offset in bytes into the file to read 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-returns start address of anonymous memory map 
+pointer to the beginning of newly allocated memory, or MAP_FAILED if unsuccessful 
+.RE
+.PP
+\fBDeprecated\fP
+.RS 4
+This function will be removed once mmap is fully functional (e\&.g\&. MAP_ANONYMOUS is supported), in which case mapped memory would need to be converted to ASCII if the file contains EBCDIC\&. 
 .RE
 .PP
 
@@ -1207,53 +1275,14 @@ if equal, returns 0, otherwise returns non-zero\&.
 .RE
 .PP
 
-.SS "size_t strnlen (const char * str, size_t maxlen)"
-Determine the length of a fixed-size string 
-.PP
-\fBParameters\fP
-.RS 4
-\fIstr\fP fixed-size character string 
-.br
-\fImaxlen\fP maximum # of bytes to traverse 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-returns the length of the string 
-.RE
-.PP
-
-.SS "void Usleep (unsigned int msec)"
-
 .SH "Variable Documentation"
 .PP 
 .SS "const char* __zoslib_version = \fBDEFAULT_BUILD_STRING\fP"
 
-.SS "else"
-\fBInitial value:\fP
-.PP
-.nf
-{
-    
-    __asm(" LG 1,%1 \n"
-          " LG 13,%2 \n"
-          " LG 15,%3 \n"
-          " SAM31 \n"
-          " STMH 14,12,72(13)\n"
-          " BASR 14,15 \n"
-          " LMH  14,12,72(13)\n" 
-                                 
-          " SAM64 \n"
-          " LGR %0,15 \n"
-          : "=r"(rc)
-          : "m"(m->reg1), "m"(m->reg13), "m"(m->reg15)
-          : "r1", "r13", "r14", "r15")
-.fi
 .SS "char** environ\fC [extern]\fP"
 
 .SS "const char* IFAUsageErrorStrings[]"
-\fBInitial value:\fP
-.PP
+\fBInitial value:\fP.PP
 .nf
 = {
     
@@ -1284,18 +1313,8 @@ returns the length of the string
     "IFAUSAGE cannot complete processing because SMF usage processing"
     " is not available on the system\&."}
 .fi
+
 .SS "const char* MODULE_REGISTER_USAGE = 'IFAUSAGE'"
-
-.SS "void* plist"
-\fBInitial value:\fP
-.PP
-.nf
-{
-  loadmod_t *m = (loadmod_t *)mod
-.fi
-.SS "return rc"
-
-.SS "m reg1 = \fBplist\fP"
 
 .SH "Author"
 .PP 

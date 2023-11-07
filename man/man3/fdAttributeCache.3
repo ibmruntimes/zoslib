@@ -1,4 +1,4 @@
-.TH "fdAttributeCache" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "fdAttributeCache" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,16 +10,10 @@ fdAttributeCache
 
 .in +1c
 .ti -1c
-.RI "\fBfd_attribute\fP \fBget_attribute\fP (int fd)"
+.RI "\fBfdAttributeCache\fP ()"
 .br
 .ti -1c
-.RI "void \fBset_attribute\fP (int fd, \fBfd_attribute\fP attr)"
-.br
-.ti -1c
-.RI "void \fBunset_attribute\fP (int fd)"
-.br
-.ti -1c
-.RI "void \fBclear\fP (void)"
+.RI "\fB~fdAttributeCache\fP ()"
 .br
 .ti -1c
 .RI "\fBfd_attribute\fP \fBget_attribute\fP (int fd)"
@@ -34,21 +28,19 @@ fdAttributeCache
 .RI "void \fBclear\fP (void)"
 .br
 .in -1c
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "fdAttributeCache::fdAttributeCache ()\fC [inline]\fP"
+
+.SS "fdAttributeCache::~fdAttributeCache ()\fC [inline]\fP"
+
 .SH "Member Function Documentation"
 .PP 
 .SS "void fdAttributeCache::clear (void)\fC [inline]\fP"
 
-.SS "void fdAttributeCache::clear (void)\fC [inline]\fP"
-
-.SS "\fBfd_attribute\fP fdAttributeCache::get_attribute (int fd)\fC [inline]\fP"
-
 .SS "\fBfd_attribute\fP fdAttributeCache::get_attribute (int fd)\fC [inline]\fP"
 
 .SS "void fdAttributeCache::set_attribute (int fd, \fBfd_attribute\fP attr)\fC [inline]\fP"
-
-.SS "void fdAttributeCache::set_attribute (int fd, \fBfd_attribute\fP attr)\fC [inline]\fP"
-
-.SS "void fdAttributeCache::unset_attribute (int fd)\fC [inline]\fP"
 
 .SS "void fdAttributeCache::unset_attribute (int fd)\fC [inline]\fP"
 

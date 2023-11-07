@@ -1,0 +1,55 @@
+\doxysection{src/zos-\/mount.c File Reference}
+\hypertarget{zos-mount_8c}{}\label{zos-mount_8c}\index{src/zos-\/mount.c@{src/zos-\/mount.c}}
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$mntent.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mount.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mntent.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{zos-mount_8c_ac3d144aa01e765a1fae62ab5491c7cc1}{\+\_\+\+POSIX\+\_\+\+SOURCE}}
+\item 
+\#define \mbox{\hyperlink{zos-mount_8c_a268e99b5d1284a80d150d565580f1aae}{\+\_\+\+OPEN\+\_\+\+SYS}}
+\item 
+\#define \mbox{\hyperlink{zos-mount_8c_a4233951f167ac8c83f4339084125221f}{NUM\+\_\+\+FSTYPE}}~5
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{zos-mount_8c_ae81cfe9665dcf3516bc06cc2eb17f184}{getmntinfo}} (struct \mbox{\hyperlink{structstatfs}{statfs}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}statfsp, int flags)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{zos-mount_8c_a268e99b5d1284a80d150d565580f1aae}\label{zos-mount_8c_a268e99b5d1284a80d150d565580f1aae} 
+\index{zos-\/mount.c@{zos-\/mount.c}!\_OPEN\_SYS@{\_OPEN\_SYS}}
+\index{\_OPEN\_SYS@{\_OPEN\_SYS}!zos-\/mount.c@{zos-\/mount.c}}
+\doxysubsubsection{\texorpdfstring{\_OPEN\_SYS}{\_OPEN\_SYS}}
+{\footnotesize\ttfamily \#define \+\_\+\+OPEN\+\_\+\+SYS}
+
+\Hypertarget{zos-mount_8c_ac3d144aa01e765a1fae62ab5491c7cc1}\label{zos-mount_8c_ac3d144aa01e765a1fae62ab5491c7cc1} 
+\index{zos-\/mount.c@{zos-\/mount.c}!\_POSIX\_SOURCE@{\_POSIX\_SOURCE}}
+\index{\_POSIX\_SOURCE@{\_POSIX\_SOURCE}!zos-\/mount.c@{zos-\/mount.c}}
+\doxysubsubsection{\texorpdfstring{\_POSIX\_SOURCE}{\_POSIX\_SOURCE}}
+{\footnotesize\ttfamily \#define \+\_\+\+POSIX\+\_\+\+SOURCE}
+
+\Hypertarget{zos-mount_8c_a4233951f167ac8c83f4339084125221f}\label{zos-mount_8c_a4233951f167ac8c83f4339084125221f} 
+\index{zos-\/mount.c@{zos-\/mount.c}!NUM\_FSTYPE@{NUM\_FSTYPE}}
+\index{NUM\_FSTYPE@{NUM\_FSTYPE}!zos-\/mount.c@{zos-\/mount.c}}
+\doxysubsubsection{\texorpdfstring{NUM\_FSTYPE}{NUM\_FSTYPE}}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+FSTYPE~5}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{zos-mount_8c_ae81cfe9665dcf3516bc06cc2eb17f184}\label{zos-mount_8c_ae81cfe9665dcf3516bc06cc2eb17f184} 
+\index{zos-\/mount.c@{zos-\/mount.c}!getmntinfo@{getmntinfo}}
+\index{getmntinfo@{getmntinfo}!zos-\/mount.c@{zos-\/mount.c}}
+\doxysubsubsection{\texorpdfstring{getmntinfo()}{getmntinfo()}}
+{\footnotesize\ttfamily int getmntinfo (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstatfs}{statfs}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{statfsp,  }\item[{int}]{flags }\end{DoxyParamCaption})}
+

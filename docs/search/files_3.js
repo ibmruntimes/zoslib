@@ -1,19 +1,4 @@
 var searchData=
 [
-  ['zos_2dbase_2eh_746',['zos-base.h',['../zos-base_8h.html',1,'']]],
-  ['zos_2dbpx_2ecc_747',['zos-bpx.cc',['../zos-bpx_8cc.html',1,'']]],
-  ['zos_2dbpx_2eh_748',['zos-bpx.h',['../zos-bpx_8h.html',1,'']]],
-  ['zos_2dchar_2dutil_2ecc_749',['zos-char-util.cc',['../zos-char-util_8cc.html',1,'']]],
-  ['zos_2dchar_2dutil_2eh_750',['zos-char-util.h',['../zos-char-util_8h.html',1,'']]],
-  ['zos_2dio_2ecc_751',['zos-io.cc',['../zos-io_8cc.html',1,'']]],
-  ['zos_2dio_2eh_752',['zos-io.h',['../zos-io_8h.html',1,'']]],
-  ['zos_2dsemaphore_2ecc_753',['zos-semaphore.cc',['../zos-semaphore_8cc.html',1,'']]],
-  ['zos_2dsemaphore_2eh_754',['zos-semaphore.h',['../zos-semaphore_8h.html',1,'']]],
-  ['zos_2dsetlibpath_2eh_755',['zos-setlibpath.h',['../zos-setlibpath_8h.html',1,'']]],
-  ['zos_2dsys_2dinfo_2ecc_756',['zos-sys-info.cc',['../zos-sys-info_8cc.html',1,'']]],
-  ['zos_2dsys_2dinfo_2eh_757',['zos-sys-info.h',['../zos-sys-info_8h.html',1,'']]],
-  ['zos_2dtls_2ecc_758',['zos-tls.cc',['../zos-tls_8cc.html',1,'']]],
-  ['zos_2dtls_2eh_759',['zos-tls.h',['../zos-tls_8h.html',1,'']]],
-  ['zos_2ecc_760',['zos.cc',['../zos_8cc.html',1,'']]],
-  ['zos_2eh_761',['zos.h',['../zos_8h.html',1,'']]]
+  ['inotify_2eh_0',['inotify.h',['../inotify_8h.html',1,'']]]
 ];

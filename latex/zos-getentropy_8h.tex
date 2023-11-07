@@ -1,0 +1,28 @@
+\doxysection{include/zos-\/getentropy.h File Reference}
+\hypertarget{zos-getentropy_8h}{}\label{zos-getentropy_8h}\index{include/zos-\/getentropy.h@{include/zos-\/getentropy.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{zos-getentropy_8h_a0b40252bd9fdd06bebf14ad221d9a19c}{\+\_\+\+\_\+getentropy}} (void \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t length)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{zos-getentropy_8h_a0b40252bd9fdd06bebf14ad221d9a19c}\label{zos-getentropy_8h_a0b40252bd9fdd06bebf14ad221d9a19c} 
+\index{zos-\/getentropy.h@{zos-\/getentropy.h}!\_\_getentropy@{\_\_getentropy}}
+\index{\_\_getentropy@{\_\_getentropy}!zos-\/getentropy.h@{zos-\/getentropy.h}}
+\doxysubsubsection{\texorpdfstring{\_\_getentropy()}{\_\_getentropy()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+getentropy (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+Fill a buffer with random bytes 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em buffer} & to store random bytes to. \\
+\hline
+\mbox{\texttt{ in}}  & {\em number} & of random bytes to generate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+On success, returns 0, or -\/1 on error. 
+\end{DoxyReturn}

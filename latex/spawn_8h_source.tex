@@ -1,0 +1,60 @@
+\doxysection{spawn.\+h}
+\hypertarget{spawn_8h_source}{}\label{spawn_8h_source}\index{include/spawn.h@{include/spawn.h}}
+\mbox{\hyperlink{spawn_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SPAWN\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SPAWN\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\_next\ <spawn.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_SETPGROUP\ 0x02}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_SETSIGMASK\ 0x08}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_USEVFORK\ 0x40}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_SETSIGDEF\ 0x01}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_SETSCHEDPARAM\ 0x04}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_SETSCHEDULER\ 0x10}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ POSIX\_SPAWN\_RESETIDS\ 0x20}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ \{}
+\DoxyCodeLine{00029\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct__spawn__actions}{\_spawn\_actions}}\ *\mbox{\hyperlink{structposix__spawn__file__actions__t_a373c97d6f4e4578f8ae54daf7165a3be}{actions}};}
+\DoxyCodeLine{00030\ \}\ \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ \{}
+\DoxyCodeLine{00033\ \ \ sigset\_t\ *\mbox{\hyperlink{structposix__spawnattr__t_a6230c8e6fe398a4147911069c5c193ae}{mask}};}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{short}\ \mbox{\hyperlink{structposix__spawnattr__t_a7e473067d6d8c3a4aa3355556130e9e4}{flags}};}
+\DoxyCodeLine{00035\ \}\ \mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_a06b5d49e3bca2daa8265e66055c5d64f}{posix\_spawn\_file\_actions\_init}}(\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *);}
+\DoxyCodeLine{00038\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_afa32abf8af936f063b94d732150282fd}{posix\_spawn\_file\_actions\_addclose}}(\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ pipe\_fd);}
+\DoxyCodeLine{00040\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_aa91a56a4818cd17fb2b727a638b8ada3}{posix\_spawn\_file\_actions\_addopen}}(\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *,\ \textcolor{keywordtype}{int},}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ \textcolor{keywordtype}{int}\ flags,\ \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\_t}});}
+\DoxyCodeLine{00042\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_ad8b31fef22a4f114430657ac2fbc0f24}{posix\_spawn\_file\_actions\_adddup2}}(\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *,\ \textcolor{keywordtype}{int}\ pipe\_fd,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00044\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_ac8ed367d3859ed050ae26300cf43b0c6}{posix\_spawn\_file\_actions\_destroy}}(\mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_ac92bc0a79fa00e637d5f75890064455b}{posix\_spawnattr\_init}}(\mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ *);}
+\DoxyCodeLine{00047\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_a380857e3956732b2b4e0a9a5296c055c}{posix\_spawnattr\_setsigmask}}(\mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ *,\ sigset\_t\ *mask);}
+\DoxyCodeLine{00048\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_ad966c922055c484d89aa79490bf1501d}{posix\_spawnattr\_setflags}}(\mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ *,\ \textcolor{keywordtype}{short}\ flags);}
+\DoxyCodeLine{00049\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_a6efacb6eeb83b257e8e8af98e814e086}{posix\_spawnattr\_destroy}}(\mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ *);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{spawn_8h_add99420687cf01421fa357071d56df90}{posix\_spawn}}(pid\_t\ *pid,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *cmd,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structposix__spawn__file__actions__t}{posix\_spawn\_file\_actions\_t}}\ *act,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structposix__spawnattr__t}{posix\_spawnattr\_t}}\ *,\ \textcolor{keywordtype}{char}\ *\textcolor{keyword}{const}\ args[],}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *\textcolor{keyword}{const}\ env[]);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00057\ \}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

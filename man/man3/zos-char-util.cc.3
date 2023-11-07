@@ -1,4 +1,4 @@
-.TH "src/zos-char-util.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-char-util.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,11 +14,13 @@ src/zos-char-util.cc
 .br
 \fC#include <_Ccsid\&.h>\fP
 .br
+\fC#include <ctest\&.h>\fP
+.br
 \fC#include <fcntl\&.h>\fP
 .br
 \fC#include <iconv\&.h>\fP
 .br
-\fC#include <mutex>\fP
+\fC#include <pthread\&.h>\fP
 .br
 \fC#include <stdlib\&.h>\fP
 .br
@@ -112,7 +114,7 @@ src/zos-char-util.cc
 
 .SH "Typedef Documentation"
 .PP 
-.SS "typedef std::unordered_map<int, \fBfd_attribute\fP, \fBIntHash\fP>::const_iterator \fBcursor_t\fP"
+.SS "typedef std::unordered_map<int,\fBfd_attribute\fP,\fBIntHash\fP>::const_iterator \fBcursor_t\fP"
 
 .SS "typedef unsigned long \fBfd_attribute\fP"
 
@@ -220,7 +222,7 @@ Sets file descriptor to auto convert\&.
 
 .SS "void __set_ccsid_guess_buf_size (int nbytes)"
 
-.SS "void* _convert_a2e (void * dst, const void * src, size_t size)"
+.SS "void * _convert_a2e (void * dst, const void * src, size_t size)"
 Convert from ASCII to EBCDIC 
 .PP
 \fBParameters\fP
@@ -238,7 +240,7 @@ returns destination string\&.
 .RE
 .PP
 
-.SS "void* _convert_e2a (void * dst, const void * src, size_t size)"
+.SS "void * _convert_e2a (void * dst, const void * src, size_t size)"
 Convert from EBCDIC to ASCII\&. 
 .PP
 \fBParameters\fP
@@ -256,9 +258,9 @@ returns destination string\&.
 .RE
 .PP
 
-.SS "int conv_utf16_utf8 (char *, size_t, const char *, size_t)"
+.SS "int conv_utf16_utf8 (char * out, size_t outsize, const char * in, size_t insize)"
 Convert string from UTF16 to UTF8\&. 
-.SS "int conv_utf8_utf16 (char *, size_t, const char *, size_t)"
+.SS "int conv_utf8_utf16 (char * out, size_t outsize, const char * in, size_t insize)"
 Convert string from UTF8 to UTF16 
 .SH "Variable Documentation"
 .PP 

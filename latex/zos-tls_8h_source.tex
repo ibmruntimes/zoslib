@@ -1,0 +1,44 @@
+\doxysection{zos-\/tls.h}
+\hypertarget{zos-tls_8h_source}{}\label{zos-tls_8h_source}\index{include/zos-\/tls.h@{include/zos-\/tls.h}}
+\mbox{\hyperlink{zos-tls_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ TODO(gabylb):\ zos\ -\/\ revisit\ when\ thread\_local\ is\ implemented.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ APIs\ that\ implement\ Thread-\/local\ storage\ support.}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#ifndef\ ZOS\_TLS\_H\_}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ ZOS\_TLS\_H\_}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{unistd_8h}{unistd.h}}>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{struct____tlsanchor}{\_\_tlsanchor}};}
+\DoxyCodeLine{00022\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____tlsanchor}{\_\_tlsanchor}}*\ \mbox{\hyperlink{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d}{\_\_tlsvaranchor\_create}}(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{struct____tlsanchor_aec8016a8a8d1c49a1ec410322bb11d92}{sz}});}
+\DoxyCodeLine{00023\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}{\_\_tlsvaranchor\_destroy}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{struct____tlsanchor}{\_\_tlsanchor}}\ *anchor);}
+\DoxyCodeLine{00024\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{zos-tls_8cc_a30fdd6916df1f0cdea1f57feab25bfdc}{\_\_tlsPtrFromAnchor}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{struct____tlsanchor}{\_\_tlsanchor}}\ *anchor,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \_\_tlssim\ \{}
+\DoxyCodeLine{00027\ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____tlsanchor}{\_\_tlsanchor}}\ *anchor;}
+\DoxyCodeLine{00028\ \ \ T\ v;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \_\_tlssim(\textcolor{keyword}{const}\ T\ \&initvalue)\ :\ v(initvalue)\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ anchor\ =\ \mbox{\hyperlink{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d}{\_\_tlsvaranchor\_create}}(\textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00033\ \ \ \}}
+\DoxyCodeLine{00034\ \ \ \_\_tlssim()\ \{\ anchor\ =\ \mbox{\hyperlink{zos-tls_8cc_ab507a6e586268e86d82c8ba3de3d4d7d}{\_\_tlsvaranchor\_create}}(\textcolor{keyword}{sizeof}(T));\ \}}
+\DoxyCodeLine{00035\ \ \ \string~\_\_tlssim()\ \{\ \mbox{\hyperlink{zos-tls_8cc_a70cfa58f0ddd04ee045b7f8dd5f5a84a}{\_\_tlsvaranchor\_destroy}}(anchor);\ \}}
+\DoxyCodeLine{00036\ \ \ T\ *access(\textcolor{keywordtype}{void})\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}T\ *\textcolor{keyword}{>}(\mbox{\hyperlink{zos-tls_8cc_a30fdd6916df1f0cdea1f57feab25bfdc}{\_\_tlsPtrFromAnchor}}(anchor,\ \&v));\ \}}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_cplusplus}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_TLS\_H\_}}
+
+\end{DoxyCode}

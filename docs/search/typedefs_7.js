@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['thunk24_5ft_1311',['thunk24_t',['../zos_8cc.html#a34787f758779a3800ee6963d39b49bab',1,'zos.cc']]],
-  ['timer_5fparm_5ft_1312',['timer_parm_t',['../zos_8cc.html#a2f276cbed5c622fd42032a840046474e',1,'zos.cc']]]
+  ['posix_5fspawn_5ffile_5factions_5ft_0',['posix_spawn_file_actions_t',['../spawn_8h.html#a5319b0f896f98c66722cc43af303397e',1,'spawn.h']]],
+  ['posix_5fspawnattr_5ft_1',['posix_spawnattr_t',['../spawn_8h.html#a54dfad4f425eee7a10ab2e69a1c6880b',1,'spawn.h']]]
 ];

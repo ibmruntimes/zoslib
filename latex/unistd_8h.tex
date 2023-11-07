@@ -1,0 +1,67 @@
+\doxysection{include/unistd.h File Reference}
+\hypertarget{unistd_8h}{}\label{unistd_8h}\index{include/unistd.h@{include/unistd.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{unistd_8h_adc162a9d4b037c6e3ab6097d0a2684c1}{\+\_\+\+\_\+\+XPLAT}}~1
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{unistd_8h_ae11471f0cd969479eff8dda0c75c884f}{\+\_\+\+\_\+pipe\+\_\+ascii}} (int\mbox{[}2\mbox{]})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{unistd_8h_ae8d65dc896b6a03b4e2181e5d3738058}{\+\_\+\+\_\+close}} (int)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{unistd_8h_adb0f5fad4e4ebe0912079ed2dcd3bb92}{getentropy}} (void \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t length) \+\_\+\+\_\+asm("{}\+\_\+\+\_\+getentropy"{})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{unistd_8h_abcbf671bf2c88884e7c0292e75075587}{execvpe}} (const char \texorpdfstring{$\ast$}{*}name, char \texorpdfstring{$\ast$}{*}const argv\mbox{[}$\,$\mbox{]}, char \texorpdfstring{$\ast$}{*}const envp\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{unistd_8h_adc162a9d4b037c6e3ab6097d0a2684c1}\label{unistd_8h_adc162a9d4b037c6e3ab6097d0a2684c1} 
+\index{unistd.h@{unistd.h}!\_\_XPLAT@{\_\_XPLAT}}
+\index{\_\_XPLAT@{\_\_XPLAT}!unistd.h@{unistd.h}}
+\doxysubsubsection{\texorpdfstring{\_\_XPLAT}{\_\_XPLAT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+XPLAT~1}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{unistd_8h_ae8d65dc896b6a03b4e2181e5d3738058}\label{unistd_8h_ae8d65dc896b6a03b4e2181e5d3738058} 
+\index{unistd.h@{unistd.h}!\_\_close@{\_\_close}}
+\index{\_\_close@{\_\_close}!unistd.h@{unistd.h}}
+\doxysubsubsection{\texorpdfstring{\_\_close()}{\_\_close()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+close (\begin{DoxyParamCaption}\item[{int}]{fd }\end{DoxyParamCaption})}
+
+\Hypertarget{unistd_8h_ae11471f0cd969479eff8dda0c75c884f}\label{unistd_8h_ae11471f0cd969479eff8dda0c75c884f} 
+\index{unistd.h@{unistd.h}!\_\_pipe\_ascii@{\_\_pipe\_ascii}}
+\index{\_\_pipe\_ascii@{\_\_pipe\_ascii}!unistd.h@{unistd.h}}
+\doxysubsubsection{\texorpdfstring{\_\_pipe\_ascii()}{\_\_pipe\_ascii()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+pipe\+\_\+ascii (\begin{DoxyParamCaption}\item[{int}]{fd\mbox{[}2\mbox{]} }\end{DoxyParamCaption})}
+
+\Hypertarget{unistd_8h_abcbf671bf2c88884e7c0292e75075587}\label{unistd_8h_abcbf671bf2c88884e7c0292e75075587} 
+\index{unistd.h@{unistd.h}!execvpe@{execvpe}}
+\index{execvpe@{execvpe}!unistd.h@{unistd.h}}
+\doxysubsubsection{\texorpdfstring{execvpe()}{execvpe()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int execvpe (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{name,  }\item[{char \texorpdfstring{$\ast$}{*}const}]{argv\mbox{[}$\,$\mbox{]},  }\item[{char \texorpdfstring{$\ast$}{*}const}]{envp\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+Execute a file. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em name} & used to construct a pathname that identifies the new process image file. \\
+\hline
+\mbox{\texttt{ in}}  & {\em argv} & an array of character pointers to NULL-\/terminated strings. \\
+\hline
+\mbox{\texttt{ in}}  & {\em envp} & an array of character pointers to NULL-\/terminated strings. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+if successful, it doesn\textquotesingle{}t return; otherwise, it returns -\/1 and sets errno. 
+\end{DoxyReturn}
+\Hypertarget{unistd_8h_adb0f5fad4e4ebe0912079ed2dcd3bb92}\label{unistd_8h_adb0f5fad4e4ebe0912079ed2dcd3bb92} 
+\index{unistd.h@{unistd.h}!getentropy@{getentropy}}
+\index{getentropy@{getentropy}!unistd.h@{unistd.h}}
+\doxysubsubsection{\texorpdfstring{getentropy()}{getentropy()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int getentropy (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{size\+\_\+t}]{length }\end{DoxyParamCaption})}
+

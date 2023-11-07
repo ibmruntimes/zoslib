@@ -1,0 +1,133 @@
+\doxysection{src/zos-\/string.c File Reference}
+\hypertarget{zos-string_8c}{}\label{zos-string_8c}\index{src/zos-\/string.c@{src/zos-\/string.c}}
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$\+\_\+\+Nascii.\+h$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_a55c845b63ed7450afbd05ada9c9bfded}{\+\_\+\+AE\+\_\+\+BIMODAL}}~1
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_af39cf13ba5720deaf619f957294a96ba}{Signal\+List}}
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}{Sig\+Info}}(N,  D)~sig\#\#N
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}{Sig\+Info}}(N,  D)~D
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}{Sig\+Info}}(N,  D)~\#N
+\item 
+\#define \mbox{\hyperlink{zos-string_8c_afe16574dc9e754d107f344d5dcdf18d2}{lookup}}(arr,  n)~(\+\_\+\+\_\+is\+ASCII()? arr\#\#ASCII\mbox{[}n\mbox{]} \+: arr\#\#EBCDIC\mbox{[}n\mbox{]})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966}{Sigs}} \{ \mbox{\hyperlink{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a8aed0d333e7811c97f0f3ddba2c44b06}{Signal\+List}}
+, \mbox{\hyperlink{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a667731ad8f3bf5062c7e3f9f6c6db25c}{sig\+Total}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-string_8c_a8b856eee87a225f697f1b264ebd6a47b}{strsignal}} (int signum)
+\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-string_8c_aa0ece4a327f7bb720c356cf291caf938}{sigdescr\+\_\+np}} (int signum)
+\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-string_8c_a0cba7f2e20277834b763b5c66d05bf96}{sigabbrev\+\_\+np}} (int signum)
+\item 
+size\+\_\+t \mbox{\hyperlink{zos-string_8c_ad50ec2039d764d2ff084007ccb957cdb}{strnlen}} (const char \texorpdfstring{$\ast$}{*}str, size\+\_\+t maxlen)
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-string_8c_ab0ad551dd3ee13f9a51f28d779ae954d}{strpcpy}} (char \texorpdfstring{$\ast$}{*}dest, const char \texorpdfstring{$\ast$}{*}src)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{zos-string_8c_a55c845b63ed7450afbd05ada9c9bfded}\label{zos-string_8c_a55c845b63ed7450afbd05ada9c9bfded} 
+\index{zos-\/string.c@{zos-\/string.c}!\_AE\_BIMODAL@{\_AE\_BIMODAL}}
+\index{\_AE\_BIMODAL@{\_AE\_BIMODAL}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{\_AE\_BIMODAL}{\_AE\_BIMODAL}}
+{\footnotesize\ttfamily \#define \+\_\+\+AE\+\_\+\+BIMODAL~1}
+
+\Hypertarget{zos-string_8c_afe16574dc9e754d107f344d5dcdf18d2}\label{zos-string_8c_afe16574dc9e754d107f344d5dcdf18d2} 
+\index{zos-\/string.c@{zos-\/string.c}!lookup@{lookup}}
+\index{lookup@{lookup}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{lookup}{lookup}}
+{\footnotesize\ttfamily \#define lookup(\begin{DoxyParamCaption}\item[{}]{arr,  }\item[{}]{n }\end{DoxyParamCaption})~(\+\_\+\+\_\+is\+ASCII()? arr\#\#ASCII\mbox{[}n\mbox{]} \+: arr\#\#EBCDIC\mbox{[}n\mbox{]})}
+
+\Hypertarget{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}\label{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd} 
+\index{zos-\/string.c@{zos-\/string.c}!SigInfo@{SigInfo}}
+\index{SigInfo@{SigInfo}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{SigInfo}{SigInfo}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \#define Sig\+Info(\begin{DoxyParamCaption}\item[{}]{N,  }\item[{}]{D }\end{DoxyParamCaption})~sig\#\#N}
+
+\Hypertarget{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}\label{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd} 
+\index{zos-\/string.c@{zos-\/string.c}!SigInfo@{SigInfo}}
+\index{SigInfo@{SigInfo}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{SigInfo}{SigInfo}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \#define Sig\+Info(\begin{DoxyParamCaption}\item[{}]{N,  }\item[{}]{D }\end{DoxyParamCaption})~D}
+
+\Hypertarget{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd}\label{zos-string_8c_a7b919a7f9520b70a6e1347a99a3248bd} 
+\index{zos-\/string.c@{zos-\/string.c}!SigInfo@{SigInfo}}
+\index{SigInfo@{SigInfo}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{SigInfo}{SigInfo}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \#define Sig\+Info(\begin{DoxyParamCaption}\item[{}]{N,  }\item[{}]{D }\end{DoxyParamCaption})~\#N}
+
+\Hypertarget{zos-string_8c_af39cf13ba5720deaf619f957294a96ba}\label{zos-string_8c_af39cf13ba5720deaf619f957294a96ba} 
+\index{zos-\/string.c@{zos-\/string.c}!SignalList@{SignalList}}
+\index{SignalList@{SignalList}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{SignalList}{SignalList}}
+{\footnotesize\ttfamily \#define Signal\+List}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966}\label{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966} 
+\index{zos-\/string.c@{zos-\/string.c}!Sigs@{Sigs}}
+\index{Sigs@{Sigs}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{Sigs}{Sigs}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966}{Sigs}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SignalList@{SignalList}!zos-\/string.c@{zos-\/string.c}}\index{zos-\/string.c@{zos-\/string.c}!SignalList@{SignalList}}}\Hypertarget{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a8aed0d333e7811c97f0f3ddba2c44b06}\label{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a8aed0d333e7811c97f0f3ddba2c44b06} 
+Signal\+List&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{sigTotal@{sigTotal}!zos-\/string.c@{zos-\/string.c}}\index{zos-\/string.c@{zos-\/string.c}!sigTotal@{sigTotal}}}\Hypertarget{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a667731ad8f3bf5062c7e3f9f6c6db25c}\label{zos-string_8c_ac9ceaae74f3eb76d2688a34751f08966a667731ad8f3bf5062c7e3f9f6c6db25c} 
+sig\+Total&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{zos-string_8c_a0cba7f2e20277834b763b5c66d05bf96}\label{zos-string_8c_a0cba7f2e20277834b763b5c66d05bf96} 
+\index{zos-\/string.c@{zos-\/string.c}!sigabbrev\_np@{sigabbrev\_np}}
+\index{sigabbrev\_np@{sigabbrev\_np}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{sigabbrev\_np()}{sigabbrev\_np()}}
+{\footnotesize\ttfamily const char \texorpdfstring{$\ast$}{*} sigabbrev\+\_\+np (\begin{DoxyParamCaption}\item[{int}]{signum }\end{DoxyParamCaption})}
+
+\Hypertarget{zos-string_8c_aa0ece4a327f7bb720c356cf291caf938}\label{zos-string_8c_aa0ece4a327f7bb720c356cf291caf938} 
+\index{zos-\/string.c@{zos-\/string.c}!sigdescr\_np@{sigdescr\_np}}
+\index{sigdescr\_np@{sigdescr\_np}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{sigdescr\_np()}{sigdescr\_np()}}
+{\footnotesize\ttfamily const char \texorpdfstring{$\ast$}{*} sigdescr\+\_\+np (\begin{DoxyParamCaption}\item[{int}]{signum }\end{DoxyParamCaption})}
+
+\Hypertarget{zos-string_8c_ad50ec2039d764d2ff084007ccb957cdb}\label{zos-string_8c_ad50ec2039d764d2ff084007ccb957cdb} 
+\index{zos-\/string.c@{zos-\/string.c}!strnlen@{strnlen}}
+\index{strnlen@{strnlen}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{strnlen()}{strnlen()}}
+{\footnotesize\ttfamily size\+\_\+t strnlen (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{str,  }\item[{size\+\_\+t}]{maxlen }\end{DoxyParamCaption})}
+
+\Hypertarget{zos-string_8c_ab0ad551dd3ee13f9a51f28d779ae954d}\label{zos-string_8c_ab0ad551dd3ee13f9a51f28d779ae954d} 
+\index{zos-\/string.c@{zos-\/string.c}!strpcpy@{strpcpy}}
+\index{strpcpy@{strpcpy}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{strpcpy()}{strpcpy()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} strpcpy (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{dest,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{src }\end{DoxyParamCaption})}
+
+\Hypertarget{zos-string_8c_a8b856eee87a225f697f1b264ebd6a47b}\label{zos-string_8c_a8b856eee87a225f697f1b264ebd6a47b} 
+\index{zos-\/string.c@{zos-\/string.c}!strsignal@{strsignal}}
+\index{strsignal@{strsignal}!zos-\/string.c@{zos-\/string.c}}
+\doxysubsubsection{\texorpdfstring{strsignal()}{strsignal()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} strsignal (\begin{DoxyParamCaption}\item[{int}]{signum }\end{DoxyParamCaption})}
+

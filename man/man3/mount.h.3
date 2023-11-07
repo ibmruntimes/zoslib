@@ -1,0 +1,60 @@
+.TH "include/sys/mount.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/sys/mount.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+\fC#include <sys/types\&.h>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBstatfs\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMFSNAMELEN\fP   15 /* length of fs type name, not inc\&. nul */"
+.br
+.ti -1c
+.RI "#define \fBMNAMELEN\fP   90 /* length of buffer for returned name */"
+.br
+.ti -1c
+.RI "#define \fBMNT_WAIT\fP   1"
+.br
+.ti -1c
+.RI "#define \fBMNT_NOWAIT\fP   2 /* only NOWAIT supported with \fBgetmntinfo\fP */"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBgetmntinfo\fP (struct \fBstatfs\fP **mntbufp, int flags)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define MFSNAMELEN   15 /* length of fs type name, not inc\&. nul */"
+
+.SS "#define MNAMELEN   90 /* length of buffer for returned name */"
+
+.SS "#define MNT_NOWAIT   2 /* only NOWAIT supported with \fBgetmntinfo\fP */"
+
+.SS "#define MNT_WAIT   1"
+
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int getmntinfo (struct \fBstatfs\fP ** mntbufp, int flags)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

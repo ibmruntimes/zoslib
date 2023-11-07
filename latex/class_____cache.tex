@@ -1,93 +1,109 @@
-\hypertarget{class_____cache}{}\doxysection{\+\_\+\+\_\+\+Cache Class Reference}
-\label{class_____cache}\index{\_\_Cache@{\_\_Cache}}
-\doxysubsection*{Public Member Functions}
+\doxysection{\+\_\+\+\_\+\+Cache Class Reference}
+\hypertarget{class_____cache}{}\label{class_____cache}\index{\_\_Cache@{\_\_Cache}}
+\doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_____cache_a5f2ad08544add09c86cd26f62cc57525}{\+\_\+\+\_\+\+Cache}} ()
 \item 
-void \mbox{\hyperlink{class_____cache_a3fd58be39af8859641a022a73a4b0fd6}{addptr}} (const void $\ast$ptr, size\+\_\+t v)
+size\+\_\+t \mbox{\hyperlink{class_____cache_aa6ecccde1a02bddaba2d58e5c1510020}{get\+Current\+Mem31}} ()
 \item 
-bool \mbox{\hyperlink{class_____cache_aeb96f33f958af4267946e095e3d86161}{elligible}} ()
+size\+\_\+t \mbox{\hyperlink{class_____cache_a6cc94cca7b2785493a00d6487638a128}{get\+Current\+Mem64}} ()
 \item 
-void $\ast$ \mbox{\hyperlink{class_____cache_a5f52e97ae5d66610fd81fde42837127d}{alloc\+\_\+seg}} (int segs)
+size\+\_\+t \mbox{\hyperlink{class_____cache_a3e205e7f2c14dc24b1d9ca9e950cf504}{get\+Max\+Mem31}} ()
 \item 
-int \mbox{\hyperlink{class_____cache_aadc5e4366b86ced683c579d3adc736ac}{free\+\_\+seg}} (void $\ast$ptr)
+size\+\_\+t \mbox{\hyperlink{class_____cache_a87e4e534686774437d44edb15f58594e}{get\+Max\+Mem64}} ()
 \item 
-int \mbox{\hyperlink{class_____cache_ad2aa7dc0030c9e74aff646f44696a66d}{is\+\_\+exist\+\_\+ptr}} (const void $\ast$ptr)
+void \mbox{\hyperlink{class_____cache_a99fb929dd21a130a3aa6c7e7b68f8861}{addptr31}} (const void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t v)
 \item 
-int \mbox{\hyperlink{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93}{is\+\_\+rmode64}} (const void $\ast$ptr)
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_____cache_abd887c53bf9992827f21a1a10b260861}{alloc\+\_\+seg}} (size\+\_\+t segs)
 \item 
-void \mbox{\hyperlink{class_____cache_a576f36b97c4c09fa169636b1ecd5b00d}{show}} (void)
+int \mbox{\hyperlink{class_____cache_a3fa4b1589363c17ec9463d5e94f8a10c}{free\+\_\+seg}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t reqsize)
 \item 
-void \mbox{\hyperlink{class_____cache_a36185e7a4fc5243525f8cf85d96095ca}{freeptr}} (const void $\ast$ptr)
+int \mbox{\hyperlink{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93}{is\+\_\+rmode64}} (const void \texorpdfstring{$\ast$}{*}ptr)
 \item 
-\mbox{\hyperlink{class_____cache_af1aeb0880061d43e19f2d1091eca63cd}{$\sim$\+\_\+\+\_\+\+Cache}} ()
+void \mbox{\hyperlink{class_____cache_a851e07a683b2e29ebb1c840d4d39b540}{freeptr31}} (const void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t reqsize)
+\item 
+void \mbox{\hyperlink{class_____cache_a0155b2ee2158e11db4c84abaf6b19895}{display\+Debris}} ()
+\item 
+\mbox{\hyperlink{class_____cache_af1aeb0880061d43e19f2d1091eca63cd}{\texorpdfstring{$\sim$}{\string~}\+\_\+\+\_\+\+Cache}} ()
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{class_____cache_a5f2ad08544add09c86cd26f62cc57525}\label{class_____cache_a5f2ad08544add09c86cd26f62cc57525}} 
+\Hypertarget{class_____cache_a5f2ad08544add09c86cd26f62cc57525}\label{class_____cache_a5f2ad08544add09c86cd26f62cc57525} 
 \index{\_\_Cache@{\_\_Cache}!\_\_Cache@{\_\_Cache}}
 \index{\_\_Cache@{\_\_Cache}!\_\_Cache@{\_\_Cache}}
 \doxysubsubsection{\texorpdfstring{\_\_Cache()}{\_\_Cache()}}
 {\footnotesize\ttfamily \+\_\+\+\_\+\+Cache\+::\+\_\+\+\_\+\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_af1aeb0880061d43e19f2d1091eca63cd}\label{class_____cache_af1aeb0880061d43e19f2d1091eca63cd}} 
-\index{\_\_Cache@{\_\_Cache}!````~\_\_Cache@{$\sim$\_\_Cache}}
-\index{````~\_\_Cache@{$\sim$\_\_Cache}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{$\sim$\_\_Cache()}{~\_\_Cache()}}
-{\footnotesize\ttfamily \+\_\+\+\_\+\+Cache\+::$\sim$\+\_\+\+\_\+\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\Hypertarget{class_____cache_af1aeb0880061d43e19f2d1091eca63cd}\label{class_____cache_af1aeb0880061d43e19f2d1091eca63cd} 
+\index{\_\_Cache@{\_\_Cache}!````~\_\_Cache@{\texorpdfstring{$\sim$}{\string~}\_\_Cache}}
+\index{````~\_\_Cache@{\texorpdfstring{$\sim$}{\string~}\_\_Cache}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}\_\_Cache()}{\string~\_\_Cache()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+\+Cache\+::\texorpdfstring{$\sim$}{\string~}\+\_\+\+\_\+\+Cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{class_____cache_a3fd58be39af8859641a022a73a4b0fd6}\label{class_____cache_a3fd58be39af8859641a022a73a4b0fd6}} 
-\index{\_\_Cache@{\_\_Cache}!addptr@{addptr}}
-\index{addptr@{addptr}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{addptr()}{addptr()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::addptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\Hypertarget{class_____cache_a99fb929dd21a130a3aa6c7e7b68f8861}\label{class_____cache_a99fb929dd21a130a3aa6c7e7b68f8861} 
+\index{\_\_Cache@{\_\_Cache}!addptr31@{addptr31}}
+\index{addptr31@{addptr31}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{addptr31()}{addptr31()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::addptr31 (\begin{DoxyParamCaption}\item[{const void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_a5f52e97ae5d66610fd81fde42837127d}\label{class_____cache_a5f52e97ae5d66610fd81fde42837127d}} 
+\Hypertarget{class_____cache_abd887c53bf9992827f21a1a10b260861}\label{class_____cache_abd887c53bf9992827f21a1a10b260861} 
 \index{\_\_Cache@{\_\_Cache}!alloc\_seg@{alloc\_seg}}
 \index{alloc\_seg@{alloc\_seg}!\_\_Cache@{\_\_Cache}}
 \doxysubsubsection{\texorpdfstring{alloc\_seg()}{alloc\_seg()}}
-{\footnotesize\ttfamily void$\ast$ \+\_\+\+\_\+\+Cache\+::alloc\+\_\+seg (\begin{DoxyParamCaption}\item[{int}]{segs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+\+Cache\+::alloc\+\_\+seg (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{segs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_aeb96f33f958af4267946e095e3d86161}\label{class_____cache_aeb96f33f958af4267946e095e3d86161}} 
-\index{\_\_Cache@{\_\_Cache}!elligible@{elligible}}
-\index{elligible@{elligible}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{elligible()}{elligible()}}
-{\footnotesize\ttfamily bool \+\_\+\+\_\+\+Cache\+::elligible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\Hypertarget{class_____cache_a0155b2ee2158e11db4c84abaf6b19895}\label{class_____cache_a0155b2ee2158e11db4c84abaf6b19895} 
+\index{\_\_Cache@{\_\_Cache}!displayDebris@{displayDebris}}
+\index{displayDebris@{displayDebris}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{displayDebris()}{displayDebris()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::display\+Debris (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_aadc5e4366b86ced683c579d3adc736ac}\label{class_____cache_aadc5e4366b86ced683c579d3adc736ac}} 
+\Hypertarget{class_____cache_a3fa4b1589363c17ec9463d5e94f8a10c}\label{class_____cache_a3fa4b1589363c17ec9463d5e94f8a10c} 
 \index{\_\_Cache@{\_\_Cache}!free\_seg@{free\_seg}}
 \index{free\_seg@{free\_seg}!\_\_Cache@{\_\_Cache}}
 \doxysubsubsection{\texorpdfstring{free\_seg()}{free\_seg()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+\+Cache\+::free\+\_\+seg (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+\+Cache\+::free\+\_\+seg (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{reqsize }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_a36185e7a4fc5243525f8cf85d96095ca}\label{class_____cache_a36185e7a4fc5243525f8cf85d96095ca}} 
-\index{\_\_Cache@{\_\_Cache}!freeptr@{freeptr}}
-\index{freeptr@{freeptr}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{freeptr()}{freeptr()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::freeptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\Hypertarget{class_____cache_a851e07a683b2e29ebb1c840d4d39b540}\label{class_____cache_a851e07a683b2e29ebb1c840d4d39b540} 
+\index{\_\_Cache@{\_\_Cache}!freeptr31@{freeptr31}}
+\index{freeptr31@{freeptr31}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{freeptr31()}{freeptr31()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::freeptr31 (\begin{DoxyParamCaption}\item[{const void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{reqsize }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_ad2aa7dc0030c9e74aff646f44696a66d}\label{class_____cache_ad2aa7dc0030c9e74aff646f44696a66d}} 
-\index{\_\_Cache@{\_\_Cache}!is\_exist\_ptr@{is\_exist\_ptr}}
-\index{is\_exist\_ptr@{is\_exist\_ptr}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{is\_exist\_ptr()}{is\_exist\_ptr()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+\+Cache\+::is\+\_\+exist\+\_\+ptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\Hypertarget{class_____cache_aa6ecccde1a02bddaba2d58e5c1510020}\label{class_____cache_aa6ecccde1a02bddaba2d58e5c1510020} 
+\index{\_\_Cache@{\_\_Cache}!getCurrentMem31@{getCurrentMem31}}
+\index{getCurrentMem31@{getCurrentMem31}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{getCurrentMem31()}{getCurrentMem31()}}
+{\footnotesize\ttfamily size\+\_\+t \+\_\+\+\_\+\+Cache\+::get\+Current\+Mem31 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-\mbox{\Hypertarget{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93}\label{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93}} 
+\Hypertarget{class_____cache_a6cc94cca7b2785493a00d6487638a128}\label{class_____cache_a6cc94cca7b2785493a00d6487638a128} 
+\index{\_\_Cache@{\_\_Cache}!getCurrentMem64@{getCurrentMem64}}
+\index{getCurrentMem64@{getCurrentMem64}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{getCurrentMem64()}{getCurrentMem64()}}
+{\footnotesize\ttfamily size\+\_\+t \+\_\+\+\_\+\+Cache\+::get\+Current\+Mem64 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_____cache_a3e205e7f2c14dc24b1d9ca9e950cf504}\label{class_____cache_a3e205e7f2c14dc24b1d9ca9e950cf504} 
+\index{\_\_Cache@{\_\_Cache}!getMaxMem31@{getMaxMem31}}
+\index{getMaxMem31@{getMaxMem31}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{getMaxMem31()}{getMaxMem31()}}
+{\footnotesize\ttfamily size\+\_\+t \+\_\+\+\_\+\+Cache\+::get\+Max\+Mem31 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_____cache_a87e4e534686774437d44edb15f58594e}\label{class_____cache_a87e4e534686774437d44edb15f58594e} 
+\index{\_\_Cache@{\_\_Cache}!getMaxMem64@{getMaxMem64}}
+\index{getMaxMem64@{getMaxMem64}!\_\_Cache@{\_\_Cache}}
+\doxysubsubsection{\texorpdfstring{getMaxMem64()}{getMaxMem64()}}
+{\footnotesize\ttfamily size\+\_\+t \+\_\+\+\_\+\+Cache\+::get\+Max\+Mem64 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93}\label{class_____cache_a5f26d82716ef7d1e1f61cbac5334cd93} 
 \index{\_\_Cache@{\_\_Cache}!is\_rmode64@{is\_rmode64}}
 \index{is\_rmode64@{is\_rmode64}!\_\_Cache@{\_\_Cache}}
 \doxysubsubsection{\texorpdfstring{is\_rmode64()}{is\_rmode64()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+\+Cache\+::is\+\_\+rmode64 (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-\mbox{\Hypertarget{class_____cache_a576f36b97c4c09fa169636b1ecd5b00d}\label{class_____cache_a576f36b97c4c09fa169636b1ecd5b00d}} 
-\index{\_\_Cache@{\_\_Cache}!show@{show}}
-\index{show@{show}!\_\_Cache@{\_\_Cache}}
-\doxysubsubsection{\texorpdfstring{show()}{show()}}
-{\footnotesize\ttfamily void \+\_\+\+\_\+\+Cache\+::show (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily int \+\_\+\+\_\+\+Cache\+::is\+\_\+rmode64 (\begin{DoxyParamCaption}\item[{const void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
