@@ -3157,6 +3157,55 @@ extern "C" int chdir_long(char *dir) {
   return chdir(dir);
 }
 
+extern "C" const char* getprogname() {
+  char argv[PATH_MAX];
+  W_PSPROC buf;
+  int token = 0;
+  pid_t mypid = getpid();
+
+  memset(&buf, 0, sizeof(buf));
+  buf.ps_pathlen = PATH_MAX;
+  buf.ps_pathptr = &argv[0];
+
+  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+    if (buf.ps_pid == mypid) {
+      // return the basename of the found executable
+      return strdup(basename(buf.ps_pathptr));
+    }
+  }
+
+  return NULL;
+}
+
+extern "C" char* __getprogramdir() {
+  char argv[PATH_MAX];
+  W_PSPROC buf;
+  int token = 0;
+  pid_t mypid = getpid();
+
+  memset(&buf, 0, sizeof(buf));
+  buf.ps_pathlen = PATH_MAX;
+  buf.ps_pathptr = &argv[0];
+
+  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+    if (buf.ps_pid == mypid) {
+      // Resolve path to find the true location of the executable.
+      char* parent = __realpath_extended(argv, NULL); // realpath allocates parent
+
+      if (parent == NULL) {
+        // handle error or return an appropriate value
+        return NULL;
+      }
+
+      // Get the parent directory.
+      dirname(parent);
+      return parent;
+    }
+  }
+
+  return NULL;
+}
+
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;
 #endif
