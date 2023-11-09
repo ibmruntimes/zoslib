@@ -67,6 +67,7 @@ extern "C" {
  * C mkdtemp implementation
  */
 __Z_EXPORT char *mkdtemp(char *templ);
+__Z_EXPORT int getloadavg(double loadavg[], int nelem);
 #if defined(__cplusplus)
 }
 #endif

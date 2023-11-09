@@ -39,6 +39,22 @@ int __get_num_frames(void) {
   return static_cast<int>(rce->pool);
 }
 
+// Adapted from OMR codebase: https://github.com/eclipse/omr/blob/master/port/unix/omrsysinfo.c#L4629
+int getloadavg(double loadavg[], int nelem) {
+  if (nelem > 3 || nelem <= 0)
+    return -1;
+  
+  ZOSCVT* __ptr32 cvt = ((ZOSPSA*)0)->cvt;
+  ZOSRMCT* __ptr32 rcmt = cvt->rmct;
+  ZOSCCT* __ptr32 cct = rcmt->cct;
+
+  //Hack: z/OS does not get cpu load in intervals
+  for (int i = 0; i < nelem; i++) 
+    loadavg[i] = (double)cct->ccvutilp / 100.0;
+
+  return nelem;
+}
+
 oslvl_t __get_os_level(void) {
   static oslvl_t oslvl = ZOSLVL_UNKNOWN;
   if (oslvl != ZOSLVL_UNKNOWN)
