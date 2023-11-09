@@ -64,10 +64,11 @@ __Z_EXPORT char* getenv(const char*) __asm("@@A00423");
 extern "C" {
 #endif
 /**
- * C mkdtemp implementation
+ * C Lib functions that do not conflict with z/OS LE
  */
 __Z_EXPORT char *mkdtemp(char *templ);
 __Z_EXPORT int getloadavg(double loadavg[], int nelem);
+__Z_EXPORT const char * getprogname(void);
 #if defined(__cplusplus)
 }
 #endif
