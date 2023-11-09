@@ -48,7 +48,7 @@ int getloadavg(double loadavg[], int nelem) {
   ZOSRMCT* __ptr32 rcmt = cvt->rmct;
   ZOSCCT* __ptr32 cct = rcmt->cct;
 
-  //Hack: z/OS does not get cpu load in intervals
+  //Hack: z/OS does not get cpu load in samples, just use the same value
   for (int i = 0; i < nelem; i++) 
     loadavg[i] = (double)cct->ccvutilp / 100.0;
 
