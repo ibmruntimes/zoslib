@@ -75,10 +75,11 @@ if(${CMAKE_C_COMPILER} MATCHES xlclang)
     -qasm
     -qasmlib=sys1.maclib:sys1.modgen)
 else()
+  # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -m64
-    -march=arch10
+    -march=arch14
     -mzos-target=zosv2r4
     -fno-short-enums
     -fzos-le-char-mode=ascii)

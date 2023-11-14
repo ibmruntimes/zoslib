@@ -45,7 +45,7 @@ static ssize_t pathmax_size(const char* path) {
   return pathmax;
 }
 
-#if TRACE_ON // for debugging use
+#ifdef TRACE_ON // for debugging use
 
 char *__realpath(const char *path, char *resolved_path) asm("@@A00187");
 char *__realpath(const char *path, char *resolved_path) {
@@ -76,7 +76,7 @@ char *__realpath(const char *path, char *resolved_path) {
                      __FILE__, __FUNCTION__, __LINE__, path, resolved_path, rv);
    return resolved_path;
 }
-#endif // if TRACE_ON - for debugging use
+#endif // ifdef TRACE_ON - for debugging use
 
 // C Library Overrides
 //-----------------------------------------------------------------

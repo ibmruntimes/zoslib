@@ -1,5 +1,3 @@
-// Need to compile this file with at least z14 to use PRNO instruction.
-#pragma options("-march=z14 if ibm-clang++64")
 #define _AE_BIMODAL 1
 #ifdef __ibmxl__
 #undef _ENHANCED_ASCII_EXT
@@ -23,7 +21,7 @@
 #endif
 
 static unsigned char _value(int bit) {
-  unsigned long long t0, t1, start;
+  unsigned long long t0, t1 = 0, start;
   int i;
   __asm volatile(" la 15,0 \n svc 137\n" ::: "r15", "r6");
   (void) __stckf(&start);

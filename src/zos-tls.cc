@@ -68,8 +68,11 @@ static void *__tlsPtrAlloc(size_t sz, pthread_key_t *k, pthread_once_t *o,
   return (char *)p + sizeof(pthread_key_t);
 }
 
+#if 0
+// Currently unused.
 static void *__tlsPtr(pthread_key_t *key) { return pthread_getspecific(*key); }
 static void __tlsDelete(pthread_key_t *key) { pthread_key_delete(*key); }
+#endif
 
 struct __tlsanchor {
   pthread_once_t once;

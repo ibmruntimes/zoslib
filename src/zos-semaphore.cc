@@ -92,14 +92,14 @@ int __sem_init(__sem_t *s0, int shared, unsigned int val) { // no lock
 }
 
 static int __sem_post_thread_w(____sem_t *s) {
-  ++s->value;
+  atomic_inc(&s->value);
   if (s->waitcnt > 0) {
     int rc = pthread_cond_signal(&s->cond);
     if (rc) {
       // unexpected error
       perror("pthread_cond_signal");
       errno = EINVAL;
-      --s->value;
+      atomic_dec(&s->value);
       return -1;
     }
   }
@@ -125,8 +125,7 @@ static int __sem_post_thread(____sem_t *s) {
 
 int __sem_post(__sem_t *s0) {
   ____sem_t *s = (____sem_t *)s0->_s;
-  volatile unsigned int o;
-  if (s->id != 0 && s->id != getpid()) {
+  if (s->id != 0 && s->id != static_cast<unsigned int>(getpid())) {
     return returnStatus(EINVAL, 0);
   }
   if (s->id == 0) {
@@ -140,7 +139,7 @@ int __sem_post(__sem_t *s0) {
 
 static int __sem_trywait_thread_w(____sem_t *s) {
   if (s->value > 0) {
-    --s->value;
+    atomic_dec(&s->value);
     return 0;
   }
   errno = EAGAIN;
@@ -168,7 +167,7 @@ int __sem_trywait(__sem_t *s0) {
   ____sem_t *s = (____sem_t *)s0->_s;
   volatile unsigned int v;
   volatile unsigned int o;
-  if (s->id != 0 && s->id != getpid()) {
+  if (s->id != 0 && s->id != static_cast<unsigned int>(getpid())) {
     return returnStatus(EINVAL, 0);
   }
   if (s->id == 0) {
@@ -199,13 +198,13 @@ static int we_expired(const struct timespec *t0) {
   unsigned long long value, sec, nsec;
   __stckf(&value);
   sec = (value / 4096000000UL) - 2208988800UL;
-  if (sec > t0->tv_sec) {
+  if (sec > static_cast<unsigned long long>(t0->tv_sec)) {
     return 1;
   }
 
-  if (sec == t0->tv_sec) {
+  if (sec == static_cast<unsigned long long>(t0->tv_sec)) {
     nsec = (value % 4096000000UL) * 1000 / 4096;
-    if (nsec > t0->tv_nsec) {
+    if (nsec > static_cast<unsigned long long>(t0->tv_nsec)) {
       return 1;
     }
   }
@@ -217,7 +216,7 @@ static int __sem_timedwait_share(____sem_t *s,
   volatile unsigned int v;
   volatile unsigned int o;
   unsigned int cnt = 0;
-  if (s->id != getpid()) {
+  if (s->id != static_cast<unsigned int>(getpid())) {
     return returnStatus(EINVAL, 0);
   }
   cnt = 0;
@@ -239,22 +238,21 @@ static int __sem_timedwait_share(____sem_t *s,
       }
     }
   }
-  return 0;
 }
 
 static int __sem_timedwait_thread_w(____sem_t *s,
                                     const struct timespec *abs_timeout) {
   int rc = 0;
   while (s->value == 0 && rc == 0) {
-    ++s->waitcnt;
+    atomic_inc(&s->waitcnt);
     if (abs_timeout)
       rc = pthread_cond_timedwait(&s->cond, &s->mutex, abs_timeout);
     else
       rc = pthread_cond_wait(&s->cond, &s->mutex);
-    --s->waitcnt;
+    atomic_dec(&s->waitcnt);
   }
   if (rc == 0 && s->value > 0)
-    --s->value;
+    atomic_dec(&s->value);
   return rc;
 }
 
@@ -288,9 +286,7 @@ int __sem_timedwait(__sem_t *s0, const struct timespec *abs_timeout) {
 }
 
 int __sem_wait(__sem_t *s0) {
-  ____sem_t *s = (____sem_t *)s0->_s;
-  int rc = __sem_timedwait(s0, 0);
-  return rc;
+  return __sem_timedwait(s0, 0);
 }
 
 int __sem_destroy(__sem_t *s0) {

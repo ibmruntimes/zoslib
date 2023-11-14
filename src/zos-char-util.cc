@@ -293,12 +293,12 @@ int __guess_ae(const void *src, size_t size) {
   return ccsid;
 }
 
+#ifdef DEBUG_ONLY
 static void ledump(const char *title) {
   __auto_ascii _a;
   __cdump_a((char *)title);
 }
 
-#if DEBUG_ONLY
 size_t __e2a_l(char *bufptr, size_t szLen) {
   int ccsid;
   int am;
@@ -359,7 +359,7 @@ size_t __a2e_s(char *string) {
   }
   return __a2e_l(string, strlen(string));
 }
-#endif // #if DEBUG_ONLY
+#endif // #ifdef DEBUG_ONLY
 
 __auto_ascii::__auto_ascii(void) {
   ascii_mode = __isASCII();

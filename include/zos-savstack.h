@@ -39,6 +39,9 @@
 class __Z_EXPORT LESavStackAsync {
   public:
     static LESavStackAsync& getInstance() {
+#if defined(__clang__) && !defined(__ibmxl__)
+      [[clang::no_destroy]]
+#endif
       static LESavStackAsync instance;
       return instance;
     }

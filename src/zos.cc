@@ -1629,7 +1629,6 @@ extern "C" int __testread(const void *location) {
   struct espiearg *r1 = (struct espiearg *)__malloc31(sizeof(struct espiearg));
   long token = 0;
   volatile int state = 0;
-  volatile int word;
   r1->flags = 0x08000000;
   r1->reserved = 0;
 #if defined(__llvm__)
@@ -1681,7 +1680,6 @@ extern "C" int __testread(const void *location) {
     state = 2;
   } else {
     state = 1;
-    word = *(int *)location;
   }
   __asm volatile(" lg 1,%0\n"
                  " la 0,8\n"
@@ -2236,7 +2234,7 @@ static void update_memlogging(const char *envar) {
   char *p;
   if (envar)
     strncpy(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
-  else if (p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR))
+  else if ((p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR)) != NULL)
     strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
   else if (mem_account())
     strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));

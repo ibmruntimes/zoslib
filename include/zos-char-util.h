@@ -79,7 +79,7 @@ __Z_EXPORT int conv_utf8_utf16(char *, size_t, const char *, size_t);
  */
 __Z_EXPORT int conv_utf16_utf8(char *, size_t, const char *, size_t);
 
-#if DEBUG_ONLY
+#ifdef DEBUG_ONLY
 /**
  * Convert from EBCDIC to ASCII in place.
  * \param [out] bufptr Buffer to convert.
@@ -233,7 +233,7 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
   unsigned long code_out;
   const unsigned char *start;
 
-  bytes = max_len;
+  bytes = (unsigned long)max_len;
   code_out = 0;
   start = str;
   __asm volatile(" trte %1,%3,0\n"
@@ -241,9 +241,9 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
                  : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
                  : "NR:r1"(_tab_a)
                  :);
-  unsigned a_len = str - start;
+  unsigned a_len = (unsigned)((unsigned long)str - (unsigned long)start);
 
-  bytes = max_len;
+  bytes = (unsigned long)max_len;
   code_out = 0;
   str = start;
   __asm volatile(" trte %1,%3,0\n"
@@ -251,7 +251,7 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
                  : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
                  : "NR:r1"(_tab_e)
                  :);
-  unsigned e_len = str - start;
+  unsigned e_len = (unsigned)((unsigned long)str - (unsigned long)start);
   if (a_len > e_len) {
     *code_page = 819;
     last_ccsid = 819;
@@ -293,7 +293,7 @@ inline unsigned strlen_e(const unsigned char *str, unsigned size) {
                  : "NR:r1"(_tab_e)
                  :);
 
-  return str - start;
+  return (unsigned)((unsigned long)str - (unsigned long)start);
 }
 
 const unsigned char __ibm1047_iso88591[256] __attribute__((aligned(8))) = {
