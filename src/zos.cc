@@ -2518,10 +2518,6 @@ __zinit::__zinit() {
 }
 
 __zinit:: ~__zinit() {
-  if (_CVTSTATE_OFF == cvstate) {
-    __ae_autoconvert_state(cvstate);
-  }
-  __ae_thread_swapmode(mode);
   ::__cleanupipc(0);
 
   // Don't delete __galloc_info (__Cache), as during exit-time a process may
