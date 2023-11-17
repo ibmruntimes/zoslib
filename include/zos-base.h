@@ -615,6 +615,11 @@ __Z_EXPORT bool __doLogMemoryWarning();
  */
 __Z_EXPORT void __mainTerminating();
 
+/**
+ * Returns the program's directory as an absolute path
+ */
+__Z_EXPORT char* __getprogramdir();
+
 #ifdef __cplusplus
 }
 #endif

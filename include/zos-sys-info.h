@@ -31,8 +31,16 @@ typedef enum {
 
 // CPU Management Control Table (CCT).
 typedef struct ZOSCCT {
-  uint8_t filler[110];
-  uint16_t cpuCount; // Number of online CPUs.
+  // Field offsets described in SYS1.MODGEN(IRACCT)
+  // Field descriptions provided in https://www.ibm.com/docs/en/zos/3.1.0?topic=ttar-contents-report
+  uint8_t filler1[72]; // 0:72 Ignore fields not relevant to current implementation 
+  uint32_t ccvrbswt;   // Recent base system wait time 
+  uint8_t filler2[4];  // Ignore fields not relevant to current implementation 
+  uint32_t ccvrbstd;   // Recent base time of day 
+  uint8_t filler3[18]; // 84:18 Ignore fields not relevant to current implementation 
+  uint16_t ccvutilp;   // System CPU utilization 
+  uint8_t filler4[6];  // 104:6 Ignore fields not relevant to current implementation 
+  uint16_t cpuCount;   // Number of online CPUs.
 } ZOSCCT_t;
 
 // System Resources Manager Control Table (RMCT).
@@ -144,6 +152,8 @@ __Z_EXPORT bool __is_vef1_available();
  * \return pointer to the buffer.
  */
 __Z_EXPORT char *__get_cpu_model(char *buffer, size_t size);
+
+__Z_EXPORT int getloadavg(double loadavg[], int nelem);
 
 #ifdef __cplusplus
 }
