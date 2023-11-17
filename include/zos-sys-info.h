@@ -31,7 +31,7 @@ typedef enum {
 
 // CPU Management Control Table (CCT).
 typedef struct ZOSCCT {
-  // Fields offsets described in SYS1.MODGEN(IRACCT)
+  // Field offsets described in SYS1.MODGEN(IRACCT)
   // Field descriptions provided in https://www.ibm.com/docs/en/zos/3.1.0?topic=ttar-contents-report
   uint8_t filler1[72]; // 0:72 Ignore fields not relevant to current implementation 
   uint32_t ccvrbswt;   // Recent base system wait time 
