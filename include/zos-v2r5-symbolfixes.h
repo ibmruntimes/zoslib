@@ -46,6 +46,7 @@
 #pragma redefine_extname dup3 dup3_undefined
 #pragma redefine_extname flock flock_undefined
 #pragma redefine_extname shm_open shm_open_undefined
+#pragma redefine_extname wait4 wait4_undefined
 #endif
 
 #endif // ZOS_V2R5_FIXUPS_H
