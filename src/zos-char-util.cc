@@ -453,10 +453,6 @@ static bool bfdcache_destroyed = false;
 
 typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
 
-// [[clang::no_destroy]] attribute can be set for this, but the attribute is
-// not available for xlclang.
-static bool bfdcache_destroyed = false;
-
 class fdAttributeCache {
   std::unordered_map<int, fd_attribute, IntHash> cache;
   pthread_mutex_t access_lock;
