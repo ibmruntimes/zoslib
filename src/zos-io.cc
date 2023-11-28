@@ -707,7 +707,7 @@ int __tag_new_file(int fd) {
 
   int ccsid = 819;
 
-  if (encode_file_new)
+  if (encode_file_new) {
     if (strcmp(encode_file_new, "IBM-1047") == 0) {
       ccsid = 1047;
     } else if (strcmp(encode_file_new, "BINARY") == 0) {
@@ -715,10 +715,9 @@ int __tag_new_file(int fd) {
       __setfdbinary(fd);
       return 0;
     }
+  }
 
-  int result = __chgfdccsid(fd, ccsid);
-
-  return result;
+  return __chgfdccsid(fd, ccsid);
 }
 
 int __chgfdcodeset(int fd, char* codeset) {
@@ -827,9 +826,9 @@ int __open_ascii(const char *filename, int opts, ...) {
   if (fd >= 0) {
     // Tag new files as ASCII (819)
     if (is_new_file) {
-     __tag_new_file(fd);
-     /* Calling __chgfdccsid() should not clobber errno. */
-     errno = old_errno;
+      __tag_new_file(fd);
+      /* Calling __chgfdccsid() should not clobber errno. */
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
@@ -871,8 +870,8 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-     __tag_new_file(fd);
-     errno = old_errno;
+      __tag_new_file(fd);
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
