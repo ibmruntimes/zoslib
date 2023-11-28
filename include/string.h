@@ -19,6 +19,7 @@ extern "C" {
 
 __Z_EXPORT size_t strnlen(const char *, size_t );
 __Z_EXPORT char *strpcpy(char *, const char *);
+__Z_EXPORT char *strndup(const char *s, size_t n);
 
 __Z_EXPORT char *strsignal(int );
 __Z_EXPORT const char *sigdescr_np(int);
