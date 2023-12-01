@@ -712,8 +712,7 @@ int __tag_new_file(int fd) {
       ccsid = 1047;
     } else if (strcmp(encode_file_new, "BINARY") == 0) {
       // Set the file descriptor to binary mode
-      __setfdbinary(fd);
-      return 0;
+      return __setfdbinary(fd);
     }
   }
 
@@ -827,7 +826,7 @@ int __open_ascii(const char *filename, int opts, ...) {
     // Tag new files as ASCII (819)
     if (is_new_file) {
       __tag_new_file(fd);
-      /* Calling __chgfdccsid() should not clobber errno. */
+      /* Calling __tag_new_file() should not clobber errno. */
       errno = old_errno;
     }
     // Enable auto-conversion of untagged files

@@ -5,8 +5,8 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZOS_V2R5_FIXUPS_H
-#define ZOS_V2R5_FIXUPS_H
+#ifndef ZOS_V2R5_SYMBOLFIXES_H
+#define ZOS_V2R5_SYMBOLFIXES_H
 
 // This enables builds on >=V2R5 systems when the target is <V2R5
 // Redefines >=V2R5 symbols with _undefined suffix to trigger a linker 
@@ -48,4 +48,4 @@
 #pragma redefine_extname shm_open shm_open_undefined
 #endif
 
-#endif // ZOS_V2R5_FIXUPS_H
+#endif // ZOS_V2R5_SYMBOLFIXES_H
