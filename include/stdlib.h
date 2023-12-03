@@ -68,11 +68,23 @@ extern "C" {
  * Replace getenv with the ascii implementation of __getenv (@@A00423) 
    which copies pointer to a buffer and is retained even after the environment changes
  */
-__Z_EXPORT char* getenv(const char*) asm("@@A00423");
-
+__Z_EXPORT char* getenv(const char*) __asm("@@A00423");
 #if defined(__cplusplus)
 }
 #endif
+#endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+/**
+ * C Lib functions that do not conflict with z/OS LE
+ */
+__Z_EXPORT char *mkdtemp(char *templ);
+__Z_EXPORT int getloadavg(double loadavg[], int nelem);
+__Z_EXPORT const char * getprogname(void);
+#if defined(__cplusplus)
+}
 #endif
 
 #endif

@@ -30,4 +30,4 @@ add_custom_command(
 
 
 # Define the install rule for the man page
-#install(FILES "${MAN_OUTPUT_DIR}/${INPUT_FILE}" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
+install(FILES "${CMAKE_SOURCE_DIR}/man/${INPUT_FILE}" DESTINATION "share/man/man1")

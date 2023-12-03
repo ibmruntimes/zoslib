@@ -67,6 +67,60 @@ TEST_F(CLIBOverrides, open) {
     EXPECT_EQ(strcmp(buff, buff2), 0);
     close(fd);
 #endif
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=IBM-1047
+    char buff[] = "This is a test";
+
+    setenv("_ENCODE_FILE_NEW", "IBM-1047", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    write(fd, buff, sizeof(buff));
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    char* buff2 = (char*)malloc(sizeof(buff));
+    memset(buff2, sizeof(buff), 1);
+    read(fd, buff2, sizeof(buff));
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=BINARY
+    setenv("_ENCODE_FILE_NEW", "BINARY", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 65535);
+    write(fd, buff, sizeof(buff));
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 65535);
+    buff2 = (char*)malloc(sizeof(buff));
+    memset(buff2, sizeof(buff), 1);
+    read(fd, buff2, sizeof(buff));
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=ISO8859-1
+    setenv("_ENCODE_FILE_NEW", "ISO8859-1", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
+    write(fd, buff, sizeof(buff));
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
+    buff2 = (char*)malloc(sizeof(buff));
+    memset(buff2, sizeof(buff), 1);
+    read(fd, buff2, sizeof(buff));
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+    unsetenv("_ENCODE_FILE_NEW");
 }
 
 TEST_F(CLIBOverrides, pipe) {

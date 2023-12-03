@@ -702,6 +702,23 @@ int __disableautocvt(int fd) {
   return fcntl(fd, F_CONTROL_CVT, &req);
 }
 
+int __tag_new_file(int fd) {
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+
+  if (encode_file_new) {
+    if (strcmp(encode_file_new, "IBM-1047") == 0) {
+      ccsid = 1047;
+    } else if (strcmp(encode_file_new, "BINARY") == 0) {
+      // Set the file descriptor to binary mode
+      return __setfdbinary(fd);
+    }
+  }
+
+  return __chgfdccsid(fd, ccsid);
+}
+
 int __chgfdcodeset(int fd, char* codeset) {
   unsigned short ccsid = __toCcsid(codeset);
   if (!ccsid)
@@ -808,9 +825,9 @@ int __open_ascii(const char *filename, int opts, ...) {
   if (fd >= 0) {
     // Tag new files as ASCII (819)
     if (is_new_file) {
-      __chgfdccsid(fd, 819);
-     /* Calling __chgfdccsid() should not clobber errno. */
-     errno = old_errno;
+      __tag_new_file(fd);
+      /* Calling __tag_new_file() should not clobber errno. */
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
@@ -852,22 +869,20 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-      __chgfdccsid(fd, 819);
-     errno = old_errno;
+      __tag_new_file(fd);
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
           strcmp(mode, "r") == 0) {
+        __disableautocvt(fd); // disable z/OS autocvt on untagged file and use our heuristic
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
-        } else {
-          // fopen tags untagged files, which enables auto-conversion
-          __disableautocvt(fd);
         }
       }
     } else if (isatty(fd)) {
@@ -910,11 +925,40 @@ int __mkstemp_ascii(char * tmpl) {
   if (ret < 0)
     return ret;
 
-  // Default ccsid for new fds should be ASCII (819)
-  if (__chgfdccsid(ret, 819) != 0)
-    return -1;
+  __tag_new_file(ret);
 
   return ret;
+}
+
+char *mkdtemp(char *templ) {
+  size_t len = strlen(templ);
+  int retries = 10;  // Number of retries to generate a unique directory name
+
+  // Check that the templ ends with "XXXXXX" as required
+  if (len < 6 || strcmp(templ + len - 6, "XXXXXX") != 0) {
+    errno = EINVAL;
+    return NULL;
+  }
+
+  while (retries--) {
+    // Generate a random string to replace "XXXXXX" in the templ
+    for (size_t i = len - 6; i < len; i++) {
+      templ[i] = 'a' + rand() % 26;
+    }
+
+    // Attempt to create the directory
+    if (mkdir(templ, 0700) == 0) {
+      return templ;
+    }
+
+    // If mkdir failed, check if it was due to a collision with an existing directory
+    if (errno != EEXIST) {
+      return NULL;
+    }
+  }
+
+  // If all retries fail, return NULL
+  return NULL;
 }
 
 int __close(int fd) {

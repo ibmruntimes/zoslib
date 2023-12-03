@@ -20,6 +20,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unordered_map>
+#include <pthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -446,11 +447,11 @@ struct IntHash {
 
 typedef unsigned long fd_attribute;
 
-typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
-
 // [[clang::no_destroy]] attribute can be set for this, but the attribute is
 // not available for xlclang.
 static bool bfdcache_destroyed = false;
+
+typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
 
 class fdAttributeCache {
   std::unordered_map<int, fd_attribute, IntHash> cache;
