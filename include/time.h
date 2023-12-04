@@ -53,9 +53,6 @@ typedef enum {
 extern "C" {
 #endif
 __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
-#if defined(__cplusplus)
-}
-#endif
 
 /**
  * Suspends the execution of the calling thread until either at least the
@@ -64,16 +61,10 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
  *  precision
  * \param [out] rem the remaining time if the call is interrupted
  */
-#if defined(__cplusplus)
-extern "C" {
-#endif
-__Z_EXPORT int __nanosleep(const struct timespec*, struct timespec*);
-#ifndef nanosleep
-__Z_EXPORT int nanosleep(const struct timespec*, struct timespec*) __asm("__nanosleep");
-#endif
+__Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 }
 #endif
-
 #endif
+
 #endif
