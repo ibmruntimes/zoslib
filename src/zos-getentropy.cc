@@ -68,8 +68,11 @@ static void _slow(int size, void* output) {
   }
 }
 
-#if (__EDC_TARGET < 0x42050000) || defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 extern "C" int __getentropy(void* output, size_t size) {
+#else
+extern "C" int getentropy(void* output, size_t size) {
+#endif
   if (size > 257) {
     errno = EIO;
     return -1;
@@ -137,4 +140,4 @@ extern "C" int __getentropy(void* output, size_t size) {
   return 0;
 }
 
-#endif  // #if (__EDC_TARGET < 0x42050000) || defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+#endif
