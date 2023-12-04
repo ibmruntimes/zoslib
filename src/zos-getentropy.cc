@@ -139,5 +139,3 @@ extern "C" int getentropy(void* output, size_t size) {
 #endif
   return 0;
 }
-
-#endif
