@@ -2893,7 +2893,11 @@ int lutimes(const char *filename, const struct timeval tv[2]) {
   return 0;
 }
 
-int __nanosleep(const struct timespec *req, struct timespec *rem) {
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
+#else
+extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
+#endif
   unsigned secrem;
   unsigned nanorem;
   int rv;
