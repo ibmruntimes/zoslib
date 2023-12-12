@@ -5,6 +5,7 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 install_manifest.txt
+build.cache
 lib/
 *.cmake
 *.dbg
