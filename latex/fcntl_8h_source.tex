@@ -1,0 +1,60 @@
+\doxysection{fcntl.\+h}
+\hypertarget{fcntl_8h_source}{}\label{fcntl_8h_source}\index{include/fcntl.h@{include/fcntl.h}}
+\mbox{\hyperlink{fcntl_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2021.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_FCNTL\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_FCNTL\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{fcntl_8h_a1ae910698705d7338f151da75afd8095}{\_\_open\_ascii}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ opts,\ ...);}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB)}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#undef\ open}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ open\ \_\_open\_replaced}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\_next\ <fcntl.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#undef\ open}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ open(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ opts,\ ...)\ \_\_asm("{}\mbox{\hyperlink{fcntl_8h_a1ae910698705d7338f151da75afd8095}{\_\_open\_ascii}}"{});}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//\ \#if\ !(defined(ZOSLIB\_OVERRIDE\_CLIB)}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#include\_next\ <fcntl.h>}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ O\_CLOEXEC\ \ \ 0x00001000}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ O\_DIRECT\ \ \ \ 0x00002000}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ O\_NOFOLLOW\ \ 0x00004000}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ O\_DIRECTORY\ 0x00008000}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ O\_PATH\ \ \ \ \ \ 0x00080000}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

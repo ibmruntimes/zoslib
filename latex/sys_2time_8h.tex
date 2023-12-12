@@ -1,0 +1,63 @@
+\doxysection{include/sys/time.h File Reference}
+\hypertarget{sys_2time_8h}{}\label{sys_2time_8h}\index{include/sys/time.h@{include/sys/time.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{sys_2time_8h_adc162a9d4b037c6e3ab6097d0a2684c1}{\+\_\+\+\_\+\+XPLAT}}~1
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{sys_2time_8h_a36dcef9422484e335c72cd9c6db5ef98}{futimes}} (int fd, const struct timeval tv\mbox{[}2\mbox{]})
+\begin{DoxyCompactList}\small\item\em (\+\_\+\+\_\+\+EDC\+\_\+\+TARGET \texorpdfstring{$<$}{<} 0x42050000) \&\& defined(\+ZOSLIB\+\_\+\+ENABLE\+\_\+\+V2\+R5\+\_\+\+FEATURES) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{sys_2time_8h_a5542e98e94c32bd2b367c4d1c40ba53e}{lutimes}} (const char \texorpdfstring{$\ast$}{*}filename, const struct timeval tv\mbox{[}2\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{sys_2time_8h_adc162a9d4b037c6e3ab6097d0a2684c1}\label{sys_2time_8h_adc162a9d4b037c6e3ab6097d0a2684c1} 
+\index{time.h@{time.h}!\_\_XPLAT@{\_\_XPLAT}}
+\index{\_\_XPLAT@{\_\_XPLAT}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{\_\_XPLAT}{\_\_XPLAT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+XPLAT~1}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{sys_2time_8h_a36dcef9422484e335c72cd9c6db5ef98}\label{sys_2time_8h_a36dcef9422484e335c72cd9c6db5ef98} 
+\index{time.h@{time.h}!futimes@{futimes}}
+\index{futimes@{futimes}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{futimes()}{futimes()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int futimes (\begin{DoxyParamCaption}\item[{int}]{fd,  }\item[{const struct timeval}]{tv\mbox{[}2\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+(\+\_\+\+\_\+\+EDC\+\_\+\+TARGET \texorpdfstring{$<$}{<} 0x42050000) \&\& defined(\+ZOSLIB\+\_\+\+ENABLE\+\_\+\+V2\+R5\+\_\+\+FEATURES) 
+
+Changes the access and modification times of a file 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em fd} & file descriptor to modify \\
+\hline
+\mbox{\texttt{ in}}  & {\em tv} & timeval structure containing new time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return 0 for success, or -\/1 for failure. 
+\end{DoxyReturn}
+\Hypertarget{sys_2time_8h_a5542e98e94c32bd2b367c4d1c40ba53e}\label{sys_2time_8h_a5542e98e94c32bd2b367c4d1c40ba53e} 
+\index{time.h@{time.h}!lutimes@{lutimes}}
+\index{lutimes@{lutimes}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{lutimes()}{lutimes()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int lutimes (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{filename,  }\item[{const struct timeval}]{tv\mbox{[}2\mbox{]} }\end{DoxyParamCaption})}
+
+Changes the access and modification times of a file 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em filename} & file path to modify \\
+\hline
+\mbox{\texttt{ in}}  & {\em tv} & timeval structure containing new time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return 0 for success, or -\/1 for failure. 
+\end{DoxyReturn}

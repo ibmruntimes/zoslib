@@ -24,19 +24,19 @@ ZOSLIB implements the following:
 ## System Requirements
 
 ZOSLIB is supported on the following z/OS operating systems
-with z/OS® UNIX System Services enabled:
+with z/OS UNIX System Services enabled:
 
 - z/OS V2R3 with the following PTFs installed:
- - UI61308
- - UI61375
- - UI61747
+  - UI61308
+  - UI61375
+  - UI61747
 
 - z/OS V2R4 with the following PTFs installed:
- - UI64830
- - UI64837
- - UI64839
- - UI64940
- - UI65567
+  - UI64830
+  - UI64837
+  - UI64839
+  - UI64940
+  - UI65567
 
 ZOSLIB is supported on the following hardware:
 - IBM z15
@@ -47,9 +47,10 @@ ZOSLIB is supported on the following hardware:
 ## Build and Install
 
 ### Build tool prerequisites
-* CMake 3.5+
-* GNU Make 4.1+
-* IBM XL C/C++ V2.3.1 for z/OS V2.3 web deliverable (xlclang/xlcang++)
+* CMake 3.24.2-zos+
+* GNU Make 4.3+
+* IBM XL C/C++ V2.3.1 for z/OS V2.3 web deliverable (xlclang/xlcang++) or
+  IBM Open XL C/C++ 2.0 (clang/clang++)
 * Git
 * Ninja (optional)
 
@@ -69,16 +70,16 @@ $ ./build.sh -h
 ```
 
 which displays flags that you can pass to `build.sh` to specify a Release build
-(default is Debug) or Shared library (default is Static), and whether to build
-and run the zoslib tests.
+(default is Debug) and whether to build and run the zoslib tests.
 
 Example:
 ``` bash
-$ ./build.sh -c -r -s -t
+$ ./build.sh -c -r -t
 ```
 
-performs a Clean (-c) Release (-r) build that creates a Shared (-s) library
-`libzoslib.so` and its sidedeck `libzoslib.x`, builds and runs the tests (-t).
+performs a Clean (-c) Release (-r) build that creates both static library `libzoslib.a`
+and shared library `libzoslib.so` and its sidedeck `libzoslib.x`, then builds and
+runs the zoslib tests (-t).
 
 `build.sh` creates directory `./build` to hold the build files, and then places
 the target files under `./install` directory.
@@ -107,12 +108,13 @@ $ cmake ..
 By default CMake will configure your build as a Debug build. You can configure
 your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
 
-Also by default, CMake will configure your build to create a static library
-`libzoslib.a`. To create a shared library, pass to CMake the option
-`-DBUILD_SHARED_LIBS=ON`.
-
 CMake will detect your development environment, perform a series of tests, and
 generate the files required for building ZOSLIB.
+
+To build the zoslib tests, pass -DBUILD_TESTING=ON to cmake, which creates `build/test/cctest`
+that links with `libzoslib.a`, and also `build/test/cctest` that links with `libzoslib.x`.
+Before running the latter, set your LIBPATH to include the directory containing `libzoslib.so`,
+which should be under `install/lib`.
 
 By default, CMake will generate Makefiles. If you prefer to use Ninja, you can
 specify -GNinja as an option to CMake.
@@ -194,7 +196,11 @@ a list of random values.
 3. To compile and link the application, enter the following command:
 
 ``` bash
-xlclang++ -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
+xlclang++ -qascii -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
+```
+or:
+``` bash
+clang++ -fzos-le-char-mode=ascii -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
 ```
 
 4. To run the application, enter the following command:
@@ -204,7 +210,7 @@ xlclang++ -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o r
 
 You should get an output similar to the following:
 ```
-ZOSLIB version: v2.1.0
+ZOSLIB version: v4.0.0
 Generating 2 random values
 Random index: 0
 BC DE CF DE  7 E3 58 3A 4F 22

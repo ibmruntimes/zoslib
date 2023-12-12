@@ -1,186 +1,258 @@
-\hypertarget{zos-sys-info_8h}{}\doxysection{include/zos-\/sys-\/info.h File Reference}
-\label{zos-sys-info_8h}\index{include/zos-\/sys-\/info.h@{include/zos-\/sys-\/info.h}}
+\doxysection{include/zos-\/sys-\/info.h File Reference}
+\hypertarget{zos-sys-info_8h}{}\label{zos-sys-info_8h}\index{include/zos-\/sys-\/info.h@{include/zos-\/sys-\/info.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
 {\ttfamily \#include $<$stdint.\+h$>$}\newline
-\doxysubsection*{Classes}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\doxysubsubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{Z\+O\+S\+C\+CT}}
+struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{ZOSCCT}}
 \item 
-struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{Z\+O\+S\+R\+M\+CT}}
+struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{ZOSRMCT}}
 \item 
-struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{Z\+O\+S\+R\+CE}}
+struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{ZOSRCE}}
 \item 
-struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{Z\+O\+S\+C\+VT}}
+struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{ZOSCVT}}
 \item 
-struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{Z\+O\+S\+P\+SA}}
+struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{ZOSPSA}}
+\item 
+struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}}
+\item 
+struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}}
 \end{DoxyCompactItemize}
-\doxysubsection*{Typedefs}
+\doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-typedef struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{Z\+O\+S\+C\+CT}} \mbox{\hyperlink{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}{Z\+O\+S\+C\+C\+T\+\_\+t}}
-\item 
-typedef struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{Z\+O\+S\+R\+M\+CT}} \mbox{\hyperlink{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}{Z\+O\+S\+R\+M\+C\+T\+\_\+t}}
-\item 
-typedef struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{Z\+O\+S\+R\+CE}} \mbox{\hyperlink{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}{Z\+O\+S\+R\+C\+E\+\_\+t}}
-\item 
-typedef struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{Z\+O\+S\+C\+VT}} \mbox{\hyperlink{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}{Z\+O\+S\+C\+V\+T\+\_\+t}}
-\item 
-typedef struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{Z\+O\+S\+P\+SA}} \mbox{\hyperlink{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}{Z\+O\+S\+P\+S\+A\+\_\+t}}
+\#define \mbox{\hyperlink{zos-sys-info_8h_a616ad85d89ea210132ae785bf6013e6e}{ZOSCPU\+\_\+\+MODEL\+\_\+\+LENGTH}}~4
 \end{DoxyCompactItemize}
-\doxysubsection*{Enumerations}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{ZOSCCT}} \mbox{\hyperlink{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}{ZOSCCT\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{ZOSRMCT}} \mbox{\hyperlink{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}{ZOSRMCT\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{ZOSRCE}} \mbox{\hyperlink{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}{ZOSRCE\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{ZOSCVT}} \mbox{\hyperlink{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}{ZOSCVT\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{ZOSPSA}} \mbox{\hyperlink{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}{ZOSPSA\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}} \mbox{\hyperlink{zos-sys-info_8h_a244354783b6b0afddb02b237a3c3e142}{ZOSPCCA}}
+\item 
+typedef struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}} \mbox{\hyperlink{zos-sys-info_8h_a707ba9900ad946a55d0ba1eb8351346a}{ZOSPCCAVT}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
 enum \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \{ \newline
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}{Z\+O\+S\+L\+V\+L\+\_\+\+V1\+R13}} = 0, 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}{Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R1}}, 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}{Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R2}}, 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}{Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R3}}, 
-\newline
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}{Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R4}}, 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}{Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R5}}, 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}{Z\+O\+S\+L\+V\+L\+\_\+\+U\+N\+K\+N\+O\+WN}}
+\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}{ZOSLVL\+\_\+\+V1\+R13}} = 0
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}{ZOSLVL\+\_\+\+V2\+R1}}
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}{ZOSLVL\+\_\+\+V2\+R2}}
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}{ZOSLVL\+\_\+\+V2\+R3}}
+, \newline
+\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}{ZOSLVL\+\_\+\+V2\+R4}}
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}{ZOSLVL\+\_\+\+V2\+R5}}
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaab486596d7ceed2a79d40ebd466ac5608}{ZOSLVL\+\_\+\+V3\+R1}}
+, \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}{ZOSLVL\+\_\+\+UNKNOWN}}
  \}
 \end{DoxyCompactItemize}
-\doxysubsection*{Functions}
+\doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{zos-sys-info_8h_a3b2ad7fe0aee30edf781eefd73ee5b88}{\+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus}} (void)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{zos-sys-info_8h_aa5b032185971a52a0019e419fe16e9d7}{\+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus}} (void)
 \item 
-int \mbox{\hyperlink{zos-sys-info_8h_a67eea4362b2e4efb1cfcf07f17eba6f7}{\+\_\+\+\_\+get\+\_\+num\+\_\+frames}} (void)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{zos-sys-info_8h_ae72c9bd004b2449be517cf9f76e6a5b3}{\+\_\+\+\_\+get\+\_\+num\+\_\+frames}} (void)
 \item 
-\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \mbox{\hyperlink{zos-sys-info_8h_af45c5eb88465481f83247e8024e59836}{\+\_\+\+\_\+get\+\_\+os\+\_\+level}} (void)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \mbox{\hyperlink{zos-sys-info_8h_a220c8f1db216eb16456518afd0fd3b5d}{\+\_\+\+\_\+get\+\_\+os\+\_\+level}} (void)
 \item 
-bool \mbox{\hyperlink{zos-sys-info_8h_a73cf375e89e966ca2e6a7e360ccc11f5}{\+\_\+\+\_\+is\+\_\+os\+\_\+level\+\_\+at\+\_\+or\+\_\+above}} (\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} level)
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \mbox{\hyperlink{zos-sys-info_8h_a086526032c2a01da1dd09d8984c1df6e}{\+\_\+\+\_\+is\+\_\+os\+\_\+level\+\_\+at\+\_\+or\+\_\+above}} (\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} level)
 \item 
-bool \mbox{\hyperlink{zos-sys-info_8h_aaabf39b1027a0ddb9a5677b13cd7d710}{\+\_\+\+\_\+is\+\_\+vxf\+\_\+available}} ()
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \mbox{\hyperlink{zos-sys-info_8h_a4d056b68d9ae84f237ad47cc21ac142d}{\+\_\+\+\_\+is\+\_\+stfle\+\_\+available}} ()
 \item 
-bool \mbox{\hyperlink{zos-sys-info_8h_ace9343312e3d85eeddebe558b070e280}{\+\_\+\+\_\+is\+\_\+vef1\+\_\+available}} ()
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \mbox{\hyperlink{zos-sys-info_8h_a9a958577fad869b08f55a33c0c3d75b2}{\+\_\+\+\_\+is\+\_\+vxf\+\_\+available}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \mbox{\hyperlink{zos-sys-info_8h_a697eddce628001c9c19a6bc1c8c406ed}{\+\_\+\+\_\+is\+\_\+vef1\+\_\+available}} ()
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-sys-info_8h_ac91b8c621335afbb2c674a005f3d8281}{\+\_\+\+\_\+get\+\_\+cpu\+\_\+model}} (char \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t size)
 \end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{zos-sys-info_8h_a616ad85d89ea210132ae785bf6013e6e}\label{zos-sys-info_8h_a616ad85d89ea210132ae785bf6013e6e} 
+\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSCPU\_MODEL\_LENGTH@{ZOSCPU\_MODEL\_LENGTH}}
+\index{ZOSCPU\_MODEL\_LENGTH@{ZOSCPU\_MODEL\_LENGTH}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
+\doxysubsubsection{\texorpdfstring{ZOSCPU\_MODEL\_LENGTH}{ZOSCPU\_MODEL\_LENGTH}}
+{\footnotesize\ttfamily \#define ZOSCPU\+\_\+\+MODEL\+\_\+\+LENGTH~4}
+
 
 
 \doxysubsection{Typedef Documentation}
-\mbox{\Hypertarget{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}\label{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}} 
+\Hypertarget{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}\label{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSCCT\_t@{ZOSCCT\_t}}
 \index{ZOSCCT\_t@{ZOSCCT\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{ZOSCCT\_t}{ZOSCCT\_t}}
-{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{Z\+O\+S\+C\+CT}} \mbox{\hyperlink{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}{Z\+O\+S\+C\+C\+T\+\_\+t}}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_c_c_t}{ZOSCCT}} \mbox{\hyperlink{zos-sys-info_8h_abf4f84f67f059cb26f2c8a8f566acb75}{ZOSCCT\+\_\+t}}}
 
-\mbox{\Hypertarget{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}\label{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}} 
+\Hypertarget{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}\label{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSCVT\_t@{ZOSCVT\_t}}
 \index{ZOSCVT\_t@{ZOSCVT\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{ZOSCVT\_t}{ZOSCVT\_t}}
-{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{Z\+O\+S\+C\+VT}} \mbox{\hyperlink{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}{Z\+O\+S\+C\+V\+T\+\_\+t}}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_c_v_t}{ZOSCVT}} \mbox{\hyperlink{zos-sys-info_8h_aab8b5cd2ac59f15d0bc983409d22e7c0}{ZOSCVT\+\_\+t}}}
 
-\mbox{\Hypertarget{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}\label{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}} 
+\Hypertarget{zos-sys-info_8h_a244354783b6b0afddb02b237a3c3e142}\label{zos-sys-info_8h_a244354783b6b0afddb02b237a3c3e142} 
+\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSPCCA@{ZOSPCCA}}
+\index{ZOSPCCA@{ZOSPCCA}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
+\doxysubsubsection{\texorpdfstring{ZOSPCCA}{ZOSPCCA}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}} \mbox{\hyperlink{struct_z_o_s_p_c_c_a}{ZOSPCCA}}}
+
+\Hypertarget{zos-sys-info_8h_a707ba9900ad946a55d0ba1eb8351346a}\label{zos-sys-info_8h_a707ba9900ad946a55d0ba1eb8351346a} 
+\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSPCCAVT@{ZOSPCCAVT}}
+\index{ZOSPCCAVT@{ZOSPCCAVT}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
+\doxysubsubsection{\texorpdfstring{ZOSPCCAVT}{ZOSPCCAVT}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}} \mbox{\hyperlink{struct_z_o_s_p_c_c_a_v_t}{ZOSPCCAVT}}}
+
+\Hypertarget{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}\label{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSPSA\_t@{ZOSPSA\_t}}
 \index{ZOSPSA\_t@{ZOSPSA\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{ZOSPSA\_t}{ZOSPSA\_t}}
-{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{Z\+O\+S\+P\+SA}} \mbox{\hyperlink{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}{Z\+O\+S\+P\+S\+A\+\_\+t}}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_p_s_a}{ZOSPSA}} \mbox{\hyperlink{zos-sys-info_8h_a5c66f5580a71dbf94fde663e7737c09a}{ZOSPSA\+\_\+t}}}
 
-\mbox{\Hypertarget{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}\label{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}} 
+\Hypertarget{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}\label{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSRCE\_t@{ZOSRCE\_t}}
 \index{ZOSRCE\_t@{ZOSRCE\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{ZOSRCE\_t}{ZOSRCE\_t}}
-{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{Z\+O\+S\+R\+CE}} \mbox{\hyperlink{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}{Z\+O\+S\+R\+C\+E\+\_\+t}}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_r_c_e}{ZOSRCE}} \mbox{\hyperlink{zos-sys-info_8h_a8aacd406c9cd793d4ec182a7a47758de}{ZOSRCE\+\_\+t}}}
 
-\mbox{\Hypertarget{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}\label{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}} 
+\Hypertarget{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}\label{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSRMCT\_t@{ZOSRMCT\_t}}
 \index{ZOSRMCT\_t@{ZOSRMCT\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{ZOSRMCT\_t}{ZOSRMCT\_t}}
-{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{Z\+O\+S\+R\+M\+CT}} \mbox{\hyperlink{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}{Z\+O\+S\+R\+M\+C\+T\+\_\+t}}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{struct_z_o_s_r_m_c_t}{ZOSRMCT}} \mbox{\hyperlink{zos-sys-info_8h_a5823e728b0d55b240e8f89dec6001bb4}{ZOSRMCT\+\_\+t}}}
 
 
 
 \doxysubsection{Enumeration Type Documentation}
-\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}} 
+\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!oslvl\_t@{oslvl\_t}}
 \index{oslvl\_t@{oslvl\_t}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{oslvl\_t}{oslvl\_t}}
 {\footnotesize\ttfamily enum \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}}}
 
 \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V1R13@{ZOSLVL\_V1R13}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V1R13@{ZOSLVL\_V1R13}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V1\+R13&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V1R13@{ZOSLVL\_V1R13}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V1R13@{ZOSLVL\_V1R13}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa38c9a795628618dd5aa678c4ebe604b1} 
+ZOSLVL\+\_\+\+V1\+R13&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R1@{ZOSLVL\_V2R1}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R1@{ZOSLVL\_V2R1}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R1&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R1@{ZOSLVL\_V2R1}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R1@{ZOSLVL\_V2R1}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa09ecb9fd45b027cd9f09e4c8a05e6dd8} 
+ZOSLVL\+\_\+\+V2\+R1&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R2@{ZOSLVL\_V2R2}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R2@{ZOSLVL\_V2R2}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R2&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R2@{ZOSLVL\_V2R2}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R2@{ZOSLVL\_V2R2}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa7aa24436f20cfd0a81c5d683b1fd9c92} 
+ZOSLVL\+\_\+\+V2\+R2&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R3@{ZOSLVL\_V2R3}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R3@{ZOSLVL\_V2R3}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R3&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R3@{ZOSLVL\_V2R3}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R3@{ZOSLVL\_V2R3}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa64e1d9eb01863019081a6b11a1e9a558} 
+ZOSLVL\+\_\+\+V2\+R3&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R4@{ZOSLVL\_V2R4}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R4@{ZOSLVL\_V2R4}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R4&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R4@{ZOSLVL\_V2R4}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R4@{ZOSLVL\_V2R4}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaaeb2334e1cfb3f9f16310abd91666e5e5} 
+ZOSLVL\+\_\+\+V2\+R4&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R5@{ZOSLVL\_V2R5}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R5@{ZOSLVL\_V2R5}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R5&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V2R5@{ZOSLVL\_V2R5}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V2R5@{ZOSLVL\_V2R5}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaad6f5ed5a0fa757e7c126d5df7593dab4} 
+ZOSLVL\+\_\+\+V2\+R5&\\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_UNKNOWN@{ZOSLVL\_UNKNOWN}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_UNKNOWN@{ZOSLVL\_UNKNOWN}}}\mbox{\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}} 
-Z\+O\+S\+L\+V\+L\+\_\+\+U\+N\+K\+N\+O\+WN&\\
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_V3R1@{ZOSLVL\_V3R1}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_V3R1@{ZOSLVL\_V3R1}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaab486596d7ceed2a79d40ebd466ac5608}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaab486596d7ceed2a79d40ebd466ac5608} 
+ZOSLVL\+\_\+\+V3\+R1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ZOSLVL\_UNKNOWN@{ZOSLVL\_UNKNOWN}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!ZOSLVL\_UNKNOWN@{ZOSLVL\_UNKNOWN}}}\Hypertarget{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b}\label{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aaa58ba8c5aed6ac7f21856244ae076e24b} 
+ZOSLVL\+\_\+\+UNKNOWN&\\
 \hline
 
 \end{DoxyEnumFields}
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{zos-sys-info_8h_a67eea4362b2e4efb1cfcf07f17eba6f7}\label{zos-sys-info_8h_a67eea4362b2e4efb1cfcf07f17eba6f7}} 
+\Hypertarget{zos-sys-info_8h_ac91b8c621335afbb2c674a005f3d8281}\label{zos-sys-info_8h_ac91b8c621335afbb2c674a005f3d8281} 
+\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_get\_cpu\_model@{\_\_get\_cpu\_model}}
+\index{\_\_get\_cpu\_model@{\_\_get\_cpu\_model}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
+\doxysubsubsection{\texorpdfstring{\_\_get\_cpu\_model()}{\_\_get\_cpu\_model()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} char \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+get\+\_\+cpu\+\_\+model (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Gets the 4 character CPU model of the system, including the null terminating character. Truncated if buffer size is too small.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer where the cpu model is to be stored \\
+\hline
+{\em size} & the size of the buffer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the buffer. 
+\end{DoxyReturn}
+\Hypertarget{zos-sys-info_8h_ae72c9bd004b2449be517cf9f76e6a5b3}\label{zos-sys-info_8h_ae72c9bd004b2449be517cf9f76e6a5b3} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_get\_num\_frames@{\_\_get\_num\_frames}}
 \index{\_\_get\_num\_frames@{\_\_get\_num\_frames}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_num\_frames()}{\_\_get\_num\_frames()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+get\+\_\+num\+\_\+frames (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+get\+\_\+num\+\_\+frames (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 Get the number of frames currently available to the system \begin{DoxyReturn}{Returns}
 returns the number of available frames 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8h_a3b2ad7fe0aee30edf781eefd73ee5b88}\label{zos-sys-info_8h_a3b2ad7fe0aee30edf781eefd73ee5b88}} 
+\Hypertarget{zos-sys-info_8h_aa5b032185971a52a0019e419fe16e9d7}\label{zos-sys-info_8h_aa5b032185971a52a0019e419fe16e9d7} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_get\_num\_online\_cpus@{\_\_get\_num\_online\_cpus}}
 \index{\_\_get\_num\_online\_cpus@{\_\_get\_num\_online\_cpus}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_num\_online\_cpus()}{\_\_get\_num\_online\_cpus()}}
-{\footnotesize\ttfamily int \+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
-Get the number of online C\+P\+Us \begin{DoxyReturn}{Returns}
-returns the number of online C\+P\+Us 
+Get the number of online CPUs \begin{DoxyReturn}{Returns}
+returns the number of online CPUs 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8h_af45c5eb88465481f83247e8024e59836}\label{zos-sys-info_8h_af45c5eb88465481f83247e8024e59836}} 
+\Hypertarget{zos-sys-info_8h_a220c8f1db216eb16456518afd0fd3b5d}\label{zos-sys-info_8h_a220c8f1db216eb16456518afd0fd3b5d} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_get\_os\_level@{\_\_get\_os\_level}}
 \index{\_\_get\_os\_level@{\_\_get\_os\_level}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_os\_level()}{\_\_get\_os\_level()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \+\_\+\+\_\+get\+\_\+os\+\_\+level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \+\_\+\+\_\+get\+\_\+os\+\_\+level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 Get the OS level \begin{DoxyReturn}{Returns}
-the OS level as Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R1/2/3/4/5 (values are in ascending order) 
+the OS level as ZOSLVL\+\_\+\+V2\+R1/2/3/4/5 (values are in ascending order) 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8h_a73cf375e89e966ca2e6a7e360ccc11f5}\label{zos-sys-info_8h_a73cf375e89e966ca2e6a7e360ccc11f5}} 
+\Hypertarget{zos-sys-info_8h_a086526032c2a01da1dd09d8984c1df6e}\label{zos-sys-info_8h_a086526032c2a01da1dd09d8984c1df6e} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_is\_os\_level\_at\_or\_above@{\_\_is\_os\_level\_at\_or\_above}}
 \index{\_\_is\_os\_level\_at\_or\_above@{\_\_is\_os\_level\_at\_or\_above}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_os\_level\_at\_or\_above()}{\_\_is\_os\_level\_at\_or\_above()}}
-{\footnotesize\ttfamily bool \+\_\+\+\_\+is\+\_\+os\+\_\+level\+\_\+at\+\_\+or\+\_\+above (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}}}]{level }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \+\_\+\+\_\+is\+\_\+os\+\_\+level\+\_\+at\+\_\+or\+\_\+above (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}}}]{level }\end{DoxyParamCaption})}
 
 Check if current OS is at or above a given level \begin{DoxyReturn}{Returns}
 true if the current OS level is at or above the given level, and false otherwise 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8h_ace9343312e3d85eeddebe558b070e280}\label{zos-sys-info_8h_ace9343312e3d85eeddebe558b070e280}} 
+\Hypertarget{zos-sys-info_8h_a4d056b68d9ae84f237ad47cc21ac142d}\label{zos-sys-info_8h_a4d056b68d9ae84f237ad47cc21ac142d} 
+\index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_is\_stfle\_available@{\_\_is\_stfle\_available}}
+\index{\_\_is\_stfle\_available@{\_\_is\_stfle\_available}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
+\doxysubsubsection{\texorpdfstring{\_\_is\_stfle\_available()}{\_\_is\_stfle\_available()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \+\_\+\+\_\+is\+\_\+stfle\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available \begin{DoxyReturn}{Returns}
+true if the STFLE instruction is available 
+\end{DoxyReturn}
+\Hypertarget{zos-sys-info_8h_a697eddce628001c9c19a6bc1c8c406ed}\label{zos-sys-info_8h_a697eddce628001c9c19a6bc1c8c406ed} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_is\_vef1\_available@{\_\_is\_vef1\_available}}
 \index{\_\_is\_vef1\_available@{\_\_is\_vef1\_available}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_vef1\_available()}{\_\_is\_vef1\_available()}}
-{\footnotesize\ttfamily bool \+\_\+\+\_\+is\+\_\+vef1\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \+\_\+\+\_\+is\+\_\+vef1\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Check if the current z arch includes Vector Enhancements Facility 1 \begin{DoxyReturn}{Returns}
 true if Vector Enhancements Facility 1 instructions are available, and false otherwise 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8h_aaabf39b1027a0ddb9a5677b13cd7d710}\label{zos-sys-info_8h_aaabf39b1027a0ddb9a5677b13cd7d710}} 
+\Hypertarget{zos-sys-info_8h_a9a958577fad869b08f55a33c0c3d75b2}\label{zos-sys-info_8h_a9a958577fad869b08f55a33c0c3d75b2} 
 \index{zos-\/sys-\/info.h@{zos-\/sys-\/info.h}!\_\_is\_vxf\_available@{\_\_is\_vxf\_available}}
 \index{\_\_is\_vxf\_available@{\_\_is\_vxf\_available}!zos-\/sys-\/info.h@{zos-\/sys-\/info.h}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_vxf\_available()}{\_\_is\_vxf\_available()}}
-{\footnotesize\ttfamily bool \+\_\+\+\_\+is\+\_\+vxf\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} bool \+\_\+\+\_\+is\+\_\+vxf\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Check if the current z arch includes Vector Extension Facility \begin{DoxyReturn}{Returns}
 true if Vector Extension Facility instructions are available, and false otherwise 

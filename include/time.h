@@ -35,7 +35,7 @@ typedef enum {
 __Z_EXPORT extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
 __Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #else //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
@@ -63,7 +63,7 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
  */
 __Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
-};
+}
 #endif
 #endif
 

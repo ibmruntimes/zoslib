@@ -1,4 +1,4 @@
-.TH "ZOSCVT" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "ZOSCVT" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -12,19 +12,25 @@ ZOSCVT
 
 .in +1c
 .ti -1c
-.RI "uint8_t \fBfiller\fP [604]"
+.RI "uint8_t \fBfiller1\fP [604]"
 .br
 .ti -1c
 .RI "struct \fBZOSRMCT\fP *__ptr32 \fBrmct\fP"
 .br
 .ti -1c
-.RI "uint8_t \fBfiller1\fP [560]"
+.RI "uint8_t \fBfiller2\fP [156]"
+.br
+.ti -1c
+.RI "struct \fBZOSPCCAVT\fP *__ptr32 \fBpccavt\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBfiller3\fP [400]"
 .br
 .ti -1c
 .RI "struct \fBZOSRCE\fP *__ptr32 \fBrce\fP"
 .br
 .ti -1c
-.RI "uint8_t \fBfiller2\fP [92]"
+.RI "uint8_t \fBfiller4\fP [92]"
 .br
 .ti -1c
 .RI "uint8_t \fBcvtoslvl\fP [16]"
@@ -34,11 +40,15 @@ ZOSCVT
 .PP 
 .SS "uint8_t ZOSCVT::cvtoslvl[16]"
 
-.SS "uint8_t ZOSCVT::filler[604]"
+.SS "uint8_t ZOSCVT::filler1[604]"
 
-.SS "uint8_t ZOSCVT::filler1[560]"
+.SS "uint8_t ZOSCVT::filler2[156]"
 
-.SS "uint8_t ZOSCVT::filler2[92]"
+.SS "uint8_t ZOSCVT::filler3[400]"
+
+.SS "uint8_t ZOSCVT::filler4[92]"
+
+.SS "struct \fBZOSPCCAVT\fP* __ptr32 ZOSCVT::pccavt"
 
 .SS "struct \fBZOSRCE\fP* __ptr32 ZOSCVT::rce"
 

@@ -1,4 +1,4 @@
-.TH "src/zos-sys-info.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-sys-info.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -11,6 +11,8 @@ src/zos-sys-info.cc
 \fC#include <assert\&.h>\fP
 .br
 \fC#include <stdio\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
 .br
 \fC#include <unistd\&.h>\fP
 .br
@@ -39,9 +41,28 @@ src/zos-sys-info.cc
 .ti -1c
 .RI "bool \fB__is_vef1_available\fP ()"
 .br
+.ti -1c
+.RI "char * \fB__get_cpu_model\fP (char *buffer, size_t size)"
+.br
 .in -1c
 .SH "Function Documentation"
 .PP 
+.SS "char * __get_cpu_model (char * buffer, size_t size)"
+Gets the 4 character CPU model of the system, including the null terminating character\&. Truncated if buffer size is too small\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIbuffer\fP pointer to the buffer where the cpu model is to be stored 
+.br
+\fIsize\fP the size of the buffer 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+pointer to the buffer\&. 
+.RE
+.PP
+
 .SS "int __get_num_frames (void)"
 Get the number of frames currently available to the system 
 .PP

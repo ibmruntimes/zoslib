@@ -1,0 +1,67 @@
+.TH "include/unistd.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/unistd.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__XPLAT\fP   1"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__pipe_ascii\fP (int[2])"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__close\fP (int)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBgetentropy\fP (void *buffer, size_t length) __asm('__getentropy')"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBexecvpe\fP (const char *name, char *const argv[], char *const envp[])"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __XPLAT   1"
+
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int __close (int fd)"
+
+.SS "\fB__Z_EXPORT\fP int __pipe_ascii (int fd[2])"
+
+.SS "\fB__Z_EXPORT\fP int execvpe (const char * name, char *const argv[], char *const envp[])"
+Execute a file\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP used to construct a pathname that identifies the new process image file\&. 
+.br
+\fIargv\fP an array of character pointers to NULL-terminated strings\&. 
+.br
+\fIenvp\fP an array of character pointers to NULL-terminated strings\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+if successful, it doesn't return; otherwise, it returns -1 and sets errno\&. 
+.RE
+.PP
+
+.SS "\fB__Z_EXPORT\fP int getentropy (void * buffer, size_t length)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

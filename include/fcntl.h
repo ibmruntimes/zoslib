@@ -10,6 +10,7 @@
 #define ZOS_FCNTL_H_
 
 #include "zos-macros.h"
+#include <sys/types.h>
 
 #define __XPLAT 1
 
@@ -20,25 +21,30 @@ extern "C" {
  * Same as C open but tags new files as ASCII (819)
  */
 __Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
+__Z_EXPORT extern int __creat_ascii(const char *filename, mode_t mode);
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB)
 
 #undef open
+#undef creat
 #define open __open_replaced
+#define creat __creat_replaced
 #include_next <fcntl.h>
 #undef open
+#undef creat
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-__Z_EXPORT extern int open(const char *filename, int opts, ...) asm("__open_ascii");
+__Z_EXPORT extern int open(const char *filename, int opts, ...) __asm("__open_ascii");
+__Z_EXPORT extern int creat(const char *filename, mode_t mode) __asm("__creat_ascii");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #else // #if !(defined(ZOSLIB_OVERRIDE_CLIB)

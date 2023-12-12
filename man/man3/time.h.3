@@ -1,0 +1,80 @@
+.TH "include/time.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/time.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__XPLAT\fP   1"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBclockid_t\fP { \fBCLOCK_REALTIME\fP, \fBCLOCK_MONOTONIC\fP, \fBCLOCK_HIGHRES\fP, \fBCLOCK_THREAD_CPUTIME_ID\fP }"
+.br
+.RI "(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES) "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBclock_gettime\fP (\fBclockid_t\fP cld_id, struct timespec *tp)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__nanosleep\fP (const struct timespec *, struct timespec *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fBnanosleep\fP (const struct timespec *, struct timespec *) __asm('__nanosleep')"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __XPLAT   1"
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBclockid_t\fP"
+
+.PP
+(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES) 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fICLOCK_REALTIME \fP\fP
+.TP
+\fB\fICLOCK_MONOTONIC \fP\fP
+.TP
+\fB\fICLOCK_HIGHRES \fP\fP
+.TP
+\fB\fICLOCK_THREAD_CPUTIME_ID \fP\fP
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int __nanosleep (const struct timespec * req, struct timespec * rem)"
+Suspends the execution of the calling thread until either at least the time specified in *req has elapsed, an event occurs, or a signal arrives\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIreq\fP struct used to specify intervals of time with nanosecond precision 
+.br
+\fIrem\fP the remaining time if the call is interrupted 
+.RE
+.PP
+
+.SS "\fB__Z_EXPORT\fP int clock_gettime (\fBclockid_t\fP cld_id, struct timespec * tp)"
+
+.SS "\fB__Z_EXPORT\fP int nanosleep (const struct timespec *, struct timespec *)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

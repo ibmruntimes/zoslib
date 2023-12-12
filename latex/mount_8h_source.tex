@@ -1,0 +1,62 @@
+\doxysection{mount.\+h}
+\hypertarget{mount_8h_source}{}\label{mount_8h_source}\index{include/sys/mount.h@{include/sys/mount.h}}
+\mbox{\hyperlink{mount_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2022.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_MOUNT\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_MOUNT\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ MFSNAMELEN\ \ \ \ \ 15\ }\textcolor{comment}{/*\ length\ of\ fs\ type\ name,\ not\ inc.\ nul\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ MNAMELEN\ \ \ \ \ \ \ 90\ }\textcolor{comment}{/*\ length\ of\ buffer\ for\ returned\ name\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ MNT\_WAIT\ \ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ MNT\_NOWAIT\ \ \ \ \ \ 2\ }\textcolor{comment}{/*\ only\ NOWAIT\ supported\ with\ getmntinfo\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structstatfs}{statfs}}\ \{\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#if\ 0\ }\textcolor{comment}{/*\ not\ implemented\ yet\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordtype}{short}\ \ f\_otype;\ \ \ \ \textcolor{comment}{/*\ type\ of\ file\ system\ (reserved:\ zero)\ */}}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{short}\ \ f\_oflags;\ \ \ \textcolor{comment}{/*\ copy\ of\ mount\ flags\ (reserved:\ zero)\ */}}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_bsize;\ \ \ \ \textcolor{comment}{/*\ fundamental\ file\ system\ block\ size\ */}}
+\DoxyCodeLine{00031\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_iosize;\ \ \ \textcolor{comment}{/*\ optimal\ transfer\ block\ size\ */}}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_blocks;\ \ \ \textcolor{comment}{/*\ total\ data\ blocks\ in\ file\ system\ */}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_bfree;\ \ \ \ \textcolor{comment}{/*\ free\ blocks\ in\ fs\ */}}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_bavail;\ \ \ \textcolor{comment}{/*\ free\ blocks\ avail\ to\ non-\/superuser\ */}}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_files;\ \ \ \ \textcolor{comment}{/*\ total\ file\ nodes\ in\ file\ system\ */}}
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_ffree;\ \ \ \ \textcolor{comment}{/*\ free\ file\ nodes\ in\ fs\ */}}
+\DoxyCodeLine{00037\ \ \ \mbox{\hyperlink{types_8h_af4b90d8453d756f99334cb7a4edcc543}{fsid\_t}}\ \ f\_fsid;\ \ \ \ \ \textcolor{comment}{/*\ file\ system\ id\ */}}
+\DoxyCodeLine{00038\ \ \ uid\_t\ \ f\_owner;\ \ \ \ \textcolor{comment}{/*\ user\ that\ mounted\ the\ file\ system\ */}}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{short}\ \ f\_reserved1;\ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ for\ future\ use\ */}}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{short}\ \ f\_type;\ \ \ \ \ \textcolor{comment}{/*\ type\ of\ file\ system\ (reserved)\ */}}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_flags;\ \ \ \ \textcolor{comment}{/*\ copy\ of\ mount\ flags\ (reserved)\ */}}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{long}\ \ \ f\_reserved2[2];\ \ \ \ \ \textcolor{comment}{/*\ reserved\ for\ future\ use\ */}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{long}\ \ \ \mbox{\hyperlink{structstatfs_a3027153641ee7a8d4394394d597a7136}{f\_reserved}}[16];\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ as\ 0\ */}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{char}\ \ \ \mbox{\hyperlink{structstatfs_aea6dfa57e9d9025d46f36f44874f737b}{f\_fstypename}}[\mbox{\hyperlink{mount_8h_a21f398ae524af2784dd7a2959caccaaa}{MFSNAMELEN}}];\ \textcolor{comment}{/*\ fs\ type\ name\ */}}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{char}\ \ \ \mbox{\hyperlink{structstatfs_ac56213877ef06282908ef35a7b683a53}{f\_mntonname}}[\mbox{\hyperlink{mount_8h_afb032765d5456bd56a7583dfd0b2f318}{MNAMELEN}}];\ \ \ \ \textcolor{comment}{/*\ directory\ on\ which\ mounted\ */}}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{char}\ \ \ \mbox{\hyperlink{structstatfs_ada04001a3ae396a9449024bdfea216ec}{f\_mntfromname}}[\mbox{\hyperlink{mount_8h_afb032765d5456bd56a7583dfd0b2f318}{MNAMELEN}}];\ \ \textcolor{comment}{/*\ mounted\ file\ system\ */}}
+\DoxyCodeLine{00049\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{mount_8h_acf006a9d166482bc1d35f5a2b139a2b1}{getmntinfo}}(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structstatfs}{statfs}}\ **mntbufp,\ \textcolor{keywordtype}{int}\ flags);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

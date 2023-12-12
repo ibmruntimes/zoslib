@@ -24,6 +24,7 @@
 */
 var menudata={children:[
 {text:"Main Page",url:"index.html"},
+{text:"Related Pages",url:"pages.html"},
 {text:"Classes",url:"annotated.html",children:[
 {text:"Class List",url:"annotated.html"},
 {text:"Class Index",url:"classes.html"},
@@ -108,10 +109,14 @@ var menudata={children:[
 {text:"c",url:"globals_func_c.html#index_c"},
 {text:"d",url:"globals_func_d.html#index_d"},
 {text:"e",url:"globals_func_e.html#index_e"},
+{text:"f",url:"globals_func_f.html#index_f"},
 {text:"g",url:"globals_func_g.html#index_g"},
 {text:"i",url:"globals_func_i.html#index_i"},
 {text:"k",url:"globals_func_k.html#index_k"},
+{text:"l",url:"globals_func_l.html#index_l"},
+{text:"m",url:"globals_func_m.html#index_m"},
 {text:"n",url:"globals_func_n.html#index_n"},
+{text:"p",url:"globals_func_p.html#index_p"},
 {text:"r",url:"globals_func_r.html#index_r"},
 {text:"s",url:"globals_func_s.html#index_s"},
 {text:"u",url:"globals_func_u.html#index_u"},
@@ -125,6 +130,7 @@ var menudata={children:[
 {text:"k",url:"globals_type.html#index_k"},
 {text:"l",url:"globals_type.html#index_l"},
 {text:"m",url:"globals_type.html#index_m"},
+{text:"p",url:"globals_type.html#index_p"},
 {text:"t",url:"globals_type.html#index_t"},
 {text:"v",url:"globals_type.html#index_v"},
 {text:"z",url:"globals_type.html#index_z"}]},
@@ -135,11 +141,13 @@ var menudata={children:[
 {text:"a",url:"globals_defs.html#index_a"},
 {text:"c",url:"globals_defs.html#index_c"},
 {text:"d",url:"globals_defs.html#index_d"},
-{text:"f",url:"globals_defs.html#index_f"},
 {text:"i",url:"globals_defs.html#index_i"},
+{text:"l",url:"globals_defs.html#index_l"},
 {text:"m",url:"globals_defs.html#index_m"},
+{text:"n",url:"globals_defs.html#index_n"},
 {text:"p",url:"globals_defs.html#index_p"},
 {text:"r",url:"globals_defs.html#index_r"},
 {text:"s",url:"globals_defs.html#index_s"},
 {text:"u",url:"globals_defs.html#index_u"},
-{text:"x",url:"globals_defs.html#index_x"}]}]}]}]}
+{text:"x",url:"globals_defs.html#index_x"},
+{text:"z",url:"globals_defs.html#index_z"}]}]}]}]}

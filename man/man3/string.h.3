@@ -1,0 +1,47 @@
+.TH "include/string.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/string.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+\fC#include <strings\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP size_t \fBstrnlen\fP (const char *, size_t)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP char * \fBstrpcpy\fP (char *, const char *)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP char * \fBstrsignal\fP (int)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP const char * \fBsigdescr_np\fP (int)"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP const char * \fBsigabbrev_np\fP (int)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP const char * sigabbrev_np (int signum)"
+
+.SS "\fB__Z_EXPORT\fP const char * sigdescr_np (int signum)"
+
+.SS "\fB__Z_EXPORT\fP size_t strnlen (const char * str, size_t maxlen)"
+
+.SS "\fB__Z_EXPORT\fP char * strpcpy (char * dest, const char * src)"
+
+.SS "\fB__Z_EXPORT\fP char * strsignal (int signum)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

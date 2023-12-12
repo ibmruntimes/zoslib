@@ -6,10 +6,14 @@
 # or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ###############################################################################
 
+cmake_minimum_required(VERSION 3.24)
 project(libzoslib CXX C ASM)
-cmake_minimum_required(VERSION 3.5)
 
-include_directories(BEFORE include)
+if(${CMAKE_C_COMPILER} MATCHES xlclang)
+  include_directories(BEFORE include)
+else()
+  include_directories(BEFORE include include/c++/v1)
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
@@ -28,7 +32,6 @@ list(APPEND zoslib_defines
   _AE_BIMODAL=1
   _ALL_SOURCE
   _ENHANCED_ASCII_EXT=0xFFFFFFFF
-  _Export=extern
   _LARGE_TIME_API
   _OPEN_MSGQ_EXT
   _OPEN_SYS_FILE_EXT=1
@@ -57,13 +60,7 @@ endif()
 
 list(APPEND zoslib_cflags -Wno-parentheses -Wno-unused-value)
 
-if(${CMAKE_C_COMPILER} MATCHES ibm-clang64)
-  list(APPEND zoslib_cflags
-    -fgnu-keywords
-    -march=arch10
-    -fno-short-enums
-    -fzos-le-char-mode=ascii)
-else()
+if(${CMAKE_C_COMPILER} MATCHES xlclang)
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -q64
@@ -77,12 +74,22 @@ else()
     -qarch=10
     -qasm
     -qasmlib=sys1.maclib:sys1.modgen)
+else()
+  # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
+  list(APPEND zoslib_cflags
+    -fgnu-keywords
+    -m64
+    -march=arch14
+    -mzos-target=zosv2r4
+    -fno-short-enums
+    -fzos-le-char-mode=ascii)
 endif()
-
-set(zoslib_cflags ${zoslib_cflags} ${CMAKE_CXX_FLAGS})
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
 target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
+
+target_compile_definitions(zoslib-help PRIVATE ${zoslib_defines})
+target_compile_options(zoslib-help PRIVATE ${zoslib_cflags})
 
 if(BUILD_TESTING)
   add_subdirectory(test)

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vdprintf_904',['vdprintf',['../zos-io_8cc.html#ae88ae734739949e2e284efb4f5aaab66',1,'vdprintf(int fd, const char *fmt, va_list ap):&#160;zos-io.cc'],['../zos-io_8h.html#a66333e20c4800e4c908fc5beca574649',1,'vdprintf(int fd, const char *, va_list ap):&#160;zos-io.cc']]]
+  ['roanon_5fmmap_0',['roanon_mmap',['../zos_8cc.html#a45796cfeb1ecbd8ba79f191fa70cc2e6',1,'roanon_mmap(void *_, size_t len, int prot, int flags, const char *filename, int fd, off_t offset):&#160;zos.cc'],['../zos-base_8h.html#a7ad8309955d906be64e656a30a163f56',1,'roanon_mmap(void *_, size_t len, int prot, int flags, const char *filename, int fd, off_t offset):&#160;zos.cc']]]
 ];

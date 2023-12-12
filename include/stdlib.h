@@ -24,12 +24,21 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
-
+/* Modify function names in header to avoid conflict with new prototypes */
 #undef realpath
 #define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
+#undef getenv
+#define getenv __getenv_replaced
+#endif
+
 #include_next <stdlib.h>
+
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 #undef mkstemp
 #undef realpath
 
@@ -40,17 +49,42 @@ extern "C" {
 /**
  * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
  */
-__Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) asm("__realpath_extended");
+__Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm("__realpath_extended");
 /**
  * Same as C mkstemp but tags fd as ASCII (819)
  */
-__Z_EXPORT int mkstemp(char*) asm("__mkstemp_ascii");
-
+__Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 #if defined(__cplusplus)
 }
 #endif
-#else
-#include_next <stdlib.h>
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
+#undef getenv
+
+#if defined(__cplusplus)
+extern "C" {
+
+/**
+ * Replace getenv with the ascii implementation of __getenv (@@A00423) 
+   which copies pointer to a buffer and is retained even after the environment changes
+ */
+__Z_EXPORT char* getenv(const char*) __asm("@@A00423");
+#if defined(__cplusplus)
+}
+#endif
+#endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+/**
+ * C Lib functions that do not conflict with z/OS LE
+ */
+__Z_EXPORT int getloadavg(double loadavg[], int nelem);
+__Z_EXPORT const char * getprogname(void);
+#if defined(__cplusplus)
+}
 #endif
 
 #if defined(__cplusplus)

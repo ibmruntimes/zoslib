@@ -10,9 +10,10 @@ config("zoslib_config") {
   include_dirs = [
     "include",
   ]
+  # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   cflags = [
-    "-march=arch10",
-    "-mtune=arch10",
+    "-march=arch14",
+    "-mzos-target=zosv2r4",
     "-fno-short-enums",
     "-fzos-le-char-mode=ascii",
   ]

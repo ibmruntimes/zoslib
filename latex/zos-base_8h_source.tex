@@ -1,0 +1,344 @@
+\doxysection{zos-\/base.h}
+\hypertarget{zos-base_8h_source}{}\label{zos-base_8h_source}\index{include/zos-\/base.h@{include/zos-\/base.h}}
+\mbox{\hyperlink{zos-base_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_BASE\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_BASE\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#undef\ \_\_ZOS\_EXT}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ \_\_ZOS\_EXT\_\_\ 1}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ '\ '\ !=\ 0x20}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#error\ EBCDIC\ codeset\ detected.\ ZOSLIB\ is\ compatible\ with\ the\ ASCII\ codeset\ only.}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <\_Nascii.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{stdio_8h}{stdio.h}}>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <sys/\_\_getipc.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <sys/ipc.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <sys/shm.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{sys_2time_8h}{sys/time.h}}>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{socket_8h}{sys/socket.h}}>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{time_8h}{time.h}}>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{unistd_8h}{unistd.h}}>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ \_\_ZOS\_CC}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-bpx_8h}{zos-\/bpx.h}}"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-char-util_8h}{zos-\/char-\/util.h}}"{}}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-io_8h}{zos-\/io.h}}"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-savstack_8h}{zos-\/savstack.h}}"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-sys-info_8h}{zos-\/sys-\/info.h}}"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-tls_8h}{zos-\/tls.h}}"{}}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-getentropy_8h}{zos-\/getentropy.h}}"{}}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ IPC\_CLEANUP\_ENVAR\_DEFAULT\ "{}\_\_IPC\_CLEANUP"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ RUNTIME\_LIMIT\_ENVAR\_DEFAULT\ "{}\_\_RUNTIMELIMIT"{}}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ CCSID\_GUESS\_BUF\_SIZE\_DEFAULT\ "{}\_\_CCSIDGUESSBUFSIZE"{}}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ UNTAGGED\_READ\_MODE\_DEFAULT\ "{}\_\_UNTAGGED\_READ\_MODE"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ UNTAGGED\_READ\_MODE\_CCSID1047\_DEFAULT\ "{}\_\_UNTAGGED\_READ\_MODE\_CCSID1047"{}}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ MEMORY\_USAGE\_LOG\_FILE\_ENVAR\_DEFAULT\ "{}\_\_MEMORY\_USAGE\_LOG\_FILE"{}}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ MEMORY\_USAGE\_LOG\_LEVEL\_ENVAR\_DEFAULT\ "{}\_\_MEMORY\_USAGE\_LOG\_LEVEL"{}}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00052\ \ \ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04a39d4856e780b4891e089d122c54a2541}{\_\_NO\_TAG\_READ\_DEFAULT}}\ =\ 0,}
+\DoxyCodeLine{00053\ \ \ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04a412a28cbc4284b11c6be20f63bc8ab3a}{\_\_NO\_TAG\_READ\_DEFAULT\_WITHWARNING}}\ =\ 1,}
+\DoxyCodeLine{00054\ \ \ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04aa9bd2e76cd11076a1ece305c20049876}{\_\_NO\_TAG\_READ\_V6}}\ =\ 2,}
+\DoxyCodeLine{00055\ \ \ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04a55c670f47bee17442e97d57aa831cb7e}{\_\_NO\_TAG\_READ\_STRICT}}\ =\ 3}
+\DoxyCodeLine{00056\ \}\ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04}{notagread\_t}};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }timespec;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{extern}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{zos-base_8h_a50c65fa4d98053511f95bc2fefd1aea5}{\_\_zoslib\_version}};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____stack__info}{\_\_stack\_info}}\ \{}
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{struct____stack__info_a0d720f84ee66fbfb1a2fe76b5779153f}{prev\_dsa}};}
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{struct____stack__info_ad8e739fdc5577685ee32d606fc4b7f49}{entry\_point}};}
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{struct____stack__info_a7a73186e632af4ae1e96a631b89543ec}{entry\_name}}[256];}
+\DoxyCodeLine{00066\ \ \ \textcolor{keywordtype}{int}\ *\mbox{\hyperlink{struct____stack__info_a5243ca543b57f70d9ff6fd0aa644390d}{return\_addr}};}
+\DoxyCodeLine{00067\ \ \ \textcolor{keywordtype}{int}\ *\mbox{\hyperlink{struct____stack__info_add3a78cc7c70da1d775d887e144c9976}{entry\_addr}};}
+\DoxyCodeLine{00068\ \ \ \textcolor{keywordtype}{int}\ *\mbox{\hyperlink{struct____stack__info_ad8f1abcaccbc800833ed6dd8d464af76}{stack\_addr}};}
+\DoxyCodeLine{00069\ \}\ \mbox{\hyperlink{struct____stack__info}{\_\_stack\_info}};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#include\ <bitset>}}
+\DoxyCodeLine{00073\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00080\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ **\mbox{\hyperlink{zos-base_8h_af8ff5f2506e8f2e9282847d5e5617860}{\_\_get\_environ\_np}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00085\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_af9e9641382185f7e06057f1916ec92cb}{\_\_xfer\_env}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00092\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a407c05f21d0359843901787cda6b428a}{\_\_cleanupipc}}(\textcolor{keywordtype}{int}\ others);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00099\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{zos-base_8h_a683f97cbc662381c4ad1e88ec9cfb18a}{getIFAUsageErrorString}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ rc);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00110\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{zos-base_8h_acb393d9b8a48281f8cb0c98cb30c2c2d}{\_\_registerProduct}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *major\_version,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *product\_owner,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *feature\_name,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *product\_name,}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *pid);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00120\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a15ac6027ff84a20d0690b75e15dc3668}{gettid}}();}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00129\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a7312d5468d83fc353f5ddf3b06f77609}{\_\_getMainThreadId}}();}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00135\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ pthread\_t\ \mbox{\hyperlink{zos-base_8h_a20398ff4abad39fa9960fb2e9e84a1c1}{\_\_getMainThreadSelf}}();}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00141\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a582db4ec8230eb9cd45f9270a30c7a06}{\_\_display\_backtrace}}(\textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00146\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_ab6f4c667745ef34041ea62dfec37ec48}{\_\_set\_backtrace\_on\_abort}}(\textcolor{keywordtype}{bool}\ flag);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00154\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a3a6d80d2d206370d3a457cc4eb3e2fe1}{backtrace}}(\textcolor{keywordtype}{void}\ **buffer,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00162\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ **\mbox{\hyperlink{zos-base_8h_a1142df7041b69a00dd11a02646c92f7c}{backtrace\_symbols}}(\textcolor{keywordtype}{void}\ *\textcolor{keyword}{const}\ *buffer,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00170\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a060af7fe5456dbaa4e3ab8dd69da5b3e}{backtrace\_symbols\_fd}}(\textcolor{keywordtype}{void}\ *\textcolor{keyword}{const}\ *buffer,\ \textcolor{keywordtype}{int}\ size,\ \textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00179\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a5b00df3a088d8b56159199938ab94192}{\_\_abend}}(\textcolor{keywordtype}{int}\ comp\_code,\ \textcolor{keywordtype}{unsigned}\ reason\_code,\ \textcolor{keywordtype}{int}\ flat\_byte,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *plist);}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00189\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_afbca3e8071ef56612dd8eed7cdda783c}{strncasecmp\_ignorecp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *b,\ \textcolor{keywordtype}{size\_t}\ n);}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00197\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_af03749d28d9e05f9802bbdbf3cd03906}{strcasecmp\_ignorecp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *b);}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00209\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a42bd9af8c1041b583d57c358d5a4f29a}{\_\_getargcv}}(\textcolor{keywordtype}{int}\ *argc,\ \textcolor{keywordtype}{char}\ ***argv,\ pid\_t\ pid);}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00219\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_aee1a5a02a2c853f05327a6d4bb68bdb4}{\_\_getexepath}}(\textcolor{keywordtype}{char}\ *path,\ \textcolor{keywordtype}{int}\ pathlen,\ pid\_t\ pid);}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00225\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ **\mbox{\hyperlink{zos-base_8h_ae3bc5aaf2f49ca511a67cdccc2a4959c}{\_\_getargv}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00231\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a4aeb4e66f287b563d64b4096a5a0e3a8}{\_\_getargc}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00237\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ *\mbox{\hyperlink{zos-base_8h_abfc5b692d1edd0ede9f4603113bf73ee}{\_\_get\_stack\_start}}();}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00245\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_a19e5ea35aebe112501372137ecf84e75}{\_\_iterate\_stack\_and\_get}}(\textcolor{keywordtype}{void}\ *dsaptr,\ \mbox{\hyperlink{struct____stack__info}{\_\_stack\_info}}\ *si);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00252\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_aca0a30ccd3ebf91f9202b6600bdb8845}{\_\_dlcb\_next}}(\textcolor{keywordtype}{void}\ *last);}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00261\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a3626656295d77e86b36bb213858b6add}{\_\_dlcb\_entry\_name}}(\textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{int}\ size,\ \textcolor{keywordtype}{void}\ *dlcb);}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00268\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_aadbee4556ce0f3a501b73f37952dd499}{\_\_dlcb\_entry\_addr}}(\textcolor{keywordtype}{void}\ *dlcb);}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00280\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_ac1cf058c2a212e0b92ae54518b59e61d}{\_\_dlcb\_iterate}}(\textcolor{keywordtype}{int}\ (*cb)(\textcolor{keywordtype}{char}*\ name,\ \textcolor{keywordtype}{void}*\ addr,\ \textcolor{keywordtype}{void}*\ data),}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *data);}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00287\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{zos-base_8h_a89043bae929404822a3fe743de0ee02a}{\_\_mach\_absolute\_time}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00299\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_a82fc6a6032346bb187f2622bed5fd95d}{\_\_zalloc}}(\textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{size\_t}\ alignment);}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00313\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_a549df274d0ee1fec7c6081d18ece6537}{anon\_mmap}}(\textcolor{keywordtype}{void}\ *\_,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00314\ }
+\DoxyCodeLine{00324\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_ad6c16f5a4f7e3a803d32aa852dd39815}{\_\_zalloc\_for\_fd}}(\textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ fd,}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ off\_t\ offset);}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00343\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{zos-base_8h_a7ad8309955d906be64e656a30a163f56}{roanon\_mmap}}(\textcolor{keywordtype}{void}\ *\_,\ \textcolor{keywordtype}{size\_t}\ len,\ \textcolor{keywordtype}{int}\ prot,\ \textcolor{keywordtype}{int}\ flags,}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keywordtype}{int}\ fd,\ off\_t\ offset);}
+\DoxyCodeLine{00351\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a157f77171eed80745a20f59e86a13b30}{\_\_zfree}}(\textcolor{keywordtype}{void}\ *addr,\ \textcolor{keywordtype}{int}\ len);}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00361\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_aa422f2389329352993e2dab0eced9a38}{anon\_munmap}}(\textcolor{keywordtype}{void}\ *addr,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00370\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_aabcd038bb45e13a9263d59562a92feb6}{\_\_check\_le\_func}}(\textcolor{keywordtype}{void}\ *addr,\ \textcolor{keywordtype}{char}\ *funcname,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00383\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a1ed44be46a350151ef9f17cfd7334c21}{\_\_cond\_timed\_wait}}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ secs,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ nsecs,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ event\_list,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *secs\_rem,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ *nsecs\_rem);}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{zos-base_8h_a0b58f7053e9ac0361e12e9b0eaf1c208}{COND\_TIME\_WAIT\_CONSTANTS}}\ \{\ \mbox{\hyperlink{zos-base_8h_a0b58f7053e9ac0361e12e9b0eaf1c208abadca9e703a2894cf1c88a178514d6f3}{CW\_INTRPT}}\ =\ 1,\ \mbox{\hyperlink{zos-base_8h_a0b58f7053e9ac0361e12e9b0eaf1c208a48c11109f874d680e4fc5bd3325cfbef}{CW\_CONDVAR}}\ =\ 32\ \};}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00395\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a0b40252bd9fdd06bebf14ad221d9a19c}{\_\_getentropy}}(\textcolor{keywordtype}{void}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00401\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{zos-base_8h_a5667a15bba6773aa39ea3f1290948a33}{\_\_get\_le\_version}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00406\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_ae1d01eea7ccb82d503feaf569fdf8b46}{\_\_build\_version}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00413\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a1777ff85ef07c47bc1b845671d31749e}{\_\_tcp\_clear\_to\_close}}(\textcolor{keywordtype}{int}\ socket,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ secs);}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00420\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a361a2aad984a60e5a4783debdccef571}{get\_ipcs\_overview}}(IPCQPROC\ *info);}
+\DoxyCodeLine{00421\ }
+\DoxyCodeLine{00428\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_ac50caf062ab934f403de2e2178a33423}{\_\_print\_zoslib\_help}}(\mbox{\hyperlink{stdio_8h_a346a7c6f81914d908496877d8c9b9b57}{FILE}}\ *fp,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *title);}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct____cpu__relax__workarea}{\_\_cpu\_relax\_workarea}}\ \{}
+\DoxyCodeLine{00431\ \ \ \textcolor{keywordtype}{void}\ *\mbox{\hyperlink{struct____cpu__relax__workarea_a1925819da07e1ed17665bc87917b5644}{sfaddr}};}
+\DoxyCodeLine{00432\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{struct____cpu__relax__workarea_ad98fa19d1fc23e05f2a2d6b9d2fb2fd0}{t0}};}
+\DoxyCodeLine{00433\ \}\ \mbox{\hyperlink{zos-base_8h_ae10c4318fa7f7eba3b2799ffc90060e8}{\_\_crwa\_t}};}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00436\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_ab773cb01c3553d6c313caf342750258e}{\_\_cpu\_relax}}(\mbox{\hyperlink{struct____cpu__relax__workarea}{\_\_crwa\_t}}\ *);}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00439\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_a426e93fca9b28e64e7575ee3b82f4cd6}{\_\_testread}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *location);}
+\DoxyCodeLine{00440\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_aa3512671bd60fb2afe484e25e1a6ceeb}{\_\_tb}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{zos-base_8h_a4d65477a2027e37093b5fa7e4574fe04}{notagread\_t}}\ \mbox{\hyperlink{zos-base_8h_abc4e6ad91a863f41c7cc977aeedd0899}{\_\_get\_no\_tag\_read\_behaviour}}();}
+\DoxyCodeLine{00443\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_aa83a8abafbe11a167252871af19f238f}{\_\_get\_no\_tag\_ignore\_ccsid1047}}();}
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00445\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00449\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{structzoslib__config}{zoslib\_config}}\ \{}
+\DoxyCodeLine{00453\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *IPC\_CLEANUP\_ENVAR\ =\ \mbox{\hyperlink{zos-base_8h_a989178e9f01743b2af2111725b2b1eb8}{IPC\_CLEANUP\_ENVAR\_DEFAULT}};}
+\DoxyCodeLine{00457\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *RUNTIME\_LIMIT\_ENVAR\ =\ \mbox{\hyperlink{zos-base_8h_a8e6b6f696a5e7fa70287429d5816264f}{RUNTIME\_LIMIT\_ENVAR\_DEFAULT}};}
+\DoxyCodeLine{00462\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *CCSID\_GUESS\_BUF\_SIZE\_ENVAR\ =\ \mbox{\hyperlink{zos-base_8h_ae51a62f771dfacf60d533df8e75002ce}{CCSID\_GUESS\_BUF\_SIZE\_DEFAULT}};}
+\DoxyCodeLine{00466\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *UNTAGGED\_READ\_MODE\_ENVAR\ =\ \mbox{\hyperlink{zos-base_8h_af8049b4002399235c671357a0c561d33}{UNTAGGED\_READ\_MODE\_DEFAULT}};}
+\DoxyCodeLine{00471\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *UNTAGGED\_READ\_MODE\_CCSID1047\_ENVAR\ =}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \mbox{\hyperlink{zos-base_8h_ad51e6cd7f9dac4350e0339af2e6bed78}{UNTAGGED\_READ\_MODE\_CCSID1047\_DEFAULT}};}
+\DoxyCodeLine{00478\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *MEMORY\_USAGE\_LOG\_FILE\_ENVAR\ =\ \mbox{\hyperlink{zos-base_8h_a1451a4864b6ed6bad0f4ac0e17cd769b}{MEMORY\_USAGE\_LOG\_FILE\_ENVAR\_DEFAULT}};}
+\DoxyCodeLine{00483\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *MEMORY\_USAGE\_LOG\_LEVEL\_ENVAR\ =}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{zos-base_8h_a059b362670f6a9692a7a7c4d4c975ed8}{MEMORY\_USAGE\_LOG\_LEVEL\_ENVAR\_DEFAULT}};}
+\DoxyCodeLine{00485\ \}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}};}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00491\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a40f9cc4b28498858b4e027f809bdfcb3}{init\_zoslib}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ config\ =\ \{\});}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00497\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{structzoslib__config}{zoslib\_config}}\ \{}
+\DoxyCodeLine{00501\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_a02e39b562b409f9e0751491ba8498d73}{IPC\_CLEANUP\_ENVAR}};}
+\DoxyCodeLine{00505\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_a7c60ac4e4754b6aeea8985fab8aeb963}{RUNTIME\_LIMIT\_ENVAR}};}
+\DoxyCodeLine{00510\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_aec4ec699b8e23c4e570673b024e4fa3b}{CCSID\_GUESS\_BUF\_SIZE\_ENVAR}};}
+\DoxyCodeLine{00514\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_aa1dd231b327d89cd556a8d70eadd0bae}{UNTAGGED\_READ\_MODE\_ENVAR}};}
+\DoxyCodeLine{00519\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_aae17c26cffd44a34f1e7b099f75078c5}{UNTAGGED\_READ\_MODE\_CCSID1047\_ENVAR}};}
+\DoxyCodeLine{00525\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_a07db5b94ecf4d8e8b1827fdc1d3fb175}{MEMORY\_USAGE\_LOG\_FILE\_ENVAR}};}
+\DoxyCodeLine{00530\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{structzoslib__config_a688635cb30faba13e751e5970136a687}{MEMORY\_USAGE\_LOG\_LEVEL\_ENVAR}};}
+\DoxyCodeLine{00531\ \}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}};}
+\DoxyCodeLine{00532\ }
+\DoxyCodeLine{00537\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_a40f9cc4b28498858b4e027f809bdfcb3}{init\_zoslib}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ config);}
+\DoxyCodeLine{00538\ }
+\DoxyCodeLine{00539\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_cplusplus}}
+\DoxyCodeLine{00540\ }
+\DoxyCodeLine{00545\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_aee93724a9d83ce65cfd505e5cd3a9a67}{init\_zoslib\_config}}(\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ *\textcolor{keyword}{const}\ config);}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00552\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_aa066b16fece00ad37c1cd13531d2abc4}{\_\_update\_envar\_settings}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *envar);}
+\DoxyCodeLine{00553\ }
+\DoxyCodeLine{00558\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{zos-base_8h_a7f5c88a0d782579a3914b7571d3058b3}{\_\_get\_libvec\_base}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00565\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-base_8h_abdbd18a2f4e325b638c8c3ffca3f6eca}{\_\_update\_envar\_names}}(\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ *\textcolor{keyword}{const}\ config);}
+\DoxyCodeLine{00566\ }
+\DoxyCodeLine{00570\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-base_8h_ac8db4f70167b89871789468b1ff68523}{\_\_doLogMemoryUsage}}();}
+\DoxyCodeLine{00571\ }
+\DoxyCodeLine{00576\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{zos-base_8h_ad3bc071320a29c4eb7d3dae3506f0540}{\_\_getMemoryUsageLogFile}}();}
+\DoxyCodeLine{00577\ }
+\DoxyCodeLine{00582\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-base_8h_ac0fa09731aad9fa1839d5631fdde98cf}{\_\_doLogMemoryAll}}();}
+\DoxyCodeLine{00583\ }
+\DoxyCodeLine{00588\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{zos-base_8h_a1d76adca09eb1b849d4376607904458e}{\_\_doLogMemoryWarning}}();}
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00594\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_ad1faac1fa6a8a2883fb09a4c2510c5e0}{\_\_mainTerminating}}();}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00597\ \}}
+\DoxyCodeLine{00598\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00601\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{zos-base_8h_aee93724a9d83ce65cfd505e5cd3a9a67}{init\_zoslib\_config}}(\mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ \&config);}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \textcolor{preprocessor}{\#include\ <exception>}}
+\DoxyCodeLine{00604\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00605\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00606\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00607\ }
+\DoxyCodeLine{00608\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00609\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ ==\ \_b.\_\_;}
+\DoxyCodeLine{00610\ \}}
+\DoxyCodeLine{00611\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00612\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ !=\ \_b.\_\_;}
+\DoxyCodeLine{00613\ \}}
+\DoxyCodeLine{00614\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator<=(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00615\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ <=\ \_b.\_\_;}
+\DoxyCodeLine{00616\ \}}
+\DoxyCodeLine{00617\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator>=(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00618\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ >=\ \_b.\_\_;}
+\DoxyCodeLine{00619\ \}}
+\DoxyCodeLine{00620\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator<(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00621\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ <\ \_b.\_\_;}
+\DoxyCodeLine{00622\ \}}
+\DoxyCodeLine{00623\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator>(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ pthread\_t\ \&\_b)\ \{}
+\DoxyCodeLine{00624\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ >\ \_b.\_\_;}
+\DoxyCodeLine{00625\ \}}
+\DoxyCodeLine{00626\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \_b)\ \{}
+\DoxyCodeLine{00627\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ ==\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\textcolor{keyword}{>}(\_b);}
+\DoxyCodeLine{00628\ \}}
+\DoxyCodeLine{00629\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ pthread\_t\ \&\_a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \_b)\ \{}
+\DoxyCodeLine{00630\ \ \ \textcolor{keywordflow}{return}\ \_a.\_\_\ !=\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \textcolor{keywordtype}{long}\textcolor{keyword}{>}(\_b);}
+\DoxyCodeLine{00631\ \}}
+\DoxyCodeLine{00632\ }
+\DoxyCodeLine{00633\ \textcolor{keyword}{struct\ }zoslibEnvar\ \{}
+\DoxyCodeLine{00634\ \ \ std::string\ envarName;}
+\DoxyCodeLine{00635\ \ \ std::string\ envarValue;}
+\DoxyCodeLine{00636\ }
+\DoxyCodeLine{00637\ \ \ zoslibEnvar(std::string\ name,\ std::string\ value)}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ :\ envarName(name),\ envarValue(value)\ \{\}}
+\DoxyCodeLine{00639\ }
+\DoxyCodeLine{00640\ \ \ \textcolor{keywordtype}{bool}\ operator<(\textcolor{keyword}{const}\ zoslibEnvar\ \&t)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00641\ \ \ \ \ \textcolor{keywordflow}{return}\ std::tie(envarName,\ envarValue)\ <}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ std::tie(t.envarName,\ t.envarValue);}
+\DoxyCodeLine{00643\ \ \ \}}
+\DoxyCodeLine{00644\ \};}
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \textcolor{keyword}{class\ }\_\_zinit\ \{}
+\DoxyCodeLine{00647\ \ \ \textcolor{keywordtype}{int}\ mode;}
+\DoxyCodeLine{00648\ \ \ \textcolor{keywordtype}{int}\ cvstate;}
+\DoxyCodeLine{00649\ \ \ std::terminate\_handler\ \_th;}
+\DoxyCodeLine{00650\ }
+\DoxyCodeLine{00651\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00652\ \ \ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ config;}
+\DoxyCodeLine{00653\ \ \ std::map<zoslibEnvar,\ std::string>\ envarHelpMap;}
+\DoxyCodeLine{00654\ }
+\DoxyCodeLine{00655\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00656\ \ \ \_\_zinit();}
+\DoxyCodeLine{00657\ \ \ \string~\_\_zinit();}
+\DoxyCodeLine{00658\ }
+\DoxyCodeLine{00659\ \ \ \textcolor{keywordtype}{int}\ initialize(\textcolor{keyword}{const}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ \&config);}
+\DoxyCodeLine{00660\ \ \ \textcolor{keywordtype}{bool}\ isValidZOSLIBEnvar(std::string\ envar);}
+\DoxyCodeLine{00661\ \ \ \textcolor{keywordtype}{int}\ setEnvarHelpMap(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00662\ \ \ \textcolor{keywordtype}{void}\ populateLEFunctionPointers(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00663\ }
+\DoxyCodeLine{00664\ \ \ \textcolor{keywordtype}{void}\ \_\_abort()\ \{\ \_th();\ \}}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00667\ \ \ \textcolor{keywordtype}{void}\ del\_instance();}
+\DoxyCodeLine{00668\ \};}
+\DoxyCodeLine{00669\ }
+\DoxyCodeLine{00670\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \_\_init\_zoslib\ \{}
+\DoxyCodeLine{00671\ \ \ \_\_init\_zoslib(\textcolor{keyword}{const}\ \mbox{\hyperlink{zos-base_8h_a09b8deb5d17f98a658948b90f5aa504c}{zoslib\_config\_t}}\ \&config\ =\ \{\});}
+\DoxyCodeLine{00672\ \};}
+\DoxyCodeLine{00673\ }
+\DoxyCodeLine{00680\ \textcolor{keyword}{template}\ <std::\textcolor{keywordtype}{size\_t}\ N>\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ std::bitset<N>}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_subtractOne(std::bitset<N>\ bs)\ \{}
+\DoxyCodeLine{00682\ \ \ \textcolor{comment}{//\ Flip\ bits\ from\ rightmost\ bit\ till\ and\ including\ the\ first\ 1:}}
+\DoxyCodeLine{00683\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<bs.size();\ i++)\ \{}
+\DoxyCodeLine{00684\ \ \ \ \ \textcolor{keywordflow}{if}\ (bs[i])\ \{}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ bs[i]\ =\ 0b0;}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00687\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ bs[i]\ =\ 0b1;}
+\DoxyCodeLine{00689\ \ \ \ \ \}}
+\DoxyCodeLine{00690\ \ \ \}}
+\DoxyCodeLine{00691\ \ \ \textcolor{keywordflow}{return}\ bs;}
+\DoxyCodeLine{00692\ \}}
+\DoxyCodeLine{00693\ }
+\DoxyCodeLine{00700\ \textcolor{keyword}{template}\ <std::\textcolor{keywordtype}{size\_t}\ N>\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ std::bitset<N>}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_addOne(std::bitset<N>\ bs)\ \{}
+\DoxyCodeLine{00702\ \ \ \textcolor{comment}{//\ Flip\ bits\ from\ rightmost\ bit\ till\ and\ including\ the\ first\ 0:}}
+\DoxyCodeLine{00703\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<bs.size();\ i++)\ \{}
+\DoxyCodeLine{00704\ \ \ \ \ \textcolor{keywordflow}{if}\ (!bs[i])\ \{}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ bs[i]\ =\ 0b1;}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00707\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ bs[i]\ =\ 0b0;}
+\DoxyCodeLine{00709\ \ \ \ \ \}}
+\DoxyCodeLine{00710\ \ \ \}}
+\DoxyCodeLine{00711\ \ \ \textcolor{keywordflow}{return}\ bs;}
+\DoxyCodeLine{00712\ \}}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \_\_zinit*\ \mbox{\hyperlink{zos_8cc_a78f04444b9b692af353be4cf1e55ad0c}{\_\_get\_instance}}();}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_cplusplus}}
+\DoxyCodeLine{00717\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_BASE\_H\_}}
+
+\end{DoxyCode}

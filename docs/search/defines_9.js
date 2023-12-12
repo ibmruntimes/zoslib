@@ -1,19 +1,4 @@
 var searchData=
 [
-  ['sem_5ffailed_1384',['SEM_FAILED',['../zos-semaphore_8h.html#a2ef55dcb46a51cb0f879f4c1724bdded',1,'zos-semaphore.h']]],
-  ['si00cpcvariety_5fv1cpc_5fmachine_1385',['SI00CPCVARIETY_V1CPC_MACHINE',['../csrsic_8h.html#a4120187b0b0e32adc0318a89311e2bca',1,'csrsic.h']]],
-  ['si00cpcvariety_5fv2cpc_5flpar_1386',['SI00CPCVARIETY_V2CPC_LPAR',['../csrsic_8h.html#a444e9e9f5cde10525abbda67b0b0022d',1,'csrsic.h']]],
-  ['si00cpcvariety_5fv3cpc_5fvm_1387',['SI00CPCVARIETY_V3CPC_VM',['../csrsic_8h.html#a67688a1bbd8e8dfa479eabe02c4a28ce',1,'csrsic.h']]],
-  ['si00validsi11v1_1388',['si00validsi11v1',['../csrsic_8h.html#ad2105e3bfddf5f6ab3b6c60a4d5ea78b',1,'csrsic.h']]],
-  ['si00validsi22v1_1389',['si00validsi22v1',['../csrsic_8h.html#aaaa94ef8c4fc7497906aa3b290329581',1,'csrsic.h']]],
-  ['si00validsi22v2_1390',['si00validsi22v2',['../csrsic_8h.html#a48a05ff78ac2b6890ef8de1faabf9953',1,'csrsic.h']]],
-  ['si00validsi22v3_1391',['si00validsi22v3',['../csrsic_8h.html#ae17368e43cf441e5b457a73346593a6b',1,'csrsic.h']]],
-  ['si11v1cpcmodel_1392',['si11v1cpcmodel',['../csrsic_8h.html#ad3eb9cfeb73a88c156bfbc69fef9e8ee',1,'csrsic.h']]],
-  ['si22v1altmpcpucapaf_1393',['si22v1altmpcpucapaf',['../csrsic_8h.html#a643f240b6556c2e0bfb50a6fa22cfc0a',1,'csrsic.h']]],
-  ['si22v1mpcpucapaf_1394',['si22v1mpcpucapaf',['../csrsic_8h.html#ac2316afa9884eb79cf61c7bde0c680b7',1,'csrsic.h']]],
-  ['si22v2lcpudedicated_1395',['si22v2lcpudedicated',['../csrsic_8h.html#a4120afe320875a0be2abf2139576217f',1,'csrsic.h']]],
-  ['si22v2lcpushared_1396',['si22v2lcpushared',['../csrsic_8h.html#a2db04cb3f3adb1099d987f8c13edf5a3',1,'csrsic.h']]],
-  ['si22v2lcpuulimit_1397',['si22v2lcpuulimit',['../csrsic_8h.html#a6285f288b0458ef532e60437de3f59a3',1,'csrsic.h']]],
-  ['si22v3dbcount_1398',['si22v3dbcount',['../csrsic_8h.html#a274f223c928a13d65fa1056b57dbc332',1,'csrsic.h']]],
-  ['stringify_1399',['STRINGIFY',['../zos_8cc.html#a51840e7e288c8d25587ce062de9d9515',1,'zos.cc']]]
+  ['runtime_5flimit_5fenvar_5fdefault_0',['RUNTIME_LIMIT_ENVAR_DEFAULT',['../zos-base_8h.html#a8e6b6f696a5e7fa70287429d5816264f',1,'zos-base.h']]]
 ];

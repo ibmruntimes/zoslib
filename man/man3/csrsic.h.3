@@ -1,4 +1,4 @@
-.TH "include/csrsic.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "include/csrsic.h" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -9,15 +9,6 @@ include/csrsic.h
 .SS "Classes"
 
 .in +1c
-.ti -1c
-.RI "struct \fBCSRSI_CSRT\fP"
-.br
-.ti -1c
-.RI "struct \fBCSRSI_CVT\fP"
-.br
-.ti -1c
-.RI "struct \fBCSRSI_PSA\fP"
-.br
 .ti -1c
 .RI "struct \fBsi11v1\fP"
 .br
@@ -64,12 +55,6 @@ include/csrsic.h
 .SS "Macros"
 
 .in +1c
-.ti -1c
-.RI "#define \fBcsrsi\fP   \fBCSRSI\fP"
-.br
-.ti -1c
-.RI "#define \fBcsrsi_byaddr\fP(Request,  Flen,  Fptr,  Rcptr)"
-.br
 .ti -1c
 .RI "#define \fBsi11v1cpcmodel\fP   si11v1cpcmodelcapident"
 .br
@@ -140,49 +125,14 @@ include/csrsic.h
 .RI "#define \fBCSRSI_BADLOCK\fP   20"
 .br
 .in -1c
-.SS "Typedefs"
-
-.in +1c
-.ti -1c
-.RI "typedef int \fBCSRSIRequest\fP"
-.br
-.ti -1c
-.RI "typedef int \fBCSRSIInfoAreaLen\fP"
-.br
-.ti -1c
-.RI "typedef int \fBCSRSIReturnCode\fP"
-.br
-.ti -1c
-.RI "typedef void \fBCSRSI_calltype\fP(\fBCSRSIRequest\fP __REQUEST, \fBCSRSIInfoAreaLen\fP __INFOAREALEN, void *__INFOAREA, \fBCSRSIReturnCode\fP *__RC)"
-.br
-.in -1c
-.SS "Variables"
-
-.in +1c
-.ti -1c
-.RI "\fBCSRSI_calltype\fP \fBCSRSI\fP"
-.br
-.in -1c
 .SH "Macro Definition Documentation"
 .PP 
-.SS "#define csrsi   \fBCSRSI\fP"
-
 .SS "#define CSRSI_BADINFOAREALEN   16"
 
 .SS "#define CSRSI_BADLOCK   20"
 
 .SS "#define CSRSI_BADREQUEST   12"
 
-.SS "#define csrsi_byaddr(Request, Flen, Fptr, Rcptr)"
-\fBValue:\fP
-.PP
-.nf
-{                                                                 \
- ((struct CSRSI_PSA*) 0) ->                                         \
-                   CSRSI_cvt->CSRSI_cvtcsrt->CSRSI_addr             \
-           (Request,Flen,Fptr,Rcptr);                               \
-};
-.fi
 .SS "#define CSRSI_REQUEST_V1CPC_MACHINE   1"
 
 .SS "#define CSRSI_REQUEST_V2CPC_LPAR   2"
@@ -222,20 +172,6 @@ include/csrsic.h
 .SS "#define si22v2lcpuulimit   si22v2lcpuc\&._si22v2lcpuulimit"
 
 .SS "#define si22v3dbcount   si22v3dbcountfield\&._si22v3dbcount"
-
-.SH "Typedef Documentation"
-.PP 
-.SS "typedef void CSRSI_calltype(\fBCSRSIRequest\fP __REQUEST, \fBCSRSIInfoAreaLen\fP __INFOAREALEN, void *__INFOAREA, \fBCSRSIReturnCode\fP *__RC)"
-
-.SS "typedef int \fBCSRSIInfoAreaLen\fP"
-
-.SS "typedef int \fBCSRSIRequest\fP"
-
-.SS "typedef int \fBCSRSIReturnCode\fP"
-
-.SH "Variable Documentation"
-.PP 
-.SS "\fBCSRSI_calltype\fP CSRSI\fC [extern]\fP"
 
 .SH "Author"
 .PP 

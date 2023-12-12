@@ -1,0 +1,61 @@
+\doxysection{include/sys/mount.h File Reference}
+\hypertarget{mount_8h}{}\label{mount_8h}\index{include/sys/mount.h@{include/sys/mount.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structstatfs}{statfs}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{mount_8h_a21f398ae524af2784dd7a2959caccaaa}{MFSNAMELEN}}~15 /\texorpdfstring{$\ast$}{*} length of fs type name, not inc. nul \texorpdfstring{$\ast$}{*}/
+\item 
+\#define \mbox{\hyperlink{mount_8h_afb032765d5456bd56a7583dfd0b2f318}{MNAMELEN}}~90 /\texorpdfstring{$\ast$}{*} length of buffer for returned name \texorpdfstring{$\ast$}{*}/
+\item 
+\#define \mbox{\hyperlink{mount_8h_a7cd4de301f0e2acaa631f3445e0c46aa}{MNT\+\_\+\+WAIT}}~1
+\item 
+\#define \mbox{\hyperlink{mount_8h_a221c308518d87c0e860255c77d25603a}{MNT\+\_\+\+NOWAIT}}~2 /\texorpdfstring{$\ast$}{*} only NOWAIT supported with \mbox{\hyperlink{zos-mount_8c_ae81cfe9665dcf3516bc06cc2eb17f184}{getmntinfo}} \texorpdfstring{$\ast$}{*}/
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{mount_8h_acf006a9d166482bc1d35f5a2b139a2b1}{getmntinfo}} (struct \mbox{\hyperlink{structstatfs}{statfs}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}mntbufp, int flags)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{mount_8h_a21f398ae524af2784dd7a2959caccaaa}\label{mount_8h_a21f398ae524af2784dd7a2959caccaaa} 
+\index{mount.h@{mount.h}!MFSNAMELEN@{MFSNAMELEN}}
+\index{MFSNAMELEN@{MFSNAMELEN}!mount.h@{mount.h}}
+\doxysubsubsection{\texorpdfstring{MFSNAMELEN}{MFSNAMELEN}}
+{\footnotesize\ttfamily \#define MFSNAMELEN~15 /\texorpdfstring{$\ast$}{*} length of fs type name, not inc. nul \texorpdfstring{$\ast$}{*}/}
+
+\Hypertarget{mount_8h_afb032765d5456bd56a7583dfd0b2f318}\label{mount_8h_afb032765d5456bd56a7583dfd0b2f318} 
+\index{mount.h@{mount.h}!MNAMELEN@{MNAMELEN}}
+\index{MNAMELEN@{MNAMELEN}!mount.h@{mount.h}}
+\doxysubsubsection{\texorpdfstring{MNAMELEN}{MNAMELEN}}
+{\footnotesize\ttfamily \#define MNAMELEN~90 /\texorpdfstring{$\ast$}{*} length of buffer for returned name \texorpdfstring{$\ast$}{*}/}
+
+\Hypertarget{mount_8h_a221c308518d87c0e860255c77d25603a}\label{mount_8h_a221c308518d87c0e860255c77d25603a} 
+\index{mount.h@{mount.h}!MNT\_NOWAIT@{MNT\_NOWAIT}}
+\index{MNT\_NOWAIT@{MNT\_NOWAIT}!mount.h@{mount.h}}
+\doxysubsubsection{\texorpdfstring{MNT\_NOWAIT}{MNT\_NOWAIT}}
+{\footnotesize\ttfamily \#define MNT\+\_\+\+NOWAIT~2 /\texorpdfstring{$\ast$}{*} only NOWAIT supported with \mbox{\hyperlink{zos-mount_8c_ae81cfe9665dcf3516bc06cc2eb17f184}{getmntinfo}} \texorpdfstring{$\ast$}{*}/}
+
+\Hypertarget{mount_8h_a7cd4de301f0e2acaa631f3445e0c46aa}\label{mount_8h_a7cd4de301f0e2acaa631f3445e0c46aa} 
+\index{mount.h@{mount.h}!MNT\_WAIT@{MNT\_WAIT}}
+\index{MNT\_WAIT@{MNT\_WAIT}!mount.h@{mount.h}}
+\doxysubsubsection{\texorpdfstring{MNT\_WAIT}{MNT\_WAIT}}
+{\footnotesize\ttfamily \#define MNT\+\_\+\+WAIT~1}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{mount_8h_acf006a9d166482bc1d35f5a2b139a2b1}\label{mount_8h_acf006a9d166482bc1d35f5a2b139a2b1} 
+\index{mount.h@{mount.h}!getmntinfo@{getmntinfo}}
+\index{getmntinfo@{getmntinfo}!mount.h@{mount.h}}
+\doxysubsubsection{\texorpdfstring{getmntinfo()}{getmntinfo()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int getmntinfo (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structstatfs}{statfs}} \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{mntbufp,  }\item[{int}]{flags }\end{DoxyParamCaption})}
+

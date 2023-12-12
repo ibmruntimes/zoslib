@@ -1,0 +1,49 @@
+\doxysection{time.\+h}
+\hypertarget{sys_2time_8h_source}{}\label{sys_2time_8h_source}\index{include/sys/time.h@{include/sys/time.h}}
+\mbox{\hyperlink{sys_2time_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_TIME\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_TIME\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\_next\ <sys/time.h>}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00029\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*\mbox{\hyperlink{sys_2time_8h_a36dcef9422484e335c72cd9c6db5ef98}{futimes}})(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }timeval\ tv[2]);}
+\DoxyCodeLine{00036\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*\mbox{\hyperlink{sys_2time_8h_a5542e98e94c32bd2b367c4d1c40ba53e}{lutimes}})(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct\ }timeval\ tv[2]);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00039\ \}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#else\ }}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#include\_next\ <sys/time.h>}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00046\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00054\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{sys_2time_8h_a36dcef9422484e335c72cd9c6db5ef98}{futimes}}(\textcolor{keywordtype}{int}\ fd,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ timeval\ tv[2]);}
+\DoxyCodeLine{00061\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{sys_2time_8h_a5542e98e94c32bd2b367c4d1c40ba53e}{lutimes}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *filename,\ \textcolor{keyword}{const}\ \textcolor{keyword}{struct}\ timeval\ tv[2]);}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

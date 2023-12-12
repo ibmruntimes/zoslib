@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#if TRACE_ON
+#ifdef TRACE_ON
 /**
  * Prints information about a file descriptor.
  * \param [in] fd file descriptor.
@@ -33,7 +33,7 @@ __Z_EXPORT ssize_t __write(int fd, const void *buffer, size_t sz);
 __Z_EXPORT ssize_t __read(int fd, void *buffer, size_t sz);
 __Z_EXPORT int __close(int fd);
 __Z_EXPORT int __open(const char *file, int oflag, int mode);
-#endif // if TRACE_ON
+#endif // ifdef TRACE_ON
 
 /**
  * Debug Printf.
@@ -138,6 +138,12 @@ __Z_EXPORT int __getfdccsid(int fd);
  * \return returns 0 if successful, or -1 on failure.
  */
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
+
+/**
+ * Returns the fileno to which memory diagnostics is written (use for
+ * instance in a `__display_backtrace(__getLogMemoryFileNo());` call).
+ */
+__Z_EXPORT int __getLogMemoryFileNo();
 
 /**
  * Logs memory allocation and release to the file name specified

@@ -71,7 +71,7 @@ __Z_EXPORT extern int (*epoll_wait)(int, struct epoll_event *, int, int);
 __Z_EXPORT extern int (*epoll_pwait)(int, struct epoll_event *, int, int, const sigset_t *);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif //!(__EDC_TARGET < 0x42050000)  && defined(ZOSLIB_ENABLE_V2R5_FEATURES)

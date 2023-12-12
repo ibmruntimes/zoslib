@@ -1,0 +1,855 @@
+\doxysection{csrsic.\+h}
+\hypertarget{csrsic_8h_source}{}\label{csrsic_8h_source}\index{include/csrsic.h@{include/csrsic.h}}
+\mbox{\hyperlink{csrsic_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ \_\_CSRSI}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ \_\_CSRSI}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ TODO(gabylb):\ disable\ for\ Woz\ clang\ till\ it\ supports\ OS\ linkage:}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ extern\ "{}OS"{}\ \{\ -\/\ error:\ unknown\ linkage\ language}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(\_\_ibmxl\_\_)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{/*********************************************************************}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ \ Name:\ CSRSIC\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ *\ \ Descriptive\ Name:\ Store\ System\ Information\ C\ declares\ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00023\ \ \textcolor{comment}{/*01*\ PROPRIETARY\ STATEMENT=\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ /***PROPRIETARY\_STATEMENT********************************************/}}
+\DoxyCodeLine{00025\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00026\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00027\ \ \textcolor{comment}{/*\ LICENSED\ MATERIALS\ -\/\ PROPERTY\ OF\ IBM\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00028\ \ \textcolor{comment}{/*\ 5694-\/A01\ COPYRIGHT\ IBM\ CORP.\ 1999,2010\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00029\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00030\ \ \textcolor{comment}{/*\ STATUS=\ HBB7770\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00031\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ /***END\_OF\_PROPRIETARY\_STATEMENT*************************************/}}
+\DoxyCodeLine{00033\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00034\ \ \textcolor{comment}{/*01*\ EXTERNAL\ CLASSIFICATION:\ PI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00035\ \ \textcolor{comment}{/*01*\ END\ OF\ EXTERNAL\ CLASSIFICATION:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00036\ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00037\ \textcolor{comment}{/*\ \ Function:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ *\ \ \ \ CSRSIC\ defines\ types,\ related\ constants,\ and\ function\ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ \ \ \ prototypes\ for\ the\ use\ of\ the\ CSRSI\ service\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ \ \ \ from\ the\ C\ language\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ \ Usage:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ *\ \ \ \ \#include\ <CSRSIC.H>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ \ Notes:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ *\ \ \ 1.\ This\ member\ should\ be\ copied\ from\ SAMPLIB\ to\ the\ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ *\ \ \ \ \ \ appropriate\ local\ C\ library.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ *\ \ \ 2.\ CSRSI\ service\ does\ not\ use\ a\ null\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ *\ \ \ \ \ \ character\ to\ terminate\ strings.\ The\ services\ expect\ the\ \ \ \ \ \ *}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ *\ \ \ \ \ \ character\ operands\ to\ be\ a\ fixed-\/length\ type.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ *\ \ \ \ \ \ Use\ memcpy\ to\ move\ into\ and\ from\ these\ fields.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ *\ \ Change\ Activity:\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ *\$00=STSICSR,HBB6601,\ 990206,\ PDXB:\ OW38489\ STSI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ *\$H1=STSICSR,HBB6601,\ 990206,\ PDXB:\ OW38489\ STSI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ *\$L1=STSI\ \ \ ,HBB7707,\ 011201,\ PDXB:\ si22v1alt\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ *\$L2=GT16WAY,HBB7709,\ 021211,\ PDXB:\ si00PCCA\_CPU\_Address\_Mask\ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\$H2=STSICSR,HBB7709,\ 031105,\ PDXB:\ Model\ Capacity\ Identifier\ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\$H3=IFA\ \ \ \ \ HBB7709\ \ 031205\ \ PDXB:\ IFA\ support\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ *\$L3=ME05086\ HBB7730\ \ 051115\ \ PDXB:\ LPAR\ origin\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ *\$01=OA21459\ HBB7720\ \ 070614,\ PD00KD:\ Cleanup\ sequence\ numbers\ \ \ \ \ \ *}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ *\$L4=ME18454\ HBB7770\ \ 100210,\ PD00XB:\ Improve\ access\ to\ CVT\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ *********************************************************************/}}
+\DoxyCodeLine{00066\ \textcolor{comment}{/*********************************************************************}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ Type\ Definitions\ for\ User\ Specified\ Parameters\ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *********************************************************************/}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ \ Type\ for\ Request\ operand\ of\ CSRSI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00071\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ \ CSRSIRequest;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*\ \ Type\ for\ InfoAreaLen\ operand\ of\ CSRSI\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ \ CSRSIInfoAreaLen;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{comment}{/*\ \ Type\ for\ Return\ Code\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{int}\ \ CSRSIReturnCode;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/*********************************************************************}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ Function\ Prototypes\ for\ Service\ Routines\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ *********************************************************************/}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00086\ \ \ \ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}OS"{}}\ \{}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ \#pragma\ linkage(CSRSI\_calltype,OS)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00090\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{void}\ CSRSI\_calltype(}
+\DoxyCodeLine{00091\ \ \ \ CSRSIRequest\ \ \ \ \ \ \_\_REQUEST,\ \ \ \textcolor{comment}{/*\ Input\ \ -\/\ request\ type\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00092\ \ \ \ CSRSIInfoAreaLen\ \ \_\_INFOAREALEN,\ \ \textcolor{comment}{/*\ Input\ -\/\ length\ of\ infoarea\ \ \ */}}
+\DoxyCodeLine{00093\ \ \ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ \ \ \ \ \ *\_\_INFOAREA,\ \ \textcolor{comment}{/*\ Input\ \ -\/\ info\ area\ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00094\ \ \ \ CSRSIReturnCode\ \ *\_\_RC);\ \ \ \ \ \ \ \textcolor{comment}{/*\ Output\ -\/\ return\ code\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#define\ csrsi\ CSRSI}}
+\DoxyCodeLine{00097\ \textcolor{keyword}{extern}\ CSRSI\_calltype\ CSRSI;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00101\ \ \ \ \}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#ifndef\ \_\_cplusplus}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ csrsi\_byaddr(Request,\ Flen,\ Fptr,\ Rcptr)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\ ((struct\ CSRSI\_PSA*)\ 0)\ -\/>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CSRSI\_cvt-\/>CSRSI\_cvtcsrt-\/>CSRSI\_addr\ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ (Request,Flen,Fptr,Rcptr);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\}}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{struct\ }CSRSI\_CSRT\ \{}
+\DoxyCodeLine{00114\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_csrt\_filler1\ \ [48];}
+\DoxyCodeLine{00115\ \ \ \ CSRSI\_calltype*\ CSRSI\_addr;}
+\DoxyCodeLine{00116\ \};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{struct\ }CSRSI\_CVT\ \{}
+\DoxyCodeLine{00119\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvt\_filler1\ \ [116];}
+\DoxyCodeLine{00120\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ CSRSI\_cvtdcb\_rsvd1\ :\ 4;\ \ \ \ \ \ \textcolor{comment}{/*\ Not\ needed\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ CSRSI\_cvtosext\ :\ 1;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ If\ on,\ indicates\ that\ the}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CVTOSLVL\ fields\ are\ valid\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ CSRSI\_cvtdcb\_rsvd2\ :\ 3;\ \ \ \ \ \ \textcolor{comment}{/*\ Not\ needed\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \}\ CSRSI\_cvtdcb;}
+\DoxyCodeLine{00126\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvt\_filler2\ \ [427];}
+\DoxyCodeLine{00127\ \ \ \ \textcolor{keyword}{struct\ }CSRSI\_CSRT\ *\ CSRSI\_cvtcsrt;}
+\DoxyCodeLine{00128\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvt\_filler3\ \ [716];}
+\DoxyCodeLine{00129\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvtoslv0;}
+\DoxyCodeLine{00130\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvtoslv1;}
+\DoxyCodeLine{00131\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvtoslv2;}
+\DoxyCodeLine{00132\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvtoslv3;}
+\DoxyCodeLine{00133\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ CSRSI\_cvtcsrsi\ :\ 1;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ If\ on,\ indicates\ that\ the}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CSRSI\ service\ is\ available\ \ \ */}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ CSRSI\_cvtoslv1\_rsvd1\ :\ 7;\ \ \ \ \textcolor{comment}{/*\ Not\ needed\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \}\ CSRSI\_cvtoslv4;}
+\DoxyCodeLine{00138\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ CSRSI\_cvt\_filler4\ [11];\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00139\ \};}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{struct\ }CSRSI\_PSA\ \{}
+\DoxyCodeLine{00143\ \ \ \ \textcolor{keywordtype}{char}\ CSRSI\_psa\_filler[16];}
+\DoxyCodeLine{00144\ \ \ \ \textcolor{keyword}{struct\ }CSRSI\_CVT*\ CSRSI\_cvt;}
+\DoxyCodeLine{00145\ \};}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{/*\ \ End\ of\ CSRSI\ Header\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ if\ defined(\_\_ibmxl\_\_)}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00152\ \textcolor{comment}{/*\ si11v1\ represents\ the\ output\ for\ a\ V1\ CPC\ when\ general\ CPC\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00153\ \textcolor{comment}{/*\ information\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00154\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00157\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler1[32];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00158\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpcmanufacturer[16];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00159\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ 16-\/character\ (0-\/9}}
+\DoxyCodeLine{00160\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ or\ uppercase\ A-\/Z)\ EBCDIC\ name}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ the\ manufacturer\ of\ the\ V1}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC.\ The\ name\ is}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00166\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpctype[4];\ \textcolor{comment}{/*\ The\ 4-\/character\ (0-\/9)\ EBCDIC}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type\ identifier\ of\ the\ V1\ CPC.}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[12];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00170\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpcmodelcapident[16];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ 16-\/character\ (0-\/9\ or}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uppercase\ A-\/Z)\ EBCDIC\ model}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capacity\ identifier\ of\ the}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration.\ The\ identifier}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ If\ the\ first\ word\ of}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ si11v1cpcmodel1\ is\ zero,\ this}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field\ also\ represents\ the}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ model\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H2C*/}}
+\DoxyCodeLine{00181\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpcsequencecode[16];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ 16-\/character\ (0-\/9}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ or\ uppercase\ A-\/Z)\ EBCDIC}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sequence\ code\ of\ the\ V1\ CPC.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ sequence\ code\ is}}
+\DoxyCodeLine{00186\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ right-\/justified\ with\ leading}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EBCDIC\ zeroes\ if\ necessary.}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00189\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpcplantofmanufacture[4];\ \textcolor{comment}{/*\ The\ 4-\/character}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (0-\/9\ or\ uppercase\ A-\/Z)\ EBCDIC}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ plant\ code\ that\ identifies\ the}}
+\DoxyCodeLine{00192\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ plant\ of\ manufacture\ for\ the}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1\ CPC.\ The\ plant\ code\ is}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00195\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00197\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si11v1cpcmodel1[16];\ \textcolor{comment}{/*\ The\ 16-\/character\ (0-\/9\ or}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uppercase\ A-\/Z)\ EBCDIC\ model}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ identifier\ of\ the\ configuration.}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ identifier\ is\ left-\/justified}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ with\ trailing\ blank\ characters}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if\ necessary.\ Valid\ only\ when}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ first\ word\ is\ not\ zero.}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Otherwise,\ the\ cpcmodelcapident}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field\ represents\ both\ the}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ model-\/capacity\ identifier}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ and\ the\ model.\ \ \ \ \ \ \ \ \ \ \ \ @H2A*/}}
+\DoxyCodeLine{00208\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler3[3980];\ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00209\ \}\ \mbox{\hyperlink{structsi11v1}{si11v1}};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\ \ \#define\ si11v1cpcmodel\ si11v1cpcmodelcapident}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00214\ \textcolor{comment}{/*\ si22v1\ represents\ the\ output\ for\ a\ V1\ CPC\ when\ information\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00215\ \textcolor{comment}{/*\ is\ requested\ about\ the\ set\ of\ CPUs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00216\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00219\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_af9cf89a90726c760cad7f9c11f352d3a}{si22v1format}}\ :\ 8;\ \ \textcolor{comment}{/*\ A\ 1-\/byte\ value.\ When\ the}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value\ is\ 1,\ the\ ACCOffset\ field}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ valid\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00222\ \ \ \textcolor{keywordtype}{unsigned}\ \mbox{\hyperlink{structsi22v1_af11629e7cfe5d2670fb34d8a63841501}{int}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 8;\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00223\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_a6ef36ef4b0b88e3b98ec8618c50f82a2}{si22v1accoffset}}\ :\ 16;\ \textcolor{comment}{/*\ Alternate\ CPU\ Capability}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Offset.\ A\ 16-\/bit\ unsigned\ binary}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies\ the}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ offset\ in\ bytes\ of\ the}}
+\DoxyCodeLine{00227\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ alternate\ CPU\ capability}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ area\ (which\ is\ physically}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ within\ the\ SI22V1area,\ and\ is}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ si22v1alt)}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00232\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler1[24];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H3C*/}}
+\DoxyCodeLine{00233\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ si22v1secondarycpucapability[4];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ An\ unsigned\ binary\ integer\ that,}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ when\ not\ zero,\ specifies\ a}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ secondary\ capability\ that\ may\ be}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applied\ to\ certain\ types\ of\ CPUs}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ configuration.\ \ There\ is}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ no\ formal\ description\ of\ the}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ algorithm\ used\ to\ generate\ this}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer,\ except\ that\ it\ is\ the}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ same\ algorithm\ used\ to\ generate}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ CPU\ capability.\ The\ integer}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ used\ as\ an\ indication\ of\ the}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capability\ of\ a\ CPU\ relative\ to}}
+\DoxyCodeLine{00246\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ capability\ of\ other\ CPU}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ models,\ and\ also\ relative\ to\ the}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capability\ of\ other\ CPU\ types}}
+\DoxyCodeLine{00249\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ within\ a\ model.\ \ When\ the\ value}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ zero,\ all\ CPUs\ of\ any\ CPU}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type\ in\ the\ configuration\ have}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ same\ capability,\ as}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ specified\ by\ the\ CPU\ capability.}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H3A*/}}
+\DoxyCodeLine{00255\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v1cpucapability[4];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ An\ unsigned\ binary\ integer}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ specifies\ the\ capability}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ one\ of\ the\ CPUs\ contained}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ V1\ CPC.\ It\ is\ used\ as}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ an\ indication\ of\ the}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capability\ of\ the\ CPU\ relative}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ the\ capability\ of\ other\ CPU}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ models.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00264\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_a6652a087787f6a5b60de404b2a9033dd}{si22v1totalcpucount}}\ \ \ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*\ A\ 2-\/byte}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ integer}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ specifies\ the}}
+\DoxyCodeLine{00267\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total\ number\ of\ CPUs\ contained}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ V1\ CPC.\ This\ number}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ includes\ all\ CPUs\ in\ the}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configured\ state,\ the\ standby}}
+\DoxyCodeLine{00271\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state,\ and\ the\ reserved\ state.}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00273\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_adef16fd139ea3cf11eb1d54d5ad2daa9}{si22v1configuredcpucount}}\ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*\ A\ 2-\/byte}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ binary}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ CPUs\ that}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ in\ the\ configured\ state.\ A}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPU\ is\ in\ the\ configured\ state}}
+\DoxyCodeLine{00279\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ when\ it\ is\ described\ in\ the}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1-\/CPC\ configuration}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ definition\ and\ is\ available\ to}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ be\ used\ to\ execute\ programs.}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00284\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_a4518f1a3a8ae4a9e762a5f0b5d832d56}{si22v1standbycpucount}}\ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*\ A\ 2-\/byte}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ integer}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ specifies\ the}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total\ number\ of\ CPUs\ that\ are}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ standby\ state.\ A\ CPU\ is}}
+\DoxyCodeLine{00289\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ standby\ state\ when\ it}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ described\ in\ the\ V1-\/CPC}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition,\ is}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs,\ but\ can\ be}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ used\ to\ execute\ programs\ by}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ issuing\ instructions\ to\ place}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ it\ in\ the\ configured\ state.}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00298\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1_ad54f06da511c1764fbd10d56a2eeda85}{si22v1reservedcpucount}}\ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*\ A\ 2-\/byte}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ binary}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ CPUs\ that}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ in\ the\ reserved\ state.\ A}}
+\DoxyCodeLine{00303\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPU\ is\ in\ the\ reserved\ state}}
+\DoxyCodeLine{00304\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ when\ it\ is\ described\ in\ the}}
+\DoxyCodeLine{00305\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1-\/CPC\ configuration}}
+\DoxyCodeLine{00306\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ definition,\ is\ not\ available}}
+\DoxyCodeLine{00307\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ be\ used\ to\ execute}}
+\DoxyCodeLine{00308\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ programs,\ and\ cannot\ be\ made}}
+\DoxyCodeLine{00309\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00310\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs\ by\ issuing}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ instructions\ to\ place\ it\ in}}
+\DoxyCodeLine{00312\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ configured\ state,\ but\ it}}
+\DoxyCodeLine{00313\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ may\ be\ possible\ to\ place\ it\ in}}
+\DoxyCodeLine{00314\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ standby\ or\ configured}}
+\DoxyCodeLine{00315\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state\ through\ manually}}
+\DoxyCodeLine{00316\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initiated\ actions\ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00317\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00318\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_si22v1mpcpucapaf[2];\ \textcolor{comment}{/*\ Each\ individual}}
+\DoxyCodeLine{00319\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment\ factor.\ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[4050];}
+\DoxyCodeLine{00321\ \ \ \}\ si22v1mpcpucapafs;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ This\ field\ is\ valid\ only}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ when\ si22v1format\ is\ 0\ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00323\ \}\ \mbox{\hyperlink{structsi22v1}{si22v1}};}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#define\ si22v1mpcpucapaf\ \ si22v1mpcpucapafs.\_si22v1mpcpucapaf}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00328\ \textcolor{comment}{/*\ si22v1alt\ maps\ the\ area\ located\ within\ the\ si22v1\ area\ by\ the\ \ \ \ \ */}}
+\DoxyCodeLine{00329\ \textcolor{comment}{/*\ si22v1accoffset\ field,\ when\ the\ si22v1format\ field\ has\ a\ value\ \ \ \ */}}
+\DoxyCodeLine{00330\ \textcolor{comment}{/*\ of\ one.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00331\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00334\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v1alt_a8b89a83b0fbbdd9328215951a56ba013}{si22v1altcpucapability}};\ \ \textcolor{comment}{/*\ A\ 32-\/bit\ unsigned\ binary}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies\ the\ announced}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capability\ of\ one\ of\ the\ CPUs\ in\ the}}
+\DoxyCodeLine{00337\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration.\ There\ is\ no\ formal}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ description\ of\ the\ algorithm\ used\ to}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ generate\ this\ integer.\ The\ integer\ is}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ used\ as\ an\ indication\ of\ the}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ announced\ capability\ of\ the\ CPU}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ relative\ to\ the\ announced\ capability}}
+\DoxyCodeLine{00343\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ other\ CPU\ models.}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ alternate-\/capability\ value}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ applies\ to\ each\ of\ the\ CPUs\ in\ the}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration.\ That\ is,\ all\ CPUs\ in}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ configuraiton\ have\ the\ same}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ alternate\ capability.}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00350\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \_si22v1altmpcpucapaf[2];\ \textcolor{comment}{/*\ Each\ individual}}
+\DoxyCodeLine{00352\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment\ factor.\ Note\ that\ the}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ leading\ underscore\ in\ the\ name\ is}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ allow\ use\ of\ a\ \#define\ that}}
+\DoxyCodeLine{00355\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ below.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[4050];}
+\DoxyCodeLine{00357\ \ \ \}\ si22v1altmpcpucapafs;\ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00358\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ series\ of\ contiguous\ 2-\/byte\ fields,}}
+\DoxyCodeLine{00359\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ each\ containing\ a\ 16-\/bit\ unsigned}}
+\DoxyCodeLine{00360\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ which\ is\ an\ adjustment}}
+\DoxyCodeLine{00361\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ factor\ (percentage)\ for\ the\ value}}
+\DoxyCodeLine{00362\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ contained\ in\ the\ altternate-\/CPU-\/}}
+\DoxyCodeLine{00363\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ capability\ field.\ The\ number\ of}}
+\DoxyCodeLine{00364\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ alternate-\/adjustment-\/factor}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fields\ is\ one\ less\ than\ the\ number}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ CPUs\ specified\ in\ the}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total-\/CPU-\/count\ field.\ The\ alternate-\/}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment-\/factor\ fields\ correspond}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ configurations}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ with\ increasing\ numbers\ of\ CPUs\ in}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ configured\ state.\ The\ first}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ alternate-\/adjustment-\/factor}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field\ corresponds\ to\ a\ configuration}}
+\DoxyCodeLine{00374\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ with\ two\ CPUs\ in\ the\ configured}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state.\ Each\ successive\ alternate-\/}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment-\/factor\ field\ corresponds}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ a\ configuration\ with\ a\ number\ of}}
+\DoxyCodeLine{00378\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ in\ the\ configurd\ state\ that\ is}}
+\DoxyCodeLine{00379\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ more\ than\ that\ for\ the\ preceding}}
+\DoxyCodeLine{00380\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L1A*/}}
+\DoxyCodeLine{00381\ \}\ \mbox{\hyperlink{structsi22v1alt}{si22v1alt}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ @L1A*/}}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\#define\ si22v1altmpcpucapaf\ \ si22v1altmpcpucapafs.\_si22v1altmpcpucapaf}}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00386\ \textcolor{comment}{/*\ si22v2\ represents\ the\ output\ for\ a\ V2\ CPC\ when\ information\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00387\ \textcolor{comment}{/*\ is\ requested\ about\ the\ set\ of\ CPUs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00388\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00391\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler1[32];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00392\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_accb64b9f559c2519f47c600c7a030814}{si22v2cpcnumber}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*\ A\ 2-\/byte}}
+\DoxyCodeLine{00393\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unsigned\ integer}}
+\DoxyCodeLine{00394\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ which\ is\ the\ number\ of}}
+\DoxyCodeLine{00395\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V2\ CPC.\ This\ number}}
+\DoxyCodeLine{00396\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ distinguishes\ this\ V2\ CPC\ from}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ all\ other\ V2\ CPCs\ provided\ by}}
+\DoxyCodeLine{00398\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ same\ logical-\/partition}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hypervisor\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00400\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \mbox{\hyperlink{structsi22v2_a843a0949097de85cd4e20c504faa2d30}{\_filler2}};\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00401\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_abb0becd324f7e2731b76875e95d507a8}{\_si22v2lcpudedicated}}\ \ \ \ \ \ \ \ \ \ \ :\ 1;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ When\ one,\ indicates\ that}}
+\DoxyCodeLine{00404\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ one\ or\ more\ of\ the\ logical}}
+\DoxyCodeLine{00405\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ for\ this\ V2\ CPC\ are}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ provided\ using\ V1\ CPUs\ that}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ dedicated\ to\ this\ V2\ CPC}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ and\ are\ not\ used\ to\ provide}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ any\ other\ V2}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPCs.\ The\ number\ of\ logical}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ that\ are\ provided\ using}}
+\DoxyCodeLine{00412\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dedicated\ V1\ CPUs\ is\ specified}}
+\DoxyCodeLine{00413\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ by\ the\ dedicated-\/LCPU-\/count}}
+\DoxyCodeLine{00414\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value.\ When\ zero,\ bit\ 0}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicates\ that\ none\ of\ the}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ this\ V2\ CPC}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ provided\ using\ V1\ CPUs}}
+\DoxyCodeLine{00418\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ are\ dedicated\ to\ this\ V2}}
+\DoxyCodeLine{00419\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00420\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a40c461f85039725305fc9aa1ccfcfb69}{\_si22v2lcpushared}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00421\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ When\ one,\ indicates\ that}}
+\DoxyCodeLine{00422\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ or\ more\ of\ the\ logical\ CPUs}}
+\DoxyCodeLine{00423\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ this\ V2\ CPC\ are\ provided}}
+\DoxyCodeLine{00424\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ using\ V1\ CPUs\ that\ can\ be\ used}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ provide\ logical\ CPUs\ for}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ other\ V2\ CPCs.\ The\ number\ of}}
+\DoxyCodeLine{00427\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ that\ are\ provided}}
+\DoxyCodeLine{00428\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ using\ shared\ V1\ CPUs\ is}}
+\DoxyCodeLine{00429\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ specified\ by\ the}}
+\DoxyCodeLine{00430\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shared-\/LCPU-\/count\ value.\ When}}
+\DoxyCodeLine{00431\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ zero,\ it\ indicates\ that\ none}}
+\DoxyCodeLine{00432\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ the\ logical\ CPUs\ for\ this}}
+\DoxyCodeLine{00433\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V2\ CPC\ are\ provided\ using}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ shared\ V1\ CPUs.\ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00435\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_aab90b3f4c85e6af1d1d5937ca8433ea9}{\_si22v2lcpuulimit}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 1;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Utilization\ limit.\ When\ one,}}
+\DoxyCodeLine{00437\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicates\ that\ the\ amount\ of}}
+\DoxyCodeLine{00438\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ use\ of\ the\ V1-\/CPC\ CPUs\ that}}
+\DoxyCodeLine{00439\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ used\ to\ provide\ the}}
+\DoxyCodeLine{00440\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ this\ V2\ CPC}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ limited.\ When\ zero,\ it}}
+\DoxyCodeLine{00442\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicates\ that\ the\ amount\ of}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ use\ of\ the\ V1-\/CPC\ CPUs\ that}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ used\ to\ provide\ the}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ this\ V2\ CPC}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ unlimited.\ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00447\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a7faa3431ad2beb256b95e27a9cebd2d6}{\_filler3}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 5;\ \textcolor{comment}{/*\ Reserved}}
+\DoxyCodeLine{00448\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00449\ \ \ \}\ si22v2lcpuc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Characteristics\ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00450\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_ac7b7341383abfd4b36d609497ef5b0fb}{si22v2totallcpucount}}\ \ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00451\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00452\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies\ the}}
+\DoxyCodeLine{00453\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total\ number\ of\ logical\ CPUs}}
+\DoxyCodeLine{00454\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ are\ provided\ for\ this\ V2}}
+\DoxyCodeLine{00455\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC.\ This\ number\ includes\ all}}
+\DoxyCodeLine{00456\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ the\ logical\ CPUs\ that\ are}}
+\DoxyCodeLine{00457\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ configured\ state,\ the}}
+\DoxyCodeLine{00458\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ standby\ state,\ and\ the}}
+\DoxyCodeLine{00459\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reserved\ state.\ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00460\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a87cd25cfae6c468265e10e7fd1a780ec}{si22v2configuredlcpucount}}\ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00461\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00462\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00463\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ logical}}
+\DoxyCodeLine{00464\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ for\ this\ V2\ CPC\ that\ are}}
+\DoxyCodeLine{00465\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ the\ configured\ state.\ A}}
+\DoxyCodeLine{00466\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPU\ is\ in\ the}}
+\DoxyCodeLine{00467\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configured\ state\ when\ it\ is}}
+\DoxyCodeLine{00468\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ described\ in\ the\ V2-\/CPC}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition\ and}}
+\DoxyCodeLine{00470\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00471\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs.\ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00472\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a1798d66e396e6b73cd12bfb29cf65111}{si22v2standbylcpucount}}\ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00473\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00474\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00475\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ logical}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ that\ are\ in\ the\ standby}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state.\ A\ logical\ CPU\ is\ in\ the}}
+\DoxyCodeLine{00478\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ standby\ state\ when\ it\ is}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ described\ in\ the\ V2-\/CPC}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition,\ is}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00482\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs,\ but\ can\ be}}
+\DoxyCodeLine{00483\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ used\ to\ execute\ programs\ by}}
+\DoxyCodeLine{00484\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ issuing\ instructions\ to\ place}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ it\ in\ the\ configured\ state.}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00487\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a937bbf89c18d2a455d9a93c1714ceb92}{si22v2reservedlcpucount}}\ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00489\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00490\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ logical}}
+\DoxyCodeLine{00491\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ that\ are\ in\ the\ reserved}}
+\DoxyCodeLine{00492\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state.\ A\ logical\ CPU\ is\ in\ the}}
+\DoxyCodeLine{00493\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reserved\ state\ when\ it\ is}}
+\DoxyCodeLine{00494\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ described\ in\ the\ V2-\/CPC}}
+\DoxyCodeLine{00495\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition,\ is}}
+\DoxyCodeLine{00496\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs,\ and\ cannot}}
+\DoxyCodeLine{00498\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ be\ made\ available\ to\ be\ used}}
+\DoxyCodeLine{00499\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ execute\ programs\ by\ issuing}}
+\DoxyCodeLine{00500\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ instructions\ to\ place\ it\ in}}
+\DoxyCodeLine{00501\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ configured\ state,\ but\ it}}
+\DoxyCodeLine{00502\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ may\ be\ possible\ to\ place\ it\ in}}
+\DoxyCodeLine{00503\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ standby\ or\ configured}}
+\DoxyCodeLine{00504\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state\ through\ manually}}
+\DoxyCodeLine{00505\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initiated\ actions\ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00506\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v2cpcname[8];\ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ The\ 8-\/character\ EBCDIC\ name\ of}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V2\ CPC.\ The\ name\ is}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00510\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00511\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00512\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v2cpccapabilityaf[4];\ \textcolor{comment}{/*\ Capability\ Adjustment}}
+\DoxyCodeLine{00513\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Factor\ (CAF).\ An\ unsigned}}
+\DoxyCodeLine{00514\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ of\ 1000\ or}}
+\DoxyCodeLine{00515\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ less.\ The\ adjustment\ factor}}
+\DoxyCodeLine{00516\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ specifies\ the\ amount\ of\ the}}
+\DoxyCodeLine{00517\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1-\/CPC\ capability\ that\ is}}
+\DoxyCodeLine{00518\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowed\ to\ be\ used\ for\ this\ V2}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC\ by\ the\ logical-\/partition}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hypervisor.\ The\ fraction\ of}}
+\DoxyCodeLine{00521\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1-\/CPC\ capability\ is}}
+\DoxyCodeLine{00522\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ determined\ by\ dividing\ the\ CAF}}
+\DoxyCodeLine{00523\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value\ by\ 1000.\ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00524\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v2lparorigin[8];\ \textcolor{comment}{/*\ A\ 64-\/bit\ unsigned\ binary}}
+\DoxyCodeLine{00525\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer,\ called\ a\ logical}}
+\DoxyCodeLine{00526\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ partition\ origin,\ which}}
+\DoxyCodeLine{00527\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ represents\ the\ relocation-\/zone}}
+\DoxyCodeLine{00528\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ origin\ of\ the\ logical}}
+\DoxyCodeLine{00529\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ partition.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L3C*/}}
+\DoxyCodeLine{00530\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler4[8];\ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L3C*/}}
+\DoxyCodeLine{00531\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a7a54e31d7c07d2e7792bbb5013973ba2}{si22v2dedicatedlcpucount}}\ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00532\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00533\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00534\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ number\ of\ configured-\/state}}
+\DoxyCodeLine{00535\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ this\ V2\ CPC}}
+\DoxyCodeLine{00536\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ are\ provided\ using}}
+\DoxyCodeLine{00537\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dedicated\ V1\ CPUs.\ (See\ the}}
+\DoxyCodeLine{00538\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ description\ of\ bit}}
+\DoxyCodeLine{00539\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ si22v2lcpudedicated.)\ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00540\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v2_a779034a8d4005586eb0878bd4874b007}{si22v2sharedlcpucount}}\ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00541\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00542\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies\ the}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ number\ of\ configured-\/state}}
+\DoxyCodeLine{00544\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logical\ CPUs\ for\ this\ V2\ CPC}}
+\DoxyCodeLine{00545\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ are\ provided\ using\ shared}}
+\DoxyCodeLine{00546\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V1\ CPUs.\ (See\ the\ description}}
+\DoxyCodeLine{00547\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ bit\ si22v2lcpushared.)}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00549\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler5[4020];\ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00550\ \}\ \mbox{\hyperlink{structsi22v2}{si22v2}};}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \textcolor{preprocessor}{\#define\ si22v2lcpudedicated\ \ \ \ \ \ \ si22v2lcpuc.\_si22v2lcpudedicated}}
+\DoxyCodeLine{00553\ \textcolor{preprocessor}{\#define\ si22v2lcpushared\ \ \ \ \ \ \ \ \ \ si22v2lcpuc.\_si22v2lcpushared}}
+\DoxyCodeLine{00554\ \textcolor{preprocessor}{\#define\ si22v2lcpuulimit\ \ \ \ \ \ \ \ \ \ si22v2lcpuc.\_si22v2lcpuulimit}}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00557\ \textcolor{comment}{/*\ si22v3db\ is\ a\ description\ block\ that\ comprises\ part\ of\ the\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00558\ \textcolor{comment}{/*\ si22v3\ data.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00559\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00561\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00562\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler1[4];\ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00563\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3db_aedc72ffe84ee5e9cbcf7ba810fa518b5}{si22v3dbtotallcpucount}}\ \ \ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00564\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00565\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00566\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ total\ number\ of\ logical}}
+\DoxyCodeLine{00567\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ that\ are\ provided\ for}}
+\DoxyCodeLine{00568\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V3\ CPC.\ This\ number}}
+\DoxyCodeLine{00569\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ includes\ all\ of\ the\ logical}}
+\DoxyCodeLine{00570\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPUs\ that\ are\ in\ the}}
+\DoxyCodeLine{00571\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configured\ state,\ the\ standby}}
+\DoxyCodeLine{00572\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state,\ and\ the\ reserved\ state.}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00574\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3db_ab9d76b30d67ef950dc0e81e58aac7ab6}{si22v3dbconfiguredlcpucount}}\ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00575\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00576\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00577\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ number\ of\ logical\ CPUs\ for}}
+\DoxyCodeLine{00578\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V3\ CPC\ that\ are\ in\ the}}
+\DoxyCodeLine{00579\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configured\ state.\ A\ logical}}
+\DoxyCodeLine{00580\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPU\ is\ in\ the\ configured\ state}}
+\DoxyCodeLine{00581\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ when\ it\ is\ described\ in\ the}}
+\DoxyCodeLine{00582\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V3-\/CPC\ configuration}}
+\DoxyCodeLine{00583\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ definition\ and\ is\ available\ to}}
+\DoxyCodeLine{00584\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ be\ used\ to\ execute\ programs.}}
+\DoxyCodeLine{00585\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00586\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3db_aebf5671f84742e118d20db3661fc7038}{si22v3dbstandbylcpucount}}\ \ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00587\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00588\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00589\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ number\ of\ logical\ CPUs\ for}}
+\DoxyCodeLine{00590\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V3\ CPC\ that\ are\ in\ the}}
+\DoxyCodeLine{00591\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ standby\ state.\ A\ logical\ CPU}}
+\DoxyCodeLine{00592\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ in\ the\ standby\ state\ when}}
+\DoxyCodeLine{00593\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ it\ is\ described\ in\ the\ V3-\/CPC}}
+\DoxyCodeLine{00594\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition,\ is}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs,\ but\ can\ be}}
+\DoxyCodeLine{00597\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ used\ to\ execute\ programs\ by}}
+\DoxyCodeLine{00598\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ issuing\ instructions\ to\ place}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ it\ in\ the\ configured\ state.}}
+\DoxyCodeLine{00600\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00601\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3db_a710e83114324520a453817a267e75ac6}{si22v3dbreservedlcpucount}}\ \ \ \ \ \ \ \ \ :\ 16;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00602\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ A\ 2-\/byte\ unsigned}}
+\DoxyCodeLine{00603\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ binary\ integer\ that\ specifies}}
+\DoxyCodeLine{00604\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ number\ of\ logical\ CPUs\ for}}
+\DoxyCodeLine{00605\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this\ V3\ CPC\ that\ are\ in\ the}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ reserved\ state.\ A\ logical\ CPU}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ in\ the\ reserved\ state\ when}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ it\ is\ described\ in\ the\ V2-\/CPC}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ configuration\ definition,\ is}}
+\DoxyCodeLine{00610\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ available\ to\ be\ used\ to}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ execute\ programs,\ and\ cannot}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ be\ made\ available\ to\ be\ used}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ execute\ programs\ by\ issuing}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ instructions\ to\ place\ it\ in}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ configured\ state,\ but\ it}}
+\DoxyCodeLine{00616\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ may\ be\ possible\ to\ place\ it\ in}}
+\DoxyCodeLine{00617\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ standby\ or\ configured}}
+\DoxyCodeLine{00618\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ state\ through\ manually}}
+\DoxyCodeLine{00619\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ initiated\ actions\ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00620\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v3dbcpcname[8];\ \textcolor{comment}{/*\ The\ 8-\/character\ EBCDIC\ name}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ of\ this\ V3\ CPC.\ The\ name\ is}}
+\DoxyCodeLine{00622\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00623\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00624\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00625\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v3dbcpccaf[4];\ \textcolor{comment}{/*\ A\ 4-\/byte\ unsigned\ binary}}
+\DoxyCodeLine{00626\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ integer\ that\ specifies\ an}}
+\DoxyCodeLine{00627\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment\ factor.\ The}}
+\DoxyCodeLine{00628\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ adjustment\ factor\ specifies}}
+\DoxyCodeLine{00629\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ amount\ of\ the\ V1-\/CPC\ or}}
+\DoxyCodeLine{00630\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ V2-\/CPC\ capability\ that\ is}}
+\DoxyCodeLine{00631\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowed\ to\ be\ used\ for\ this\ V3}}
+\DoxyCodeLine{00632\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC\ by\ the}}
+\DoxyCodeLine{00633\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ virtual-\/machine-\/hypervisor}}
+\DoxyCodeLine{00634\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ program.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00635\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si22v3dbvmhpidentifier[16];\ \textcolor{comment}{/*\ The\ 16-\/character}}
+\DoxyCodeLine{00636\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ EBCDIC\ identifier\ of\ the}}
+\DoxyCodeLine{00637\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ virtual-\/machine-\/hypervisor}}
+\DoxyCodeLine{00638\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ program\ that\ provides\ this\ V3}}
+\DoxyCodeLine{00639\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CPC.\ (This\ identifier\ may}}
+\DoxyCodeLine{00640\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ include\ qualifiers\ such\ as}}
+\DoxyCodeLine{00641\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ version\ number\ and\ release}}
+\DoxyCodeLine{00642\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ level).\ The\ identifier\ is}}
+\DoxyCodeLine{00643\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left-\/justified\ with\ trailing}}
+\DoxyCodeLine{00644\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blank\ characters\ if\ necessary.}}
+\DoxyCodeLine{00645\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00646\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[24];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00647\ \}\ \mbox{\hyperlink{structsi22v3db}{si22v3db}};}
+\DoxyCodeLine{00648\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00649\ \textcolor{comment}{/*\ si22v3\ represents\ the\ output\ for\ a\ V3\ CPC\ when\ information\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00650\ \textcolor{comment}{/*\ is\ requested\ about\ the\ set\ of\ CPUs\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00651\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00653\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00654\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler1[28];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00655\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[3];\ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00656\ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3_abd24d451b1ee37552a8e78c2d1103c81}{\_filler3}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ 4;\ \textcolor{comment}{/*\ Reserved}}
+\DoxyCodeLine{00658\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi22v3_aa151fabfa2a7e3ce723f213512237022}{\_si22v3dbcount}}\ \ \ \ \ \ \ \ \ \ :\ 4;\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00660\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Description\ Block\ Count.\ A}}
+\DoxyCodeLine{00661\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4-\/bit\ unsigned\ binary\ integer}}
+\DoxyCodeLine{00662\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ indicates\ the\ number\ (up}}
+\DoxyCodeLine{00663\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ 8)\ of\ V3-\/CPC\ description}}
+\DoxyCodeLine{00664\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ blocks\ that\ are\ stored\ in\ the}}
+\DoxyCodeLine{00665\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ si22v3dbe\ array.\ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00666\ \ \ \}\ si22v3dbcountfield;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00667\ \ \ \mbox{\hyperlink{structsi22v3db}{si22v3db}}\ \ si22v3dbe[8];\ \ \ \ \textcolor{comment}{/*\ Array\ of\ entries.\ Only\ the\ number}}
+\DoxyCodeLine{00668\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicated\ by\ si22v3dbcount}}
+\DoxyCodeLine{00669\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ are\ valid\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00670\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler5[3552];\ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00671\ \}\ \mbox{\hyperlink{structsi22v3}{si22v3}};}
+\DoxyCodeLine{00672\ }
+\DoxyCodeLine{00673\ \textcolor{preprocessor}{\#define\ si22v3dbcount\ \ \ \ \ \ si22v3dbcountfield.\_si22v3dbcount}}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00677\ \textcolor{comment}{/*\ SI00\ represents\ the\ "{}starter"{}\ information.\ This\ structure\ is\ \ \ \ \ \ */}}
+\DoxyCodeLine{00678\ \textcolor{comment}{/*\ part\ of\ the\ information\ returned\ on\ every\ CSRSI\ request.\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00679\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00680\ }
+\DoxyCodeLine{00681\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00682\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structsi00_abb6c4b4cb093166e673134f67a639e47}{si00cpcvariety}};\ \ \ \ \textcolor{comment}{/*\ SI00CPCVariety\_V1CPC\_MACHINE,}}
+\DoxyCodeLine{00683\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SI00CPCVariety\_V2CPC\_LPAR,\ or}}
+\DoxyCodeLine{00684\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SI00CPCVariety\_V3CPC\_VM\ \ \ @H1A*/}}
+\DoxyCodeLine{00685\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00686\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi00_a26247da0927faa18d7e24dd0b512e469}{\_si00validsi11v1}}\ \ :\ 1;\ \textcolor{comment}{/*\ si11v1\ was\ requested\ and}}
+\DoxyCodeLine{00687\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ information\ returned\ is\ valid}}
+\DoxyCodeLine{00688\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi00_a0cd67359595268e4b096edc1a9741f57}{\_si00validsi22v1}}\ \ :\ 1;\ \textcolor{comment}{/*\ si22v2\ was\ requested\ and}}
+\DoxyCodeLine{00690\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ information\ returned\ is\ valid}}
+\DoxyCodeLine{00691\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi00_a69667e0d23132c901376fd4ff0a47752}{\_si00validsi22v2}}\ \ :\ 1;\ \textcolor{comment}{/*\ si22v2\ was\ requested\ and}}
+\DoxyCodeLine{00693\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ information\ returned\ is\ valid}}
+\DoxyCodeLine{00694\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi00_a474f1b6c1d3eb5441d5b89d0486208b9}{\_si00validsi22v3}}\ \ :\ 1;\ \textcolor{comment}{/*\ si22v3\ was\ requested\ and}}
+\DoxyCodeLine{00696\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ the\ information\ returned\ is\ valid}}
+\DoxyCodeLine{00697\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structsi00_a2a2a7caa322730954e682f0dc87d9cd3}{\_filler1}}\ \ \ \ \ \ \ \ \ \ :\ 4;\ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00699\ \ \ \ \ \}\ si00validityflags;}
+\DoxyCodeLine{00700\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler2[2];\ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00701\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si00pccacpid[12];\ \textcolor{comment}{/*\ PCCACPID\ value\ for\ this\ CPU}}
+\DoxyCodeLine{00702\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00703\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si00pccacpua[2];\ \textcolor{comment}{/*\ PCCACPUA\ value\ for\ this\ CPU}}
+\DoxyCodeLine{00704\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00705\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si00pccacafm[2];\ \textcolor{comment}{/*\ PCCACAFM\ value\ for\ this\ CPU.}}
+\DoxyCodeLine{00706\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ This\ has\ information\ only}}
+\DoxyCodeLine{00707\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ about\ CPUs\ 0-\/15\ \ \ \ \ \ \ \ \ @L2C*/}}
+\DoxyCodeLine{00708\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler3[4];\ \ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00709\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si00lastupdatetimestamp[8];\ \textcolor{comment}{/*\ Time\ of\ last\ STSI}}
+\DoxyCodeLine{00710\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ update,\ via\ STCK\ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00711\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ si00pcca\_cpu\_address\_mask[8];\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00712\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCCA\_CPU\_Address\_Mask\ value\ for\ this\ CPU}}
+\DoxyCodeLine{00713\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L2A*/}}
+\DoxyCodeLine{00714\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ \ \_filler4[24];\ \ \textcolor{comment}{/*\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @L2C*/}}
+\DoxyCodeLine{00715\ \}\ \mbox{\hyperlink{structsi00}{si00}};}
+\DoxyCodeLine{00716\ }
+\DoxyCodeLine{00717\ \textcolor{preprocessor}{\#define\ si00validsi11v1\ \ \ \ \ \ \ \ \ si00validityflags.\_si00validsi11v1}}
+\DoxyCodeLine{00718\ \textcolor{preprocessor}{\#define\ si00validsi22v1\ \ \ \ \ \ \ \ \ si00validityflags.\_si00validsi22v1}}
+\DoxyCodeLine{00719\ \textcolor{preprocessor}{\#define\ si00validsi22v2\ \ \ \ \ \ \ \ \ si00validityflags.\_si00validsi22v2}}
+\DoxyCodeLine{00720\ \textcolor{preprocessor}{\#define\ si00validsi22v3\ \ \ \ \ \ \ \ \ si00validityflags.\_si00validsi22v3}}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00723\ \textcolor{comment}{/*\ siv1\ represents\ the\ information\ returned\ when\ V1CPC\_MACHINE\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00724\ \textcolor{comment}{/*\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00725\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00726\ }
+\DoxyCodeLine{00727\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00728\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv1_aac0b7bcbd22b660ab83afa9d76326a60}{siv1si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped\ by}}
+\DoxyCodeLine{00729\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00730\ \ \ \mbox{\hyperlink{structsi11v1}{si11v1}}\ \mbox{\hyperlink{structsiv1_ae47bee928d357496f9cce357a3eb7cf2}{siv1si11v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00731\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si11v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00732\ \ \ \mbox{\hyperlink{structsi22v1}{si22v1}}\ \mbox{\hyperlink{structsiv1_aa657a62b73d33757e6f1ccb6ac5e492a}{siv1si22v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00733\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00734\ \}\ \mbox{\hyperlink{structsiv1}{siv1}};}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00737\ \textcolor{comment}{/*\ siv1v2\ represents\ the\ information\ returned\ when\ V1CPC\_MACHINE\ \ \ \ \ */}}
+\DoxyCodeLine{00738\ \textcolor{comment}{/*\ data\ and\ V2CPC\_LPAR\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00739\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00740\ }
+\DoxyCodeLine{00741\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00742\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv1v2_a5c99443fb3b02fb1f6f56d7a38be1681}{siv1v2si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped\ by}}
+\DoxyCodeLine{00743\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ by\ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00744\ \ \ \mbox{\hyperlink{structsi11v1}{si11v1}}\ \mbox{\hyperlink{structsiv1v2_aab1b51f4ad15a44b54656b008a898f2e}{siv1v2si11v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00745\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si11v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00746\ \ \ \mbox{\hyperlink{structsi22v1}{si22v1}}\ \mbox{\hyperlink{structsiv1v2_a8c92e062ab7ef2779b0a02e0f62bb682}{siv1v2si22v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00747\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v2\ \ \ @H1A*/}}
+\DoxyCodeLine{00748\ \ \ \mbox{\hyperlink{structsi22v2}{si22v2}}\ \mbox{\hyperlink{structsiv1v2_ad252d9ae2846769621f982ab5683e111}{siv1v2si22v2}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00749\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v2\ \ \ @H1A*/}}
+\DoxyCodeLine{00750\ \}\ \mbox{\hyperlink{structsiv1v2}{siv1v2}};}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00753\ \textcolor{comment}{/*\ siv1v2v3\ represents\ the\ information\ returned\ when\ V1CPC\_MACHINE\ \ \ */}}
+\DoxyCodeLine{00754\ \textcolor{comment}{/*\ data,\ V2CPC\_LPAR\ data\ and\ V3CPC\_VM\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00755\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00756\ }
+\DoxyCodeLine{00757\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00758\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv1v2v3_a66ac99b7765e0d0c4e5a87e7f409e436}{siv1v2v3si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00759\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si00\ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00760\ \ \ \mbox{\hyperlink{structsi11v1}{si11v1}}\ \mbox{\hyperlink{structsiv1v2v3_ad2e73f7bc318f06c85dcdbcb05b94ef5}{siv1v2v3si11v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00761\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si11v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00762\ \ \ \mbox{\hyperlink{structsi22v1}{si22v1}}\ \mbox{\hyperlink{structsiv1v2v3_a023f4dbdcd2284090a5f01c20137aeff}{siv1v2v3si22v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00763\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00764\ \ \ \mbox{\hyperlink{structsi22v2}{si22v2}}\ \mbox{\hyperlink{structsiv1v2v3_afb4c4849674ebdf1eca7f17a36b5cd64}{siv1v2v3si22v2}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00765\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v2\ \ \ @H1A*/}}
+\DoxyCodeLine{00766\ \ \ \mbox{\hyperlink{structsi22v3}{si22v3}}\ \mbox{\hyperlink{structsiv1v2v3_a47d7b45d901e32cb0f5e15154d2d9f74}{siv1v2v3si22v3}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00767\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v3\ \ \ @H1A*/}}
+\DoxyCodeLine{00768\ \}\ \mbox{\hyperlink{structsiv1v2v3}{siv1v2v3}};}
+\DoxyCodeLine{00769\ }
+\DoxyCodeLine{00770\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00771\ \textcolor{comment}{/*\ siv1v3\ represents\ the\ information\ returned\ when\ V1CPC\_MACHINE\ \ \ \ \ */}}
+\DoxyCodeLine{00772\ \textcolor{comment}{/*\ data\ and\ V3CPC\_VM\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00773\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00776\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv1v3_aae3bef9b61fdd93a8c958c8c82f60d86}{siv1v3si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped}}
+\DoxyCodeLine{00777\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ by\ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00778\ \ \ \mbox{\hyperlink{structsi11v1}{si11v1}}\ \mbox{\hyperlink{structsiv1v3_ad01499ac4eadf01e2f4c34a5f2eb3c92}{siv1v3si11v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00779\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si11v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00780\ \ \ \mbox{\hyperlink{structsi22v1}{si22v1}}\ \mbox{\hyperlink{structsiv1v3_adaf22d4c70404cb68b04b1786b654542}{siv1v3si22v1}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00781\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v1\ \ \ @H1A*/}}
+\DoxyCodeLine{00782\ \ \ \mbox{\hyperlink{structsi22v3}{si22v3}}\ \mbox{\hyperlink{structsiv1v3_afdfb5e9f6c900ec94f9307ac044cfe74}{siv1v3si22v3}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00783\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v3\ \ \ @H1A*/}}
+\DoxyCodeLine{00784\ \}\ \mbox{\hyperlink{structsiv1v3}{siv1v3}};}
+\DoxyCodeLine{00785\ }
+\DoxyCodeLine{00786\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00787\ \textcolor{comment}{/*\ siv2\ represents\ the\ information\ returned\ when\ V2CPC\_LPAR\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00788\ \textcolor{comment}{/*\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00789\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00790\ }
+\DoxyCodeLine{00791\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00792\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv2_a79ee87c41655f45f120991919cef9c73}{siv2si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped\ by}}
+\DoxyCodeLine{00793\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00794\ \ \ \mbox{\hyperlink{structsi22v2}{si22v2}}\ \mbox{\hyperlink{structsiv2_a3efe3f3184bbdc3bb5ad75a25a1d5f5e}{siv2si22v2}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00795\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v2\ \ \ @H1A*/}}
+\DoxyCodeLine{00796\ \}\ \mbox{\hyperlink{structsiv2}{siv2}};}
+\DoxyCodeLine{00797\ }
+\DoxyCodeLine{00798\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00799\ \textcolor{comment}{/*\ siv2v3\ represents\ the\ information\ returned\ when\ V2CPC\_LPAR\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00800\ \textcolor{comment}{/*\ and\ V3CPC\_VM\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00801\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00802\ }
+\DoxyCodeLine{00803\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00804\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv2v3_aee7f66a8de86d67efa16a49190d0e545}{siv2v3si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped}}
+\DoxyCodeLine{00805\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ by\ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00806\ \ \ \mbox{\hyperlink{structsi22v2}{si22v2}}\ \mbox{\hyperlink{structsiv2v3_ad18db7d8681eac5b1b6ba93d848c9adf}{siv2v3si22v2}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00807\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v2\ \ \ @H1A*/}}
+\DoxyCodeLine{00808\ \ \ \mbox{\hyperlink{structsi22v3}{si22v3}}\ \mbox{\hyperlink{structsiv2v3_a567bd40e3a142a70b5127569d2e1359c}{siv2v3si22v3}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00809\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v3\ \ \ @H1A*/}}
+\DoxyCodeLine{00810\ \}\ \mbox{\hyperlink{structsiv2v3}{siv2v3}};}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00813\ \textcolor{comment}{/*\ siv3\ represents\ the\ information\ returned\ when\ V3CPC\_VM\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00814\ \textcolor{comment}{/*\ data\ is\ requested\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00815\ \textcolor{comment}{/*********************************************************************/}}
+\DoxyCodeLine{00816\ }
+\DoxyCodeLine{00817\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00818\ \ \ \mbox{\hyperlink{structsi00}{si00}}\ \mbox{\hyperlink{structsiv3_a0eb8f1010cc73f78ed67970c84c8fa62}{siv3si00}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area\ mapped\ by}}
+\DoxyCodeLine{00819\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ struct\ si00\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @H1A*/}}
+\DoxyCodeLine{00820\ \ \ \mbox{\hyperlink{structsi22v3}{si22v3}}\ \mbox{\hyperlink{structsiv3_adfc1ba3ed70ff068866db24a7f940745}{siv3si22v3}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Area}}
+\DoxyCodeLine{00821\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mapped\ by\ struct\ si22v3\ \ \ @H1A*/}}
+\DoxyCodeLine{00822\ \}\ \mbox{\hyperlink{structsiv3}{siv3}};}
+\DoxyCodeLine{00823\ }
+\DoxyCodeLine{00824\ }
+\DoxyCodeLine{00825\ \textcolor{comment}{/*********************************************************************}}
+\DoxyCodeLine{00826\ \textcolor{comment}{\ *\ \ \ \ \ \ \ Fixed\ Service\ Parameter\ and\ Return\ Code\ Defines\ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00827\ \textcolor{comment}{\ *********************************************************************/}}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \textcolor{comment}{/*\ \ SI00\ Constants\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00830\ }
+\DoxyCodeLine{00831\ \textcolor{preprocessor}{\#define\ SI00CPCVARIETY\_V1CPC\_MACHINE\ \ \ 1}}
+\DoxyCodeLine{00832\ \textcolor{preprocessor}{\#define\ SI00CPCVARIETY\_V2CPC\_LPAR\ \ \ \ \ \ 2}}
+\DoxyCodeLine{00833\ \textcolor{preprocessor}{\#define\ SI00CPCVARIETY\_V3CPC\_VM\ \ \ \ \ \ \ \ 3}}
+\DoxyCodeLine{00834\ }
+\DoxyCodeLine{00835\ \textcolor{comment}{/*\ \ CSRSI\ Constants\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00836\ }
+\DoxyCodeLine{00837\ \textcolor{preprocessor}{\#define\ CSRSI\_REQUEST\_V1CPC\_MACHINE\ \ \ \ 1}}
+\DoxyCodeLine{00838\ \textcolor{preprocessor}{\#define\ CSRSI\_REQUEST\_V2CPC\_LPAR\ \ \ \ \ \ \ 2}}
+\DoxyCodeLine{00839\ \textcolor{preprocessor}{\#define\ CSRSI\_REQUEST\_V3CPC\_VM\ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00840\ }
+\DoxyCodeLine{00841\ \textcolor{comment}{/*\ \ CSRSI\ Return\ codes\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00842\ }
+\DoxyCodeLine{00843\ \textcolor{preprocessor}{\#define\ CSRSI\_SUCCESS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0}}
+\DoxyCodeLine{00844\ \textcolor{preprocessor}{\#define\ CSRSI\_STSINOTAVAILABLE\ \ \ \ \ \ \ \ \ 4}}
+\DoxyCodeLine{00845\ \textcolor{preprocessor}{\#define\ CSRSI\_SERVICENOTAVAILABLE\ \ \ \ \ \ 8}}
+\DoxyCodeLine{00846\ \textcolor{preprocessor}{\#define\ CSRSI\_BADREQUEST\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 12}}
+\DoxyCodeLine{00847\ \textcolor{preprocessor}{\#define\ CSRSI\_BADINFOAREALEN\ \ \ \ \ \ \ \ \ \ \ 16}}
+\DoxyCodeLine{00848\ \textcolor{preprocessor}{\#define\ CSRSI\_BADLOCK\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 20}}
+\DoxyCodeLine{00849\ }
+\DoxyCodeLine{00850\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ ifndef(\_\_CSRSI)}}
+
+\end{DoxyCode}

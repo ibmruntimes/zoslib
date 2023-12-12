@@ -1,4 +1,4 @@
-.TH "include/zos-sys-info.h" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "include/zos-sys-info.h" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,7 +6,11 @@ include/zos-sys-info.h
 .SH SYNOPSIS
 .br
 .PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
 \fC#include <stdint\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
 .br
 
 .SS "Classes"
@@ -27,6 +31,19 @@ include/zos-sys-info.h
 .ti -1c
 .RI "struct \fBZOSPSA\fP"
 .br
+.ti -1c
+.RI "struct \fBZOSPCCA\fP"
+.br
+.ti -1c
+.RI "struct \fBZOSPCCAVT\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBZOSCPU_MODEL_LENGTH\fP   4"
+.br
 .in -1c
 .SS "Typedefs"
 
@@ -46,41 +63,61 @@ include/zos-sys-info.h
 .ti -1c
 .RI "typedef struct \fBZOSPSA\fP \fBZOSPSA_t\fP"
 .br
+.ti -1c
+.RI "typedef struct \fBZOSPCCA\fP \fBZOSPCCA\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBZOSPCCAVT\fP \fBZOSPCCAVT\fP"
+.br
 .in -1c
 .SS "Enumerations"
 
 .in +1c
 .ti -1c
-.RI "enum \fBoslvl_t\fP { \fBZOSLVL_V1R13\fP = 0, \fBZOSLVL_V2R1\fP, \fBZOSLVL_V2R2\fP, \fBZOSLVL_V2R3\fP, \fBZOSLVL_V2R4\fP, \fBZOSLVL_V2R5\fP, \fBZOSLVL_UNKNOWN\fP }"
+.RI "enum \fBoslvl_t\fP { \fBZOSLVL_V1R13\fP = 0, \fBZOSLVL_V2R1\fP, \fBZOSLVL_V2R2\fP, \fBZOSLVL_V2R3\fP, \fBZOSLVL_V2R4\fP, \fBZOSLVL_V2R5\fP, \fBZOSLVL_V3R1\fP, \fBZOSLVL_UNKNOWN\fP }"
 .br
 .in -1c
 .SS "Functions"
 
 .in +1c
 .ti -1c
-.RI "int \fB__get_num_online_cpus\fP (void)"
+.RI "\fB__Z_EXPORT\fP int \fB__get_num_online_cpus\fP (void)"
 .br
 .ti -1c
-.RI "int \fB__get_num_frames\fP (void)"
+.RI "\fB__Z_EXPORT\fP int \fB__get_num_frames\fP (void)"
 .br
 .ti -1c
-.RI "\fBoslvl_t\fP \fB__get_os_level\fP (void)"
+.RI "\fB__Z_EXPORT\fP \fBoslvl_t\fP \fB__get_os_level\fP (void)"
 .br
 .ti -1c
-.RI "bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
+.RI "\fB__Z_EXPORT\fP bool \fB__is_os_level_at_or_above\fP (\fBoslvl_t\fP level)"
 .br
 .ti -1c
-.RI "bool \fB__is_vxf_available\fP ()"
+.RI "\fB__Z_EXPORT\fP bool \fB__is_stfle_available\fP ()"
 .br
 .ti -1c
-.RI "bool \fB__is_vef1_available\fP ()"
+.RI "\fB__Z_EXPORT\fP bool \fB__is_vxf_available\fP ()"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP bool \fB__is_vef1_available\fP ()"
+.br
+.ti -1c
+.RI "\fB__Z_EXPORT\fP char * \fB__get_cpu_model\fP (char *buffer, size_t size)"
 .br
 .in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define ZOSCPU_MODEL_LENGTH   4"
+
 .SH "Typedef Documentation"
 .PP 
 .SS "typedef struct \fBZOSCCT\fP \fBZOSCCT_t\fP"
 
 .SS "typedef struct \fBZOSCVT\fP \fBZOSCVT_t\fP"
+
+.SS "typedef struct \fBZOSPCCA\fP \fBZOSPCCA\fP"
+
+.SS "typedef struct \fBZOSPCCAVT\fP \fBZOSPCCAVT\fP"
 
 .SS "typedef struct \fBZOSPSA\fP \fBZOSPSA_t\fP"
 
@@ -108,10 +145,28 @@ include/zos-sys-info.h
 .TP
 \fB\fIZOSLVL_V2R5 \fP\fP
 .TP
+\fB\fIZOSLVL_V3R1 \fP\fP
+.TP
 \fB\fIZOSLVL_UNKNOWN \fP\fP
 .SH "Function Documentation"
 .PP 
-.SS "int __get_num_frames (void)"
+.SS "\fB__Z_EXPORT\fP char * __get_cpu_model (char * buffer, size_t size)"
+Gets the 4 character CPU model of the system, including the null terminating character\&. Truncated if buffer size is too small\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIbuffer\fP pointer to the buffer where the cpu model is to be stored 
+.br
+\fIsize\fP the size of the buffer 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+pointer to the buffer\&. 
+.RE
+.PP
+
+.SS "\fB__Z_EXPORT\fP int __get_num_frames (void)"
 Get the number of frames currently available to the system 
 .PP
 \fBReturns\fP
@@ -120,7 +175,7 @@ returns the number of available frames
 .RE
 .PP
 
-.SS "int __get_num_online_cpus (void)"
+.SS "\fB__Z_EXPORT\fP int __get_num_online_cpus (void)"
 Get the number of online CPUs 
 .PP
 \fBReturns\fP
@@ -129,7 +184,7 @@ returns the number of online CPUs
 .RE
 .PP
 
-.SS "\fBoslvl_t\fP __get_os_level (void)"
+.SS "\fB__Z_EXPORT\fP \fBoslvl_t\fP __get_os_level (void)"
 Get the OS level 
 .PP
 \fBReturns\fP
@@ -138,7 +193,7 @@ the OS level as ZOSLVL_V2R1/2/3/4/5 (values are in ascending order)
 .RE
 .PP
 
-.SS "bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
+.SS "\fB__Z_EXPORT\fP bool __is_os_level_at_or_above (\fBoslvl_t\fP level)"
 Check if current OS is at or above a given level 
 .PP
 \fBReturns\fP
@@ -147,7 +202,16 @@ true if the current OS level is at or above the given level, and false otherwise
 .RE
 .PP
 
-.SS "bool __is_vef1_available ()"
+.SS "\fB__Z_EXPORT\fP bool __is_stfle_available ()"
+Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available 
+.PP
+\fBReturns\fP
+.RS 4
+true if the STFLE instruction is available 
+.RE
+.PP
+
+.SS "\fB__Z_EXPORT\fP bool __is_vef1_available ()"
 Check if the current z arch includes Vector Enhancements Facility 1 
 .PP
 \fBReturns\fP
@@ -156,7 +220,7 @@ true if Vector Enhancements Facility 1 instructions are available, and false oth
 .RE
 .PP
 
-.SS "bool __is_vxf_available ()"
+.SS "\fB__Z_EXPORT\fP bool __is_vxf_available ()"
 Check if the current z arch includes Vector Extension Facility 
 .PP
 \fBReturns\fP

@@ -1,0 +1,107 @@
+.TH "src/zos-string.c" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/zos-string.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <string\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <signal\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <_Nascii\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB_AE_BIMODAL\fP   1"
+.br
+.ti -1c
+.RI "#define \fBSignalList\fP"
+.br
+.ti -1c
+.RI "#define \fBSigInfo\fP(N,  D)   sig##N"
+.br
+.ti -1c
+.RI "#define \fBSigInfo\fP(N,  D)   D"
+.br
+.ti -1c
+.RI "#define \fBSigInfo\fP(N,  D)   #N"
+.br
+.ti -1c
+.RI "#define \fBlookup\fP(arr,  n)   (__isASCII()? arr##ASCII[n] : arr##EBCDIC[n])"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSigs\fP { \fBSignalList\fP, \fBsigTotal\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "char * \fBstrsignal\fP (int signum)"
+.br
+.ti -1c
+.RI "const char * \fBsigdescr_np\fP (int signum)"
+.br
+.ti -1c
+.RI "const char * \fBsigabbrev_np\fP (int signum)"
+.br
+.ti -1c
+.RI "size_t \fBstrnlen\fP (const char *str, size_t maxlen)"
+.br
+.ti -1c
+.RI "char * \fBstrpcpy\fP (char *dest, const char *src)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define _AE_BIMODAL   1"
+
+.SS "#define lookup(arr, n)   (__isASCII()? arr##ASCII[n] : arr##EBCDIC[n])"
+
+.SS "#define SigInfo(N, D)   sig##N"
+
+.SS "#define SigInfo(N, D)   D"
+
+.SS "#define SigInfo(N, D)   #N"
+
+.SS "#define SignalList"
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBSigs\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fISignalList \fP\fP
+.TP
+\fB\fIsigTotal \fP\fP
+.SH "Function Documentation"
+.PP 
+.SS "const char * sigabbrev_np (int signum)"
+
+.SS "const char * sigdescr_np (int signum)"
+
+.SS "size_t strnlen (const char * str, size_t maxlen)"
+
+.SS "char * strpcpy (char * dest, const char * src)"
+
+.SS "char * strsignal (int signum)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

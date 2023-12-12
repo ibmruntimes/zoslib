@@ -1,0 +1,36 @@
+.TH "include/fcntl.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/fcntl.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__XPLAT\fP   1"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__open_ascii\fP (const char *filename, int opts,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __XPLAT   1"
+
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int __open_ascii (const char * filename, int opts,  \&.\&.\&.)\fC [extern]\fP"
+Same as C open but tags new files as ASCII (819) 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

@@ -1,4 +1,4 @@
-.TH "si00" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "si00" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -18,19 +18,19 @@ si00
 .RI "struct {"
 .br
 .ti -1c
-.RI "   int \fB_si00validsi11v1\fP: 1"
+.RI "   unsigned int \fB_si00validsi11v1\fP: 1"
 .br
 .ti -1c
-.RI "   int \fB_si00validsi22v1\fP: 1"
+.RI "   unsigned int \fB_si00validsi22v1\fP: 1"
 .br
 .ti -1c
-.RI "   int \fB_si00validsi22v2\fP: 1"
+.RI "   unsigned int \fB_si00validsi22v2\fP: 1"
 .br
 .ti -1c
-.RI "   int \fB_si00validsi22v3\fP: 1"
+.RI "   unsigned int \fB_si00validsi22v3\fP: 1"
 .br
 .ti -1c
-.RI "   int \fB_filler1\fP: 4"
+.RI "   unsigned int \fB_filler1\fP: 4"
 .br
 .ti -1c
 .RI "} \fBsi00validityflags\fP"
@@ -62,7 +62,7 @@ si00
 .in -1c
 .SH "Member Data Documentation"
 .PP 
-.SS "int si00::_filler1"
+.SS "unsigned int si00::_filler1"
 
 .SS "unsigned char si00::_filler2[2]"
 
@@ -70,13 +70,13 @@ si00
 
 .SS "unsigned char si00::_filler4[24]"
 
-.SS "int si00::_si00validsi11v1"
+.SS "unsigned int si00::_si00validsi11v1"
 
-.SS "int si00::_si00validsi22v1"
+.SS "unsigned int si00::_si00validsi22v1"
 
-.SS "int si00::_si00validsi22v2"
+.SS "unsigned int si00::_si00validsi22v2"
 
-.SS "int si00::_si00validsi22v3"
+.SS "unsigned int si00::_si00validsi22v3"
 
 .SS "char si00::si00cpcvariety"
 
@@ -90,7 +90,7 @@ si00
 
 .SS "unsigned char si00::si00pccacpua[2]"
 
-.SS "struct { \&.\&.\&. }  si00::si00validityflags"
+.SS "struct  { \&.\&.\&. }  si00::si00validityflags"
 
 
 .SH "Author"

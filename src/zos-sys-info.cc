@@ -21,6 +21,7 @@ static const uint8_t __ZOSLVL_V1R13 = 0x20;
 static const uint8_t __ZOSLVL_V2R3 = 0x10;
 static const uint8_t __ZOSLVL_V2R4 = 0x08;
 static const uint8_t __ZOSLVL_V2R5 = 0x04;
+static const uint8_t __ZOSLVL_V3R1 = 0x02;
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,6 +40,22 @@ int __get_num_frames(void) {
   return static_cast<int>(rce->pool);
 }
 
+// Adapted from OMR codebase: https://github.com/eclipse/omr/blob/master/port/unix/omrsysinfo.c#L4629
+int getloadavg(double loadavg[], int nelem) {
+  if (nelem > 3 || nelem <= 0)
+    return -1;
+  
+  ZOSCVT* __ptr32 cvt = ((ZOSPSA*)0)->cvt;
+  ZOSRMCT* __ptr32 rcmt = cvt->rmct;
+  ZOSCCT* __ptr32 cct = rcmt->cct;
+
+  //Hack: z/OS does not get cpu load in samples, just use the same value
+  for (int i = 0; i < nelem; i++) 
+    loadavg[i] = (double)cct->ccvutilp / 100.0;
+
+  return nelem;
+}
+
 oslvl_t __get_os_level(void) {
   static oslvl_t oslvl = ZOSLVL_UNKNOWN;
   if (oslvl != ZOSLVL_UNKNOWN)
@@ -50,6 +67,8 @@ oslvl_t __get_os_level(void) {
   // set for the current level and all those before it. There is also the
   // exception for V1R13, which if its bit is set, also has the bits for V2R2
   // and V2R1 set.
+  if (lvl & __ZOSLVL_V3R1)
+    return (oslvl = ZOSLVL_V3R1);
   if (lvl & __ZOSLVL_V2R5)
     return (oslvl = ZOSLVL_V2R5);
   if (lvl & __ZOSLVL_V2R4)

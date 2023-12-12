@@ -1,0 +1,84 @@
+\doxysection{epoll.\+h}
+\hypertarget{epoll_8h_source}{}\label{epoll_8h_source}\index{include/sys/epoll.h@{include/sys/epoll.h}}
+\mbox{\hyperlink{epoll_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SYS\_EPOLL\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SYS\_EPOLL\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ \&\&\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*\ epoll\_create\ options\ */}}
+\DoxyCodeLine{00022\ \textcolor{comment}{/*\ EPOLL\_CLOEXEC:\ same\ value\ as\ O\_CLOEXEC\ in\ fcntl.h\ */}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ EPOLL\_CLOEXEC\ \ \ \ 0x00001000}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ epoll\_ctl\ options\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ EPOLL\_CTL\_ADD\ \ \ \ 0}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ EPOLL\_CTL\_MOD\ \ \ \ 1}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ EPOLL\_CTL\_DEL\ \ \ \ 2}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{/*\ epoll\ events\ */}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ EPOLLRDNORM\ \ \ \ \ 0x0001}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ EPOLLRDBAND\ \ \ \ \ 0x0002}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ EPOLLIN\ \ \ \ \ \ \ \ \ 0x0003}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ EPOLLOUT\ \ \ \ \ \ \ \ 0x0004}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ EPOLLWRBAND\ \ \ \ \ 0x0008}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ EPOLLPRI\ \ \ \ \ \ \ \ 0x0010}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ EPOLLERR\ \ \ \ \ \ \ \ 0x0020}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ EPOLLHUP\ \ \ \ \ \ \ \ 0x0040}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ EPOLLEXCLUSIVE\ \ 0x20000000}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ EPOLLONESHOT\ \ \ \ 0x40000000}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{union\ }epoll\_data\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ ptr;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ fd;}
+\DoxyCodeLine{00049\ \ \ \ \ uint32\_t\ \ \ \ u32;}
+\DoxyCodeLine{00050\ \ \ \ \ uint64\_t\ \ \ \ u64;}
+\DoxyCodeLine{00051\ \}\ epoll\_data\_t;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#if\ defined(\_\_clang\_\_)\ \&\&\ !defined(\_\_ibmxl\_\_)}}
+\DoxyCodeLine{00054\ \textcolor{keyword}{struct\ }epoll\_event\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ events;}
+\DoxyCodeLine{00056\ \ \ \ \ epoll\_data\_t\ \ \ \ data\ \mbox{\hyperlink{zos-char-util_8h_aa3d5037573f81a4fe0b7c91447affebf}{\_\_attribute\_\_}}((packed));}
+\DoxyCodeLine{00057\ \};}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#pragma\ pack(1)}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{struct\ }epoll\_event\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ events;}
+\DoxyCodeLine{00062\ \ \ \ \ epoll\_data\_t\ \ \ \ data;}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#pragma\ pack(reset)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*epoll\_create)(int);}
+\DoxyCodeLine{00068\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*epoll\_create1)(int);}
+\DoxyCodeLine{00069\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*epoll\_ctl)(int,\ int,\ int,\ \textcolor{keyword}{struct\ }epoll\_event\ *);}
+\DoxyCodeLine{00070\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*epoll\_wait)(int,\ \textcolor{keyword}{struct\ }epoll\_event\ *,\ int,\ int);}
+\DoxyCodeLine{00071\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keyword}{extern}\ int\ (*epoll\_pwait)(int,\ \textcolor{keyword}{struct\ }epoll\_event\ *,\ int,\ int,\ \textcolor{keyword}{const}\ sigset\_t\ *);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif\ }}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

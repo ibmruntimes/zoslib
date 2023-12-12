@@ -12,13 +12,15 @@
 #include "zos-io.h"
 
 #include <_Ccsid.h>
+#include <ctest.h>
 #include <fcntl.h>
 #include <iconv.h>
-#include <mutex>
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unordered_map>
+#include <pthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -292,7 +294,12 @@ int __guess_ae(const void *src, size_t size) {
   return ccsid;
 }
 
-#if DEBUG_ONLY
+#ifdef DEBUG_ONLY
+static void ledump(const char *title) {
+  __auto_ascii _a;
+  __cdump_a((char *)title);
+}
+
 size_t __e2a_l(char *bufptr, size_t szLen) {
   int ccsid;
   int am;
@@ -303,12 +310,10 @@ size_t __e2a_l(char *bufptr, size_t szLen) {
   strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
 
   if (ccsid == 819) {
-    if (__indebug() && !am) {
-      /*
+    if (!am) {
       __dump_title(2, bufptr, szLen, 16,
                    "Attempt convert from ASCII to ASCII \n");
       ledump((char *)"Attempt convert from ASCII to ASCII");
-      */
       return szLen;
     }
     // return szLen; restore to convert
@@ -328,12 +333,10 @@ size_t __a2e_l(char *bufptr, size_t szLen) {
   strlen_ae((const unsigned char *)bufptr, &ccsid, szLen, &am);
 
   if (ccsid == 1047) {
-    if (__indebug() && !am) {
-      /*
-     __dump_title(2, bufptr, szLen, 16,
-                  "Attempt convert from EBCDIC to EBCDIC\n");
-     ledump((char *)"Attempt convert from EBCDIC to EBCDIC");
-     */
+    if (!am) {
+      __dump_title(2, bufptr, szLen, 16,
+                   "Attempt convert from EBCDIC to EBCDIC\n");
+      ledump((char *)"Attempt convert from EBCDIC to EBCDIC");
       return szLen;
     }
     // return szLen; restore to convert
@@ -357,7 +360,7 @@ size_t __a2e_s(char *string) {
   }
   return __a2e_l(string, strlen(string));
 }
-#endif // #if DEBUG_ONLY
+#endif // #ifdef DEBUG_ONLY
 
 __auto_ascii::__auto_ascii(void) {
   ascii_mode = __isASCII();
@@ -444,39 +447,58 @@ struct IntHash {
 
 typedef unsigned long fd_attribute;
 
+// [[clang::no_destroy]] attribute can be set for this, but the attribute is
+// not available for xlclang.
+static bool bfdcache_destroyed = false;
+
 typedef std::unordered_map<int, fd_attribute, IntHash>::const_iterator cursor_t;
 
 class fdAttributeCache {
   std::unordered_map<int, fd_attribute, IntHash> cache;
-  std::mutex access_lock;
+  pthread_mutex_t access_lock;
 
 public:
-  fd_attribute get_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
-    cursor_t c = cache.find(fd);
-    if (c != cache.end()) {
-      return c->second;
+  fdAttributeCache() {
+    if (pthread_mutex_init(&access_lock, NULL) != 0) {
+      perror("pthread_mutex_init");
+      abort();
     }
-    return 0;
+  }
+  ~fdAttributeCache() {
+    pthread_mutex_destroy(&access_lock);
+    bfdcache_destroyed = true;
+  }
+  fd_attribute get_attribute(int fd) {
+    pthread_mutex_lock(&access_lock);
+    cursor_t c = cache.find(fd);
+    fd_attribute a = c != cache.end() ? c->second : 0;
+    pthread_mutex_unlock(&access_lock);
+    return a;
   }
   void set_attribute(int fd, fd_attribute attr) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    pthread_mutex_lock(&access_lock);
     cache[fd] = attr;
+    pthread_mutex_unlock(&access_lock);
   }
   void unset_attribute(int fd) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    if (fd < 0)
+      return;
+    pthread_mutex_lock(&access_lock);
     cache.erase(fd);
+    pthread_mutex_unlock(&access_lock);
   }
   void clear(void) {
-    std::lock_guard<std::mutex> guard(access_lock);
+    pthread_mutex_lock(&access_lock);
     cache.clear();
+    pthread_mutex_unlock(&access_lock);
   }
 };
 
 fdAttributeCache fdcache;
 
 void __fd_close(int fd) { 
-  fdcache.unset_attribute(fd);
+  if (!bfdcache_destroyed)
+    fdcache.unset_attribute(fd);
 }
 
 int __file_needs_conversion(int fd) {
@@ -543,10 +565,18 @@ int __file_needs_conversion_init(const char *name, int fd) {
 
 void __set_autocvt_on_fd_stream(int fd, unsigned short ccsid,
                                 unsigned char txtflag, int on_untagged_only) {
+  struct file_tag tag;
+
+  tag.ft_ccsid = ccsid;
+  tag.ft_txtflag = txtflag;
+  tag.ft_deferred = 0;
+  tag.ft_rsvflags = 0;
+
   struct f_cnvrt req = {SETCVTON, 0, (short)ccsid};
 
-  if (!on_untagged_only || 0 == __getfdccsid(fd)) {
+  if (!on_untagged_only || (!isatty(fd) && 0 == __getfdccsid(fd))) {
     fcntl(fd, F_CONTROL_CVT, &req);
+    fcntl(fd, F_SETTAG, &tag);
   }
 }
 

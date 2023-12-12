@@ -1,0 +1,620 @@
+\doxysection{edcwccwi.\+h}
+\hypertarget{edcwccwi_8h_source}{}\label{edcwccwi_8h_source}\index{include/edcwccwi.h@{include/edcwccwi.h}}
+\mbox{\hyperlink{edcwccwi_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2020.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#ifndef\ \_\_edcwccwi}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#define\ \_\_edcwccwi\ 1}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#pragma\ nomargins\ nosequence}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#pragma\ checkout(suspend)}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ /***************************************************************}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ *\ <edcwccwi.h>\ header\ file\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ *\ LICENSED\ MATERIALS\ -\/\ PROPERTY\ OF\ IBM\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ *\ 5650-\/ZOS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ *\ COPYRIGHT\ IBM\ CORP.\ 1988,\ 2015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ *\ US\ GOVERNMENT\ USERS\ RESTRICTED\ RIGHTS\ -\/\ USE,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ *\ DUPLICATION\ OR\ DISCLOSURE\ RESTRICTED\ BY\ GSA\ ADP\ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ *\ SCHEDULE\ CONTRACT\ WITH\ IBM\ CORP.\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ *\ STATUS\ =\ HLE77A0\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ ***************************************************************/}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \#if\ defined(\_\_IBM\_METAL\_\_)}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \#error\ Language\ Environment\ standard\ C\ headers\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{cannot\ be\ used\ when\ METAL\ option\ is\ used.\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{Correct\ your\ header\ search\ path.}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \#endif\ }\textcolor{comment}{/*\ \_\_IBM\_METAL\_\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ !defined(\_\_features\_h)\ ||\ defined(\_\_inc\_features)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \#include\ <features.h>}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#ifndef\ \_\_EDC\_LE}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \#define\ \_\_EDC\_LE\ 0x10000000}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#if\ \_\_TARGET\_LIB\_\_\ >=\ \_\_EDC\_LE}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_dsa\_prev,\ "{}\(\backslash\)174\(\backslash\)174DSAPRV"{})}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_ep\_find,\ "{}\(\backslash\)174\(\backslash\)174EPFIND"{})}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_fnwsa,\ "{}\(\backslash\)174\(\backslash\)174FNWSA"{})}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#if\ !defined(\_LP64)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_stack\_info,\ "{}\(\backslash\)174\(\backslash\)174STACK\(\backslash\)174"{})}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#if\ defined(\_\_XPLINK\_\_)\ \&\&\ !defined(\_LP64)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_bldxfd,\ "{}\(\backslash\)174\(\backslash\)174BLDXFD"{})}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#ifdef\ \_LP64}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \#pragma\ map\ (\_\_set\_laa\_for\_jit,\ "{}\(\backslash\)174\(\backslash\)174SETJIT"{})}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \#define\ \_\_bldxfd(fd)\ fd}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#ifndef\ \_\_types}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ 0x41080000}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#pragma\ map\ (\_\_static\_reinit,\ "{}\(\backslash\)174\(\backslash\)174STATRE"{})}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#define\ \_\_STATIC\_REINIT\_FULL\ 1}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ *\ \ \ =============================================================}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ *\ \ \ Function\ definitions\ for\ Language\ Environment\ C-\/Language\ CWIs}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ *\ \ \ =============================================================}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#ifdef\ \_NO\_PROTO}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ *\ \_\_dsa\_prev();}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ *\ \_\_ep\_find();}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ *\ \_\_fnwsa();}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#if\ defined(\_\_XPLINK\_\_)\ \&\&\ !defined(\_LP64)}}
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{void}\ *\ \_\_bldxfd();}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ \ \_\_dsa\_prev()\ \ -\/-\/\ Do\ logical\ or\ physical\ DSA\ backchaining}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ \ ============\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ *\ \ note:\ This\ routine\ may\ ABEND.\ \ Caller\ may\ need\ to\ use\ CEE3SRP,}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ CEEMRCE,\ etc.\ to\ handle\ ABENDs\ in\ this\ routine.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ (or\ use\ signal\ catcher,\ sigsetjmp(),\ and\ siglongjmp())}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ prior\ DSA\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00104\ \_\_dsa\_prev}
+\DoxyCodeLine{00105\ (}
+\DoxyCodeLine{00106\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ current\ DSA\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ ,\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ backchaining\ request\ type:}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1\ =\ physical}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2\ =\ logical\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ ,\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ starting\ DSA\ format:}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0\ =\ up}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1\ =\ down\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ ,\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ called\ function\ returns\ a\ pointer}}
+\DoxyCodeLine{00117\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ the\ fetched\ data\ (perhaps}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ moved\ into\ this\ A/S)}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ note:\ if\ callback\ function\ cannot}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ the\ requested\ data,\ it\ must}}
+\DoxyCodeLine{00121\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ return\ -\/-\/\ i.e.\ it\ should}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ longjump\ back\ to\ the\ user\ program}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ called\ \_\_dsa\_prev()\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ (*)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ ptr\ to\ user-\/provided}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback\ function\ that\ fetches}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,\ possibly\ from\ other}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ address\ space\ -\/-\/\ NULL\ =\ fetch}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\ from\ current\ A/S\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00130\ \ \ \ \ \ (}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 1st\ input\ parm\ for\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ starting\ address\ of\ data\ to\ be}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fetched\ (perhaps\ from\ other\ A/S)\ */}}
+\DoxyCodeLine{00134\ \ \ \ \ \ ,\ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 2nd\ input\ parm\ or\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ length\ of\ data\ to\ be\ fetched}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (will\ not\ exceed\ 16\ bytes)\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00137\ \ \ \ \ \ )}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ ,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ LE\ CAA\ -\/-\/\ required\ if}}
+\DoxyCodeLine{00140\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 4th\ argument\ is\ non-\/NULL.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Note:\ this\ may\ be\ the\ address\ of}}
+\DoxyCodeLine{00142\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CAA\ in\ the\ other\ A/S\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ ,\ \textcolor{keywordtype}{int}\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ ptr\ to\ output\ field}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ where\ previous\ DSA\ stack\ format}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ will\ be\ returned\ -\/-\/\ NULL\ =\ don't}}
+\DoxyCodeLine{00147\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pass\ back\ stack\ format\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00148\ ,\ \textcolor{keywordtype}{void}\ **\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ pointer\ to\ output\ field}}
+\DoxyCodeLine{00149\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ where\ address\ of\ physical\ callee}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ DSA\ will\ be\ placed\ -\/-\/\ NULL\ =}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ don't\ pass\ back\ physical\ callee}}
+\DoxyCodeLine{00152\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ address\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00153\ ,\ \textcolor{keywordtype}{int}\ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ ptr\ to\ output\ field}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ where\ physical\ callee\ stack\ format}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ will\ be\ returned\ -\/-\/\ NULL\ =\ don't}}
+\DoxyCodeLine{00156\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pass\ back\ stack\ format\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00157\ );}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ *\ \ \_\_ep\_find()\ -\/-\/\ find\ entry\ point\ of\ owner\ of\ passed-\/in\ DSA}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ *\ \ ===========\ \ \ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ entry\ point\ -\/-\/\ NULL\ =}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ could\ not\ find\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00169\ \_\_ep\_find}
+\DoxyCodeLine{00170\ (}
+\DoxyCodeLine{00171\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ DSA\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ ,\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ DSA\ format:}}
+\DoxyCodeLine{00174\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0\ =\ up}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1\ =\ down\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ ,\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ called\ function\ returns\ a\ pointer}}
+\DoxyCodeLine{00178\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ the\ fetched\ data\ (perhaps}}
+\DoxyCodeLine{00179\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ moved\ into\ this\ A/S)}}
+\DoxyCodeLine{00180\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ note:\ if\ callback\ function\ cannot}}
+\DoxyCodeLine{00181\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ the\ requested\ data,\ it\ must}}
+\DoxyCodeLine{00182\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ return\ -\/-\/\ i.e.\ it\ should}}
+\DoxyCodeLine{00183\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ longjump\ back\ to\ the\ user\ program}}
+\DoxyCodeLine{00184\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ called\ \_\_dsa\_prev()\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ \ (*)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ ptr\ to\ user-\/provided}}
+\DoxyCodeLine{00187\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback\ function\ that\ fetches}}
+\DoxyCodeLine{00188\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,\ possibly\ from\ other}}
+\DoxyCodeLine{00189\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ address\ space\ -\/-\/\ NULL\ =\ fetch}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\ from\ current\ A/S\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00191\ \ \ \ \ \ (}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 1st\ input\ parm\ for\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00193\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ starting\ address\ of\ data\ to\ be}}
+\DoxyCodeLine{00194\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fetched\ (perhaps\ from\ other\ A/S)\ */}}
+\DoxyCodeLine{00195\ \ \ \ \ \ ,\ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 2nd\ input\ parm\ or\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00196\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ length\ of\ data\ to\ be\ fetched}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (will\ not\ exceed\ 16\ bytes)\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00198\ \ \ \ \ \ )}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ );}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ *\ \ \_\_fnwsa()\ -\/-\/\ find\ the\ WSA\ associated\ with\ an\ executable\ module}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ *\ \ =========\ \ \ \ containing\ the\ specified\ entry\ point}}
+\DoxyCodeLine{00208\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ address\ of\ WSA\ (or\ NULL\ if}}
+\DoxyCodeLine{00212\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ module\ doesn't\ have\ a\ WSA)\ -\/-\/}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/1\ ==\ executable\ module\ could}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ be\ found\ from\ ep\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00215\ \_\_fnwsa}
+\DoxyCodeLine{00216\ (}
+\DoxyCodeLine{00217\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ entry\ point\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ ,\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ called\ function\ returns\ a\ pointer}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ the\ fetched\ data\ (perhaps}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ moved\ into\ this\ A/S)}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ note:\ if\ callback\ function\ cannot}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ the\ requested\ data,\ it\ must}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ not\ return\ -\/-\/\ i.e.\ it\ should}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ longjump\ back\ to\ the\ user\ program}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ that\ called\ \_\_fnwsa()\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \ (*)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ optional\ ptr\ to\ user-\/provided}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ callback\ function\ that\ fetches}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,\ possibly\ from\ other}}
+\DoxyCodeLine{00231\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ address\ space\ -\/-\/\ NULL\ =\ fetch}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\ from\ current\ A/S\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00233\ \ \ \ \ \ (}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 1st\ input\ parm\ for\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ starting\ address\ of\ data\ to\ be}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fetched\ (perhaps\ from\ other\ A/S)\ */}}
+\DoxyCodeLine{00237\ \ \ \ \ \ ,\ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 2nd\ input\ parm\ or\ callback\ fcn\ -\/-\/}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ length\ of\ data\ to\ be\ fetched}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (will\ not\ exceed\ 1K\ bytes)\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00240\ \ \ \ \ \ )}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ ,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ LE\ CAA\ -\/-\/\ required\ if}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2nd\ argument\ is\ non-\/NULL.}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Note:\ this\ may\ be\ the\ address\ of}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CAA\ in\ the\ other\ A/S\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ );}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \textcolor{preprocessor}{\#if\ defined(\_\_XPLINK\_\_)\ \&\&\ !defined(\_LP64)}}
+\DoxyCodeLine{00251\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ *\ \ \_\_bldxfd()\ -\/-\/\ build\ an\ XPLINK\ Compatibility\ Descriptor\ out\ of\ a}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ *\ \ =========\ \ \ \ \ "{}function\ pointer"{}\ of\ unknown\ origin}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{keywordtype}{char}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ address\ of\ storage\ contain}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ XPLINK\ Compatibility\ Descriptor\ \ */}}
+\DoxyCodeLine{00259\ \_\_bldxfd}
+\DoxyCodeLine{00260\ (}
+\DoxyCodeLine{00261\ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ entry\ point\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ );}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_\_XPLINK\_\_\ \&\&\ !LP64\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#if\ ((!defined(\_LP64)\ \&\&\ defined(\_\_XPLINK\_\_))\ \ \ ||\ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\ \ \ \ \ (defined(\_LP64)\ \ \&\&\ (\_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4109)))}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201}}
+\DoxyCodeLine{00270\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{char}\ \_\_jumpinfo\_vector\_t[16];}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \textcolor{keyword}{typedef}}
+\DoxyCodeLine{00273\ \textcolor{keyword}{struct\ }\_\_jumpinfo\_vr\_ext}
+\DoxyCodeLine{00274\ \{}
+\DoxyCodeLine{00275\ \ \ \ \textcolor{keywordtype}{short}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ji\_ve\_version;}
+\DoxyCodeLine{00276\ \ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ji\_ve\_u[14];}
+\DoxyCodeLine{00277\ \ \ \ \_\_jumpinfo\_vector\_t\ \_\_ji\_ve\_savearea[32];}
+\DoxyCodeLine{00278\ \}\_\_jumpinfo\_vr\_ext\_t;}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00280\ \textcolor{keyword}{typedef}}
+\DoxyCodeLine{00281\ \textcolor{keyword}{struct\ }\_\_jumpinfo}
+\DoxyCodeLine{00282\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*Note\ -\/\ offsets\ are\ for\ 31-\/bit\ expansion*/}}
+\DoxyCodeLine{00284\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u1[68];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +0\ \ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00285\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_mask\_saved;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +44\ \ when\ non-\/zero}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicates\ signal\ mask}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ saved\ in\ \_\_ji\_sigmask*/}}
+\DoxyCodeLine{00288\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u2[3];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +45\ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00289\ \textcolor{preprocessor}{\ \ \#ifdef\ \_\_DOT1}}
+\DoxyCodeLine{00290\ \ \ sigset\_t\ \ \_\_ji\_sigmask;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +48\ \ signal\ mask\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\ \ \#else}}
+\DoxyCodeLine{00292\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \_\_ji\_u2a;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +48\ \ Filler\ for\ non-\/posix*/}}
+\DoxyCodeLine{00293\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \ \ \_\_ji\_u2b;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +4C\ \ Filler\ for\ non-\/posix*/}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\ \ \#endif}}
+\DoxyCodeLine{00295\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u3[11];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +50\ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00296\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_fp4\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.0\ 4\ FPRs\ valid\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00297\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_fp16\ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.1\ 16\ FPRs\ valid\ \ \ \ \ \ */}}
+\DoxyCodeLine{00298\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_fpc\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.2\ FPC\ \ valid\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00299\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_res1a\ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.3\ reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#ifndef\ \_LP64}}
+\DoxyCodeLine{00301\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_hr\ \ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.4\ Hi\ regs\ valid\ \ \ \ \ \ */}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00303\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_res3\ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.4\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00304\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00305\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_res2\ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.5\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00306\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_exp\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.6\ explicit\ backchain\ */}}
+\DoxyCodeLine{00307\ \ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \ \_\_ji\_fl\_res2a\ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.7\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201}}
+\DoxyCodeLine{00309\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u4[12];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +5C\ \ \ Reserved\ \ \ \ \ \ \ @D4C*/}}
+\DoxyCodeLine{00310\ \ \ \_\_jumpinfo\_vr\_ext\_t\ *\_\_ji\_vr\_ext;\ \ \ \ \ \ \textcolor{comment}{/*\ +68\ \ \ Pointer\ to\ VRs}}
+\DoxyCodeLine{00311\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ save\ area\ \ \ \ \ \ @D4A*/}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#ifndef\ \_LP64\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @D4A*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00313\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u7[4];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +6C\ \ \ Reserved\ \ \ \ \ \ \ @D4A*/}}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#endif\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ @D4A*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00315\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u8[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +70\ \ \ Reserved\ \ \ \ \ \ \ @D4A*/}}
+\DoxyCodeLine{00316\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{/*\ not\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00317\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u4[36];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +5C\ \ \ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \ \ \ \ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00319\ \ \ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \ \_\_ji\_gr[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +80\ \ resume\ registers\ \ \ \ */}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#ifndef\ \_LP64}}
+\DoxyCodeLine{00321\ \ \ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \ \_\_ji\_hr[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +C0\ \ hi\ regs\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00322\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00323\ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \_\_ji\_u5[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +100\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00324\ \ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \ \_\_ji\_fpr[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +140\ FP\ registers\ 0-\/15\ \ \ */}}
+\DoxyCodeLine{00325\ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \_\_ji\_fpc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +1C0\ Floating\ pt\ cntl\ reg*/}}
+\DoxyCodeLine{00326\ \ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \ \_\_ji\_u6[60];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +1C4\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +200\ End\ of\ Resume\ area\ */}}
+\DoxyCodeLine{00328\ \}\ \_\_jumpinfo\_t;}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{comment}{/**********************************************************************}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ *\ \ \_\_far\_jump()\ \ -\/-\/\ perform\ far\ jump\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ **********************************************************************}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00335\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{00336\ \_\_far\_jump}
+\DoxyCodeLine{00337\ (}
+\DoxyCodeLine{00338\ \ \ \textcolor{keyword}{struct}\ \_\_jumpinfo\ *\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ pointer\ to\ jump\ info\ buffer\ \ \ \ \ \ */}}
+\DoxyCodeLine{00339\ );}
+\DoxyCodeLine{00340\ }
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00342\ }
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\#if\ !defined(\_LP64)}}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#if\ defined(\_\_XPLINK\_\_)}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \textcolor{comment}{/*******************************************************************}}
+\DoxyCodeLine{00348\ \textcolor{comment}{\ *\ \ \_\_set\_stack\_softlimit()\ -\/-\/\ Set\ stack\ softlimit\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00349\ \textcolor{comment}{\ *******************************************************************}}
+\DoxyCodeLine{00350\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ returns\ the\ previous\ value\ of\ the}}
+\DoxyCodeLine{00353\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ softlimit\ (ULONG\_MAX\ returned\ if}}
+\DoxyCodeLine{00354\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ first\ call)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00355\ \_\_set\_stack\_softlimit}
+\DoxyCodeLine{00356\ (}
+\DoxyCodeLine{00357\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ soft\ limit\ stack\ size\ in\ bytes\ \ \ */}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ );}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_\_XPLINK\_\_\ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\ \ \#define\ \_\_set\_stack\_softlimit(a)\ \(\backslash\)}}
+\DoxyCodeLine{00364\ \textcolor{preprocessor}{\ \ \ \ struct\ \_\_no64bitSupport\ \_\_set\_stack\_softlimit}}
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ !\ \_LP64\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \textcolor{preprocessor}{\#ifdef\ \_LP64}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \textcolor{keyword}{typedef}}
+\DoxyCodeLine{00370\ \textcolor{keyword}{struct\ }\_\_laa\_jit\_s\ \{}
+\DoxyCodeLine{00371\ \ \textcolor{keywordtype}{void}\ *\ \ \ user\_data1;}
+\DoxyCodeLine{00372\ \ \textcolor{keywordtype}{void}\ *\ \ \ user\_data2;}
+\DoxyCodeLine{00373\ \}\ \_\_laa\_jit\_t;}
+\DoxyCodeLine{00374\ \textcolor{comment}{/**********************************************************************}}
+\DoxyCodeLine{00375\ \textcolor{comment}{\ *\ \ \_\_set\_laa\_for\_jit()\ \ -\/-\/\ set\ 2\ reserved\ fields\ in\ the\ LAA\ for\ JAVA\ *}}
+\DoxyCodeLine{00376\ \textcolor{comment}{\ **********************************************************************}}
+\DoxyCodeLine{00377\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00378\ \textcolor{keywordtype}{int}\ \_\_set\_laa\_for\_jit\ (\ \_\_laa\_jit\_t\ *laa\_jit);}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_LP64\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \textcolor{preprocessor}{\#if\ defined(\_\_XPLINK\_\_)}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \textcolor{keyword}{typedef}}
+\DoxyCodeLine{00385\ \textcolor{keyword}{struct\ \ }\_\_mcontext}
+\DoxyCodeLine{00386\ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*Note\ -\/\ offsets\ are\ for\ 31-\/bit\ expansion*/}}
+\DoxyCodeLine{00388\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_1[68];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +0\ \ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00389\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_mask\_saved;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +44\ \ when\ non-\/zero}}
+\DoxyCodeLine{00390\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ indicates\ signal\ mask}}
+\DoxyCodeLine{00391\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ saved\ in\ \_\_mc\_sigmask*/}}
+\DoxyCodeLine{00392\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_2[2];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +45\ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00393\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_\_3\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :3;\ \textcolor{comment}{/*\ +47\ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00394\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_psw\_flag\ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +47.3\ \_\_mc\_psw\ PSW\ valid\ */}}
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A}}
+\DoxyCodeLine{00396\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_int\_dsa\_flag\ \ \ \ \ :1;\ \textcolor{comment}{/*\ +47.4\ \_\_mc\_int\_dsa}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\ valid\ \ \ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00398\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_savstack\_flag\ \ \ \ :1;\ \textcolor{comment}{/*\ +47.5\ \_\_mc\_int\_dsa\ was}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ saved\ from\ (must\ be}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ restored\ to)}}
+\DoxyCodeLine{00401\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CEECAA\_SAVSTACK}}
+\DoxyCodeLine{00402\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (31-\/bit)\ or}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CEELCA\_SAVSTACK}}
+\DoxyCodeLine{00404\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (64-\/bit)\ \ \ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00405\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_savstack\_async\_flag:1;\textcolor{comment}{/*+47.6\ \_\_mc\_int\_dsa\ was}}
+\DoxyCodeLine{00406\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ saved\ from\ (must\ be}}
+\DoxyCodeLine{00407\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ restored\ to)\ the}}
+\DoxyCodeLine{00408\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ field\ pointed\ to\ by}}
+\DoxyCodeLine{00409\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CEECAA\_SAVSTACK\_ASYNC}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (31-\/bit)\ or}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CEELCA\_SAVSTACK\_ASYNC}}
+\DoxyCodeLine{00412\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (64-\/bit)\ \ \ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00413\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_\_4\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +47.7\ Reserved\ \ \ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00414\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00415\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_\_4\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :4;\ \textcolor{comment}{/*\ +47\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00417\ \textcolor{preprocessor}{\ \#ifdef\ \_\_DOT1}}
+\DoxyCodeLine{00418\ \ sigset\_t\ \ \ \ \_\_mc\_sigmask;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +48\ signal\ mask\ for\ posix*/}}
+\DoxyCodeLine{00419\ \textcolor{preprocessor}{\ \#else}}
+\DoxyCodeLine{00420\ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \_\_mc\_\_4a;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +48\ \ Filler\ for\ non-\/posix*/}}
+\DoxyCodeLine{00421\ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \_\_mc\_\_4b;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +4C\ \ Filler\ for\ non-\/posix*/}}
+\DoxyCodeLine{00422\ \textcolor{preprocessor}{\ \#endif}}
+\DoxyCodeLine{00423\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_5[11];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +50\ \ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00424\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_fp4\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.0\ 4\ FPRs\ valid\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00425\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_fp16\ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.1\ 16\ FPRs\ valid\ \ \ \ \ \ */}}
+\DoxyCodeLine{00426\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_fpc\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.2\ FPC\ valid\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00427\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_res1a\ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.3\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00428\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_hr\ \ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.4\ Hi\ regs\ valid\ \ \ \ \ \ */}}
+\DoxyCodeLine{00429\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_res2\ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.5\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00430\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_exp\ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.6\ Explicit\ backchain\ */}}
+\DoxyCodeLine{00431\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_res2a\ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5B.7\ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00432\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4201}}
+\DoxyCodeLine{00433\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_res2b\ \ \ \ \ \ \ \ \ :2;\ \textcolor{comment}{/*\ +5C.0\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00434\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_vr\ \ \ \ \ \ \ \ \ \ \ \ :1;\ \textcolor{comment}{/*\ +5C.2\ Vector\ savearea\ valid*/}}
+\DoxyCodeLine{00435\ \ \textcolor{keywordtype}{unsigned}\ \ \ \ \_\_mc\_fl\_res2c\ \ \ \ \ \ \ \ \ :5;\ \textcolor{comment}{/*\ +5C.x\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00436\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_6a[11];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +5D\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00437\ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ *\_\_mc\_vr\_ext;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +68\ ptr\ to\ vrs\ save\ area\ \ \ */}}
+\DoxyCodeLine{00438\ \ \_\_pad31\ \ \ \ (\_\_mc\_\_6b,4)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +6C\ 31-\/bit\ reserved\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00439\ \ char\ \ \ \ \ \ \ \ \_\_mc\_\_6c[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +70\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00440\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00441\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_6[36];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +5C\ \ \ Reserved\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00442\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00443\ \ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \_\_mc\_gr[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +80\ resume\ register\ \ \ \ \ \ */}}
+\DoxyCodeLine{00444\ \textcolor{preprocessor}{\#ifndef\ \_LP64}}
+\DoxyCodeLine{00445\ \ \textcolor{keywordtype}{long}\ \ \ \ \ \ \ \ \_\_mc\_hr\_[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +C0\ hi\ regs\ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00447\ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \_\_mc\_\_7[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +100\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00448\ \ \textcolor{keywordtype}{double}\ \ \ \ \ \ \_\_mc\_fpr[16];\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +140\ FP\ registers\ 0-\/15\ \ \ */}}
+\DoxyCodeLine{00449\ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \_\_mc\_fpc;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +1C0\ Floating\ pt\ cntl\ reg*/}}
+\DoxyCodeLine{00450\ \ \textcolor{keywordtype}{char}\ \ \ \ \ \ \ \ \_\_mc\_\_8[60];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +1C4\ Reserved\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00451\ \ \_\_pad31\ \ \ \ \ \ \ \ \ (\_\_mc\_\_9,16)\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ reserved\ \ 31-\/bit\ \ \ \ \ */}}
+\DoxyCodeLine{00452\ \ \_\_pad64\ \ \ \ \ \ \ \ \ (\_\_mc\_\_9,8)\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ reserved\ \ 64-\/bit\ \ \ \ \ */}}
+\DoxyCodeLine{00453\ \ struct\ \_\_mcontext\ \ *\_\_mc\_aux\_mcontext\_ptr;\textcolor{comment}{/*\ +210\ ptr\ \_\_mcontext\ \ */}}
+\DoxyCodeLine{00454\ \ \_\_pad31\ \ \ \ \ \ \ \ \ (\_\_mc\_\_10,12)\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +214\ reserved\ \ 31-\/bit\ \ \ \ \ */}}
+\DoxyCodeLine{00455\ \ \_\_pad64\ \ \ \ \ \ \ \ \ (\_\_mc\_\_10,24)\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +218\ reserved\ \ 64-\/bit\ \ \ \ \ */}}
+\DoxyCodeLine{00456\ \ \_\_pad31\ \ \ \ \ \ \ \ \ (\_\_mc\_psw,8\ )\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 8-\/byte\ PSW\ for\ 31-\/bit\ \ \ \ \ */}}
+\DoxyCodeLine{00457\ \ \_\_pad64\ \ \ \ \ \ \ \ \ (\_\_mc\_psw,16)\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ 16-\/byte\ PSW\ for\ 64-\/bit\ \ \ \ */}}
+\DoxyCodeLine{00458\ \ \textcolor{comment}{/*\ Note-\/\ \_\_mc\_psw\ is\ valid\ only\ if\ \_\_mc\_psw\_flag\ is\ set\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A}}
+\DoxyCodeLine{00460\ \ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ *\_\_mc\_int\_dsa;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +228\ interrupt\ DSA\ \ \ @D2A*/}}
+\DoxyCodeLine{00461\ \ \textcolor{comment}{/*\ Note-\/\ \_\_mc\_int\_dsa\ is\ only\ valid\ if\ \_\_mc\_int\_dsa\_flag\ is\ set\ \ \ */}}
+\DoxyCodeLine{00462\ \ \_\_pad31\ \ \ \ \ \ \ \ \ (\_\_mc\_\_11,84)\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ \ 31-\/bit\ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00463\ \ \_\_pad64\ \ \ \ \ \ \ \ \ (\_\_mc\_\_11,104)\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ \ 64-\/bit\ \ \ \ \ @D2A*/}}
+\DoxyCodeLine{00464\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00465\ \ \_\_pad31\ \ \ \ \ \ \ \ \ (\_\_mc\_\_11,88)\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ \ 31-\/bit\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00466\ \ \_\_pad64\ \ \ \ \ \ \ \ \ (\_\_mc\_\_11,112)\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ reserved\ \ 64-\/bit\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ +280\ End\ of\ Resume\ area\ \ */}}
+\DoxyCodeLine{00469\ \}\ \_\_mcontext\_t\_;}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_\_XPLINK\_\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00472\ }
+\DoxyCodeLine{00473\ \_\_new4108(\textcolor{keywordtype}{int},\_\_static\_reinit,(\textcolor{keywordtype}{int},\textcolor{keywordtype}{void}\ *));}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ \_NO\_PROTO\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00479\ \textcolor{comment}{\ *\ \ Constants\ for\ \_\_dsa\_prev()\ and\ \_\_ep\_find()\ and\ \_\_stack\_info()}}
+\DoxyCodeLine{00480\ \textcolor{comment}{\ *\ \ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00481\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \textcolor{preprocessor}{\#define\ \_\_EDCWCCWI\_PHYSICAL\ 1\ \ \ }\textcolor{comment}{/*\ do\ physical\ backchain\ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00484\ \textcolor{preprocessor}{\#define\ \_\_EDCWCCWI\_LOGICAL\ \ 2\ \ \ }\textcolor{comment}{/*\ do\ logical\ backchain\ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ \textcolor{preprocessor}{\#define\ \_\_EDCWCCWI\_UP\ \ \ \ \ \ \ 0\ \ \ }\textcolor{comment}{/*\ stack\ format\ =\ UP\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00487\ \textcolor{preprocessor}{\#define\ \_\_EDCWCCWI\_DOWN\ \ \ \ \ 1\ \ \ }\textcolor{comment}{/*\ stack\ format\ =\ DOWN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \textcolor{comment}{/******************************************************************/}}
+\DoxyCodeLine{00490\ \textcolor{comment}{/*\ define's\ for\ VHM\ events\ and\ structure\ required\ as\ input\ to\ the\ */}}
+\DoxyCodeLine{00491\ \textcolor{comment}{/*\ VHM\ event\ calls\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00492\ \textcolor{comment}{/******************************************************************/}}
+\DoxyCodeLine{00493\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4103}}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00497\ \textcolor{preprocessor}{\ \ \ \#ifndef\ \_LP64}}
+\DoxyCodeLine{00498\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#ifdef\ \_\_XPLINK\_\_}}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}OS\_UPSTACK"{}}\ \textcolor{keywordtype}{void}\ \_\_cee\_heap\_manager(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#else}}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}OS"{}}\ \textcolor{keywordtype}{void}\ \_\_cee\_heap\_manager(\textcolor{keywordtype}{int},\ \textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00502\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#endif}}
+\DoxyCodeLine{00503\ \textcolor{preprocessor}{\ \ \ \#endif}}
+\DoxyCodeLine{00504\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00505\ \ \ \ \textcolor{keywordtype}{void}\ \ \_\_cee\_heap\_manager(\textcolor{keywordtype}{int}\ ,\textcolor{keywordtype}{void}\ *);}
+\DoxyCodeLine{00506\ \textcolor{preprocessor}{\ \ \ \#ifndef\ \_LP64}}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#ifdef\ \_\_XPLINK\_\_}}
+\DoxyCodeLine{00508\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \#pragma\ linkage(\_\_cee\_heap\_manager,\ OS\_UPSTACK)}}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#else}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \#pragma\ linkage(\_\_cee\_heap\_manager,\ OS)}}
+\DoxyCodeLine{00511\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \#endif}}
+\DoxyCodeLine{00512\ \textcolor{preprocessor}{\ \ \ \#endif}}
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00514\ }
+\DoxyCodeLine{00515\ \textcolor{preprocessor}{\#define\ \_VHM\_INIT\ 1}}
+\DoxyCodeLine{00516\ \textcolor{preprocessor}{\#define\ \_VHM\_TERM\ 2}}
+\DoxyCodeLine{00517\ \textcolor{preprocessor}{\#define\ \_VHM\_CEEDUMP\ 3}}
+\DoxyCodeLine{00518\ \textcolor{preprocessor}{\#define\ \_VHM\_REPORT\ 4}}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ \textcolor{comment}{/******\ struct\ \_\_event1\_s\ ******/}}
+\DoxyCodeLine{00521\ }
+\DoxyCodeLine{00522\ \textcolor{keyword}{struct\ }\_\_event1\_s\ \{}
+\DoxyCodeLine{00523\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_free;}
+\DoxyCodeLine{00524\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_malloc;}
+\DoxyCodeLine{00525\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_realloc;}
+\DoxyCodeLine{00526\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_calloc;}
+\DoxyCodeLine{00527\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_xp\_free;}
+\DoxyCodeLine{00528\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_xp\_malloc;}
+\DoxyCodeLine{00529\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_xp\_realloc;}
+\DoxyCodeLine{00530\ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_ev1\_xp\_calloc;}
+\DoxyCodeLine{00531\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \_\_ev1\_le\_xplink\ :\ 1,}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ev1\_le\_reserved\ :\ 31;}
+\DoxyCodeLine{00533\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \_\_ev1\_vhm\_xplink\ :\ 1,}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_ev1\_vhm\_reserved\ :\ 31;}
+\DoxyCodeLine{00535\ \};}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4106}}
+\DoxyCodeLine{00538\ }
+\DoxyCodeLine{00539\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00540\ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\_vhm\_event()\ PROTOTYPE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00541\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00542\ \textcolor{preprocessor}{\ \ \ \#pragma\ map\ (\_\_vhm\_event,\ "{}\(\backslash\)174\(\backslash\)174VHMEVT"{})}}
+\DoxyCodeLine{00543\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00544\ \ \ \ \textcolor{comment}{/*\ NOTE\ !!!\ At\ this\ moment\ this\ API\ is\ just\ supporting\ to\ drive\ \ */}}
+\DoxyCodeLine{00545\ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ the\ \_VHM\_REPORT\ as\ the\ event\ argument\ with\ VHM\_CLEAR\ as\ */}}
+\DoxyCodeLine{00546\ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ the\ optional\ argument\ in\ MEMCHECK\ VHM.\ It\ could\ support\ */}}
+\DoxyCodeLine{00547\ \ \ \ \textcolor{comment}{/*\ \ \ \ \ \ \ more\ events\ and\ more\ event\ options\ in\ the\ future.\ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00549\ \ \ \ \textcolor{keywordtype}{void}\ \_\_vhm\_event(\textcolor{keywordtype}{int},\ ...);}
+\DoxyCodeLine{00550\ }
+\DoxyCodeLine{00551\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00552\ \ \ \ \textcolor{comment}{/*\ \ \_\_vhm\_event()\ EVENT\ OPTIONS.\ Used\ in\ the\ optional\ argument.\ \ */}}
+\DoxyCodeLine{00553\ \textcolor{comment}{\ \ \ /*****************************************************************/}}
+\DoxyCodeLine{00554\ \textcolor{preprocessor}{\ \ \ \#define\ \_VHM\_REPORT\_CLEAR\ 0x01\ }\textcolor{comment}{/*\ Used\ by\ \_VHM\_REPORT\ event\ to\ \ \ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ free\ the\ resources\ previously\ \ */}}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ logged\ by\ MEMCHECK.\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4106\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE4103\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00561\ }
+\DoxyCodeLine{00562\ \textcolor{preprocessor}{\ \ \#if\ !defined(\_LP64)}}
+\DoxyCodeLine{00563\ \textcolor{preprocessor}{\ \ \#ifdef\ \_OPEN\_THREADS}}
+\DoxyCodeLine{00564\ \textcolor{preprocessor}{\ \ \#include\ <pthread.h>}}
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\_\_segaddrs\{}
+\DoxyCodeLine{00567\ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_startaddr;}
+\DoxyCodeLine{00568\ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \_\_endaddr;}
+\DoxyCodeLine{00569\ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \_\_segtype;}
+\DoxyCodeLine{00570\ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ padding;}
+\DoxyCodeLine{00571\ \ \ \}SegmentAddresses;}
+\DoxyCodeLine{00572\ }
+\DoxyCodeLine{00573\ \ \ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\_\_stackinfo\ \{}
+\DoxyCodeLine{00574\ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \_\_structsize;}
+\DoxyCodeLine{00575\ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \_\_numsegs;}
+\DoxyCodeLine{00576\ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ \_\_stacktop;}
+\DoxyCodeLine{00577\ \ \ \ \ \ \textcolor{keywordtype}{void}\ *\ \ \ resrv;}
+\DoxyCodeLine{00578\ \ \ \ \ \ SegmentAddresses\ \_\_segaddr[1];}
+\DoxyCodeLine{00579\ \ \ \}STACKINFO;}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \ \ \_\_new4102(\textcolor{keywordtype}{int},\ \mbox{\hyperlink{struct____stack__info}{\_\_stack\_info}},\ (STACKINFO\ *,\ \textcolor{keyword}{struct}\ \_\_thdq\_\ *));}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \textcolor{preprocessor}{\ \ \#endif}}
+\DoxyCodeLine{00584\ \textcolor{preprocessor}{\ \ \#else}}
+\DoxyCodeLine{00585\ \textcolor{preprocessor}{\ \ \ \ \#define\ \_\_stack\_info(a,b)\ \(\backslash\)}}
+\DoxyCodeLine{00586\ \textcolor{preprocessor}{\ \ \ \ \ \ struct\ \_\_no64bitSupport\ \_\_stack\_info}}
+\DoxyCodeLine{00587\ \textcolor{preprocessor}{\ \ \#endif}}
+\DoxyCodeLine{00588\ }
+\DoxyCodeLine{00589\ }
+\DoxyCodeLine{00590\ \textcolor{preprocessor}{\#if\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A}}
+\DoxyCodeLine{00591\ }
+\DoxyCodeLine{00592\ \textcolor{preprocessor}{\ \ \#ifndef\ \_LP64}}
+\DoxyCodeLine{00593\ \textcolor{preprocessor}{\ \ \ \ \#define\ \_\_LE\_SAVSTACK\_ADDR\ ((void**)\_\_gtca()+250)}}
+\DoxyCodeLine{00594\ \textcolor{preprocessor}{\ \ \ \ \#define\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR\ ((void**)\_\_gtca()+253)}}
+\DoxyCodeLine{00595\ \textcolor{preprocessor}{\ \ \#else}}
+\DoxyCodeLine{00596\ \textcolor{preprocessor}{\ \ \ \ \#ifndef\ \_\_LAA\_P}}
+\DoxyCodeLine{00597\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \#define\ \_\_LAA\_P\ ((void\ *)*((void\ *\ \_\_ptr32\ *)0x04B8ul))}}
+\DoxyCodeLine{00598\ \textcolor{preprocessor}{\ \ \ \ \#endif}}
+\DoxyCodeLine{00599\ \textcolor{preprocessor}{\ \ \ \ \#define\ \_\_LE\_SAVSTACK\_ADDR\ \(\backslash\)}}
+\DoxyCodeLine{00600\ \textcolor{preprocessor}{\ \ \ \ \ \ (((void**)(*(((void**)(\_\_LAA\_P))+11)))+4)}}
+\DoxyCodeLine{00601\ \textcolor{preprocessor}{\ \ \ \ \#define\ \_\_LE\_SAVSTACK\_ASYNC\_ADDR\ \(\backslash\)}}
+\DoxyCodeLine{00602\ \textcolor{preprocessor}{\ \ \ \ \ \ (((void**)(*(((void**)(\_\_LAA\_P))+11)))+42)}}
+\DoxyCodeLine{00603\ \textcolor{preprocessor}{\ \ \#endif}}
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_EDC\_TARGET\ >=\ \_\_EDC\_LE410A\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00606\ }
+\DoxyCodeLine{00607\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{/*\ \_\_TARGET\_LIB\_\_\ >=\ \_\_EDC\_LE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ }
+\DoxyCodeLine{00610\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00611\ \}}
+\DoxyCodeLine{00612\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00613\ }
+\DoxyCodeLine{00614\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#pragma\ checkout(resume)}}
+\DoxyCodeLine{00615\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#endif\ }\textcolor{comment}{/*\ \_\_edcwccwi\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

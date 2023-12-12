@@ -1,0 +1,36 @@
+.TH "include/sys/stat.h" 3 "zoslib" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+include/sys/stat.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'zos\-macros\&.h'\fP
+.br
+
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef int \fBmode_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__Z_EXPORT\fP int \fB__mkfifo_ascii\fP (const char *pathname, \fBmode_t\fP mode)"
+.br
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef int \fBmode_t\fP"
+
+.SH "Function Documentation"
+.PP 
+.SS "\fB__Z_EXPORT\fP int __mkfifo_ascii (const char * pathname, \fBmode_t\fP mode)\fC [extern]\fP"
+Same as C mkfifo but tags FIFO special files as ASCII (819) 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for zoslib from the source code\&.

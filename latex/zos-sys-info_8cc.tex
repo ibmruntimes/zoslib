@@ -1,10 +1,11 @@
-\hypertarget{zos-sys-info_8cc}{}\doxysection{src/zos-\/sys-\/info.cc File Reference}
-\label{zos-sys-info_8cc}\index{src/zos-\/sys-\/info.cc@{src/zos-\/sys-\/info.cc}}
-{\ttfamily \#include \char`\"{}zos-\/sys-\/info.\+h\char`\"{}}\newline
+\doxysection{src/zos-\/sys-\/info.cc File Reference}
+\hypertarget{zos-sys-info_8cc}{}\label{zos-sys-info_8cc}\index{src/zos-\/sys-\/info.cc@{src/zos-\/sys-\/info.cc}}
+{\ttfamily \#include "{}zos-\/sys-\/info.\+h"{}}\newline
 {\ttfamily \#include $<$assert.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
-\doxysubsection*{Functions}
+\doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 int \mbox{\hyperlink{zos-sys-info_8cc_a3b2ad7fe0aee30edf781eefd73ee5b88}{\+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus}} (void)
@@ -20,11 +21,31 @@ bool \mbox{\hyperlink{zos-sys-info_8cc_a6ad10d265f086cc2fa4154a022beb4b8}{\+\_\+
 bool \mbox{\hyperlink{zos-sys-info_8cc_aaabf39b1027a0ddb9a5677b13cd7d710}{\+\_\+\+\_\+is\+\_\+vxf\+\_\+available}} ()
 \item 
 bool \mbox{\hyperlink{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280}{\+\_\+\+\_\+is\+\_\+vef1\+\_\+available}} ()
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{zos-sys-info_8cc_aa9c8ebd2e3dedd066660ce64bc635d05}{\+\_\+\+\_\+get\+\_\+cpu\+\_\+model}} (char \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t size)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
-\mbox{\Hypertarget{zos-sys-info_8cc_a67eea4362b2e4efb1cfcf07f17eba6f7}\label{zos-sys-info_8cc_a67eea4362b2e4efb1cfcf07f17eba6f7}} 
+\Hypertarget{zos-sys-info_8cc_aa9c8ebd2e3dedd066660ce64bc635d05}\label{zos-sys-info_8cc_aa9c8ebd2e3dedd066660ce64bc635d05} 
+\index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_get\_cpu\_model@{\_\_get\_cpu\_model}}
+\index{\_\_get\_cpu\_model@{\_\_get\_cpu\_model}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
+\doxysubsubsection{\texorpdfstring{\_\_get\_cpu\_model()}{\_\_get\_cpu\_model()}}
+{\footnotesize\ttfamily char \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+get\+\_\+cpu\+\_\+model (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+Gets the 4 character CPU model of the system, including the null terminating character. Truncated if buffer size is too small.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & pointer to the buffer where the cpu model is to be stored \\
+\hline
+{\em size} & the size of the buffer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the buffer. 
+\end{DoxyReturn}
+\Hypertarget{zos-sys-info_8cc_a67eea4362b2e4efb1cfcf07f17eba6f7}\label{zos-sys-info_8cc_a67eea4362b2e4efb1cfcf07f17eba6f7} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_get\_num\_frames@{\_\_get\_num\_frames}}
 \index{\_\_get\_num\_frames@{\_\_get\_num\_frames}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_num\_frames()}{\_\_get\_num\_frames()}}
@@ -33,25 +54,25 @@ bool \mbox{\hyperlink{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280}{\+\_\+
 Get the number of frames currently available to the system \begin{DoxyReturn}{Returns}
 returns the number of available frames 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_a3b2ad7fe0aee30edf781eefd73ee5b88}\label{zos-sys-info_8cc_a3b2ad7fe0aee30edf781eefd73ee5b88}} 
+\Hypertarget{zos-sys-info_8cc_a3b2ad7fe0aee30edf781eefd73ee5b88}\label{zos-sys-info_8cc_a3b2ad7fe0aee30edf781eefd73ee5b88} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_get\_num\_online\_cpus@{\_\_get\_num\_online\_cpus}}
 \index{\_\_get\_num\_online\_cpus@{\_\_get\_num\_online\_cpus}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_num\_online\_cpus()}{\_\_get\_num\_online\_cpus()}}
 {\footnotesize\ttfamily int \+\_\+\+\_\+get\+\_\+num\+\_\+online\+\_\+cpus (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
-Get the number of online C\+P\+Us \begin{DoxyReturn}{Returns}
-returns the number of online C\+P\+Us 
+Get the number of online CPUs \begin{DoxyReturn}{Returns}
+returns the number of online CPUs 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_af45c5eb88465481f83247e8024e59836}\label{zos-sys-info_8cc_af45c5eb88465481f83247e8024e59836}} 
+\Hypertarget{zos-sys-info_8cc_af45c5eb88465481f83247e8024e59836}\label{zos-sys-info_8cc_af45c5eb88465481f83247e8024e59836} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_get\_os\_level@{\_\_get\_os\_level}}
 \index{\_\_get\_os\_level@{\_\_get\_os\_level}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_get\_os\_level()}{\_\_get\_os\_level()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{zos-sys-info_8h_adbc37c8430939d1f676d7d6d1fd282aa}{oslvl\+\_\+t}} \+\_\+\+\_\+get\+\_\+os\+\_\+level (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 Get the OS level \begin{DoxyReturn}{Returns}
-the OS level as Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R1/2/3/4/5 (values are in ascending order) 
+the OS level as ZOSLVL\+\_\+\+V2\+R1/2/3/4/5 (values are in ascending order) 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_a73cf375e89e966ca2e6a7e360ccc11f5}\label{zos-sys-info_8cc_a73cf375e89e966ca2e6a7e360ccc11f5}} 
+\Hypertarget{zos-sys-info_8cc_a73cf375e89e966ca2e6a7e360ccc11f5}\label{zos-sys-info_8cc_a73cf375e89e966ca2e6a7e360ccc11f5} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_is\_os\_level\_at\_or\_above@{\_\_is\_os\_level\_at\_or\_above}}
 \index{\_\_is\_os\_level\_at\_or\_above@{\_\_is\_os\_level\_at\_or\_above}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_os\_level\_at\_or\_above()}{\_\_is\_os\_level\_at\_or\_above()}}
@@ -60,16 +81,16 @@ the OS level as Z\+O\+S\+L\+V\+L\+\_\+\+V2\+R1/2/3/4/5 (values are in ascending 
 Check if current OS is at or above a given level \begin{DoxyReturn}{Returns}
 true if the current OS level is at or above the given level, and false otherwise 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_a6ad10d265f086cc2fa4154a022beb4b8}\label{zos-sys-info_8cc_a6ad10d265f086cc2fa4154a022beb4b8}} 
+\Hypertarget{zos-sys-info_8cc_a6ad10d265f086cc2fa4154a022beb4b8}\label{zos-sys-info_8cc_a6ad10d265f086cc2fa4154a022beb4b8} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_is\_stfle\_available@{\_\_is\_stfle\_available}}
 \index{\_\_is\_stfle\_available@{\_\_is\_stfle\_available}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_stfle\_available()}{\_\_is\_stfle\_available()}}
 {\footnotesize\ttfamily bool \+\_\+\+\_\+is\+\_\+stfle\+\_\+available (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Check if S\+T\+F\+LE (S\+T\+O\+RE F\+A\+C\+I\+L\+I\+TY L\+I\+ST E\+X\+T\+E\+N\+D\+ED) instruction is available \begin{DoxyReturn}{Returns}
-true if the S\+T\+F\+LE instruction is available 
+Check if STFLE (STORE FACILITY LIST EXTENDED) instruction is available \begin{DoxyReturn}{Returns}
+true if the STFLE instruction is available 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280}\label{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280}} 
+\Hypertarget{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280}\label{zos-sys-info_8cc_ace9343312e3d85eeddebe558b070e280} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_is\_vef1\_available@{\_\_is\_vef1\_available}}
 \index{\_\_is\_vef1\_available@{\_\_is\_vef1\_available}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_vef1\_available()}{\_\_is\_vef1\_available()}}
@@ -78,7 +99,7 @@ true if the S\+T\+F\+LE instruction is available
 Check if the current z arch includes Vector Enhancements Facility 1 \begin{DoxyReturn}{Returns}
 true if Vector Enhancements Facility 1 instructions are available, and false otherwise 
 \end{DoxyReturn}
-\mbox{\Hypertarget{zos-sys-info_8cc_aaabf39b1027a0ddb9a5677b13cd7d710}\label{zos-sys-info_8cc_aaabf39b1027a0ddb9a5677b13cd7d710}} 
+\Hypertarget{zos-sys-info_8cc_aaabf39b1027a0ddb9a5677b13cd7d710}\label{zos-sys-info_8cc_aaabf39b1027a0ddb9a5677b13cd7d710} 
 \index{zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}!\_\_is\_vxf\_available@{\_\_is\_vxf\_available}}
 \index{\_\_is\_vxf\_available@{\_\_is\_vxf\_available}!zos-\/sys-\/info.cc@{zos-\/sys-\/info.cc}}
 \doxysubsubsection{\texorpdfstring{\_\_is\_vxf\_available()}{\_\_is\_vxf\_available()}}

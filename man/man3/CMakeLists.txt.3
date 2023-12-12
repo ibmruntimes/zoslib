@@ -1,4 +1,4 @@
-.TH "src/CMakeLists.txt" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/CMakeLists.txt" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,6 +6,27 @@ src/CMakeLists.txt
 .SH SYNOPSIS
 .br
 .PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBset\fP (libsrc zos\-bpx\&.cc zos\-char\-util\&.cc zos\-getentropy\&.cc zos\-io\&.cc zos\-semaphore\&.cc zos\-spawn\&.cc zos\-string\&.c zos\-sys\-info\&.cc zos\-tls\&.cc zos\&.cc zos\-mount\&.c) set(zoslib\-help zoslib\-help\&.cc) set(CELQUOPT_OBJECT '$"
+.br
+.ti -1c
+.RI "celquopt s o \fBset\fP (CELQUOPT_SOURCE '${CMAKE_CURRENT_SOURCE_DIR}/celquopt\&.s') set_source_files_properties($"
+.br
+.ti -1c
+.RI "PROPERTIES EXTERNAL_OBJECT TRUE GENERATED TRUE \fBadd_custom_command\fP (OUTPUT ${CELQUOPT_OBJECT} COMMAND/bin/as \-mgoff \-o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE} DEPENDS ${CELQUOPT_SOURCE} COMMENT 'Generate celquopt\&.s\&.o object' VERBATIM) add_library(libzoslib OBJECT $"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "PROPERTIES EXTERNAL_OBJECT TRUE GENERATED TRUE add_custom_command (OUTPUT ${CELQUOPT_OBJECT} COMMAND/bin/as \-mgoff \-o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE} DEPENDS ${CELQUOPT_SOURCE} COMMENT 'Generate celquopt\&.s\&.o object' VERBATIM)"
+
+.SS "celquopt s o set (CELQUOPT_SOURCE '${CMAKE_CURRENT_SOURCE_DIR}/celquopt\&.s')"
+
+.SS "set (libsrc zos\-bpx\&.cc zos\-char\-util\&.cc zos\-getentropy\&.cc zos\-io\&.cc zos\-semaphore\&.cc zos\-spawn\&.cc zos\-string\&.c zos\-sys\-info\&.cc zos\-tls\&.cc zos\&.cc zos\-mount\&. c)"
+
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for zoslib from the source code\&.

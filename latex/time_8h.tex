@@ -1,0 +1,94 @@
+\doxysection{include/time.h File Reference}
+\hypertarget{time_8h}{}\label{time_8h}\index{include/time.h@{include/time.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{time_8h_adc162a9d4b037c6e3ab6097d0a2684c1}{\+\_\+\+\_\+\+XPLAT}}~1
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331a}{clockid\+\_\+t}} \{ \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331aa3225196686ced5a2732f8030a10c5b98}{CLOCK\+\_\+\+REALTIME}}
+, \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331aa12a9ebbd93d62f4b893c1831390bbc0f}{CLOCK\+\_\+\+MONOTONIC}}
+, \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331aa84fa191348712359af9225ec2870e470}{CLOCK\+\_\+\+HIGHRES}}
+, \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331aa6e72a9ff010176e8858e5813fec4a278}{CLOCK\+\_\+\+THREAD\+\_\+\+CPUTIME\+\_\+\+ID}}
+ \}
+\begin{DoxyCompactList}\small\item\em (\+\_\+\+\_\+\+EDC\+\_\+\+TARGET \texorpdfstring{$<$}{<} 0x42050000) \&\& defined(\+ZOSLIB\+\_\+\+ENABLE\+\_\+\+V2\+R5\+\_\+\+FEATURES) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{time_8h_a762448ad55968b74a794e0d9afe96a16}{clock\+\_\+gettime}} (\mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331a}{clockid\+\_\+t}} cld\+\_\+id, struct timespec \texorpdfstring{$\ast$}{*}tp)
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{time_8h_a3e31aa17c0ca247d2c71700940757512}{\+\_\+\+\_\+nanosleep}} (const struct timespec \texorpdfstring{$\ast$}{*}, struct timespec \texorpdfstring{$\ast$}{*})
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{time_8h_a22fcd4438b67fb09514b2099a1170ddc}{nanosleep}} (const struct timespec \texorpdfstring{$\ast$}{*}, struct timespec \texorpdfstring{$\ast$}{*}) \+\_\+\+\_\+asm("{}\+\_\+\+\_\+nanosleep"{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{time_8h_adc162a9d4b037c6e3ab6097d0a2684c1}\label{time_8h_adc162a9d4b037c6e3ab6097d0a2684c1} 
+\index{time.h@{time.h}!\_\_XPLAT@{\_\_XPLAT}}
+\index{\_\_XPLAT@{\_\_XPLAT}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{\_\_XPLAT}{\_\_XPLAT}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+XPLAT~1}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{time_8h_a2f9c761af656069fe6fc3df81fa4331a}\label{time_8h_a2f9c761af656069fe6fc3df81fa4331a} 
+\index{time.h@{time.h}!clockid\_t@{clockid\_t}}
+\index{clockid\_t@{clockid\_t}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{clockid\_t}{clockid\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331a}{clockid\+\_\+t}}}
+
+
+
+(\+\_\+\+\_\+\+EDC\+\_\+\+TARGET \texorpdfstring{$<$}{<} 0x42050000) \&\& defined(\+ZOSLIB\+\_\+\+ENABLE\+\_\+\+V2\+R5\+\_\+\+FEATURES) 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLOCK\_REALTIME@{CLOCK\_REALTIME}!time.h@{time.h}}\index{time.h@{time.h}!CLOCK\_REALTIME@{CLOCK\_REALTIME}}}\Hypertarget{time_8h_a2f9c761af656069fe6fc3df81fa4331aa3225196686ced5a2732f8030a10c5b98}\label{time_8h_a2f9c761af656069fe6fc3df81fa4331aa3225196686ced5a2732f8030a10c5b98} 
+CLOCK\+\_\+\+REALTIME&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLOCK\_MONOTONIC@{CLOCK\_MONOTONIC}!time.h@{time.h}}\index{time.h@{time.h}!CLOCK\_MONOTONIC@{CLOCK\_MONOTONIC}}}\Hypertarget{time_8h_a2f9c761af656069fe6fc3df81fa4331aa12a9ebbd93d62f4b893c1831390bbc0f}\label{time_8h_a2f9c761af656069fe6fc3df81fa4331aa12a9ebbd93d62f4b893c1831390bbc0f} 
+CLOCK\+\_\+\+MONOTONIC&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLOCK\_HIGHRES@{CLOCK\_HIGHRES}!time.h@{time.h}}\index{time.h@{time.h}!CLOCK\_HIGHRES@{CLOCK\_HIGHRES}}}\Hypertarget{time_8h_a2f9c761af656069fe6fc3df81fa4331aa84fa191348712359af9225ec2870e470}\label{time_8h_a2f9c761af656069fe6fc3df81fa4331aa84fa191348712359af9225ec2870e470} 
+CLOCK\+\_\+\+HIGHRES&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CLOCK\_THREAD\_CPUTIME\_ID@{CLOCK\_THREAD\_CPUTIME\_ID}!time.h@{time.h}}\index{time.h@{time.h}!CLOCK\_THREAD\_CPUTIME\_ID@{CLOCK\_THREAD\_CPUTIME\_ID}}}\Hypertarget{time_8h_a2f9c761af656069fe6fc3df81fa4331aa6e72a9ff010176e8858e5813fec4a278}\label{time_8h_a2f9c761af656069fe6fc3df81fa4331aa6e72a9ff010176e8858e5813fec4a278} 
+CLOCK\+\_\+\+THREAD\+\_\+\+CPUTIME\+\_\+\+ID&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{time_8h_a3e31aa17c0ca247d2c71700940757512}\label{time_8h_a3e31aa17c0ca247d2c71700940757512} 
+\index{time.h@{time.h}!\_\_nanosleep@{\_\_nanosleep}}
+\index{\_\_nanosleep@{\_\_nanosleep}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{\_\_nanosleep()}{\_\_nanosleep()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+nanosleep (\begin{DoxyParamCaption}\item[{const struct timespec \texorpdfstring{$\ast$}{*}}]{req,  }\item[{struct timespec \texorpdfstring{$\ast$}{*}}]{rem }\end{DoxyParamCaption})}
+
+Suspends the execution of the calling thread until either at least the time specified in \texorpdfstring{$\ast$}{*}req has elapsed, an event occurs, or a signal arrives. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em req} & struct used to specify intervals of time with nanosecond precision \\
+\hline
+\mbox{\texttt{ out}}  & {\em rem} & the remaining time if the call is interrupted \\
+\hline
+\end{DoxyParams}
+\Hypertarget{time_8h_a762448ad55968b74a794e0d9afe96a16}\label{time_8h_a762448ad55968b74a794e0d9afe96a16} 
+\index{time.h@{time.h}!clock\_gettime@{clock\_gettime}}
+\index{clock\_gettime@{clock\_gettime}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{clock\_gettime()}{clock\_gettime()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int clock\+\_\+gettime (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{time_8h_a2f9c761af656069fe6fc3df81fa4331a}{clockid\+\_\+t}}}]{cld\+\_\+id,  }\item[{struct timespec \texorpdfstring{$\ast$}{*}}]{tp }\end{DoxyParamCaption})}
+
+\Hypertarget{time_8h_a22fcd4438b67fb09514b2099a1170ddc}\label{time_8h_a22fcd4438b67fb09514b2099a1170ddc} 
+\index{time.h@{time.h}!nanosleep@{nanosleep}}
+\index{nanosleep@{nanosleep}!time.h@{time.h}}
+\doxysubsubsection{\texorpdfstring{nanosleep()}{nanosleep()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int nanosleep (\begin{DoxyParamCaption}\item[{const struct timespec \texorpdfstring{$\ast$}{*}}]{,  }\item[{struct timespec \texorpdfstring{$\ast$}{*}}]{ }\end{DoxyParamCaption})}
+

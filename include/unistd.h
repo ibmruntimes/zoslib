@@ -18,7 +18,7 @@ extern "C" {
 __Z_EXPORT int __pipe_ascii(int [2]);
 __Z_EXPORT int __close(int);
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_UNISTD)
@@ -38,11 +38,11 @@ extern "C" {
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
-__Z_EXPORT int pipe(int [2]) asm("__pipe_ascii");
-__Z_EXPORT int close(int) asm("__close");
+__Z_EXPORT int pipe(int [2]) __asm("__pipe_ascii");
+__Z_EXPORT int close(int) __asm("__close");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 #else
 #include_next <unistd.h>
@@ -54,7 +54,6 @@ extern "C" {
 
 #if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 __Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
-__Z_EXPORT extern int (*getentropy)(void *, size_t);
 #else
 
 /**
@@ -70,8 +69,10 @@ __Z_EXPORT int execvpe(const char *name, char *const argv[],
                        char *const envp[]);
 #endif
 
+#include <zos-getentropy.h>
+
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif

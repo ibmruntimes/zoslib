@@ -1,0 +1,65 @@
+\doxysection{zos-\/setlibpath.h}
+\hypertarget{zos-setlibpath_8h_source}{}\label{zos-setlibpath_8h_source}\index{include/zos-\/setlibpath.h@{include/zos-\/setlibpath.h}}
+\mbox{\hyperlink{zos-setlibpath_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2021.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_SETLIBPATH\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_SETLIBPATH\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <libgen.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <sys/ps.h>}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{class\ }\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \mbox{\hyperlink{class____setlibpath}{\_\_setlibpath}}\ \{}
+\DoxyCodeLine{00019\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \mbox{\hyperlink{class____setlibpath_a91aa46d44954c6c8ee87b988e2956cfc}{\_\_setlibpath}}()\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ std::vector<char>\ argv(512,\ 0);}
+\DoxyCodeLine{00022\ \ \ \ \ std::vector<char>\ parent(512,\ 0);}
+\DoxyCodeLine{00023\ \ \ \ \ W\_PSPROC\ buf;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ token\ =\ 0;}
+\DoxyCodeLine{00025\ \ \ \ \ pid\_t\ mypid\ =\ getpid();}
+\DoxyCodeLine{00026\ \ \ \ \ memset(\&buf,\ 0,\ \textcolor{keyword}{sizeof}(buf));}
+\DoxyCodeLine{00027\ \ \ \ \ buf.ps\_pathlen\ =\ argv.size();}
+\DoxyCodeLine{00028\ \ \ \ \ buf.ps\_pathptr\ =\ \&argv[0];}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{while}\ ((token\ =\ w\_getpsent(token,\ \&buf,\ \textcolor{keyword}{sizeof}(buf)))\ >\ 0)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buf.ps\_pid\ ==\ mypid)\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Found\ our\ process.\ */}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ Resolve\ path\ to\ find\ true\ location\ of\ executable;\ don't\ use\ an}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ overridden\ realpath\ function\ from\ zoslib,\ since\ this\ header\ may}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ be\ used\ in\ an\ exe\ before\ libzoslib.so\ has\ been\ loaded.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_\_realpath\_a(\&argv[0],\ \&parent[0])\ ==\ NULL)}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Get\ parent\ directory.\ */}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ dirname(\&parent[0]);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Get\ parent's\ parent\ directory.\ */}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ std::vector<char>\ parent2(parent.begin(),\ parent.end());}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ dirname(\&parent2[0]);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Append\ new\ paths\ to\ libpath.\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ std::ostringstream\ libpath;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ libpath\ <<\ getenv(\textcolor{stringliteral}{"{}LIBPATH"{}});}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ libpath\ <<\ \textcolor{stringliteral}{"{}:"{}}\ <<\ \&parent[0]\ <<\ \textcolor{stringliteral}{"{}/lib.target/"{}};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ libpath\ <<\ \textcolor{stringliteral}{"{}:"{}}\ <<\ \&parent[0]\ <<\ \textcolor{stringliteral}{"{}/lib/"{}};}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ libpath\ <<\ \textcolor{stringliteral}{"{}:"{}}\ <<\ \&parent2[0]\ <<\ \textcolor{stringliteral}{"{}/lib/"{}};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ setenv(\textcolor{stringliteral}{"{}LIBPATH"{}},\ libpath.str().c\_str(),\ 1);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \}}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZOS\_SETLIBPATH\_H\_}}
+
+\end{DoxyCode}

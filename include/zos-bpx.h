@@ -27,7 +27,7 @@ typedef struct __bpxyatt {
   char att_res01[2]; /* (reserved) */
 
   /* ATTSETFLAGS1 = 1 byte */
-  int att_modechg : 1,  /* X'80' 1=Change to mode indicated */
+  unsigned int att_modechg : 1,  /* X'80' 1=Change to mode indicated */
       att_ownerchg : 1, /* X'40' 1=Change to Owner indicated */
       att_setgen : 1,   /* X'20' 1=Set General Attributes */
       att_trunc : 1,    /* X'10' 1=Truncate Size */
@@ -37,7 +37,7 @@ typedef struct __bpxyatt {
       att_mtimetod : 1; /* X'01' 1=Change Mtime to Cur. Time */
 
   /* ATTSETFLAGS2 = 1 byte */
-  int att_maaudit : 1,    /* X'80' 1=Modify auditor audit info */
+  unsigned int att_maaudit : 1,    /* X'80' 1=Modify auditor audit info */
       att_muaudit : 1,    /* X'40' 1=Modify user audit info */
       att_ctimechg : 1,   /* X'20' 1=Change the Ctime */
       att_ctimetod : 1,   /* X'10' 1=Change Ctime to Cur. Time */
@@ -47,7 +47,7 @@ typedef struct __bpxyatt {
       att_res04 : 1;      /* X'01' (reserved flag bits) */
 
   /* ATTSETFLAGS3 = 1 byte */
-  int att_res05 : 1,        /* X'80' (reserved flag bits) */
+  unsigned int att_res05 : 1,        /* X'80' (reserved flag bits) */
       att_charsetidchg : 1, /* X'40' 1=Change File Tag */
       att_lp64times : 1,    /* X'20' 1=Use 64-bit time values */
       att_seclabelchg : 1;  /* X'10' 1=Change Seclabel */
@@ -59,10 +59,10 @@ typedef struct __bpxyatt {
   int att_gid;  /* Group ID of the Group of the file */
 
   /* 3 bytes */
-  int att_opaquemask : 24; /* (reserved for ADSTAR use) */
+  unsigned int att_opaquemask : 24; /* (reserved for ADSTAR use) */
 
   /* ATTVISIBLEMASK = 1 byte */
-  int att_visblmaskres : 2,   /* (reserved for visible mask use) */
+  unsigned int att_visblmaskres : 2,   /* (reserved for visible mask use) */
       att_nodelfilesmask : 1, /* X'20' 1=Files should not be deleted */
       att_sharelibmask : 1,   /* X'10' 1=Shared Library Mask */
       att_noshareasmask : 1,  /* X'08' 1=No Shareas Flag Mask */
@@ -72,10 +72,10 @@ typedef struct __bpxyatt {
 
   /* ATTGENVALUE = 0 bytes */
   /* 3 bytes */
-  int att_opaque : 24; /* (reserved for ADSTAR use) */
+  unsigned int att_opaque : 24; /* (reserved for ADSTAR use) */
 
   /** ATTVISIBLE = 1 byte **/
-  int att_visibleres : 2, /* (reserved for visible flag use) */
+  unsigned int att_visibleres : 2, /* (reserved for visible flag use) */
       att_nodelfiles : 1, /* X'20' 1=Files should not be deleted */
       att_sharelib : 1,   /* X'10' 1=Shared Library Flag */
       att_noshareas : 1,  /* X'08' 1=No Shareas Flag */

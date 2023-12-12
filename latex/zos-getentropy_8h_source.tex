@@ -1,0 +1,23 @@
+\doxysection{zos-\/getentropy.h}
+\hypertarget{zos-getentropy_8h_source}{}\label{zos-getentropy_8h_source}\index{include/zos-\/getentropy.h@{include/zos-\/getentropy.h}}
+\mbox{\hyperlink{zos-getentropy_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_ZOS\_GET\_ENTROPY\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_ZOS\_GET\_ENTROPY\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#if\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ ||\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{types_8h}{sys/types.h}}>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00017\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{zos-getentropy_8h_a0b40252bd9fdd06bebf14ad221d9a19c}{\_\_getentropy}}(\textcolor{keywordtype}{void}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ length);}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00019\ \}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_ZOS\_GET\_ENTROPY\_H\_}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ (\_\_EDC\_TARGET\ <\ 0x42050000)\ ||\ defined(ZOSLIB\_ENABLE\_V2R5\_FEATURES)}}
+
+\end{DoxyCode}

@@ -53,20 +53,73 @@ TEST_F(CLIBOverrides, open) {
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
     close(fd);
 
+    char buff[] = "This is a test";
+    int bufflen = strlen(buff);
+    char* buff2 = (char*)malloc(bufflen);
+ 
 #if CHECK_NFS
     const char* file_str = "/gsa/tlbgsa/projects/i/igortest/nodejs_data_file";
     fd = open(file_str, O_CREAT | O_WRONLY, 0777);
-    char buff[] = "This is a test";
-    write(fd, buff, sizeof(buff));
+    write(fd, buff, bufflen);
     close(fd);
 
     fd = open(file_str, O_RDONLY);
-    char* buff2 = (char*)malloc(sizeof(buff));
-    memset(buff2, sizeof(buff), 1);
-    read(fd, buff2, sizeof(buff));
+    memset(buff2, bufflen, 1);
+    read(fd, buff2, bufflen);
     EXPECT_EQ(strcmp(buff, buff2), 0);
     close(fd);
 #endif
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=IBM-1047
+    setenv("_ENCODE_FILE_NEW", "IBM-1047", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    write(fd, buff, bufflen);
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    memset(buff2, bufflen, 1);
+    read(fd, buff2, bufflen);
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=BINARY
+    setenv("_ENCODE_FILE_NEW", "BINARY", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 65535);
+    write(fd, buff, bufflen);
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 65535);
+    buff2 = (char*)malloc(bufflen);
+    memset(buff2, bufflen, 1);
+    read(fd, buff2, bufflen);
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+
+    // Delete and re-open temp_path _ENCODE_FILE_NEW=ISO8859-1
+    setenv("_ENCODE_FILE_NEW", "ISO8859-1", 1);
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
+    write(fd, buff, bufflen);
+    close(fd);
+
+    fd = open(temp_path, O_RDONLY);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
+    buff2 = (char*)malloc(bufflen);
+    memset(buff2, bufflen, 1);
+    read(fd, buff2, bufflen);
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    free(buff2);
+    close(fd);
+    unsetenv("_ENCODE_FILE_NEW");
 }
 
 TEST_F(CLIBOverrides, pipe) {

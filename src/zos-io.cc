@@ -23,6 +23,8 @@
 #include <sys/inotify.h>
 #include <utmpx.h>
 
+static FILE *fp_memprintf = NULL;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -697,7 +699,24 @@ int __setfdtext(int fd) {
 
 int __disableautocvt(int fd) {
   struct f_cnvrt req = {SETCVTOFF, 0, 0};
-  fcntl(fd, F_CONTROL_CVT, &req);
+  return fcntl(fd, F_CONTROL_CVT, &req);
+}
+
+int __tag_new_file(int fd) {
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+
+  if (encode_file_new) {
+    if (strcmp(encode_file_new, "IBM-1047") == 0) {
+      ccsid = 1047;
+    } else if (strcmp(encode_file_new, "BINARY") == 0) {
+      // Set the file descriptor to binary mode
+      return __setfdbinary(fd);
+    }
+  }
+
+  return __chgfdccsid(fd, ccsid);
 }
 
 int __chgfdcodeset(int fd, char* codeset) {
@@ -721,6 +740,11 @@ int __getfdccsid(int fd) {
   return ccsid;
 }
 
+int __getLogMemoryFileNo() {
+  static int fn = fileno(fp_memprintf);
+  return fn;
+}
+
 // Defined in zos.cc, no need to expose it:
 extern void __setLogMemoryUsage(bool value);
 
@@ -734,10 +758,12 @@ void __memprintf(const char *format, ...) {
   static const char *fname = __getMemoryUsageLogFile();
   static bool isstderr = !strcmp(fname, "stderr");
   static bool isstdout = !strcmp(fname, "stdout");
-  static FILE *fp = isstderr ? stderr : \
-                    isstdout ? stdout : \
-                    fopen(fname, "a+");
-  if (!fp) {
+  if (!fp_memprintf) {
+    fp_memprintf = isstderr ? stderr : \
+                   isstdout ? stdout : \
+                   fopen(fname, "a+");
+  }
+  if (!fp_memprintf) {
     va_end(args);
     perror(fname);
     __setLogMemoryUsage(false);
@@ -746,8 +772,9 @@ void __memprintf(const char *format, ...) {
   char buf[PATH_MAX*2];
   vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
-
-  fprintf(fp, "MEM pid=%d tid=%d: %s", getpid(), gettid(), buf);
+  fprintf(fp_memprintf, "p=%d t=%d %s", getpid(), gettid(), buf);
+  if (fp_memprintf != stderr)
+    fflush(fp_memprintf);
 }
 
 // C Library Overrides
@@ -798,9 +825,9 @@ int __open_ascii(const char *filename, int opts, ...) {
   if (fd >= 0) {
     // Tag new files as ASCII (819)
     if (is_new_file) {
-      __chgfdccsid(fd, 819);
-     /* Calling __chgfdccsid() should not clobber errno. */
-     errno = old_errno;
+      __tag_new_file(fd);
+      /* Calling __tag_new_file() should not clobber errno. */
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
@@ -814,10 +841,23 @@ int __open_ascii(const char *filename, int opts, ...) {
           errno = old_errno;
         }
       }
+    } else if (isatty(fd)) {
+      // tty devices need to have auto convert enabled
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
+      }
     }
   }
   va_end(ap);
   return fd;
+}
+
+int __creat_ascii(const char *filename, mode_t mode) {
+  return __open_ascii(filename, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
 
 FILE *__fopen_ascii(const char *filename, const char *mode) {
@@ -829,23 +869,30 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-      __chgfdccsid(fd, 819);
-     errno = old_errno;
+      __tag_new_file(fd);
+      errno = old_errno;
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
           strcmp(mode, "r") == 0) {
+        __disableautocvt(fd); // disable z/OS autocvt on untagged file and use our heuristic
         if (__file_needs_conversion_init(filename, fd)) {
           struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
           fcntl(fd, F_CONTROL_CVT, &cvtreq);
           /* Calling fcntl() should not clobber errno. */
           errno = old_errno;
-        } else {
-          // fopen tags untagged files, which enables auto-conversion
-          __disableautocvt(fd);
         }
+      }
+    } else if (isatty(fd)) {
+      // tty devices need to have auto convert enabled
+      struct file_tag *t = &sb.st_tag;
+      if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047)) {
+          struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+          fcntl(fd, F_CONTROL_CVT, &cvtreq);
+          /* Calling fcntl() should not clobber errno. */
+          errno = old_errno;
       }
     }
   }
@@ -878,9 +925,7 @@ int __mkstemp_ascii(char * tmpl) {
   if (ret < 0)
     return ret;
 
-  // Default ccsid for new fds should be ASCII (819)
-  if (__chgfdccsid(ret, 819) != 0)
-    return -1;
+  __tag_new_file(ret);
 
   return ret;
 }

@@ -1,0 +1,32 @@
+\doxysection{include/sys/stat.h File Reference}
+\hypertarget{stat_8h}{}\label{stat_8h}\index{include/sys/stat.h@{include/sys/stat.h}}
+{\ttfamily \#include "{}zos-\/macros.\+h"{}}\newline
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef int \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \mbox{\hyperlink{stat_8h_af54560301e3b415edf25c53bb2577e69}{\+\_\+\+\_\+mkfifo\+\_\+ascii}} (const char \texorpdfstring{$\ast$}{*}pathname, \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}} mode)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}\label{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c} 
+\index{stat.h@{stat.h}!mode\_t@{mode\_t}}
+\index{mode\_t@{mode\_t}!stat.h@{stat.h}}
+\doxysubsubsection{\texorpdfstring{mode\_t}{mode\_t}}
+{\footnotesize\ttfamily typedef int \mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}}}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{stat_8h_af54560301e3b415edf25c53bb2577e69}\label{stat_8h_af54560301e3b415edf25c53bb2577e69} 
+\index{stat.h@{stat.h}!\_\_mkfifo\_ascii@{\_\_mkfifo\_ascii}}
+\index{\_\_mkfifo\_ascii@{\_\_mkfifo\_ascii}!stat.h@{stat.h}}
+\doxysubsubsection{\texorpdfstring{\_\_mkfifo\_ascii()}{\_\_mkfifo\_ascii()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\+\_\+\+\_\+\+Z\+\_\+\+EXPORT}} int \+\_\+\+\_\+mkfifo\+\_\+ascii (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{pathname,  }\item[{\mbox{\hyperlink{stat_8h_a8a35dd1207a16dfa8b1d4163176d828c}{mode\+\_\+t}}}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [extern]}}
+
+Same as C mkfifo but tags FIFO special files as ASCII (819) 

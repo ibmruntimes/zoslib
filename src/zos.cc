@@ -15,7 +15,7 @@
 #define __ZOS_CC
 #include "edcwccwi.h"
 #include "zos-getentropy.h"
-#include "zos-base.h"
+#include "zos.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
@@ -54,12 +54,12 @@
 #include <unordered_map>
 #include <vector>
 
-#if !defined(_gdsa) && defined(__llvm__)
+#if defined(__clang__) && !defined(__ibmxl__)
 #define _gdsa __builtin_s390_gdsa
+#else
+extern "builtin" void *_gdsa();
 #endif
 
-#pragma linkage(_gtca, builtin)
-#pragma linkage(_gdsa, builtin)
 
 #ifndef dsa
 #define dsa() ((unsigned long *)_gdsa())
@@ -87,7 +87,6 @@ int (*nanosleep)(const struct timespec*, struct timespec*) = 0;
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static int __debug_mode = 0;
 static char **__argv = nullptr;
 static int __argc = -1;
 static pthread_t _timer_tid;
@@ -105,6 +104,9 @@ static bool __gLogMemoryWarning = false;
 static char __gArgsStr[PATH_MAX*2] = "";
 static bool __gMainTerminating = false;
 
+static int __gMainThreadId = -1;
+static pthread_t __gMainThreadSelf = {-1u};
+
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
 #else
@@ -116,7 +118,6 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
-static int shmid_value(void);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -208,11 +209,6 @@ extern "C" void __xfer_env(void) {
     }
     ++start;
   }
-}
-
-static void ledump(const char *title) {
-  __auto_ascii _a;
-  __cdump_a((char *)title);
 }
 
 extern "C" int gettid() { return (int)(pthread_self().__ & 0x7fffffff); }
@@ -634,11 +630,11 @@ static void *_timer(void *parm) {
     sleep(tp->secs);
     t1 = __clock();
   }
-  if (__debug_mode) {
-    dprintf(2, "Sent abort: __NODERUNTIMELIMIT was set to %d\n", tp->secs);
-    raise(SIGABRT);
-  }
-  return 0;
+  __zinit *zinit_ptr = __get_instance();
+  zoslib_config_t &config = zinit_ptr->config;
+  dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
+  raise(SIGABRT);
+  return 0; // avoid compiler warning
 }
 
 extern void __settimelimit(int secs) {
@@ -659,8 +655,6 @@ extern void __settimelimit(int secs) {
   }
   pthread_attr_destroy(&attr);
 }
-extern "C" void __setdebug(int v) { __debug_mode = v; }
-extern "C" int __indebug(void) { return __debug_mode; }
 
 extern "C" void *__dlcb_next(void *last) {
   if (last == 0) {
@@ -737,34 +731,6 @@ extern "C" int kill(int pid, int sig) {
   return rv;
 }
 
-// overriding LE's fork when linked statically
-extern "C" int __fork(void) {
-  int cnt = __get_instance()->inc_forkcount();
-  int max = __get_instance()->get_forkmax();
-  if (cnt > max) {
-    dprintf(2,
-            "fork(): current count %d is greater than "
-            "__NODEFORKMAX value %d, fork failed\n",
-            cnt, max);
-    errno = EPROCLIM;
-    return -1;
-  }
-#if 0
-  int rc, rn, pid;
-  __bpx4frk(&pid, &rc, &rn);
-  if (-1 == pid) {
-    errno = rc;
-  }
-  return pid;
-#else
-  int pid = fork();
-  if (pid == 0) {
-    __get_instance()->forked(1);
-  }
-  return pid;
-#endif
-}
-
 // Thread entry constants for __getthent():
 #define PGTH_CURRENT 1
 #define PGTHACOMMANDLONG 1
@@ -774,7 +740,12 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
   // See https://www.ibm.com/docs/en/zos/2.4.0?
   //             topic=31-bpxypgth-map-getthent-inputoutput-structure
   // for the structs mapping below.
+#if defined(__clang__) && !defined(__ibmxl__)
+#define __AttrPacked  __attribute__((packed))
+#else
 #pragma pack(1)
+#define __AttrPacked
+#endif
   struct {
     int pid;
     unsigned long thid;
@@ -784,7 +755,7 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
     char loginname[8];
     char flag;
     char len;
-  } input_data;
+  } __AttrPacked input_data;
 
   union {
     struct {
@@ -800,16 +771,19 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
       int offsetCommand;
       int offsetFileData;
       int offsetThread;
-    } output_data;
+    } __AttrPacked output_data;
     char buf[2048];
-  } output_buf;
+  } __AttrPacked output_buf;
 
   struct output_cmd_type {
     char gthe[4];
-    short int len;
+    short int len __AttrPacked;
     char cmd[2048];
-  };
-#pragma pack()
+  } __AttrPacked;
+#if defined(__clang__) && !defined(__ibmxl__)
+#else
+#pragma pack(reset)
+#endif
 
   int input_length;
   int output_length;
@@ -1312,39 +1286,31 @@ public:
   int free_seg(void *ptr, size_t reqsize) {
     unsigned long k = (unsigned long)ptr;
     long long rc, reason;
-    rc = __iarv64_free(ptr, xttoken, &reason);
-    std::lock_guard<std::mutex> guard(access_lock);
-    mem_cursor_t c = cache.find(k);
-    size_t size;
-    if (rc == 0) {
+    {
+      std::lock_guard<std::mutex> guard(access_lock);
+      mem_cursor_t c = cache.find(k);
       if (c != cache.end()) {
-        size = c->second;
-        curmem64 -= size;
+        size_t size = c->second;
         cache.erase(c);
-        if (__doLogMemoryUsage()) {
-          const char *w = size != reqsize ? " INFO: size vs req-size" : "";
-          if (*w && __doLogMemoryAll())
-            __memprintf("addr=%p, size=%zu, req-size=%zu: iarv64_free OK " \
-                        "(current=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+        rc = __iarv64_free(ptr, xttoken, &reason);
+        if (rc == 0) {
+          curmem64 -= size;
+          if (__doLogMemoryUsage()) {
+            const char *w = size != reqsize ? " VWARN size vs req-size" : "";
+            if (__doLogMemoryAll() || (*w && __doLogMemoryWarning()))
+              __memprintf("addr=%p size=%zu req-size=%zu iarv64_free OK " \
+                          "(v64=%zu)%s\n", ptr, size, reqsize, curmem64, w);
+          }
+        } else if (__doLogMemoryUsage()) {
+          __memprintf("VERROR addr=%p size=%zu iarv64_free failed " \
+                      "rc=%llx, reason=%llx (v64=%zu)\n", ptr, size,
+                      rc, reason, curmem64);
         }
-      } else if (__doLogMemoryWarning()) {
-        __memprintf("WARNING: addr=%p, req-size=%zu: iarv64_free OK but " \
-                    "address not found in cache (current=%zu)\n",
-                    ptr, reqsize, curmem64);
-      }
-    } else if (__doLogMemoryUsage()) {
-      if (c != cache.end()) {
-        size = c->second;
-        __memprintf("ERROR: addr=%p, size=%zu: iarv64_free failed, rc=%llx, " \
-                    "reason=%llx (current=%zu)\n", ptr, size, rc, reason,
-                    curmem64);
-      } else {
-        __memprintf("ERROR: addr=%p: iarv64_free failed and address not " \
-                    "found in cache: rc=%llx, reason=%llx (current=%zu)\n",
-                    ptr, rc, reason, curmem64);
+        return rc;
       }
     }
-    return rc;
+
+    return -1;
   }
 #else
   void *alloc_seg(int segs) {
@@ -1437,7 +1403,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
     return __get_galloc_info()->alloc_seg(request_size);
   } else {
-    char *p;
+    void *p;
     // The following solution allocates memory 2gb below the bar whose length
     // is a multiple of 8 and whose memory is aligned on a page (4096) boundary.
     // The below solution is similar to:
@@ -1464,7 +1430,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
                                              extra_size) & ~(alignment - 1));
     mem_aligned[-1] = mem_default;
 
-    p = (char *)mem_aligned;
+    p = (void *)mem_aligned;
     __get_galloc_info()->addptr31(p, len);
     memset(p, 0, len);
     return p;
@@ -1500,35 +1466,37 @@ extern "C" int execvpe(const char *name, char *const argv[],
   int lp, ln;
   const char *p;
   int eacces = 0, etxtbsy = 0;
-  char *bp, *cur;
+  char *dp = NULL, *cur;
 
   // Get the path we're searching
   int len;
-  if (cur = getenv("PATH")) {
+  if ((cur = getenv("PATH")) != NULL) {
     len = strlen(cur);
-  }
-  else {
+  } else {
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       char *dp = (char*)__alloca (len);
-       confstr (_CS_PATH, dp, len);
-       cur = dp;
-    } else { len = 1; }
+       dp = (char*)malloc(len + 1);
+       if (dp == NULL)
+         return errno ? errno : ENOMEM;
+    } else
+       len = 1;
   }
   char path[len + 1];
-  if (cur)
-    strcpy(path, cur);
+  char buf[len + strlen(name) + 2];
+  char *bp = buf;
+
+  if (dp != NULL) {
+    strncpy(path, dp, sizeof(path));
+    free(dp);
+  } else if (cur != NULL)
+    strncpy(path, cur, sizeof(path));
   else {
     path[0] = ':';
     path[1] = '\0';
-    cur = path;
   }
 
-  char buf[len + strlen(name) + 2];
-  bp = buf;
-
-  while (cur != NULL) {
+  for (cur = path; cur != NULL;) {
     p = cur;
     if ((cur = strchr(cur, ':')) != NULL)
       *cur++ = '\0';
@@ -1661,7 +1629,6 @@ extern "C" int __testread(const void *location) {
   struct espiearg *r1 = (struct espiearg *)__malloc31(sizeof(struct espiearg));
   long token = 0;
   volatile int state = 0;
-  volatile int word;
   r1->flags = 0x08000000;
   r1->reserved = 0;
 #if defined(__llvm__)
@@ -1713,7 +1680,6 @@ extern "C" int __testread(const void *location) {
     state = 2;
   } else {
     state = 1;
-    word = *(int *)location;
   }
   __asm volatile(" lg 1,%0\n"
                  " la 0,8\n"
@@ -2268,7 +2234,7 @@ static void update_memlogging(const char *envar) {
   char *p;
   if (envar)
     strncpy(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
-  else if (p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR))
+  else if ((p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR)) != NULL)
     strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
   else if (mem_account())
     strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
@@ -2294,10 +2260,6 @@ int __update_envar_settings(const char *envar) {
 
   // Exit early if envar is not a ZOSLIB envar
   if (envar && !zinit_ptr->isValidZOSLIBEnvar(envar)) {
-    if (__debug_mode)
-      dprintf(2,
-              "__update_envar_settings(): \"%s\" is not a valid zoslib envar\n",
-              envar);
     return -1;
   }
 
@@ -2309,15 +2271,6 @@ int __update_envar_settings(const char *envar) {
     char *cu = __getenv_a(config.IPC_CLEANUP_ENVAR);
     if (cu && !memcmp(cu, "1", 2)) {
       __cleanupipc(1);
-    }
-  }
-
-  if (force_update_all || strcmp(envar, config.DEBUG_ENVAR) == 0) {
-    char *dbg = __getenv_a(config.DEBUG_ENVAR);
-    if (!dbg) {
-      __debug_mode = 0;
-    } else if (!memcmp(dbg, "1", 2)) {
-      __debug_mode = 1;
     }
   }
 
@@ -2343,29 +2296,6 @@ int __update_envar_settings(const char *envar) {
       int gs = __atoi_a(cgbs);
       if (gs > 0)
         __set_ccsid_guess_buf_size(gs);
-    }
-  }
-
-  if (force_update_all || strcmp(envar, config.FORKMAX_ENVAR) == 0) {
-    char *fm = __getenv_a(config.FORKMAX_ENVAR);
-    if (!fm) {
-      if (0 != zinit_ptr->forkmax && 0 != zinit_ptr->shmid) {
-        zinit_ptr->forkmax = 0;
-        shmdt(zinit_ptr->forkcurr);
-        shmctl(zinit_ptr->shmid, IPC_RMID, 0);
-      }
-    } else {
-      int v = __atoi_a(fm);
-      if (v > 0) {
-        zinit_ptr->forkmax = v;
-        char path[1024];
-        if (0 == getcwd(path, sizeof(path)))
-          strcpy(path, "./");
-        key_t key = ftok(path, 9021);
-        zinit_ptr->shmid = shmget(key, 1024, 0666 | IPC_CREAT);
-        zinit_ptr->forkcurr = (int *)shmat(zinit_ptr->shmid, (void *)0, 0);
-        *(zinit_ptr->forkcurr) = 0;
-      }
     }
   }
 
@@ -2545,18 +2475,21 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
 }
 
 int *__get_stack_start() {
-  if (gettid() == 1 && __main_thread_stack_top_address != 0)
+  if (pthread_equal(pthread_self(), __gMainThreadSelf) > 0 &&
+      __main_thread_stack_top_address != 0) {
     return __main_thread_stack_top_address;
-
+  }
   __stack_info si;
   void *cur_dsa = dsa();
 
   while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
     cur_dsa = si.prev_dsa;
 
-    if ((gettid() == 1 && strcmp(si.entry_name, "CELQINIT") == 0) ||
-        strcmp(si.entry_name, "CELQPCMM") == 0)
+    if ((pthread_equal(pthread_self(), __gMainThreadSelf) > 0 &&
+         strcmp(si.entry_name, "CELQINIT") == 0) ||
+        strcmp(si.entry_name, "CELQPCMM") == 0) {
       return si.stack_addr;
+    }
   }
   return nullptr;
 }
@@ -2577,23 +2510,14 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 }
 
 __zinit::__zinit() {
+  __gMainThreadId = gettid();
+  __gMainThreadSelf = pthread_self();
   update_memlogging(nullptr);
   if (__doLogMemoryUsage())
     __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
 }
 
 __zinit:: ~__zinit() {
-  if (_CVTSTATE_OFF == cvstate) {
-    __ae_autoconvert_state(cvstate);
-  }
-  __ae_thread_swapmode(mode);
-  if (shmid != 0) {
-    if (__forked) {
-      dec_forkcount();
-    }
-    shmdt(forkcurr);
-    shmctl(shmid, IPC_RMID, 0);
-  }
   ::__cleanupipc(0);
 
   // Don't delete __galloc_info (__Cache), as during exit-time a process may
@@ -2689,9 +2613,6 @@ static void setProcessEnvars() {
 
 int __zinit::initialize(const zoslib_config_t &aconfig) {
   memcpy(&config, &aconfig, sizeof(config));
-  forkmax = 0;
-  shmid = 0;
-  __forked = 0;
   __galloc_info = new __Cache;
 
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
@@ -2798,16 +2719,8 @@ int __zinit::setEnvarHelpMap() {
       "number of bytes to scan for CCSID guess heuristics (default: 4096)"));
 
   envarHelpMap.insert(
-      std::make_pair(zoslibEnvar(config.FORKMAX_ENVAR, std::string("")),
-                     "set to indicate max number of forks"));
-
-  envarHelpMap.insert(
       std::make_pair(zoslibEnvar(config.IPC_CLEANUP_ENVAR, std::string("")),
                      "set to toggle IPC cleanup"));
-
-  envarHelpMap.insert(
-      std::make_pair(zoslibEnvar(config.DEBUG_ENVAR, std::string("")),
-                     "set to toggle debug ZOSLIB mode"));
 
   envarHelpMap.insert(
       std::make_pair(zoslibEnvar(config.RUNTIME_LIMIT_ENVAR, std::string("")),
@@ -2824,10 +2737,10 @@ int __zinit::setEnvarHelpMap() {
       std::make_pair(zoslibEnvar(config.MEMORY_USAGE_LOG_LEVEL_ENVAR, std::string("")),
                      "set to 1 to display only warnings when memory is "
                      "allocated or freed, and 2 to display all messages; "
-                     "the process started/terminated messages that include "
-                     "memory stats summary, as well as any error message will "
-                     "always be displayed if memory diagnostic messages is "
-                     "enabled"));
+                     "the process started, terminated messages that include "
+                     "memory statistics summary, and any error messages are "
+                     "always displayed if logging of memory diagnostic "
+                     "messages is enabled"));
  
 
   return __update_envar_settings(NULL);
@@ -2959,17 +2872,56 @@ int lutimes(const char *filename, const struct timeval tv[2]) {
   attributes.att_mtime = tv[1].tv_sec;
 
   // ZOSLIB is built in ASCII, but BPX4LCR wants EBCDIC.
-  char *pathname = _str_a2e(filename);
+  int len = strlen(filename);
+  char pathname[len+1];
+  strncpy(pathname, filename, sizeof(pathname));
+  len = __a2e_s(pathname);
+  if (len <= 0) {
+    perror("__a2e_s");
+    return -1;
+  }
 
-  __bpx4lcr(strlen(pathname), pathname, sizeof(attributes), &attributes,
+  __bpx4lcr(len, pathname, sizeof(attributes), &attributes,
             &return_value, &return_code, &reason_code);
 
   if (return_value != 0) {
     errno = return_code;
+    perror("__bpx4lcr");
     return -1;
   }
 
   return 0;
+}
+
+#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
+#else
+extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
+#endif
+  unsigned secrem;
+  unsigned nanorem;
+  int rv;
+  int err;
+
+  rv = __cond_timed_wait((unsigned int)req->tv_sec, (unsigned int)req->tv_nsec,
+                         (unsigned int)(CW_CONDVAR | CW_INTRPT), &secrem,
+                         &nanorem);
+  err = errno;
+
+  if (rem != NULL && (rv == 0 || err == EINTR)) {
+    rem->tv_nsec = nanorem;
+    rem->tv_sec = secrem;
+  }
+
+  /* Don't clobber errno unless __cond_timed_wait() errored.
+   * Don't leak EAGAIN, that just means the timeout expired.
+   */
+  if (rv == -1 && err == EAGAIN) {
+    errno = 0;
+    rv = 0;
+  }
+
+  return rv;
 }
 
 #define PPA_FUNC_LENGTH 256
@@ -3024,9 +2976,7 @@ void init_zoslib_config(zoslib_config_t &config) {
 
 extern "C" void init_zoslib_config(zoslib_config_t *const config) {
   config->IPC_CLEANUP_ENVAR = IPC_CLEANUP_ENVAR_DEFAULT;
-  config->DEBUG_ENVAR = DEBUG_ENVAR_DEFAULT;
   config->RUNTIME_LIMIT_ENVAR = RUNTIME_LIMIT_ENVAR_DEFAULT;
-  config->FORKMAX_ENVAR = FORKMAX_ENVAR_DEFAULT;
   config->CCSID_GUESS_BUF_SIZE_ENVAR = CCSID_GUESS_BUF_SIZE_DEFAULT;
   config->UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   config->UNTAGGED_READ_MODE_CCSID1047_ENVAR =
@@ -3039,36 +2989,6 @@ extern "C" void init_zoslib(const zoslib_config_t config) {
   __get_instance()->initialize(config);
 }
 
-#if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-extern "C" int __nanosleep(const struct timespec *req, struct timespec *rem) {
-#else
-extern "C" int nanosleep(const struct timespec *req, struct timespec *rem) {
-#endif
-  unsigned secrem;
-  unsigned nanorem;
-  int rv;
-  int err;
-
-  rv = __cond_timed_wait((unsigned int)req->tv_sec, (unsigned int)req->tv_nsec,
-                         (unsigned int)(CW_CONDVAR | CW_INTRPT), &secrem,
-                         &nanorem);
-  err = errno;
-
-  if (rem != NULL && (rv == 0 || err == EINTR)) {
-    rem->tv_nsec = nanorem;
-    rem->tv_sec = secrem;
-  }
-
-  /* Don't clobber errno unless __cond_timed_wait() errored.
-   * Don't leak EAGAIN, that just means the timeout expired.
-   */
-  if (rv == -1 && err == EAGAIN) {
-    errno = 0;
-    rv = 0;
-  }
-
-  return rv;
-}
 
 extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
   // Grab address from function descriptor
@@ -3143,6 +3063,60 @@ extern "C" bool __doLogMemoryWarning() {
 }
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
+
+//TODO: Implement chdir_long properly, for now call chdir
+extern "C" int chdir_long(char *dir) {
+  return chdir(dir);
+}
+
+extern "C" const char* getprogname() {
+  char argv[PATH_MAX];
+  W_PSPROC buf;
+  int token = 0;
+  pid_t mypid = getpid();
+
+  memset(&buf, 0, sizeof(buf));
+  buf.ps_pathlen = PATH_MAX;
+  buf.ps_pathptr = &argv[0];
+
+  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+    if (buf.ps_pid == mypid) {
+      // return the basename of the found executable
+      return strdup(basename(buf.ps_pathptr));
+    }
+  }
+
+  return NULL;
+}
+
+extern "C" char* __getprogramdir() {
+  char argv[PATH_MAX];
+  W_PSPROC buf;
+  int token = 0;
+  pid_t mypid = getpid();
+
+  memset(&buf, 0, sizeof(buf));
+  buf.ps_pathlen = PATH_MAX;
+  buf.ps_pathptr = &argv[0];
+
+  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
+    if (buf.ps_pid == mypid) {
+      // Resolve path to find the true location of the executable.
+      char* parent = __realpath_extended(argv, NULL); // realpath allocates parent
+
+      if (parent == NULL) {
+        // handle error or return an appropriate value
+        return NULL;
+      }
+
+      // Get the parent directory.
+      dirname(parent);
+      return parent;
+    }
+  }
+
+  return NULL;
+}
 
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;

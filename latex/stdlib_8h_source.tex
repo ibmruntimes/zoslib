@@ -1,0 +1,73 @@
+\doxysection{stdlib.\+h}
+\hypertarget{stdlib_8h_source}{}\label{stdlib_8h_source}\index{include/stdlib.h@{include/stdlib.h}}
+\mbox{\hyperlink{stdlib_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ Materials\ -\/\ Property\ of\ IBM}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ ZOSLIB}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ (C)\ Copyright\ IBM\ Corp.\ 2021.\ All\ Rights\ Reserved.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ US\ Government\ Users\ Restricted\ Rights\ -\/\ Use,\ duplication}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ or\ disclosure\ restricted\ by\ GSA\ ADP\ Schedule\ Contract\ with\ IBM\ Corp.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ ZOS\_STDLIB\_H\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ ZOS\_STDLIB\_H\_}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ \_\_XPLAT\ 1}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{zos-macros_8h}{zos-\/macros.h}}"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00016\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00018\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{stdlib_8h_a1fb36605e99bcb0fbd8fb20dfe3f830c}{\_\_realpath\_extended}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ \_\_restrict\_\_,\ \textcolor{keywordtype}{char}\ *\ \_\_restrict\_\_);}
+\DoxyCodeLine{00019\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{stdlib_8h_ad8da36c33a1fbda1648637842e545c5c}{\_\_mkstemp\_ascii}}(\textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00021\ \}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB)\ ||\ defined(ZOSLIB\_OVERRIDE\_CLIB\_STDLIB)}}
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ Modify\ function\ names\ in\ header\ to\ avoid\ conflict\ with\ new\ prototypes\ */}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#undef\ realpath}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ realpath\ \_\_realpath\_replaced}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#undef\ mkstemp}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ mkstemp\ \_\_mkstemp\_replaced}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB\_GETENV)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#undef\ getenv}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ getenv\ \_\_getenv\_replaced}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\_next\ <stdlib.h>}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB)\ ||\ defined(ZOSLIB\_OVERRIDE\_CLIB\_STDLIB)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#undef\ mkstemp}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#undef\ realpath}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00050\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}\ *realpath(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ \_\_restrict\_\_,\ \textcolor{keywordtype}{char}\ *\ \_\_restrict\_\_)\ \_\_asm(\textcolor{stringliteral}{"{}\_\_realpath\_extended"{}});}
+\DoxyCodeLine{00054\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{int}\ mkstemp(\textcolor{keywordtype}{char}*)\ \_\_asm(\textcolor{stringliteral}{"{}\_\_mkstemp\_ascii"{}});}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00056\ \}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#if\ defined(ZOSLIB\_OVERRIDE\_CLIB\_GETENV)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#undef\ getenv}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00064\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00071\ \mbox{\hyperlink{zos-macros_8h_aed7e0d9f32e1ea73439ac0386ffaaa8d}{\_\_Z\_EXPORT}}\ \textcolor{keywordtype}{char}*\ getenv(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*)\ \textcolor{keyword}{asm}(\textcolor{stringliteral}{"{}@@A00423"{}});}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#if\ defined(\_\_cplusplus)}}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

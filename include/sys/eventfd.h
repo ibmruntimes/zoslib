@@ -30,7 +30,7 @@ extern "C" {
 __Z_EXPORT extern int (*eventfd)(unsigned int initval, int flags);
 
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #endif //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)

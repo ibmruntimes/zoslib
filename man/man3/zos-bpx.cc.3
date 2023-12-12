@@ -1,4 +1,4 @@
-.TH "src/zos-bpx.cc" 3 "Tue Jan 18 2022" "zoslib" \" -*- nroff -*-
+.TH "src/zos-bpx.cc" 3 "zoslib" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,6 +8,8 @@ src/zos-bpx.cc
 .PP
 \fC#include 'zos\-bpx\&.h'\fP
 .br
+\fC#include 'zos\-base\&.h'\fP
+.br
 \fC#include <assert\&.h>\fP
 .br
 \fC#include <errno\&.h>\fP
@@ -16,7 +18,7 @@ src/zos-bpx.cc
 .br
 \fC#include <unistd\&.h>\fP
 .br
-\fC#include <mutex>\fP
+\fC#include <stdlib\&.h>\fP
 .br
 
 .SS "Macros"
@@ -31,6 +33,12 @@ src/zos-bpx.cc
 .in +1c
 .ti -1c
 .RI "char *__ptr32 *__ptr32 \fB__uss_base_address\fP (void)"
+.br
+.ti -1c
+.RI "char * \fB__realpath_orig\fP (const char __restrict__ *path, char __restrict__ *resolved_path) asm('@@A00187')"
+.br
+.ti -1c
+.RI "char * \fB__realpath_extended\fP (const char __restrict__ *path, char __restrict__ *resolved_path)"
 .br
 .ti -1c
 .RI "void \fB__bpx4kil\fP (int pid, int signal, void *signal_options, int *return_value, int *return_code, int *reason_code)"
@@ -64,7 +72,11 @@ src/zos-bpx.cc
 
 .SS "void __bpx4lcr (int pathname_length, char * pathname, int attributes_length, \fB__bpxyatt_t\fP * attributes, int * return_value, int * return_code, int * reason_code)"
 
-.SS "char* __ptr32* __ptr32 __uss_base_address (void)"
+.SS "char * __realpath_extended (const char __restrict__ * path, char __restrict__ * resolved_path)"
+
+.SS "char * __realpath_orig (const char __restrict__ * path, char __restrict__ * resolved_path)"
+
+.SS "char *__ptr32 *__ptr32 __uss_base_address (void)"
 
 .SH "Author"
 .PP 
