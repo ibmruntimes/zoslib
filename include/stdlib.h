@@ -15,10 +15,12 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
 __Z_EXPORT char *__realpath_extended(const char * __restrict__, char * __restrict__);
 __Z_EXPORT int __mkstemp_ascii(char*);
+
 #if defined(__cplusplus)
-};
+}
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
@@ -45,10 +47,29 @@ __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) asm("_
 __Z_EXPORT int mkstemp(char*) asm("__mkstemp_ascii");
 
 #if defined(__cplusplus)
-};
+}
 #endif
 #else
 #include_next <stdlib.h>
+#endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+__Z_EXPORT char *mkdtemp(char *);
+#ifdef __NATIVE_ASCII_F
+  __Z_EXPORT char *mkdtemp(char *) asm("__mkdtemp_a");
+#ifdef __AE_BIMODAL_F
+  __Z_EXPORT char *__mkdtemp_a(char *);
+  __Z_EXPORT char *__mkdtemp_e(char *);
+#endif
+#else
+  __Z_EXPORT char *mkdtemp(char *)  asm("__mkdtemp_e");
+#endif
+
+#if defined(__cplusplus)
+}
 #endif
 
 #endif
