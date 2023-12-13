@@ -5,7 +5,6 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 install_manifest.txt
-build.cache
 lib/
 *.cmake
 *.dbg
@@ -19,4 +18,8 @@ test/cctest_a
 # Build artifacts
 *.a
 install/
+build.cache
+build/
+zoslib.xml
+zoslib_a.xml
 

@@ -19,7 +19,6 @@ set(libsrc
   zos.cc
   zos-mount.c
   zos-mkdtemp.c
-  celquopt.s
 )
 set(zoslib-help zoslib-help.cc)
 

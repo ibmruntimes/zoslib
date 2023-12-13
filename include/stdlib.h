@@ -12,13 +12,14 @@
 #define __XPLAT 1
 #include "zos-macros.h"
 
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
 __Z_EXPORT char *__realpath_extended(const char * __restrict__, char * __restrict__);
+#ifdef __NATIVE_ASCII_F
 __Z_EXPORT int __mkstemp_ascii(char*);
-
+#endif
 #if defined(__cplusplus)
 }
 #endif
@@ -36,11 +37,10 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define getenv __getenv_replaced
 #endif
 
+
 #include_next <stdlib.h>
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
-#undef mkstemp
-#undef realpath
 
 #if defined(__cplusplus)
 extern "C" {
@@ -49,21 +49,28 @@ extern "C" {
 /**
  * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
  */
+#undef realpath
 __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm("__realpath_extended");
+
+#ifdef __NATIVE_ASCII_F
 /**
  * Same as C mkstemp but tags fd as ASCII (819)
  */
+#undef mkstemp
 __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
+#endif /* __NATIVE_ASCII_F */
+
 #if defined(__cplusplus)
 }
 #endif
-#endif
+#endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) */
 
 #if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 #undef getenv
 
 #if defined(__cplusplus)
 extern "C" {
+#endif
 
 /**
  * Replace getenv with the ascii implementation of __getenv (@@A00423) 
