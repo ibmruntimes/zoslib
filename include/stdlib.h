@@ -32,7 +32,7 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define mkstemp __mkstemp_replaced
 #endif
 
-#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV) && defined(__NATIVE_ASCII_F)
 #undef getenv
 #define getenv __getenv_replaced
 #endif
@@ -65,7 +65,7 @@ __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 #endif
 #endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) */
 
-#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV) && defined(__NATIVE_ASCII_F)
 #undef getenv
 
 #if defined(__cplusplus)
