@@ -57,26 +57,31 @@ char *real_mkdtemp(CodePage_t cp, char *templ) {
 #define validChars cp.validChars
   srand(time(NULL));
 #define RANDOM_INT(max) (1 + rand()/((RAND_MAX + 1u) / (max) ))
-#define UPDATE_CHAR(n) templ[len-n+n-1] = validChars[(s##n+c##n)%(sizeof validChars)]
+#define UPDATE_CHAR(n) templ[len-TempLen+n-1] = validChars[(s##n+c##n)%(sizeof validChars)]
 
+  // Pick the first random letter for each X
   int s1 = RANDOM_INT(sizeof validChars);
   int s2 = RANDOM_INT(sizeof validChars);
   int s3 = RANDOM_INT(sizeof validChars);
   int s4 = RANDOM_INT(sizeof validChars);
   int s5 = RANDOM_INT(sizeof validChars);
   int s6 = RANDOM_INT(sizeof validChars);
+  // Loop over all of the possible combinations until we find
+  // a name that doesn't exist.  For example: start with 
+  // dir-aaaaaa, if that doesn't exist try dir-aaaaab.
+  // Of course the try is something more random than dir-aaaaaa.
   for (int c1=0; c1<sizeof validChars; ++c1) {
-    UPDATE_CHAR(1);
+    UPDATE_CHAR(1); // dir-aXXXXX
     for (int c2=0; c2<sizeof validChars; ++c2) {
-      UPDATE_CHAR(2);
+      UPDATE_CHAR(2); // dir-aaXXXX
       for (int c3=0; c3<sizeof validChars; ++c3) {
-        UPDATE_CHAR(3);
+        UPDATE_CHAR(3); // dir-aaaXXX
         for (int c4=0; c4<sizeof validChars; ++c4) {
-          UPDATE_CHAR(4);
+          UPDATE_CHAR(4); // dir-aaaaXX
           for (int c5=0; c5<sizeof validChars; ++c5) {
-            UPDATE_CHAR(5);
+            UPDATE_CHAR(5); // dir-aaaaaX
             for (int c6=0; c6<sizeof validChars; ++c6) {
-              UPDATE_CHAR(6);
+              UPDATE_CHAR(6); // dir-aaaaaa
               int rc = mkdir(templ, 0700);
               if (rc==0)
                 return templ;
