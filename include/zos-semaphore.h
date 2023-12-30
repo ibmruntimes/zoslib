@@ -18,7 +18,7 @@
 #include <pthread.h>
 #include <sys/sem.h>
 
-#if __WORDSIZE == 64
+#if defined(__WORDSIZE) && __WORDSIZE == 64
 #define __SIZEOF_SEM_T 32
 #else
 #define __SIZEOF_SEM_T 16

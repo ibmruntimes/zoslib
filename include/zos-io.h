@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#if TRACE_ON
+#ifdef TRACE_ON
 /**
  * Prints information about a file descriptor.
  * \param [in] fd file descriptor.
@@ -33,7 +33,7 @@ __Z_EXPORT ssize_t __write(int fd, const void *buffer, size_t sz);
 __Z_EXPORT ssize_t __read(int fd, void *buffer, size_t sz);
 __Z_EXPORT int __close(int fd);
 __Z_EXPORT int __open(const char *file, int oflag, int mode);
-#endif // if TRACE_ON
+#endif // ifdef TRACE_ON
 
 /**
  * Debug Printf.
