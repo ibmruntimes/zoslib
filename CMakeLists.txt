@@ -70,6 +70,8 @@ if(${CMAKE_C_COMPILER} MATCHES xlclang)
     -qarch=10
     -qasm
     -qasmlib=sys1.maclib:sys1.modgen)
+
+  target_link_options(zoslib PUBLIC "-Wl,DLL")
 else()
   list(APPEND zoslib_cflags
     -fgnu-keywords
