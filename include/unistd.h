@@ -56,6 +56,15 @@ extern "C" {
 __Z_EXPORT extern int (*pipe2)(int pipefd[2], int flags);
 __Z_EXPORT extern int (*getentropy)(void *, size_t);
 #else
+#if (__EDC_TARGET < 0x42050000)
+/**
+ * Fill a buffer with random bytes
+ * \param [out] buffer to store random bytes to.
+ * \param [in] number of random bytes to generate.
+ * \return On success, returns 0, or -1 on error.
+ */
+__Z_EXPORT extern int getentropy(void *, size_t) __asm("__getentropy");
+#endif
 
 /**
  * Execute a file.
