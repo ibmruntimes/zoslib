@@ -69,19 +69,21 @@ $ ./build.sh -h
 ```
 
 which displays flags that you can pass to `build.sh` to specify a Release build
-(default is Debug) or Shared library (default is Static), and whether to build
-and run the zoslib tests.
+(default is Debug) and whether to build and run the zoslib tests.
 
 Example:
 ``` bash
-$ ./build.sh -c -r -s -t
+$ ./build.sh -c -r -t
 ```
 
-performs a Clean (-c) Release (-r) build that creates a Shared (-s) library
-`libzoslib.so` and its sidedeck `libzoslib.x`, builds and runs the tests (-t).
+performs a Clean (-c) Release (-r) build, and builds and runs the tests (-t).
+
+The build creates shared library `libzoslib.so` and its sidedeck `libzoslib.x`, 
+as well as the archive `libzoslib.a`.
 
 `build.sh` creates directory `./build` to hold the build files, and then places
-the target files under `./install` directory.
+the target files under `./install` directory as specified by the
+`-DCMAKE_INSTALL_PREFIX` option to cmake.
 
 2. Use the steps below to build and optionally run the zoslib tests:
 
@@ -106,10 +108,6 @@ $ cmake ..
 
 By default CMake will configure your build as a Debug build. You can configure
 your build as a Release build with the `-DCMAKE_BUILD_TYPE=Release` option.
-
-Also by default, CMake will configure your build to create a static library
-`libzoslib.a`. To create a shared library, pass to CMake the option
-`-DBUILD_SHARED_LIBS=ON`.
 
 CMake will detect your development environment, perform a series of tests, and
 generate the files required for building ZOSLIB.
@@ -194,7 +192,7 @@ a list of random values.
 3. To compile and link the application, enter the following command:
 
 ``` bash
-xlclang++ -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
+xlclang++ -qascii -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
 ```
 
 4. To run the application, enter the following command:

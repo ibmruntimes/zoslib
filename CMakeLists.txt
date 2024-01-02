@@ -6,8 +6,8 @@
 # or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ###############################################################################
 
-project(libzoslib CXX C ASM)
 cmake_minimum_required(VERSION 3.5)
+project(libzoslib CXX C ASM)
 
 include_directories(BEFORE include)
 
