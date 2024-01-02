@@ -18,4 +18,8 @@ test/cctest_a
 # Build artifacts
 *.a
 install/
+build.cache
+build/
+zoslib.xml
+zoslib_a.xml
 
