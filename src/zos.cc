@@ -1508,35 +1508,37 @@ extern "C" int execvpe(const char *name, char *const argv[],
   int lp, ln;
   const char *p;
   int eacces = 0, etxtbsy = 0;
-  char *bp, *cur;
+  char *dp = NULL, *cur;
 
   // Get the path we're searching
   int len;
-  if (cur = getenv("PATH")) {
+  if ((cur = getenv("PATH")) != NULL) {
     len = strlen(cur);
-  }
-  else {
+  } else {
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       char *dp = (char*)alloca (len);
-       confstr (_CS_PATH, dp, len);
-       cur = dp;
-    } else { len = 1; }
+       dp = (char*)malloc(len + 1);
+       if (dp == NULL)
+         return errno ? errno : ENOMEM;
+    } else
+       len = 1;
   }
   char path[len + 1];
-  if (cur)
-    strcpy(path, cur);
+  char buf[len + strlen(name) + 2];
+  char *bp = buf;
+
+  if (dp != NULL) {
+    strncpy(path, dp, sizeof(path));
+    free(dp);
+  } else if (cur != NULL)
+    strncpy(path, cur, sizeof(path));
   else {
     path[0] = ':';
     path[1] = '\0';
-    cur = path;
   }
 
-  char buf[len + strlen(name) + 2];
-  bp = buf;
-
-  while (cur != NULL) {
+  for (cur = path; cur != NULL;) {
     p = cur;
     if ((cur = strchr(cur, ':')) != NULL)
       *cur++ = '\0';
