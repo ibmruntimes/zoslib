@@ -201,7 +201,7 @@ public:
 #endif // ifdef __cplusplus
 
 inline unsigned strlen_ae(const unsigned char *str, int *code_page,
-                          int max_len, int *ambiguous) {
+                          unsigned long max_len, int *ambiguous) {
   static int last_ccsid = 819;
   static const unsigned char _tab_a[256] __attribute__((aligned(8))) = {
       1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -233,7 +233,7 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
   unsigned long code_out;
   const unsigned char *start;
 
-  bytes = (unsigned long)max_len;
+  bytes = max_len;
   code_out = 0;
   start = str;
   __asm volatile(" trte %1,%3,0\n"
@@ -241,9 +241,9 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
                  : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
                  : "NR:r1"(_tab_a)
                  :);
-  unsigned a_len = (unsigned)((unsigned long)str - (unsigned long)start);
+  unsigned a_len = str - start;
 
-  bytes = (unsigned long)max_len;
+  bytes = max_len;
   code_out = 0;
   str = start;
   __asm volatile(" trte %1,%3,0\n"
@@ -251,7 +251,7 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
                  : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
                  : "NR:r1"(_tab_e)
                  :);
-  unsigned e_len = (unsigned)((unsigned long)str - (unsigned long)start);
+  unsigned e_len = str - start;
   if (a_len > e_len) {
     *code_page = 819;
     last_ccsid = 819;
@@ -293,7 +293,7 @@ inline unsigned strlen_e(const unsigned char *str, unsigned size) {
                  : "NR:r1"(_tab_e)
                  :);
 
-  return (unsigned)((unsigned long)str - (unsigned long)start);
+  return str - start;
 }
 
 const unsigned char __ibm1047_iso88591[256] __attribute__((aligned(8))) = {
