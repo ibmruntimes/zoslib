@@ -2591,10 +2591,6 @@ __zinit::__zinit() {
 }
 
 __zinit:: ~__zinit() {
-  if (_CVTSTATE_OFF == cvstate) {
-    __ae_autoconvert_state(cvstate);
-  }
-  __ae_thread_swapmode(mode);
   if (shmid != 0) {
     if (__forked) {
       dec_forkcount();
