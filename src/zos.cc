@@ -1526,7 +1526,6 @@ extern "C" int execvpe(const char *name, char *const argv[],
   }
   char path[len + 1];
   char buf[len + strlen(name) + 2];
-  char *bp = buf;
 
   if (dp != NULL) {
     strncpy(path, dp, sizeof(path));
@@ -1556,7 +1555,7 @@ extern "C" int execvpe(const char *name, char *const argv[],
     buf[lp + ln + 1] = '\0';
 
   retry:
-    (void)execve(bp, argv, envp);
+    (void)execve(buf, argv, envp);
     switch (errno) {
     case EACCES:
       eacces = 1;
@@ -1575,7 +1574,7 @@ extern "C" int execvpe(const char *name, char *const argv[],
       memcpy(ap + 2, argv + 1, cnt * sizeof(char *));
 
       ap[0] = (char *)"sh";
-      ap[1] = bp;
+      ap[1] = buf;
       (void)execve("/bin/sh", ap, envp);
       goto done;
     }
