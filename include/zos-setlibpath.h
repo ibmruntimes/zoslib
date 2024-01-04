@@ -46,7 +46,7 @@ public:
 
         /* Append new paths to libpath. */
         std::ostringstream libpath;
-        /* Same comment above on __realpath_a() use applies to __getenv_a():
+        /* Same comment above on __realpath_a() use applies to __getenv_a(): */
         libpath << __getenv_a("LIBPATH");
         libpath << ":" << &parent[0] << "/lib.target/";
         libpath << ":" << &parent[0] << "/lib/";
