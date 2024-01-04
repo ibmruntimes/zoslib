@@ -1,3 +1,4 @@
+#undef ZOSLIB_OVERRIDE_CLIB
 #include "zos.h"
 
 #include <fcntl.h>
