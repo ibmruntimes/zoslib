@@ -848,6 +848,10 @@ int __open_ascii(const char *filename, int opts, ...) {
   return fd;
 }
 
+int __creat_ascii(const char *filename, mode_t mode) {
+  return __open_ascii(filename, O_CREAT|O_WRONLY|O_TRUNC, mode);
+}
+
 FILE *__fopen_ascii(const char *filename, const char *mode) {
   struct stat sb;
   int is_new_file = stat(filename, &sb) != 0;
