@@ -29,9 +29,12 @@ public:
     while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
       if (buf.ps_pid == mypid) {
         /* Found our process. */
-
-        /* Resolve path to find true location of executable. */
-        if (realpath(&argv[0], &parent[0]) == NULL)
+        /*
+         * Resolve path to find true location of executable; don't use an
+         * overridden realpath function from zoslib, since this header may
+         * be used in an exe before libzoslib.so has been loaded.
+        */
+        if (__realpath_a(&argv[0], &parent[0]) == NULL)
           break;
 
         /* Get parent directory. */
