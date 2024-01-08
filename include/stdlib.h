@@ -21,24 +21,38 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 }
 #endif
 
-#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) || \
+    defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 /* Modify function names in header to avoid conflict with new prototypes */
 #undef realpath
 #define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 #undef getenv
 #define getenv __getenv_replaced
+#endif
+
 #include_next <stdlib.h>
+
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 #undef mkstemp
 #undef realpath
+#endif
+
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 #undef getenv
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 /**
  * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
  */
@@ -47,12 +61,18 @@ __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm(
  * Same as C mkstemp but tags fd as ASCII (819)
  */
 __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
+#endif
 
+#if defined(ZOSLIB_OVERRIDE_CLIB_GETENV)
 /**
  * Replace getenv with the ascii implementation of __getenv (@@A00423) 
-   which copies pointer to a buffer and is retained even after the environment changes
+ * which copies pointer to a buffer and is retained even after the environment changes.
+ * This override should only be used in a single-threaded environment:
+ * https://www.ibm.com/docs/en/zos/2.4.0?topic=functions-getenv-get-environment-variable
  */
 __Z_EXPORT char* getenv(const char*) __asm("@@A00423");
+#endif
+
 #if defined(__cplusplus)
 }
 #endif
