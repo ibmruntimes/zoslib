@@ -8,10 +8,8 @@
 
                    #ifndef __edcwccwi
                    #define __edcwccwi 1
-#if !defined(__clang__) || defined(__ibmxl__)
                    #pragma nomargins nosequence
                    #pragma checkout(suspend)
-#endif
   /***************************************************************
   * <edcwccwi.h> header file                                     *
   *                                                              *
@@ -613,7 +611,5 @@ struct __event1_s {
 }
 #endif
 
-#if !defined(__clang__) || defined(__ibmxl__)
                    #pragma checkout(resume)
-#endif
                    #endif /* __edcwccwi */

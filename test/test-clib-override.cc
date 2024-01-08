@@ -54,18 +54,17 @@ TEST_F(CLIBOverrides, open) {
     close(fd);
 
     char buff[] = "This is a test";
-    int bufflen = strlen(buff);
-    char* buff2 = (char*)malloc(bufflen);
- 
+    char* buff2 = (char*)malloc(sizeof(buff));
+
 #if CHECK_NFS
     const char* file_str = "/gsa/tlbgsa/projects/i/igortest/nodejs_data_file";
     fd = open(file_str, O_CREAT | O_WRONLY, 0777);
-    write(fd, buff, bufflen);
+    write(fd, buff, sizeof(buff));
     close(fd);
 
     fd = open(file_str, O_RDONLY);
-    memset(buff2, bufflen, 1);
-    read(fd, buff2, bufflen);
+    memset(buff2, 1, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
     EXPECT_EQ(strcmp(buff, buff2), 0);
     close(fd);
 #endif
@@ -75,15 +74,14 @@ TEST_F(CLIBOverrides, open) {
     remove(temp_path);
     fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
-    write(fd, buff, bufflen);
+    write(fd, buff, sizeof(buff));
     close(fd);
 
     fd = open(temp_path, O_RDONLY);
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
-    memset(buff2, bufflen, 1);
-    read(fd, buff2, bufflen);
+    memset(buff2, 1, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
     EXPECT_EQ(strcmp(buff, buff2), 0);
-    free(buff2);
     close(fd);
 
     // Delete and re-open temp_path _ENCODE_FILE_NEW=BINARY
@@ -91,16 +89,14 @@ TEST_F(CLIBOverrides, open) {
     remove(temp_path);
     fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
     EXPECT_EQ(__getfdccsid(fd), 65535);
-    write(fd, buff, bufflen);
+    write(fd, buff, sizeof(buff));
     close(fd);
 
     fd = open(temp_path, O_RDONLY);
     EXPECT_EQ(__getfdccsid(fd), 65535);
-    buff2 = (char*)malloc(bufflen);
-    memset(buff2, bufflen, 1);
-    read(fd, buff2, bufflen);
+    memset(buff2, 1, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
     EXPECT_EQ(strcmp(buff, buff2), 0);
-    free(buff2);
     close(fd);
 
     // Delete and re-open temp_path _ENCODE_FILE_NEW=ISO8859-1
@@ -108,14 +104,13 @@ TEST_F(CLIBOverrides, open) {
     remove(temp_path);
     fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
-    write(fd, buff, bufflen);
+    write(fd, buff, sizeof(buff));
     close(fd);
 
     fd = open(temp_path, O_RDONLY);
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
-    buff2 = (char*)malloc(bufflen);
-    memset(buff2, bufflen, 1);
-    read(fd, buff2, bufflen);
+    memset(buff2, 1, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
     EXPECT_EQ(strcmp(buff, buff2), 0);
     free(buff2);
     close(fd);
