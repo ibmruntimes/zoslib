@@ -11,10 +11,7 @@ namespace {
 TEST(FlockTest, BasicFileLocking) {
   char template_name[] = "/tmp/test_file_lock_XXXXXX";
   int fd = mkstemp(template_name);
-
   ASSERT_NE(fd, 0) << "Failed to create a unique temporary file";
-  int fd = open(filename, O_RDWR | O_CREAT, 0666);
-  ASSERT_NE(fd, -1) << "Failed to open file for testing";
 
   int ret = flock(fd, LOCK_EX);
   EXPECT_EQ(ret, 0) << "Failed to acquire exclusive lock";
@@ -32,7 +29,6 @@ TEST(FlockTest, BasicFileLocking) {
 
 TEST(FlockTest, NonBlockingLock) {
   char template_name[] = "/tmp/test_file_lock_nonblocking_XXXXXX";
-  
   int fd = mkstemp(template_name);
   ASSERT_NE(fd, -1) << "Failed to create a unique temporary file";
 
