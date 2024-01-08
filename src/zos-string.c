@@ -129,12 +129,12 @@ char *strpcpy(char *dest, const char *src) {
 
 char *strndup(const char *s, size_t n) {
   size_t len = strnlen(s, n);
-  char *dup_str = malloc(len + 1);
-  if (dup_str != NULL) {
-    strncpy(dup_str, s, len);
-    dup_str[len] = '\0';
+  char *dupStr = malloc(len + 1);
+  if (dupStr != NULL) {
+    strncpy(dupStr, s, len);
+    dupStr[len] = '\0';
   }
-  return dup_str;
+  return dupStr;
 }
 
 #if TEST
