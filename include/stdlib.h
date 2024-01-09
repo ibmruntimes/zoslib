@@ -100,13 +100,13 @@ extern "C" {
 
 __Z_EXPORT char *mkdtemp(char *);
 #ifdef __NATIVE_ASCII_F
-  __Z_EXPORT char *mkdtemp(char *) asm("__mkdtemp_a");
+  __Z_EXPORT char *mkdtemp(char *) __asm("__mkdtemp_a");
 #ifdef __AE_BIMODAL_F
   __Z_EXPORT char *__mkdtemp_a(char *);
   __Z_EXPORT char *__mkdtemp_e(char *);
 #endif
 #else
-  __Z_EXPORT char *mkdtemp(char *)  asm("__mkdtemp_e");
+  __Z_EXPORT char *mkdtemp(char *)  __asm("__mkdtemp_e");
 #endif
 
 #if defined(__cplusplus)
