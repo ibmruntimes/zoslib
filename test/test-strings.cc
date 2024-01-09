@@ -14,7 +14,6 @@ TEST(StrndupTest, CheckStrndupFunctionality) {
 
   ASSERT_NE(copied, nullptr);
 
-  copied[length] = '\0';
   EXPECT_STREQ(copied, "Hello");
 
   free(copied);
