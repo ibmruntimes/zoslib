@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <_Nascii.h>
 
 #define SignalList \
@@ -124,6 +125,16 @@ size_t strnlen(const char *str, size_t maxlen) {
 char *strpcpy(char *dest, const char *src) {
   char *ptr = strcpy(dest, src);
   return ptr + strlen(ptr);
+}
+
+char *strndup(const char *s, size_t n) {
+  size_t len = strnlen(s, n);
+  char *dupStr = malloc(len + 1);
+  if (dupStr != NULL) {
+    strncpy(dupStr, s, len);
+    dupStr[len] = '\0';
+  }
+  return dupStr;
 }
 
 #if TEST
