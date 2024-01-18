@@ -80,6 +80,14 @@ __Z_EXPORT int __find_file_in_path(char *out, int size, const char *envvar,
                                    const char *file);
 
 /**
+ * Apply or remove an advisory lock on an open file
+ * \param [in] fd file descriptor of the open file
+ * \param [in] operation is one of LOCK_SH, LOCK_EX or LOCK_UN
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __flock(int fd, int operation);
+
+/**
  * Change file descriptor to CCSID.
  * \param [in] fd file descriptor.
  * \param [in] ccsid CCSID.
