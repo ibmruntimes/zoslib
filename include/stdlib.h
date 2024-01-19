@@ -11,6 +11,7 @@
 
 #define __XPLAT 1
 #include "zos-macros.h"
+#include <features.h>
 
 
 #if defined(__cplusplus)
