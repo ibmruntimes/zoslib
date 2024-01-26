@@ -1476,9 +1476,10 @@ extern "C" int execvpe(const char *name, char *const argv[],
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       dp = (char*)malloc(len + 1);
+       dp = (char*)malloc(len);
        if (dp == NULL)
          return errno ? errno : ENOMEM;
+       confstr (_CS_PATH, dp, len);
     } else
        len = 1;
   }
