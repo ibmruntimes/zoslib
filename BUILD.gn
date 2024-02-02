@@ -42,6 +42,7 @@ shared_library("zoslib") {
     "src/zos-getentropy.cc",
     "src/zos-io.cc",
     "src/zos-semaphore.cc",
+    "src/zos-spawn.cc",
     "src/zos-sys-info.cc",
     "src/zos-tls.cc",
   ]
