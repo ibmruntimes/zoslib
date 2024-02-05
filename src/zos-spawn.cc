@@ -6,7 +6,7 @@
 //// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 /////////////////////////////////////////////////////////////////////////////////
 
-#include <spawn.h>
+#include "spawn.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
@@ -237,7 +237,8 @@ int posix_spawn(pid_t *pid, const char *path,
       }
     }
     execve(path, args, env);
-    return ENOENT;
+    rc = errno;
+    return rc != 0 ? rc : ENOENT;
   }
   return 0;
 }
