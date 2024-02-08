@@ -87,25 +87,22 @@ int (*nanosleep)(const struct timespec*, struct timespec*) = 0;
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static char **__argv = nullptr;
-static int __argc = -1;
-static pthread_t _timer_tid;
-static int *__main_thread_stack_top_address = 0;
-static bool __is_backtrace_on_abort = true;
-static bool __zoslib_terminated = false;
+namespace {
+char **__argv = nullptr;
+int __argc = -1;
+pthread_t _timer_tid;
+int *__main_thread_stack_top_address = 0;
+bool __is_backtrace_on_abort = true;
+bool __zoslib_terminated = false;
+bool __gMainTerminating = false;
 
-static const char MEMLOG_LEVEL_WARNING = '1';
-static const char MEMLOG_LEVEL_ALL = '2';
+int __gMainThreadId = -1;
+pthread_t __gMainThreadSelf = {-1u};
+char __gArgsStr[PATH_MAX*2] = "";
+char __gChildInfo[32] = "";
 
-static char __gMemoryUsageLogFile[PATH_MAX] = "";
-static bool __gLogMemoryUsage = false;
-static bool __gLogMemoryAll = false;
-static bool __gLogMemoryWarning = false;
-static char __gArgsStr[PATH_MAX*2] = "";
-static bool __gMainTerminating = false;
-
-static int __gMainThreadId = -1;
-static pthread_t __gMainThreadSelf = {-1u};
+__zinit __instance;
+}
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -118,12 +115,12 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
+extern "C" void update_memlogging(__zinit *, const char *envar);
+extern "C" void update_memlogging_level(__zinit *, const char *envar);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
-
-static __zinit __instance;
 
 __zinit* __get_instance() {
   if (__zoslib_terminated)
@@ -2225,34 +2222,6 @@ int __print_zoslib_help(FILE *fp, const char *title) {
   return 0;
 }
 
-static void update_memlogging(const char *envar) {
-  __zinit *zinit_ptr = __get_instance();
-  if (!zinit_ptr)
-    return;
-  zoslib_config_t &config = zinit_ptr->config;
-
-  char *p;
-  if (envar)
-    strncpy(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
-  else if ((p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR)) != NULL)
-    strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
-  else if (mem_account())
-    strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
-
-  if (*__gMemoryUsageLogFile) {
-    __gLogMemoryUsage = true;
-    int len = 0;
-    __gArgsStr[0] = 0;
-    for (int i=0; i<__getargc(); ++i) {
-      strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
-      len += strlen(__argv[i]);
-      __gArgsStr[len++] = ' ';
-      __gArgsStr[len] = 0;
-    }
-  } else
-    __gLogMemoryUsage = false;
-}
-
 int __update_envar_settings(const char *envar) {
   __zinit *zinit_ptr = __get_instance();
   if (!zinit_ptr)
@@ -2310,20 +2279,12 @@ int __update_envar_settings(const char *envar) {
         get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
 
-  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0) {
-    update_memlogging(envar);
-  }
-  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0) {
-    char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
-    if (penv && __doLogMemoryUsage()) {
-      // Errors and start/terminating messages are always displayed.
-      if (*penv == MEMLOG_LEVEL_ALL)
-        __gLogMemoryAll = true;  // display all messages
-      else if (*penv == MEMLOG_LEVEL_WARNING)
-        __gLogMemoryWarning = true; // warnings only
-    }
-  }
-
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0)
+    update_memlogging(zinit_ptr, envar);
+ 
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0)
+    update_memlogging_level(zinit_ptr, envar);
+ 
   return 0;
 }
 
@@ -2512,9 +2473,35 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 __zinit::__zinit() {
   __gMainThreadId = gettid();
   __gMainThreadSelf = pthread_self();
-  update_memlogging(nullptr);
-  if (__doLogMemoryUsage())
-    __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
+
+  update_memlogging(__get_instance(), nullptr);
+  update_memlogging_level(__get_instance(), nullptr);
+
+  if (__doLogMemoryUsage()) {
+    int len = 0;
+    __gArgsStr[0] = 0;
+    for (int i=0; i<__getargc(); ++i) {
+      strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
+      len += strlen(__argv[i]);
+      __gArgsStr[len++] = ' ';
+      __gArgsStr[len] = 0;
+    }
+
+    // Include <parent-name>(parent-pid) in the start/termination message:
+    int ppid = getppid();
+    int argc;
+    char **argv = nullptr;
+    if (__getargcv(&argc, &argv, ppid) != 0) {
+      snprintf(__gChildInfo, sizeof(__gChildInfo), "?(%d)-CHILD", ppid);
+    } else {
+      const char *parentname = strrchr(argv[0], '/');
+      parentname = (parentname != nullptr) ? parentname + 1 : argv[0]; 
+      free((void*)argv);
+      snprintf(__gChildInfo, sizeof(__gChildInfo), "%s(%d)-CHILD",
+               parentname, ppid);
+    }
+    __memprintf("%s PROCESS STARTED: %s\n", __gChildInfo, __gArgsStr);
+  }
 }
 
 __zinit:: ~__zinit() {
@@ -3048,18 +3035,6 @@ extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
    }
   }
   return 1;
-}
-
-extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
-
-extern "C" void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
-
-extern "C" char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
-
-extern "C" bool __doLogMemoryAll() { return __gLogMemoryAll; }
-
-extern "C" bool __doLogMemoryWarning() {
-  return __gLogMemoryAll || __gLogMemoryWarning;
 }
 
 extern "C" void __mainTerminating() { __gMainTerminating = true; }

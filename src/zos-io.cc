@@ -24,7 +24,17 @@
 #include <sys/file.h>
 #include <utmpx.h>
 
-static FILE *fp_memprintf = NULL;
+namespace {
+const char MEMLOG_LEVEL_WARNING = '1';
+const char MEMLOG_LEVEL_ALL = '2';
+
+char __gMemoryUsageLogFile[PATH_MAX] = "";
+bool __gLogMemoryUsage = false;
+bool __gLogMemoryAll = false;
+bool __gLogMemoryWarning = false;
+bool __gLogMemoryShowPid = true;
+FILE *fp_memprintf = nullptr;
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -978,6 +988,64 @@ int __flock(int fd, int operation) {
   lbuf.l_start = lbuf.l_len = 0;
 
   return fcntl(fd, (operation & LOCK_NB) ? F_SETLK : F_SETLKW, &lbuf);
+}
+
+static void getMemUsageLogFilename(char* outName, const char *nameInEnv,
+                                   size_t maxlen) {
+  std::string str(nameInEnv);
+  size_t s = str.find("%PID%");
+  if (s != std::string::npos) {
+    str.replace(s, 5, std::to_string(getpid()));
+    __gLogMemoryShowPid = false;
+  }
+  s = str.find("%PPID%");
+  if (s != std::string::npos)
+    str.replace(s, 6, std::to_string(getppid()));
+  strncpy(outName, str.c_str(), maxlen);
+}
+
+void update_memlogging(__zinit *zinit_ptr, const char *envar) {
+  if (!zinit_ptr)
+    return;
+  zoslib_config_t &config = zinit_ptr->config;
+
+  char *p;
+  if (envar)
+    getMemUsageLogFilename(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
+  else if (p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR))
+    getMemUsageLogFilename(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
+
+  if (*__gMemoryUsageLogFile)
+    __gLogMemoryUsage = true;
+  else
+    __gLogMemoryUsage = false;
+}
+
+void update_memlogging_level(__zinit *zinit_ptr, const char *envar) {
+  if (!zinit_ptr)
+    return;
+  zoslib_config_t &config = zinit_ptr->config;
+
+  char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
+  if (penv && __doLogMemoryUsage()) {
+    // Errors and start/terminating messages are always displayed.
+    if (*penv == MEMLOG_LEVEL_ALL)
+      __gLogMemoryAll = true;  // display all messages
+    else if (*penv == MEMLOG_LEVEL_WARNING)
+      __gLogMemoryWarning = true; // warnings only
+  }
+}
+
+bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
+
+void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
+
+char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
+
+bool __doLogMemoryAll() { return __gLogMemoryAll; }
+
+bool __doLogMemoryWarning() {
+  return __gLogMemoryAll || __gLogMemoryWarning;
 }
 
 
