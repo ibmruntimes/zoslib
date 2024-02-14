@@ -117,6 +117,7 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
 extern "C" void update_memlogging(__zinit *, const char *envar);
 extern "C" void update_memlogging_level(__zinit *, const char *envar);
+extern "C" void update_memlogging_inc(__zinit *, const char *envar);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -2285,6 +2286,9 @@ int __update_envar_settings(const char *envar) {
   if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0)
     update_memlogging_level(zinit_ptr, envar);
  
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_INC_ENVAR) == 0)
+    update_memlogging_inc(zinit_ptr, envar);
+
   return 0;
 }
 

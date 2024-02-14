@@ -47,6 +47,7 @@
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 #define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 #define MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_LEVEL"
+#define MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_INC"
 
 typedef enum {
   __NO_TAG_READ_DEFAULT = 0,
@@ -482,6 +483,12 @@ typedef struct __Z_EXPORT zoslib_config {
    */
   const char *MEMORY_USAGE_LOG_LEVEL_ENVAR =
               MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
+  /**
+   * String to indicate the envar to be used to specify the increase in memory
+   * allocated, in bytes, after which logging occurs.
+   */
+  const char *MEMORY_USAGE_LOG_INC_ENVAR = MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT;
+
 } zoslib_config_t;
 
 /**
