@@ -358,7 +358,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (fc.tok_sev >= 2) {
         dprintf(2, "____le_traceback_a() service failed\n");
         free(return_buff);
-        *return_string = 0;
+        if (return_string != nullptr)
+          *return_string = 0;
         return;
       }
       caller_dsa = tbck_parms.__tf_caller_dsa_addr;
@@ -430,7 +431,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (i == size) {
         // return &table[0];
         table[i] = 0;
-        *return_string = &table[0];
+        if (return_string != nullptr)
+          *return_string = &table[0];
         return;
       }
       free(return_buff);
