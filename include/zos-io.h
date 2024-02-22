@@ -171,7 +171,7 @@ __Z_EXPORT bool __doLogMemoryAll();
 __Z_EXPORT bool __doLogMemoryWarning();
 
 /**
- * Returns true if memory allocation should be displayed when curvar increases
+ * Returns true if memory allocation should be displayed when curval increases
  * by the value set in environment variable __MEMORY_USAGE_LOG_INC since the last
  * currently allocated size was displayed.
  */
