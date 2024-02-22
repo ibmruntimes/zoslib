@@ -117,6 +117,7 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
 extern "C" void update_memlogging(__zinit *, const char *envar);
 extern "C" void update_memlogging_level(__zinit *, const char *envar);
+extern "C" void update_memlogging_inc(__zinit *, const char *envar);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -357,7 +358,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (fc.tok_sev >= 2) {
         dprintf(2, "____le_traceback_a() service failed\n");
         free(return_buff);
-        *return_string = 0;
+        if (return_string != nullptr)
+          *return_string = 0;
         return;
       }
       caller_dsa = tbck_parms.__tf_caller_dsa_addr;
@@ -429,7 +431,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (i == size) {
         // return &table[0];
         table[i] = 0;
-        *return_string = &table[0];
+        if (return_string != nullptr)
+          *return_string = &table[0];
         return;
       }
       free(return_buff);
@@ -2285,6 +2288,9 @@ int __update_envar_settings(const char *envar) {
   if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0)
     update_memlogging_level(zinit_ptr, envar);
  
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_INC_ENVAR) == 0)
+    update_memlogging_inc(zinit_ptr, envar);
+
   return 0;
 }
 

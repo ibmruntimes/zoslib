@@ -29,6 +29,7 @@ const char MEMLOG_LEVEL_WARNING = '1';
 const char MEMLOG_LEVEL_ALL = '2';
 
 char __gMemoryUsageLogFile[PATH_MAX] = "";
+size_t __gLogMemoryInc = 0u;
 bool __gLogMemoryUsage = false;
 bool __gLogMemoryAll = false;
 bool __gLogMemoryWarning = false;
@@ -1034,6 +1035,27 @@ void update_memlogging_level(__zinit *zinit_ptr, const char *envar) {
     else if (*penv == MEMLOG_LEVEL_WARNING)
       __gLogMemoryWarning = true; // warnings only
   }
+}
+
+void update_memlogging_inc(__zinit *zinit_ptr, const char *envar) {
+  if (!zinit_ptr)
+    return;
+  zoslib_config_t &config = zinit_ptr->config;
+
+  char *penv = getenv(config.MEMORY_USAGE_LOG_INC_ENVAR);
+  if (penv && __doLogMemoryUsage()) {
+    __gLogMemoryInc = atol(penv);
+  }
+}
+
+bool __doLogMemoryInc(size_t curval, size_t *plastval) {
+  if (!__doLogMemoryUsage() || __gLogMemoryInc == 0u)
+    return false;
+  if (curval > *plastval && ((curval - *plastval) / __gLogMemoryInc) > 0) {
+    *plastval = curval;
+    return true;
+  }
+  return false;
 }
 
 bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
