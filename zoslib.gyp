@@ -37,6 +37,7 @@
       ],
       'sources': [
         'src/zos.cc',
+        'src/zos-allocs-trace.cc',
         'src/zos-bpx.cc',
         'src/zos-char-util.cc',
         'src/zos-getentropy.cc',
@@ -47,6 +48,7 @@
         'src/zos-string.c',
         'src/zos-sys-info.cc',
         'src/zos-tls.cc',
+        'src/zos-tsearch.c',
         'src/celquopt.s',
       ],
     }

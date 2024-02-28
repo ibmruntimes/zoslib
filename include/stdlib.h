@@ -38,6 +38,50 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define getenv __getenv_replaced
 #endif
 
+#ifdef ZOSLIB_TRACE_ALLOCS
+
+#include <sys/types.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+void *__calloc_orig(size_t, size_t) __asm("calloc");
+void *__malloc_orig(size_t) __asm("malloc");
+void *__realloc_orig(void *, size_t) __asm("realloc");
+void __free_orig(void *) __asm("free");
+void *__malloc31_orig(size_t) __asm("__malloc31");
+
+__Z_EXPORT void * __calloc_trace(size_t, size_t, const char *pfname, int linenum);
+__Z_EXPORT void * __malloc_trace(size_t, const char *pfname, int linenum);
+__Z_EXPORT void * __realloc_trace(void *, size_t, const char *pfname, int linenum);
+__Z_EXPORT void * __reallocf_trace(void *, size_t, const char *pfname, int linenum);
+__Z_EXPORT void   __free_trace(void *);
+__Z_EXPORT void * __malloc31_trace(size_t, const char *pfname, int linenum);
+
+#define __calloc_prtsrc(x, y)   __calloc_trace(x, y, __FILE__, __LINE__)
+#define __malloc_prtsrc(x)      __malloc_trace(x, __FILE__, __LINE__)
+#define __realloc_prtsrc(x, y)  __realloc_trace(x, y, __FILE__, __LINE__)
+#define __reallocf_prtsrc(x, y) __reallocf_trace(x, y, __FILE__, __LINE__)
+#define __malloc31_prtsrc(x)    __malloc31_trace(x, __FILE__, __LINE__)
+
+#if defined(__cplusplus)
+}
+#endif
+
+#undef calloc
+#undef malloc
+#undef realloc
+#undef free
+#undef __malloc31
+
+#define calloc     __calloc_replaced
+#define malloc     __malloc_replaced
+#define realloc    __realloc_replaced
+#define free       __free_replaced
+#define __malloc31 __malloc31_replaced
+
+#endif /* ZOSLIB_TRACE_ALLOCS */
 
 #include_next <stdlib.h>
 
@@ -82,6 +126,27 @@ __Z_EXPORT char* getenv(const char*) __asm("@@A00423");
 }
 #endif
 #endif
+
+#ifdef ZOSLIB_TRACE_ALLOCS
+#undef calloc
+#undef malloc
+#undef realloc
+#undef free
+#undef __malloc31
+
+#define calloc     __calloc_prtsrc
+#define malloc     __malloc_prtsrc
+#define realloc    __realloc_prtsrc
+#define __malloc31 __malloc31_prtsrc
+// #define free       __free_prtsrc
+// fails with clang:
+// .../include/c++/v1/locale:283:68: error: reference to unresolved using
+// declaration
+// unique_ptr<unsigned char, void(*)(void*)> __stat_hold(nullptr, free);
+
+void free(void *) __asm("__free_trace");
+
+#endif /* ZOSLIB_TRACE_ALLOCS */
 
 #if defined(__cplusplus)
 extern "C" {

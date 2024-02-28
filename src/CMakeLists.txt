@@ -7,6 +7,7 @@
 ###############################################################################
 
 set(libsrc
+  zos-allocs-trace.cc
   zos-bpx.cc
   zos-char-util.cc
   zos-getentropy.cc
@@ -16,10 +17,12 @@ set(libsrc
   zos-string.c
   zos-sys-info.cc
   zos-tls.cc
+  zos-tsearch.c
   zos.cc
   zos-mount.c
   zos-mkdtemp.c
 )
+
 set(zoslib-help zoslib-help.cc)
 
 set(CELQUOPT_OBJECT "${CMAKE_CURRENT_BINARY_DIR}/celquopt.s.o")

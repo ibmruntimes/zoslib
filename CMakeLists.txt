@@ -11,6 +11,7 @@ project(libzoslib CXX C ASM)
 
 if(${CMAKE_C_COMPILER} MATCHES xlclang)
   include_directories(BEFORE include)
+  include_directories(BEFORE include include/c++)
 else()
   include_directories(BEFORE include include/c++/v1)
 endif()
