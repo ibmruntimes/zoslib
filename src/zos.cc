@@ -2879,7 +2879,6 @@ int lutimes(const char *filename, const struct timeval tv[2]) {
 
   if (return_value != 0) {
     errno = return_code;
-    perror("__bpx4lcr");
     return -1;
   }
 
