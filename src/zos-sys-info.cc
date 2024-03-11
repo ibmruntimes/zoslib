@@ -141,8 +141,10 @@ char *__get_timestamp(char *ts) {
   // returns timestamp as yyyy-mm-dd hh:mm:ss, so char ts[20]
   time_t lt = time(NULL);
   struct tm *tm = localtime(&lt);
-  sprintf(ts,"%04d-%02d-%02d %02d:%02d:%02d", tm->tm_year+1900,
-    tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+  if (sprintf(ts,"%04d-%02d-%02d %02d:%02d:%02d", tm->tm_year + 1900,
+              tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec)
+              < 0)
+    return NULL;
   return ts;
 }
 

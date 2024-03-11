@@ -34,7 +34,7 @@ extern "C" void heapreport() {
     __memprintfx("ERROR: __heaprpt() failed errno=%d\n", sverrno);
     return;
   }
-  char ts[20]; // yyyy-mm-dd hh:mm:ss
+  char ts[20] = "(error)"; // yyyy-mm-dd hh:mm:ss
   __get_timestamp(ts);
   if (start__uheap_bytes_alloc < 0) {
     __memprintfx("__heaprpt() at %s:\n" \
@@ -343,7 +343,7 @@ void display_stats() {
     abort();
   }
 
-  char ts[20]; // yyyy-mm-dd hh:mm:ss
+  char ts[20] = "(error)"; // yyyy-mm-dd hh:mm:ss
   __get_timestamp(ts);
   if (!gbDisplayAllAllocStats) {
     __memprintfx("\nMEMORY ALLOCATIONS (only those with an updated 'unfreed')" \
