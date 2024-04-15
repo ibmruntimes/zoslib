@@ -38,38 +38,22 @@ public:
 
 #endif // __cplusplus
 
-/* 
-These macros provide a workaround for the non-existing thread local storage (TLS) 
-support for C applications on z/os. It leverages the pthread_key_create, pthread_getspecific 
-and pthread_setspecific calls to acheve TLS.
-*/
 
-static void tls_destructor(void *value) {
-    free(value);
+struct __tlsanchor {
+  pthread_once_t once;
+  pthread_key_t key;
+  size_t sz;
+};
+
+typedef struct __tlsanchor tls_t;
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+void * __tlsValue(tls_t *);
+char** __tlsArray(tls_t *,int ,int);
+#if defined(__cplusplus)
 }
+#endif
 
-#define GET_KEY_VAL(key_name, key_status, val, size) \
-   if(key_status == 0){\
-      int resp = pthread_key_create(&key_name, tls_destructor);  \
-      assert(resp == 0);\
-      key_status = 1;\
-   } \
-   val = pthread_getspecific(key_name); \
-    if (val == NULL) \
-    { \
-        val = calloc(1,size);\
-        assert(val != NULL);\
-    }
-
-#define SET_KEY_VAL(key_name,val) \
-pthread_setspecific(key_name,val);
-
-#define GET_KEY_VAL_ARRAY(key_name,key_status, val, size, rows, columns)\
-GET_KEY_VAL(key_name,key_status, val, ((rows*sizeof(char *))+(rows*columns*size))) \
-{\
-char *data_start = (char *)(val + rows);\
-    for (int i = 0; i < rows; i++) { \
-        val[i] = data_start + i * columns;\
-    } \
-}
 #endif // ZOS_TLS_H_
