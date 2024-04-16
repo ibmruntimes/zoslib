@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 static void _cleanup(void *p) {
   pthread_key_t key = *((pthread_key_t *)p);
@@ -92,12 +93,18 @@ void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *initvalue) {
   return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue);
 }
 void * __tlsValue(tls_t *a) {
-	const int initvalue = 0;
-	return __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)&initvalue);
+	char * initvalue = NULL;
+	void *val = NULL;
+	initvalue = (char *)malloc(sizeof(char)*(a->sz));
+	assert(initvalue != NULL);
+	bzero(initvalue,a->sz);
+	val = __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)initvalue);
+	free(initvalue);
+	return val;
 }
 
 char** __tlsArray(tls_t *a, int rows, int columns) {
-	char ** val = NULL;
+	char **val = NULL;
 	a->sz = ((rows*sizeof(char *))+(rows*columns*(a->sz)));
 	val = (char **)__tlsValue(a);
 	for (int i = 0; i < rows; i++) {
