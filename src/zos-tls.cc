@@ -93,23 +93,22 @@ void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *initvalue) {
   return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue);
 }
 void * __tlsValue(tls_t *a) {
-	char * initvalue = NULL;
-	void *val = NULL;
-	initvalue = (char *)malloc(sizeof(char)*(a->sz));
-	assert(initvalue != NULL);
-	bzero(initvalue,a->sz);
-	val = __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)initvalue);
-	free(initvalue);
-	return val;
+  void *val = NULL;
+  char * initvalue = (char *)malloc(sizeof(char)*(a->sz));
+  assert(initvalue != NULL);
+  bzero(initvalue,a->sz);
+  val = __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)initvalue);
+  free(initvalue);
+  return val;
 }
 
 char** __tlsArray(tls_t *a, int rows, int columns) {
-	char **val = NULL;
-	a->sz = ((rows*sizeof(char *))+(rows*columns*(a->sz)));
-	val = (char **)__tlsValue(a);
-	for (int i = 0; i < rows; i++) {
-		      val[i] = (char*)(val + rows) + i * columns;
-		}
-	return val;
+  char **val = NULL;
+  a->sz = ((rows*sizeof(char *))+(rows*columns*(a->sz)));
+  val = (char **)__tlsValue(a);
+  for (int i = 0; i < rows; i++) {
+    val[i] = (char*)(val + rows) + i * columns;
+  }
+  return val;
 }
 
