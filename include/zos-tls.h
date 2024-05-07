@@ -37,4 +37,23 @@ public:
 };
 
 #endif // __cplusplus
+
+
+struct __tlsanchor {
+  pthread_once_t once;
+  pthread_key_t key;
+  size_t sz;
+};
+
+typedef struct __tlsanchor tls_t;
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+void * __tlsValue(tls_t *);
+char** __tlsArray(tls_t *,int ,int);
+#if defined(__cplusplus)
+}
+#endif
+
 #endif // ZOS_TLS_H_

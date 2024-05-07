@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 static void _cleanup(void *p) {
   pthread_key_t key = *((pthread_key_t *)p);
@@ -74,11 +75,6 @@ static void *__tlsPtr(pthread_key_t *key) { return pthread_getspecific(*key); }
 static void __tlsDelete(pthread_key_t *key) { pthread_key_delete(*key); }
 #endif
 
-struct __tlsanchor {
-  pthread_once_t once;
-  pthread_key_t key;
-  size_t sz;
-};
 
 struct __tlsanchor *__tlsvaranchor_create(size_t sz) {
   struct __tlsanchor *a =
@@ -96,3 +92,23 @@ void __tlsvaranchor_destroy(struct __tlsanchor *anchor) {
 void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *initvalue) {
   return __tlsPtrAlloc(anchor->sz, &(anchor->key), &(anchor->once), initvalue);
 }
+void * __tlsValue(tls_t *a) {
+  void *val = NULL;
+  char * initvalue = (char *)malloc(sizeof(char)*(a->sz));
+  assert(initvalue != NULL);
+  bzero(initvalue,a->sz);
+  val = __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)initvalue);
+  free(initvalue);
+  return val;
+}
+
+char** __tlsArray(tls_t *a, int rows, int columns) {
+  char **val = NULL;
+  a->sz = ((rows*sizeof(char *))+(rows*columns*(a->sz)));
+  val = (char **)__tlsValue(a);
+  for (int i = 0; i < rows; i++) {
+    val[i] = (char*)(val + rows) + i * columns;
+  }
+  return val;
+}
+
