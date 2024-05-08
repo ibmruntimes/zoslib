@@ -28,7 +28,7 @@ __Z_EXPORT int flock(int fd, int operation) __asm("__flock");
 }
 #endif
 #else
-#include <sys/file.h>
+#include_next <sys/file.h>
 #endif
 
 #endif
