@@ -582,6 +582,20 @@ __Z_EXPORT void __mainTerminating();
  */
 __Z_EXPORT char* __getprogramdir();
 
+/**
+ * Reserve aligned storage block
+ * \param [in] alignment - must be a power of two and a multiple of
+ *  sizeof(void*)
+ * \param [in] size - number of bytes to allocate
+ * \return pointer to the beginning of newly allocated memory
+ */
+__Z_EXPORT void *__aligned_malloc(size_t size, size_t alignment);
+
+/**
+ * \param [in] ptr - pointer to the memory to deallocate
+ */
+__Z_EXPORT void __aligned_free(void *ptr);
+
 #ifdef __cplusplus
 }
 #endif
