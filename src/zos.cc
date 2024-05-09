@@ -5,7 +5,6 @@
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
-
 #define _AE_BIMODAL 1
 #undef _ENHANCED_ASCII_EXT
 #define _ENHANCED_ASCII_EXT 0xFFFFFFFF
@@ -3096,6 +3095,41 @@ extern "C" char* __getprogramdir() {
   }
 
   return NULL;
+}
+
+extern "C" void *__aligned_malloc(size_t size, size_t alignment) {
+#if (__TARGET_LIB__ >= 0x43010000)
+  void *ptr;
+  if (posix_memalign(&ptr, alignment, size) == 0)
+    return ptr;
+  return nullptr;
+#else
+  if (size == 0)
+    return nullptr;
+  if (alignment % 8 != 0 || (alignment & (alignment - 1)) != 0) {
+    errno = EINVAL;
+    return nullptr;
+  }
+  size_t req_size = size + alignment;
+  void *ptr = malloc(req_size);
+  if (ptr == nullptr || alignment == 0)
+    return ptr;
+  size_t sptr = reinterpret_cast<size_t>(ptr);
+  size_t mod = sptr % alignment;
+  size_t offset = alignment - mod;
+  assert(offset >= sizeof(void*));
+  void **ptr_aligned = reinterpret_cast<void**>(sptr + offset);
+  ptr_aligned[-1] = ptr;
+  return ptr_aligned;
+#endif
+}
+
+extern "C" void __aligned_free(void *ptr) {
+#if (__TARGET_LIB__ >= 0x43010000)
+  free(ptr);
+#else
+  free((reinterpret_cast<void**>(ptr))[-1]);
+#endif
 }
 
 #if defined(ZOSLIB_INITIALIZE)
