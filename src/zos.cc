@@ -25,7 +25,6 @@
 #include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <features.h>
 #include <iconv.h>
 #include <libgen.h>
 #include <poll.h>
@@ -3112,6 +3111,7 @@ extern "C" void *__aligned_malloc(size_t size, size_t alignment) {
   size_t sptr = reinterpret_cast<size_t>(ptr);
   size_t mod = sptr % alignment;
   size_t offset = alignment - mod;
+  assert(offset >= sizeof(void*));
   void **ptr_aligned = reinterpret_cast<void**>(sptr + offset);
   ptr_aligned[-1] = ptr;
   return ptr_aligned;
