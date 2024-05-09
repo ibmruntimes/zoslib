@@ -3104,10 +3104,16 @@ extern "C" void *__aligned_malloc(size_t size, size_t alignment) {
     return ptr;
   return nullptr;
 #else
+  if (size == 0)
+    return nullptr;
+  if (alignment % 8 != 0 || (alignment & (alignment - 1)) != 0) {
+    errno = EINVAL;
+    return nullptr;
+  }
   size_t req_size = size + alignment;
   void *ptr = malloc(req_size);
-  if (ptr == nullptr)
-    return nullptr;
+  if (ptr == nullptr || alignment == 0)
+    return ptr;
   size_t sptr = reinterpret_cast<size_t>(ptr);
   size_t mod = sptr % alignment;
   size_t offset = alignment - mod;
