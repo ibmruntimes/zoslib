@@ -53,4 +53,13 @@ TEST(AlignedAlloc, TestThree) {
   }
 }
 
+TEST(AlignedAlloc, TestFour) {
+  size_t alignment = 0;
+  size_t size = 4096;
+  void *ptr;
+  ptr = __aligned_malloc(size, alignment);
+  ASSERT_NE(ptr, nullptr);
+  __aligned_free(ptr);
+}
+
 } // namespace
