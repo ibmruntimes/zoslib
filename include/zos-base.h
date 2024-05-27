@@ -31,6 +31,12 @@
 
 #define __ZOS_CC
 
+#if __clang_major__ < 18
+#define NR(attr,reg) attr "NR:" #reg
+#else
+#define NR(attr,reg) attr "{" #reg "}"
+#endif 
+
 #include "zos-macros.h"
 #include "zos-bpx.h"
 #include "zos-char-util.h"
