@@ -60,6 +60,12 @@ extern "builtin" void *_gdsa();
 #endif
 
 
+#if((__open_xl_version__) < 2)
+#define NR(attr, reg) attr "NR:" #reg
+#else
+#define NR(attr, reg) attr "{" #reg "}"
+#endif
+
 #ifndef dsa
 #define dsa() ((unsigned long *)_gdsa())
 #endif
@@ -464,7 +470,7 @@ void __abend(int comp_code, unsigned reason_code, int flat_byte, void *plist) {
   r1 = (flat_byte << 24) + (0x00ffffff & comp_code);
   __asm volatile(" SVC 13\n"
                  :
-                 : "NR:r0"(r0), "NR:r1"(r1), "NR:r15"(r15)
+                 : NR("", r0)(r0), NR("", r1)(r1), NR("", r15)(r15)
                  :);
 }
 
@@ -1097,7 +1103,7 @@ static long long __iarv64(void *parm, long long *reason_code_ptr) {
   char *code = ((char *__ptr32 *__ptr32 *__ptr32 *)0)[4][193][52];
   code = (char *)(((unsigned long long)code) | 14); // offset to the entry
   asm volatile(" PC 0(%3)"
-               : "=NR:r0"(reason), "+NR:r1"(parm), "=NR:r15"(rc)
+               : NR("=", r0)(reason), NR("+", r1)(parm), NR("=", r15)(rc)
                : "a"(code)
                : );
   rc = (rc & 0x0ffff);
@@ -2145,7 +2151,7 @@ unsigned long long __registerProduct(const char *major_version,
   arg->begtime_addr = (char *__ptr32)__malloc31(sizeof(char *__ptr32));
 
   // Load 25 (IFAUSAGE) into reg15 and call via SVC
-  asm volatile(" svc 109\n" : "=NR:r15"(ifausage_rc) : "NR:r1"(arg), "NR:r15"(25) :);
+  asm volatile(" svc 109\n" : NR("=", r15)(ifausage_rc) : NR("", r1)(arg), NR("", r15)(25) :);
 
   free(arg);
 

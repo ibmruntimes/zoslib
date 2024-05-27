@@ -17,6 +17,12 @@
 #include <_Nascii.h>
 #include <sys/types.h>
 
+#if((__open_xl_version__) < 2)
+#define NR(attr, reg) attr "NR:" #reg
+#else
+#define NR(attr, reg) attr "{" #reg "}"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -174,8 +180,8 @@ inline void* __Z_EXPORT __convert_one_to_one(const void *table, void *dst,
                                              size_t size, const void *src) {
   void *rst = dst;
   __asm volatile(" troo 2,%2,1 \n jo *-4 \n"
-                 : "+NR:r3"(size), "+NR:r2"(dst), "+r"(src)
-                 : "NR:r1"(table)
+                 : NR("+", r3)(size), NR("+", r2)(dst), "+r"(src)
+                 : NR("", r1)(table)
                  : "r0");
   return rst;
 }
@@ -238,8 +244,8 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
   start = str;
   __asm volatile(" trte %1,%3,0\n"
                  " jo *-4\n"
-                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-                 : "NR:r1"(_tab_a)
+                 : NR("+", r3)(bytes), NR("+", r2)(str), "+r"(bytes), "+r"(code_out)
+                 : NR("", r1)(_tab_a)
                  :);
   unsigned a_len = str - start;
 
@@ -248,8 +254,8 @@ inline unsigned strlen_ae(const unsigned char *str, int *code_page,
   str = start;
   __asm volatile(" trte %1,%3,0\n"
                  " jo *-4\n"
-                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-                 : "NR:r1"(_tab_e)
+                 : NR("+", r3)(bytes), NR("+", r2)(str), "+r"(bytes), "+r"(code_out)
+                 : NR("", r1)(_tab_e)
                  :);
   unsigned e_len = str - start;
   if (a_len > e_len) {
@@ -289,8 +295,8 @@ inline unsigned strlen_e(const unsigned char *str, unsigned size) {
 
   __asm volatile(" trte %1,%3,0\n"
                  " jo *-4\n"
-                 : "+NR:r3"(bytes), "+NR:r2"(str), "+r"(bytes), "+r"(code_out)
-                 : "NR:r1"(_tab_e)
+                 : NR("+", r3)(bytes), NR("+", r2)(str), "+r"(bytes), "+r"(code_out)
+                 : NR("", r1)(_tab_e)
                  :);
 
   return str - start;

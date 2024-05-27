@@ -15,6 +15,12 @@
 #include <stdlib.h>
 #include <_Nascii.h>
 
+#if((__open_xl_version__) < 2)
+#define NR(attr, reg) attr "NR:" #reg
+#else
+#define NR(attr, reg) attr "{" #reg "}"
+#endif
+
 #define SignalList \
   SigInfo(0,     "Signal 0"), \
   SigInfo(HUP,   "SIGHUP"), \
@@ -116,7 +122,7 @@ size_t strnlen(const char *str, size_t maxlen) {
   asm volatile(" SRST %0,%1\n"
                " jo *-4"
                : "+r"(op1), "+r"(op2)
-               : "NR:r0"(0)
+               : NR("", r0)(0)
                :);
   return op1 - str;
 

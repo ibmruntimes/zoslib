@@ -16,6 +16,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#if((__open_xl_version__) < 2)
+#define NR(attr, reg) attr "NR:" #reg
+#else
+#define NR(attr, reg) attr "{" #reg "}"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,8 +67,8 @@ char *__realpath(const char *path, char *resolved_path) {
    path_resolved_len=strlen(resolved_path);
    const void *argv[] = {&path_len, ebcdic_path, &path_resolved_len, resolved_path, &rv, &rc, &rn};
    __asm volatile(" basr 14,%0\n"
-                  : "+NR:r15"(reg15)
-                  : "NR:r1"(&argv)
+                  : NR("+", r15)(reg15)
+                  : NR("", r1)(&argv)
                   : "r0", "r14");
    free(ebcdic_path);
    if (-1 == rv) {
@@ -97,8 +103,8 @@ void __bpx4kil(int pid, int signal, void *signal_options, int *return_value,
   void *argv[] = {&pid,         &signal,     signal_options,
                   return_value, return_code, reason_code}; // os style parm list
   __asm volatile(" basr 14,%0\n"
-                 : "+NR:r15"(reg15)
-                 : "NR:r1"(&argv)
+                 : NR("+", r15)(reg15)
+                 : NR("", r1)(&argv)
                  : "r0", "r14");
 }
 
@@ -106,8 +112,8 @@ void __bpx4frk(int *pid, int *return_code, int *reason_code) {
   void *reg15 = __uss_base_address()[240 / 4];    // BPX4FRK offset is 240
   void *argv[] = {pid, return_code, reason_code}; // os style parm list
   __asm volatile(" basr 14,%0\n"
-                 : "+NR:r15"(reg15)
-                 : "NR:r1"(&argv)
+                 : NR("+", r15)(reg15)
+                 : NR("", r1)(&argv)
                  : "r0", "r14");
 }
 
@@ -119,8 +125,8 @@ void __bpx4ctw(unsigned int *secs, unsigned int *nsecs,
   void *argv[] = {secs,         nsecs,       event_list, secs_rem, nsecs_rem,
                   return_value, return_code, reason_code}; // os style parm list
   __asm volatile(" basr 14,%0\n"
-                 : "+NR:r15"(reg15)
-                 : "NR:r1"(&argv)
+                 : NR("+", r15)(reg15)
+                 : NR("", r1)(&argv)
                  : "r0", "r14");
 }
 
@@ -135,8 +141,8 @@ void __bpx4gth(int *input_length, void **input_address, int *output_length,
                   return_value, return_code,   reason_code};
 
   __asm volatile(" basr 14,%0\n"
-                 : "+NR:r15"(reg15)
-                 : "NR:r1"(&argv)
+                 : NR("+", r15)(reg15)
+                 : NR("", r1)(&argv)
                  : "r0");
 }
 
@@ -151,8 +157,8 @@ void __bpx4lcr(int pathname_length, char *pathname, int attributes_length,
                   return_value,     return_code, reason_code};
 
   __asm volatile(" basr 14,%0\n"
-                 : "+NR:r15"(reg15)
-                 : "NR:r1"(&argv)
+                 : NR("+", r15)(reg15)
+                 : NR("", r1)(&argv)
                  : "r0", "r14");
 }
 
