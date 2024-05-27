@@ -26,17 +26,14 @@ ZOSLIB implements the following:
 ZOSLIB is supported on the following z/OS operating systems
 with z/OS UNIX System Services enabled:
 
-- z/OS V2R3 with the following PTFs installed:
-  - UI61308
-  - UI61375
-  - UI61747
-
 - z/OS V2R4 with the following PTFs installed:
   - UI64830
   - UI64837
   - UI64839
   - UI64940
   - UI65567
+- z/OS V2R5
+- z/OS V3R1
 
 ZOSLIB is supported on the following hardware:
 - IBM z16
@@ -221,7 +218,7 @@ Random index: 1
 
 ## API Documentation
 
-The ZOSLIB API documentation is available [here](docs).
+The ZOSLIB API documentation is available [here](https://ibmruntimes.github.io/zoslib/).
 
 ## Legalities
 
