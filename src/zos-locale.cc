@@ -170,4 +170,25 @@ locale_t uselocale(locale_t new_loc) {
   return prev_loc;
 }
 
+struct SetAndRestore {
+  explicit SetAndRestore(locale_t l) {
+    if (l == (locale_t)0) {
+      _stored = uselocale(&c_locale);
+    } else {
+      _stored = uselocale(l);
+    }
+  }
+
+  ~SetAndRestore() {
+    uselocale(_stored);
+  }
+
+  private:
+    locale_t _stored = (locale_t)0;
+};
+
+double strtod_l(const char * __restrict__ str, char ** __restrict__ end, locale_t l) {
+  SetAndRestore newloc(l);
+  return strtod(str, end);
+}
 }

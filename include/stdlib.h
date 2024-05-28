@@ -61,6 +61,7 @@ __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm(
 __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 #endif /* __NATIVE_ASCII_F */
 
+__Z_EXPORT double strtod_l(const char * __restrict__ , char ** __restrict__ , locale_t );
 #if defined(__cplusplus)
 }
 #endif
