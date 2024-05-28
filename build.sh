@@ -64,7 +64,9 @@ fi
 pushd build
 export MAKEFLAGS='-j4'
 
-cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} ${BLD_TESTS} -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DCMAKE_INSTALL_PREFIX=${SCRIPT_DIR}/install
+if((IS_CLEAN==1)) || ! test -s CMakeCache.txt; then
+  cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} ${BLD_TESTS} -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DCMAKE_INSTALL_PREFIX=${SCRIPT_DIR}/install
+fi
 cmake --build . --target install
 
 popd

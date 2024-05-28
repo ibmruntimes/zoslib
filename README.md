@@ -39,6 +39,7 @@ with z/OS UNIX System Services enabled:
   - UI65567
 
 ZOSLIB is supported on the following hardware:
+- IBM z16
 - IBM z15
 - IBM z14/z14 Model ZR1
 - IBM z13/z13s

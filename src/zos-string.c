@@ -8,6 +8,8 @@
 
 #define _AE_BIMODAL 1
 
+#include "zos-base.h"
+
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
@@ -116,7 +118,7 @@ size_t strnlen(const char *str, size_t maxlen) {
   asm volatile(" SRST %0,%1\n"
                " jo *-4"
                : "+r"(op1), "+r"(op2)
-               : "NR:r0"(0)
+               : NR("",r0)(0)
                :);
   return op1 - str;
 

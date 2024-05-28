@@ -48,7 +48,11 @@ __Z_EXPORT int posix_spawnattr_setsigmask(posix_spawnattr_t *, sigset_t *mask);
 __Z_EXPORT int posix_spawnattr_setflags(posix_spawnattr_t *, short flags);
 __Z_EXPORT int posix_spawnattr_destroy(posix_spawnattr_t *);
 
-__Z_EXPORT int posix_spawn(pid_t *pid, const char *cmd,
+__Z_EXPORT int posix_spawn(pid_t *pid, const char *path,
+                const posix_spawn_file_actions_t *act,
+                const posix_spawnattr_t *, char *const args[],
+                char *const env[]);
+__Z_EXPORT int posix_spawnp(pid_t *pid, const char *file,
                 const posix_spawn_file_actions_t *act,
                 const posix_spawnattr_t *, char *const args[],
                 char *const env[]);

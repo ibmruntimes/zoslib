@@ -5,7 +5,6 @@
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
-
 #define _AE_BIMODAL 1
 #undef _ENHANCED_ASCII_EXT
 #define _ENHANCED_ASCII_EXT 0xFFFFFFFF
@@ -87,25 +86,22 @@ int (*nanosleep)(const struct timespec*, struct timespec*) = 0;
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-static char **__argv = nullptr;
-static int __argc = -1;
-static pthread_t _timer_tid;
-static int *__main_thread_stack_top_address = 0;
-static bool __is_backtrace_on_abort = true;
-static bool __zoslib_terminated = false;
+namespace {
+char **__argv = nullptr;
+int __argc = -1;
+pthread_t _timer_tid;
+int *__main_thread_stack_top_address = 0;
+bool __is_backtrace_on_abort = true;
+bool __zoslib_terminated = false;
+bool __gMainTerminating = false;
 
-static const char MEMLOG_LEVEL_WARNING = '1';
-static const char MEMLOG_LEVEL_ALL = '2';
+int __gMainThreadId = -1;
+pthread_t __gMainThreadSelf = {-1u};
+char __gArgsStr[PATH_MAX*2] = "";
+char __gChildInfo[32] = "";
 
-static char __gMemoryUsageLogFile[PATH_MAX] = "";
-static bool __gLogMemoryUsage = false;
-static bool __gLogMemoryAll = false;
-static bool __gLogMemoryWarning = false;
-static char __gArgsStr[PATH_MAX*2] = "";
-static bool __gMainTerminating = false;
-
-static int __gMainThreadId = -1;
-static pthread_t __gMainThreadSelf = {-1u};
+__zinit __instance;
+}
 
 #if defined(BUILD_VERSION)
 const char *__zoslib_version = BUILD_VERSION;
@@ -118,12 +114,13 @@ const char *__zoslib_version = DEFAULT_BUILD_STRING;
 #endif
 
 extern "C" void __set_ccsid_guess_buf_size(int nbytes);
+extern "C" void update_memlogging(__zinit *, const char *envar);
+extern "C" void update_memlogging_level(__zinit *, const char *envar);
+extern "C" void update_memlogging_inc(__zinit *, const char *envar);
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
-
-static __zinit __instance;
 
 __zinit* __get_instance() {
   if (__zoslib_terminated)
@@ -360,7 +357,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (fc.tok_sev >= 2) {
         dprintf(2, "____le_traceback_a() service failed\n");
         free(return_buff);
-        *return_string = 0;
+        if (return_string != nullptr)
+          *return_string = 0;
         return;
       }
       caller_dsa = tbck_parms.__tf_caller_dsa_addr;
@@ -432,7 +430,8 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       if (i == size) {
         // return &table[0];
         table[i] = 0;
-        *return_string = &table[0];
+        if (return_string != nullptr)
+          *return_string = &table[0];
         return;
       }
       free(return_buff);
@@ -465,7 +464,7 @@ void __abend(int comp_code, unsigned reason_code, int flat_byte, void *plist) {
   r1 = (flat_byte << 24) + (0x00ffffff & comp_code);
   __asm volatile(" SVC 13\n"
                  :
-                 : "NR:r0"(r0), "NR:r1"(r1), "NR:r15"(r15)
+                 : NR("",r0)(r0), NR("",r1)(r1), NR("",r15)(r15)
                  :);
 }
 
@@ -1098,7 +1097,7 @@ static long long __iarv64(void *parm, long long *reason_code_ptr) {
   char *code = ((char *__ptr32 *__ptr32 *__ptr32 *)0)[4][193][52];
   code = (char *)(((unsigned long long)code) | 14); // offset to the entry
   asm volatile(" PC 0(%3)"
-               : "=NR:r0"(reason), "+NR:r1"(parm), "=NR:r15"(rc)
+               : NR("=",r0)(reason), NR("+",r1)(parm), NR("=",r15)(rc)
                : "a"(code)
                : );
   rc = (rc & 0x0ffff);
@@ -1476,9 +1475,10 @@ extern "C" int execvpe(const char *name, char *const argv[],
     // If PATH is not defined, get the default from confstr
     len = confstr(_CS_PATH, NULL, 0);
     if (len) {
-       dp = (char*)malloc(len + 1);
+       dp = (char*)malloc(len);
        if (dp == NULL)
          return errno ? errno : ENOMEM;
+       confstr (_CS_PATH, dp, len);
     } else
        len = 1;
   }
@@ -2145,7 +2145,10 @@ unsigned long long __registerProduct(const char *major_version,
   arg->begtime_addr = (char *__ptr32)__malloc31(sizeof(char *__ptr32));
 
   // Load 25 (IFAUSAGE) into reg15 and call via SVC
-  asm volatile(" svc 109\n" : "=NR:r15"(ifausage_rc) : "NR:r1"(arg), "NR:r15"(25) :);
+  asm volatile(" svc 109\n"
+               : NR("=",r15)(ifausage_rc)
+               : NR("",r1)(arg), NR("",r15)(25)
+               :);
 
   free(arg);
 
@@ -2224,34 +2227,6 @@ int __print_zoslib_help(FILE *fp, const char *title) {
   return 0;
 }
 
-static void update_memlogging(const char *envar) {
-  __zinit *zinit_ptr = __get_instance();
-  if (!zinit_ptr)
-    return;
-  zoslib_config_t &config = zinit_ptr->config;
-
-  char *p;
-  if (envar)
-    strncpy(__gMemoryUsageLogFile, envar, sizeof(__gMemoryUsageLogFile));
-  else if ((p = getenv(config.MEMORY_USAGE_LOG_FILE_ENVAR)) != NULL)
-    strncpy(__gMemoryUsageLogFile, p, sizeof(__gMemoryUsageLogFile));
-  else if (mem_account())
-    strncpy(__gMemoryUsageLogFile, "stderr", sizeof(__gMemoryUsageLogFile));
-
-  if (*__gMemoryUsageLogFile) {
-    __gLogMemoryUsage = true;
-    int len = 0;
-    __gArgsStr[0] = 0;
-    for (int i=0; i<__getargc(); ++i) {
-      strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
-      len += strlen(__argv[i]);
-      __gArgsStr[len++] = ' ';
-      __gArgsStr[len] = 0;
-    }
-  } else
-    __gLogMemoryUsage = false;
-}
-
 int __update_envar_settings(const char *envar) {
   __zinit *zinit_ptr = __get_instance();
   if (!zinit_ptr)
@@ -2309,19 +2284,14 @@ int __update_envar_settings(const char *envar) {
         get_no_tag_ignore_ccsid1047(config.UNTAGGED_READ_MODE_CCSID1047_ENVAR);
   }
 
-  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0) {
-    update_memlogging(envar);
-  }
-  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0) {
-    char *penv = getenv(config.MEMORY_USAGE_LOG_LEVEL_ENVAR);
-    if (penv && __doLogMemoryUsage()) {
-      // Errors and start/terminating messages are always displayed.
-      if (*penv == MEMLOG_LEVEL_ALL)
-        __gLogMemoryAll = true;  // display all messages
-      else if (*penv == MEMLOG_LEVEL_WARNING)
-        __gLogMemoryWarning = true; // warnings only
-    }
-  }
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_FILE_ENVAR) == 0)
+    update_memlogging(zinit_ptr, envar);
+ 
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_LEVEL_ENVAR) == 0)
+    update_memlogging_level(zinit_ptr, envar);
+ 
+  if (force_update_all || strcmp(envar, config.MEMORY_USAGE_LOG_INC_ENVAR) == 0)
+    update_memlogging_inc(zinit_ptr, envar);
 
   return 0;
 }
@@ -2511,9 +2481,35 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 __zinit::__zinit() {
   __gMainThreadId = gettid();
   __gMainThreadSelf = pthread_self();
-  update_memlogging(nullptr);
-  if (__doLogMemoryUsage())
-    __memprintf("PROCESS STARTED: %s\n", __gArgsStr);
+
+  update_memlogging(__get_instance(), nullptr);
+  update_memlogging_level(__get_instance(), nullptr);
+
+  if (__doLogMemoryUsage()) {
+    int len = 0;
+    __gArgsStr[0] = 0;
+    for (int i=0; i<__getargc(); ++i) {
+      strncat(__gArgsStr, __argv[i], sizeof(__gArgsStr) - len - 1);
+      len += strlen(__argv[i]);
+      __gArgsStr[len++] = ' ';
+      __gArgsStr[len] = 0;
+    }
+
+    // Include <parent-name>(parent-pid) in the start/termination message:
+    int ppid = getppid();
+    int argc;
+    char **argv = nullptr;
+    if (__getargcv(&argc, &argv, ppid) != 0) {
+      snprintf(__gChildInfo, sizeof(__gChildInfo), "?(%d)-CHILD", ppid);
+    } else {
+      const char *parentname = strrchr(argv[0], '/');
+      parentname = (parentname != nullptr) ? parentname + 1 : argv[0]; 
+      free((void*)argv);
+      snprintf(__gChildInfo, sizeof(__gChildInfo), "%s(%d)-CHILD",
+               parentname, ppid);
+    }
+    __memprintf("%s PROCESS STARTED: %s\n", __gChildInfo, __gArgsStr);
+  }
 }
 
 __zinit:: ~__zinit() {
@@ -2885,7 +2881,6 @@ int lutimes(const char *filename, const struct timeval tv[2]) {
 
   if (return_value != 0) {
     errno = return_code;
-    perror("__bpx4lcr");
     return -1;
   }
 
@@ -3049,18 +3044,6 @@ extern "C" int __check_le_func(void *addr, char *funcname, size_t len) {
   return 1;
 }
 
-extern "C" bool __doLogMemoryUsage() { return __gLogMemoryUsage; }
-
-extern "C" void __setLogMemoryUsage(bool v) { __gLogMemoryUsage = v; }
-
-extern "C" char *__getMemoryUsageLogFile() { return __gMemoryUsageLogFile; }
-
-extern "C" bool __doLogMemoryAll() { return __gLogMemoryAll; }
-
-extern "C" bool __doLogMemoryWarning() {
-  return __gLogMemoryAll || __gLogMemoryWarning;
-}
-
 extern "C" void __mainTerminating() { __gMainTerminating = true; }
 
 //TODO: Implement chdir_long properly, for now call chdir
@@ -3115,6 +3098,41 @@ extern "C" char* __getprogramdir() {
   }
 
   return NULL;
+}
+
+extern "C" void *__aligned_malloc(size_t size, size_t alignment) {
+#if (__TARGET_LIB__ >= 0x43010000)
+  void *ptr;
+  if (posix_memalign(&ptr, alignment, size) == 0)
+    return ptr;
+  return nullptr;
+#else
+  if (size == 0)
+    return nullptr;
+  if (alignment % 8 != 0 || (alignment & (alignment - 1)) != 0) {
+    errno = EINVAL;
+    return nullptr;
+  }
+  size_t req_size = size + alignment;
+  void *ptr = malloc(req_size);
+  if (ptr == nullptr || alignment == 0)
+    return ptr;
+  size_t sptr = reinterpret_cast<size_t>(ptr);
+  size_t mod = sptr % alignment;
+  size_t offset = alignment - mod;
+  assert(offset >= sizeof(void*));
+  void **ptr_aligned = reinterpret_cast<void**>(sptr + offset);
+  ptr_aligned[-1] = ptr;
+  return ptr_aligned;
+#endif
+}
+
+extern "C" void __aligned_free(void *ptr) {
+#if (__TARGET_LIB__ >= 0x43010000)
+  free(ptr);
+#else
+  free((reinterpret_cast<void**>(ptr))[-1]);
+#endif
 }
 
 #if defined(ZOSLIB_INITIALIZE)

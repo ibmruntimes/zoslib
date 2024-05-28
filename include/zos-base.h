@@ -31,6 +31,12 @@
 
 #define __ZOS_CC
 
+#if __clang_major__ < 18
+#define NR(attr,reg) attr "NR:" #reg
+#else
+#define NR(attr,reg) attr "{" #reg "}"
+#endif 
+
 #include "zos-macros.h"
 #include "zos-bpx.h"
 #include "zos-char-util.h"
@@ -47,6 +53,7 @@
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 #define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 #define MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_LEVEL"
+#define MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_INC"
 
 typedef enum {
   __NO_TAG_READ_DEFAULT = 0,
@@ -482,6 +489,12 @@ typedef struct __Z_EXPORT zoslib_config {
    */
   const char *MEMORY_USAGE_LOG_LEVEL_ENVAR =
               MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT;
+  /**
+   * String to indicate the envar to be used to specify the increase in memory
+   * allocated, in bytes, after which logging occurs.
+   */
+  const char *MEMORY_USAGE_LOG_INC_ENVAR = MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT;
+
 } zoslib_config_t;
 
 /**
@@ -565,29 +578,6 @@ unsigned long __get_libvec_base(void);
 __Z_EXPORT int __update_envar_names(zoslib_config_t *const config);
 
 /**
- * Returns true if logging of memory allocation and release is specified.
- */
-__Z_EXPORT bool __doLogMemoryUsage();
-
-/**
- * Returns the file name, including "stdout" or "stderr", used to log memory
- * allocation and release to.
- */
-__Z_EXPORT char *__getMemoryUsageLogFile();
-
-/**
- * Returns true if all messages from memory allocation and release are being
- * displayed.
- */
-__Z_EXPORT bool __doLogMemoryAll();
-
-/**
- * Returns true if only warnings from memory allocation and release are being
- * displayed. Errors are always included if memory logging in on.
- */
-__Z_EXPORT bool __doLogMemoryWarning();
-
-/**
  * Tell zoslib that the main process is terminating, for its diagnostics.
  *
  */
@@ -597,6 +587,20 @@ __Z_EXPORT void __mainTerminating();
  * Returns the program's directory as an absolute path
  */
 __Z_EXPORT char* __getprogramdir();
+
+/**
+ * Reserve aligned storage block
+ * \param [in] alignment - must be a power of two and a multiple of
+ *  sizeof(void*)
+ * \param [in] size - number of bytes to allocate
+ * \return pointer to the beginning of newly allocated memory
+ */
+__Z_EXPORT void *__aligned_malloc(size_t size, size_t alignment);
+
+/**
+ * \param [in] ptr - pointer to the memory to deallocate
+ */
+__Z_EXPORT void __aligned_free(void *ptr);
 
 #ifdef __cplusplus
 }

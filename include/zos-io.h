@@ -80,6 +80,14 @@ __Z_EXPORT int __find_file_in_path(char *out, int size, const char *envvar,
                                    const char *file);
 
 /**
+ * Apply or remove an advisory lock on an open file
+ * \param [in] fd file descriptor of the open file
+ * \param [in] operation is one of LOCK_SH, LOCK_EX or LOCK_UN
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __flock(int fd, int operation);
+
+/**
  * Change file descriptor to CCSID.
  * \param [in] fd file descriptor.
  * \param [in] ccsid CCSID.
@@ -138,6 +146,36 @@ __Z_EXPORT int __getfdccsid(int fd);
  * \return returns 0 if successful, or -1 on failure.
  */
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
+
+/**
+ * Returns true if logging of memory allocation and release is specified.
+ */
+__Z_EXPORT bool __doLogMemoryUsage();
+
+/**
+ * Returns the file name, including "stdout" or "stderr", used to log memory
+ * allocation and release to.
+ */
+__Z_EXPORT char *__getMemoryUsageLogFile();
+
+/**
+ * Returns true if all messages from memory allocation and release are being
+ * displayed.
+ */
+__Z_EXPORT bool __doLogMemoryAll();
+
+/**
+ * Returns true if only warnings from memory allocation and release are being
+ * displayed. Errors are always included if memory logging in on.
+ */
+__Z_EXPORT bool __doLogMemoryWarning();
+
+/**
+ * Returns true if memory allocation should be displayed when curval increases
+ * by the value set in environment variable __MEMORY_USAGE_LOG_INC since the last
+ * currently allocated size was displayed.
+ */
+__Z_EXPORT bool __doLogMemoryInc(size_t curval, size_t *plastval);
 
 /**
  * Returns the fileno to which memory diagnostics is written (use for

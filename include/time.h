@@ -42,12 +42,22 @@ __Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
 
 #include_next <time.h>
 
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
+// __clockid_t is defined in sys/types.h #if __EDC_TARGET >= __EDC_LE4205 as
+#ifndef __clockid_t
+  #define __clockid_t    1
+  typedef unsigned  int clockid_t;
+#endif
+
+// These are defined in the system's time.h  #if __EDC_TARGET >= __EDC_LE4205
+#ifndef CLOCK_REALTIME
+  #define CLOCK_REALTIME        0
+#endif
+#ifndef CLOCK_MONOTONIC
+  #define CLOCK_MONOTONIC       1
+#endif
+// These are not defined anywhere as of LE 3.1:
+#define CLOCK_HIGHRES           2
+#define CLOCK_THREAD_CPUTIME_ID 3
 
 #if defined(__cplusplus)
 extern "C" {

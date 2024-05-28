@@ -6,7 +6,7 @@
 //// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 /////////////////////////////////////////////////////////////////////////////////
 
-#include <spawn.h>
+#include "spawn.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <errno.h>
@@ -14,6 +14,8 @@
 #include <fcntl.h>
 #define _POSIX_SOURCE
 #include <unistd.h>
+
+#include "zos-io.h"
 
 enum ActionKinds { op_open, op_close, op_dup2};
 struct _spawn_actions {
@@ -173,8 +175,10 @@ int posix_spawnattr_destroy(posix_spawnattr_t* attr) {
   return 0;
 }
 
-int posix_spawn(pid_t *pid, const char *cmd, const posix_spawn_file_actions_t *act, const posix_spawnattr_t* attr, char * const args[], char * const env[]) {
-
+int posix_spawn(pid_t *pid, const char *path,
+                const posix_spawn_file_actions_t *act,
+                const posix_spawnattr_t* attr,
+                char * const args[], char * const env[]) {
   if (pid==nullptr)
     return EINVAL;
 #if HAS_VFORK
@@ -228,12 +232,26 @@ int posix_spawn(pid_t *pid, const char *cmd, const posix_spawn_file_actions_t *a
             if ((rc=dup2(cur->fd, cur->new_fd)) < 0)
               return rc;
             break;
-          default: return 127;
+          default: return ENOENT;
         }
       }
     }
-  execve(cmd, args, env);
-  return 127;
+    execve(path, args, env);
+    rc = errno;
+    return rc != 0 ? rc : ENOENT;
   }
   return 0;
+}
+
+int posix_spawnp(pid_t *pid, const char *file,
+                const posix_spawn_file_actions_t *act,
+                const posix_spawnattr_t* attr,
+                char * const args[], char * const env[]) {
+  char filepath[PATH_MAX];
+  char *pathenv = getenv("PATH");
+  if (pathenv != NULL &&
+      __find_file_in_path(filepath, sizeof(filepath), pathenv, file) > 0) {
+    return posix_spawn(pid, filepath, act, attr, args, env);
+  }
+  return ENOENT;
 }
