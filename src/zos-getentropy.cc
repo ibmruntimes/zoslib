@@ -96,7 +96,7 @@ extern "C" int getentropy(void* output, size_t size) {
       __asm volatile(" prno 8,10\n"
             " jo *-4\n"
             :
-            : NR("",r0)(0), NR("",r1)(&value)
+            : __ZL_NR("",r0)(0), __ZL_NR("",r1)(&value)
             :);
     if (0x2000 & value.b) {
         feature = 1;
@@ -127,15 +127,15 @@ extern "C" int getentropy(void* output, size_t size) {
   long first_operand_length = 0;
   __asm volatile(" prno 10,2\n"
         " jo *-4\n"
-        : NR("+",r2)(out), NR("+",r3)(size)
-        : NR("",r0)(114), NR("",r11)(first_operand_length)
+        : __ZL_NR("+",r2)(out), __ZL_NR("+",r3)(size)
+        : __ZL_NR("",r0)(114), __ZL_NR("",r11)(first_operand_length)
         :);
 
 #else
   __asm(" prno 8,10\n"
       " jo *-4\n"
-      : NR("+",r10)(out), NR("+",r11)(size)
-      : NR("",r0)(114), NR("",r9)(0)
+      : __ZL_NR("+",r10)(out), __ZL_NR("+",r11)(size)
+      : __ZL_NR("",r0)(114), __ZL_NR("",r9)(0)
       : "r0");
 #endif
   return 0;

@@ -31,10 +31,12 @@
 
 #define __ZOS_CC
 
+// XL-specific NR parameter constraint:
+// https://www.ibm.com/docs/en/zos/2.4.0?topic=statements-inline-assembly-extension
 #if __clang_major__ < 18
-#define NR(attr,reg) attr "NR:" #reg
+#define __ZL_NR(attr,reg) attr "NR:" #reg
 #else
-#define NR(attr,reg) attr "{" #reg "}"
+#define __ZL_NR(attr,reg) attr "{" #reg "}"
 #endif 
 
 #include "zos-macros.h"

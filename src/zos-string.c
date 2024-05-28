@@ -118,7 +118,7 @@ size_t strnlen(const char *str, size_t maxlen) {
   asm volatile(" SRST %0,%1\n"
                " jo *-4"
                : "+r"(op1), "+r"(op2)
-               : NR("",r0)(0)
+               : __ZL_NR("",r0)(0)
                :);
   return op1 - str;
 
