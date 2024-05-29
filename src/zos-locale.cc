@@ -10,6 +10,7 @@
 #define ZOSLIB_OVERRIDE_CLIB_LOCALE
 #endif
 #include <locale.h>
+#include <stdlib.h>
 
 #include <errno.h>
 #include <string>
