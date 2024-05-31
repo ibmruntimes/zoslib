@@ -6,6 +6,9 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifndef __ibmxl__
+// libc++ in xlclang++ leaks newlocale/locale_t so zoslib can't provide 
+// alternatives for that compiler
 #ifndef ZOSLIB_OVERRIDE_CLIB_LOCALE
 #define ZOSLIB_OVERRIDE_CLIB_LOCALE
 #endif
@@ -193,3 +196,4 @@ double strtod_l(const char * __restrict__ str, char ** __restrict__ end, locale_
   return strtod(str, end);
 }
 }
+#endif

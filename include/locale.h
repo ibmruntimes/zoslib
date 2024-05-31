@@ -9,9 +9,14 @@
 #ifndef ZOS_LOCALE_H_
 #define ZOS_LOCALE_H_
 
+// With the xlclang++ compiler, the libc++ it provides has definitions
+// for these functions in the global space that conflict with these.
+// For xlclang++, exclude these declarations unless ZOSLIB_OVERRIDE_CLIB_LOCALE
+// is defined even if ZOSLIB_OVERRIDE_CLIB is defined.
+
+#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE))
 #include "zos-macros.h"
 
-#if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)
 #undef newlocale
 #define newlocale_replaced
 #undef freelocale
