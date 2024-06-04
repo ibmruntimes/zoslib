@@ -82,6 +82,8 @@ locale_t newlocale(int category_mask, const char* locale, locale_t base) {
 
   if (base && base != LC_GLOBAL_LOCALE)
     *new_loc = *base;
+  else
+    new_loc->category_mask = 0;
 
   auto set_for_category = [&](int id, int mask, std::string &setting) {
     const char *setting_to_apply = nullptr;
@@ -153,8 +155,7 @@ locale_t uselocale(locale_t new_loc) {
     };
 
 #define Apply(id, locale_member) apply_category(id, id##_MASK, new_loc->locale_member, saved_locale. locale_member)
-    bool is_ok =
-  CategoryList(Apply, &&);
+    bool is_ok = CategoryList(Apply, &&);
 #undef Apply
 
     if (!is_ok) {
