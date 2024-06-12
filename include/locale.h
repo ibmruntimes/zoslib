@@ -62,6 +62,6 @@ __Z_EXPORT extern locale_t uselocale(locale_t newloc) __asm("__zluselocale_a");
 #else
 #include_next <locale.h>
 
-#endif // ZOSLIB_OVERRIDE_LOCALE_T
+#endif 
 
 #endif

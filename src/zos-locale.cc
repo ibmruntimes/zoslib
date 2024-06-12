@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef __ibmxl__
-// libc++ in xlclang++ leaks newlocale/locale_t so zoslib can't provide 
+// libc++ in xlclang++ leaks newlocale/locale_t so zoslib can't provide
 // alternatives for that compiler
 #ifndef ZOSLIB_OVERRIDE_CLIB_LOCALE
 #define ZOSLIB_OVERRIDE_CLIB_LOCALE
