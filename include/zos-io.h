@@ -148,30 +148,30 @@ __Z_EXPORT int __getfdccsid(int fd);
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
 
 /**
- * Returns true if logging of memory allocation and release is specified.
+ * Returns true if logging of memory [de]allocation is specified.
  */
 __Z_EXPORT bool __doLogMemoryUsage();
 
 /**
  * Returns the file name, including "stdout" or "stderr", used to log memory
- * allocation and release to.
+ * [de]allocation to.
  */
 __Z_EXPORT char *__getMemoryUsageLogFile();
 
 /**
- * Returns true if all messages from memory allocation and release are being
+ * Returns true if all messages from memory [de]allocation are being
  * displayed.
  */
 __Z_EXPORT bool __doLogMemoryAll();
 
 /**
- * Returns true if only warnings from memory allocation and release are being
+ * Returns true if only warnings from memory [de]allocation are being
  * displayed. Errors are always included if memory logging in on.
  */
 __Z_EXPORT bool __doLogMemoryWarning();
 
 /**
- * Returns true if memory allocation should be displayed when curval increases
+ * Returns true if memory allocation should be displayed when curvar increases
  * by the value set in environment variable __MEMORY_USAGE_LOG_INC since the last
  * currently allocated size was displayed.
  */
@@ -184,11 +184,28 @@ __Z_EXPORT bool __doLogMemoryInc(size_t curval, size_t *plastval);
 __Z_EXPORT int __getLogMemoryFileNo();
 
 /**
- * Logs memory allocation and release to the file name specified
- * in the environment variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
+ * Logs memory [de]allocation to the file name specified in the environment
+ * variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR.
  * \param [in] same as C's printf() parameters
  */
 __Z_EXPORT void __memprintf(const char *format, ...);
+
+/**
+ * Logs memory [de]allocation to the file name specified in the environment
+ * variable zoslib_config_t.MEMORY_USAGE_LOG_FILE_ENVAR, but without the
+ * process-id or thread-id prefix as __memprintf does.
+ * \param [in] same as C's printf() parameters
+ */
+__Z_EXPORT void __memprintfx(const char *format, ...);
+
+/**
+ * Returns the file name component of a given path.
+ * Similar to basename(path), but doesn't modify path, and if path ends with /,
+ * which is unexpected for a filename path, then it returns a pointer to that /.
+ * \param [in] path of a file.
+ * \return the file name component of a given path.
+ */
+__Z_EXPORT const char *__file_basename(const char *path);
 
 #ifdef __cplusplus
 }

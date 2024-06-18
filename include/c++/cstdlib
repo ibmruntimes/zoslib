@@ -1,0 +1,27 @@
+///////////////////////////////////////////////////////////////////////////////
+// Licensed Materials - Property of IBM
+// ZOSLIB
+// (C) Copyright IBM Corp. 2024. All Rights Reserved.
+// US Government Users Restricted Rights - Use, duplication
+// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+///////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+/*
+ * Works around error with xlclang:
+ * <compiler-path>/c++/cstdlib:line:col: error: no member named '__calloc_prtsrc' in the global namespace
+ * <zoslib-path>/include/stdlib.h:line:col: note: expanded from macro 'calloc'
+ * #define calloc     __calloc_prtsrc
+ * Same for malloc and realloc.
+*/ 
+
+#if defined(ZOSLIB_TRACE_ALLOCS) && defined(__clang__) && defined(__ibmxl__)
+#undef __calloc_prtsrc
+#undef __malloc_prtsrc
+#undef __realloc_prtsrc
+void *__calloc_prtsrc(size_t, size_t);
+void *__malloc_prtsrc(size_t);
+void *__realloc_prtsrc(void *, size_t);
+#endif
+
+#include_next <cstdlib>

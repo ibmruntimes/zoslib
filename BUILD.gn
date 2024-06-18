@@ -37,6 +37,7 @@ shared_library("zoslib") {
     "include/zos-sys-info.h",
     "include/zos-tls.h",
     "src/zos.cc",
+    "src/zos-allocs-trace.cc",
     "src/zos-bpx.cc",
     "src/zos-char-util.cc",
     "src/zos-getentropy.cc",
@@ -45,6 +46,7 @@ shared_library("zoslib") {
     "src/zos-spawn.cc",
     "src/zos-sys-info.cc",
     "src/zos-tls.cc",
+    "src/zos-tsearch.c",
   ]
 
   configs += [ ":zoslib_config" ]
