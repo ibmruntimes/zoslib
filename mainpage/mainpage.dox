@@ -20,7 +20,12 @@ The API documentation for ZOSLIB is provided within the library's headers.
 These are the main headers for ZOSLIB:
 - @ref include/zos.h
 - @ref include/zos-base.h
+- @ref include/zos-bpx.h
+- @ref include/zos-char-util.h
+- @ref include/zos-getentropy.h
+- @ref include/zos-io.h
+- @ref include/zos-macros.h
+- @ref include/zos-savstack.h
 - @ref include/zos-semaphore.h
 - @ref include/zos-sys-info.h
-
-*/
+- @ref include/zos-tls.h
