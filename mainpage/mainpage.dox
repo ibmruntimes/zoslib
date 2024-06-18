@@ -31,7 +31,6 @@ These are the main headers for ZOSLIB:
 - @ref include/zos-tls.h
 
 ZOSLIB also overrides the following LE headers:
-
 - @ref include/fcntl.h
 - @ref include/limits.h
 - @ref include/mntent.h
