@@ -20,7 +20,38 @@ The API documentation for ZOSLIB is provided within the library's headers.
 These are the main headers for ZOSLIB:
 - @ref include/zos.h
 - @ref include/zos-base.h
+- @ref include/zos-bpx.h
+- @ref include/zos-char-util.h
+- @ref include/zos-getentropy.h
+- @ref include/zos-io.h
+- @ref include/zos-macros.h
+- @ref include/zos-savstack.h
 - @ref include/zos-semaphore.h
 - @ref include/zos-sys-info.h
+- @ref include/zos-tls.h
 
-*/
+ZOSLIB also overrides the following LE headers:
+- @ref include/fcntl.h
+- @ref include/limits.h
+- @ref include/mntent.h
+- @ref include/netdb.h
+- @ref include/signal.h
+- @ref include/spawn.h
+- @ref include/stdio.h
+- @ref include/stdlib.h
+- @ref include/string.h
+- @ref include/time.h
+- @ref include/unistd.h
+- @ref include/utmpx.h
+- @ref include/sys/epoll.h
+- @ref include/sys/eventfd.h
+- @ref include/sys/file.h
+- @ref include/sys/fsstat.h
+- @ref include/sys/inotify.h
+- @ref include/sys/mount.h
+- @ref include/sys/param.h
+- @ref include/sys/socket.h
+- @ref include/sys/stat.h
+- @ref include/sys/sysmacros.h
+- @ref include/sys/time.h
+- @ref include/sys/types.h

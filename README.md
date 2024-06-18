@@ -33,6 +33,10 @@ with z/OS UNIX System Services enabled:
   - UI64940
   - UI65567
 - z/OS V2R5
+  - UI78912
+  - UI81095
+  - UI80156
+  - UI83424
 - z/OS V3R1
 
 ZOSLIB is supported on the following hardware:
