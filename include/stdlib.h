@@ -12,6 +12,9 @@
 #define __XPLAT 1
 #include "zos-macros.h"
 #include <features.h>
+#ifndef __ibmxl__
+#include <locale.h>
+#endif
 
 
 #if defined(__cplusplus)
@@ -65,6 +68,16 @@ __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 }
 #endif
 #endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) */
+
+#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE))
+#if defined(__cplusplus)
+extern "C" {
+#endif
+__Z_EXPORT double strtod_l(const char * __restrict__ , char ** __restrict__ , locale_t );
+#if defined(__cplusplus)
+}
+#endif
+#endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB_GETENV) && defined(__NATIVE_ASCII_F)
 #undef getenv

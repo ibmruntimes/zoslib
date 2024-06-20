@@ -85,6 +85,8 @@ else()
     -mzos-target=zosv2r4
     -fno-short-enums
     -fzos-le-char-mode=ascii)
+
+  target_link_options(zoslib PUBLIC "--shared")
 endif()
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
