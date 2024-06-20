@@ -39,7 +39,7 @@ extern "C" {
 # define LC_TIME_MASK      _CATMASK(LC_TIME)
 # define LC_MESSAGES_MASK  _CATMASK(LC_MESSAGES)
 
-// LC_ALL_MASK is an extentsion, and not defined in the standard.
+// LC_ALL_MASK is an extension, and not defined in the standard.
 // A little care is needed here.  The values assigned to LC_COLLATE etc.
 // are not necessarily continuous.  Therefore, LC_ALL_MASK must be
 // constructed by expicitly "or"ing the values of the individual categories.
