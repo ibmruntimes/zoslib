@@ -668,7 +668,7 @@ int __chgfdccsid(int fd, unsigned short ccsid) {
   memset(&attr, 0, sizeof(attr));
   attr.att_filetagchg = 1;
   attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
+  if (ccsid != FT_BINARY && ccsid != 0) {
     attr.att_filetag.ft_txtflag = 1;
   }
   return __fchattr(fd, &attr, sizeof(attr));
@@ -799,6 +799,8 @@ int __mkstemp_orig(char *) asm("@@A00184");
 FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
 struct utmpx *__getutxent_orig(void) asm("getutxent");
+int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) asm("@@PT3C");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1070,6 +1072,31 @@ bool __doLogMemoryWarning() {
   return __gLogMemoryAll || __gLogMemoryWarning;
 }
 
+// pthread_create override to ensure that _CVTSTATE_OFF does not break multi-threaded programs
+typedef struct {
+    void *(*start_routine)(void *);
+    void *arg;
+} __ThreadArg;
+
+void *custom_start_routine(void *arg) {
+  __ThreadArg *threadArg = (__ThreadArg *)arg;
+
+  int cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
+  if (_CVTSTATE_OFF == cvstate) {
+    __ae_autoconvert_state(_CVTSTATE_ON);
+  }
+
+  return threadArg->start_routine(threadArg->arg);
+}
+
+int __pthread_create_extended(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) {
+  __ThreadArg threadArg;
+  threadArg.start_routine = start_routine;
+  threadArg.arg = arg;
+
+  return __pthread_create_orig(thread, attr, custom_start_routine, (void *)&threadArg);
+}
 
 #ifdef __cplusplus
 }
