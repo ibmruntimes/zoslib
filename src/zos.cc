@@ -3098,6 +3098,19 @@ extern "C" char* __getprogramdir() {
   return NULL;
 }
 
+// C Library overrides
+int __sysconf_orig(int ) asm("sysconf");
+
+// Add support for _SC_NPROCESSORS_ONLN
+int __sysconf(int name) {
+  switch (name) {
+    case _SC_NPROCESSORS_ONLN:
+      return __get_num_online_cpus();
+    default:
+      return __sysconf_orig(name); 
+  }
+}
+
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;
 #endif
