@@ -139,6 +139,20 @@ char *strndup(const char *s, size_t n) {
   return dupStr;
 }
 
+void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen) {
+  size_t i;
+  const unsigned char *haystack_bytes = (const unsigned char *)haystack;
+  const unsigned char *needle_bytes = (const unsigned char *)needle;
+
+  for (i = 0; i <= haystacklen - needlelen; i++) {
+    if (memcmp(&haystack_bytes[i], needle_bytes, needlelen) == 0) {
+      return (void *)&haystack_bytes[i];
+    }
+  }
+
+  return NULL;
+}
+
 #if TEST
 int main() {
   printf("values: segv=%d total=%d\n", SIGSEGV, sigTotal);

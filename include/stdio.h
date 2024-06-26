@@ -10,6 +10,7 @@
 #define ZOS_STDIO_H_
 
 #include "zos-macros.h"
+#include <sys/types.h>
 
 #define __XPLAT 1
 
@@ -39,6 +40,8 @@ extern "C" {
 #endif
 
 __Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) __asm("__fopen_ascii");
+__Z_EXPORT ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+__Z_EXPORT ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream);
 
 #if defined(__cplusplus)
 }

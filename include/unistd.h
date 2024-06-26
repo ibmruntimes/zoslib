@@ -17,6 +17,8 @@ extern "C" {
 #endif
 __Z_EXPORT int __pipe_ascii(int [2]);
 __Z_EXPORT int __close(int);
+__Z_EXPORT int __sysconf(int name);
+
 #if defined(__cplusplus)
 }
 #endif
@@ -27,19 +29,23 @@ __Z_EXPORT int __close(int);
 #define pipe __pipe_replaced
 #undef close
 #define close __close_replaced
+#undef sysconf
+#define sysconf __sysconf_replaced
 #include_next <unistd.h>
 #undef pipe
 #undef close
+#undef sysconf
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
 __Z_EXPORT int pipe(int [2]) __asm("__pipe_ascii");
 __Z_EXPORT int close(int) __asm("__close");
+__Z_EXPORT int close(int) __asm("__close");
+__Z_EXPORT int sysconf(int name) __asm("__sysconf");
 
 #if defined(__cplusplus)
 }
@@ -73,6 +79,10 @@ __Z_EXPORT int execvpe(const char *name, char *const argv[],
 
 #if defined(__cplusplus)
 }
+#endif
+
+#ifndef _SC_NPROCESSORS_ONLN
+#define _SC_NPROCESSORS_ONLN 58 /* match linux */
 #endif
 
 #endif

@@ -104,6 +104,9 @@ extern "C" {
  */
 __Z_EXPORT int getloadavg(double loadavg[], int nelem);
 __Z_EXPORT const char * getprogname(void);
+__Z_EXPORT int mkostemp(char *, int flags);
+__Z_EXPORT int mkstemps(char *, int suffixlen);
+__Z_EXPORT int mkostemps(char *, int suffixlen, int flags);
 #if defined(__cplusplus)
 }
 #endif

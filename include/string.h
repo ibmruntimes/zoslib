@@ -24,6 +24,7 @@ __Z_EXPORT char *strndup(const char *s, size_t n);
 __Z_EXPORT char *strsignal(int );
 __Z_EXPORT const char *sigdescr_np(int);
 __Z_EXPORT const char *sigabbrev_np(int);
+__Z_EXPORT void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
 
 // Linux includes strings.h in string.h, this avoids the 
 // warning - implicitly declaring library function 'strcasecmp'

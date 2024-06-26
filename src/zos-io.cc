@@ -1091,11 +1091,133 @@ void *custom_start_routine(void *arg) {
 
 int __pthread_create_extended(pthread_t *thread, const pthread_attr_t *attr,
                       void *(*start_routine)(void *), void *arg) {
-  __ThreadArg threadArg;
-  threadArg.start_routine = start_routine;
-  threadArg.arg = arg;
+  __ThreadArg *threadArg = (__ThreadArg *)malloc(sizeof(__ThreadArg));
+  threadArg->start_routine = start_routine;
+  threadArg->arg = arg;
 
-  return __pthread_create_orig(thread, attr, custom_start_routine, (void *)&threadArg);
+  return __pthread_create_orig(thread, attr, custom_start_routine, (void *)threadArg);
+}
+
+ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
+    if (lineptr == NULL || n == NULL || stream == NULL) {
+        return -1;
+    }
+
+    int c;
+    size_t pos = 0;
+
+    if (*lineptr == NULL || *n == 0) {
+        *n = 128;
+        *lineptr = (char *)malloc(*n);
+        if (*lineptr == NULL) {
+            return -1;
+        }
+    }
+
+    while ((c = fgetc(stream)) != EOF) {
+        if (pos + 1 >= *n) {
+            // Resize buffer if needed
+            *n *= 2;
+            char *new_ptr = (char *)realloc(*lineptr, *n);
+            if (new_ptr == NULL) {
+                return -1;
+            }
+            *lineptr = new_ptr;
+        }
+
+        (*lineptr)[pos++] = (char)c;
+
+        if (c == '\n') {
+            break;
+        }
+    }
+
+    if (pos == 0 && c == EOF) {
+        return -1;
+    }
+
+    (*lineptr)[pos] = '\0';
+
+    return pos;
+}
+
+ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream) {
+  char *buf = *lineptr;
+  size_t bufsize = *n;
+  size_t len = 0;
+  int c;
+
+  if (buf == NULL || bufsize == 0) {
+    bufsize = 128;
+    buf = (char*)malloc(bufsize);
+    if (buf == NULL) {
+      return -1;
+    }
+    *lineptr = buf;
+    *n = bufsize;
+  }
+
+  while (1) {
+    c = fgetc(stream);
+    if (c == EOF || c == delimiter) {
+      break;
+    }
+
+    if (len + 1 >= bufsize) {
+      bufsize *= 2;
+      buf = (char*)realloc(buf, bufsize);
+      if (buf == NULL) {
+        return -1;
+      }
+      *lineptr = buf;
+      *n = bufsize;
+    }
+
+    buf[len++] = c;
+  }
+
+  buf[len] = '\0';
+
+  if (c == EOF && len == 0) {
+    free(buf);
+    *lineptr = NULL;
+    *n = 0;
+    return -1;
+  }
+
+  return len;
+}
+
+int mkostemp(char *tmpl, int flags) {
+  if (strlen(tmpl) < 6 || strcmp(&tmpl[strlen(tmpl) - 6], "XXXXXX") != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+  return mkstemp(tmpl);
+}
+
+int mkostemps(char *tmpl, int suffixlen, int flags) {
+  if (strlen(tmpl) < 6 + suffixlen || strcmp(&tmpl[strlen(tmpl) - 6 - suffixlen], "XXXXXX") != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+  char *p = tmpl + strlen(tmpl) - suffixlen - 6;
+  *p = '\0';
+  int fd = mkostemp(tmpl, flags);
+  *p = 'X';
+  return fd;
+}
+
+int mkstemps(char *tmpl, int suffixlen) {
+  if (strlen(tmpl) < 6 + suffixlen || strcmp(&tmpl[strlen(tmpl) - 6 - suffixlen], "XXXXXX") != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+  char *p = tmpl + strlen(tmpl) - suffixlen - 6;
+  *p = '\0';
+  int fd = __mkstemp_ascii(tmpl);
+  *p = 'X';
+  return fd;
 }
 
 #ifdef __cplusplus
