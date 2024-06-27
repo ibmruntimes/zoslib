@@ -48,4 +48,8 @@ __Z_EXPORT int pthread_create(pthread_t *thread,
 #endif
 #endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_PTHREAD) */
 
+#ifndef PTHREAD_RWLOCK_INITIALIZER
+#define PTHREAD_RWLOCK_INITIALIZER PTHREAD_RWLOCK_INITIALIZER_NP
+#endif
+
 #endif
