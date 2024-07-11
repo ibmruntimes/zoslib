@@ -31,10 +31,13 @@ __Z_EXPORT int __sysconf(int name);
 #define close __close_replaced
 #undef sysconf
 #define sysconf __sysconf_replaced
+#undef readlink
+#define readlink __readlink_replaced
 #include_next <unistd.h>
 #undef pipe
 #undef close
 #undef sysconf
+#undef readlink
 
 #if defined(__cplusplus)
 extern "C" {
@@ -46,6 +49,8 @@ __Z_EXPORT int pipe(int [2]) __asm("__pipe_ascii");
 __Z_EXPORT int close(int) __asm("__close");
 __Z_EXPORT int close(int) __asm("__close");
 __Z_EXPORT int sysconf(int name) __asm("__sysconf");
+__Z_EXPORT ssize_t readlink(const char *path, char *buf, size_t bufsiz) asm("__readlink");
+
 
 #if defined(__cplusplus)
 }
