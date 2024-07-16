@@ -3133,6 +3133,7 @@ extern "C" void __aligned_free(void *ptr) {
 #else
   free((reinterpret_cast<void**>(ptr))[-1]);
 #endif
+}
 
 // C Library overrides
 int __sysconf_orig(int ) asm("sysconf");
