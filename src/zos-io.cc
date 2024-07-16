@@ -1098,115 +1098,70 @@ int __pthread_create_extended(pthread_t *thread, const pthread_attr_t *attr,
   return __pthread_create_orig(thread, attr, custom_start_routine, (void *)threadArg);
 }
 
-ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
-    if (lineptr == NULL || n == NULL || stream == NULL) {
+ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp) {
+  ssize_t result = 0;
+  size_t cur_len = 0;
+
+  if (lineptr == NULL || n == NULL || fp == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
+
+  if (*lineptr == NULL || *n == 0) {
+    *n = 128; /* TODO: find a good initial value */
+    *lineptr = (char *)malloc(*n);
+    if (*lineptr == NULL) {
+      errno = ENOMEM;
+      return -1;
+    }
+  }
+
+  while (1) {
+    int i = getc(fp);
+    if (i == EOF) {
+      if (cur_len == 0) {
         return -1;
+      }
+      break;
     }
 
-    int c;
-    size_t pos = 0;
+    if (cur_len + 1 >= *n) {
+      size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
+      size_t needed = 2 * *n + 1; /* double it */
 
-    if (*lineptr == NULL || *n == 0) {
-        *n = 128;
-        *lineptr = (char *)malloc(*n);
-        if (*lineptr == NULL) {
-            return -1;
-        }
-    }
-
-    while ((c = fgetc(stream)) != EOF) {
-        if (pos + 1 >= *n) {
-            // Resize buffer if needed
-            *n *= 2;
-            char *new_ptr = (char *)realloc(*lineptr, *n);
-            if (new_ptr == NULL) {
-                return -1;
-            }
-            *lineptr = new_ptr;
-        }
-
-        (*lineptr)[pos++] = (char)c;
-
-        if (c == '\n') {
-            break;
-        }
-    }
-
-    if (pos == 0 && c == EOF) {
+      if (needed_max < needed) {
+        needed = needed_max;
+      }
+      if (cur_len + 1 >= needed) {
+        errno = EOVERFLOW;
         return -1;
+      }
+
+      char *new_lineptr = (char *)realloc(*lineptr, needed);
+      if (new_lineptr == NULL) {
+        errno = ENOMEM;
+        return -1;
+      }
+
+      *lineptr = new_lineptr;
+      *n = needed;
     }
 
-    (*lineptr)[pos] = '\0';
+    (*lineptr)[cur_len++] = i;
 
-    return pos;
+    if (i == delimiter) {
+      break;
+    }
+  }
+
+  (*lineptr)[cur_len] = '\0';
+  result = cur_len;
+
+  return result;
 }
 
-ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp) {
-    ssize_t result;
-    size_t cur_len = 0;
-
-    if (lineptr == NULL || n == NULL || fp == NULL) {
-        errno = EINVAL;
-        return -1;
-    }
-
-    if (*lineptr == NULL || *n == 0) {
-        *n = 120;
-        *lineptr = (char *)realloc(*lineptr, *n);
-        if (*lineptr == NULL) {
-            errno = ENOMEM;
-            return -1;
-        }
-    }
-
-    for (;;) {
-        int i = getc(fp);
-        if (i == EOF) {
-            if (cur_len == 0) {
-                result = -1;
-            } else {
-                result = cur_len;
-            }
-            break;
-        }
-
-        if (cur_len + 1 >= *n) {
-            size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
-            size_t needed = 2 * *n + 1;
-
-            if (needed_max < needed) {
-                needed = needed_max;
-            }
-            if (cur_len + 1 >= needed) {
-                result = -1;
-                errno = EOVERFLOW;
-                return result;
-            }
-
-            char *new_lineptr = (char *)realloc(*lineptr, needed);
-            if (new_lineptr == NULL) {
-                errno = ENOMEM;
-                return -1;
-            }
-
-            *lineptr = new_lineptr;
-            *n = needed;
-        }
-
-        (*lineptr)[cur_len] = i;
-        cur_len++;
-
-        if (i == delimiter) {
-            break;
-        }
-    }
-
-    if (cur_len > 0) {
-        (*lineptr)[cur_len] = '\0';
-        result = cur_len;
-    }
-
-    return result;
+ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
+  return getdelim(lineptr, n, '\n', stream);
 }
 
 int mkostemp(char *tmpl, int flags) {
