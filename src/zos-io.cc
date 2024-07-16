@@ -1141,51 +1141,72 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
     return pos;
 }
 
-ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream) {
-    size_t pos;
-    int c;
+ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp) {
+    ssize_t result;
+    size_t cur_len = 0;
 
-    if (lineptr == NULL || n == NULL || stream == NULL) {
+    if (lineptr == NULL || n == NULL || fp == NULL) {
         errno = EINVAL;
         return -1;
     }
 
-    if (*lineptr == NULL) {
-        *n = 128; // Start with a reasonable buffer size
-        *lineptr = (char *)malloc(*n);
+    if (*lineptr == NULL || *n == 0) {
+        *n = 120;
+        *lineptr = (char *)realloc(*lineptr, *n);
         if (*lineptr == NULL) {
             errno = ENOMEM;
             return -1;
         }
     }
 
-    pos = 0;
+    for (;;) {
+        int i = getc(fp);
+        if (i == EOF) {
+            if (cur_len == 0) {
+                result = -1;
+            } else {
+                result = cur_len;
+            }
+            break;
+        }
 
-    while ((c = fgetc(stream)) != EOF) {
-        if (pos + 1 >= *n) {
-            size_t new_size = *n * 2;
-            char *new_ptr = (char *)realloc(*lineptr, new_size);
-            if (new_ptr == NULL) {
+        if (cur_len + 1 >= *n) {
+            size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
+            size_t needed = 2 * *n + 1;
+
+            if (needed_max < needed) {
+                needed = needed_max;
+            }
+            if (cur_len + 1 >= needed) {
+                result = -1;
+                errno = EOVERFLOW;
+                return result;
+            }
+
+            char *new_lineptr = (char *)realloc(*lineptr, needed);
+            if (new_lineptr == NULL) {
                 errno = ENOMEM;
                 return -1;
             }
-            *lineptr = new_ptr;
-            *n = new_size;
+
+            *lineptr = new_lineptr;
+            *n = needed;
         }
 
-        (*lineptr)[pos++] = (char)c;
+        (*lineptr)[cur_len] = i;
+        cur_len++;
 
-        if (c == delimiter) {
+        if (i == delimiter) {
             break;
         }
     }
 
-    if (pos == 0 && c == EOF) {
-        return -1;
+    if (cur_len > 0) {
+        (*lineptr)[cur_len] = '\0';
+        result = cur_len;
     }
 
-    (*lineptr)[pos] = '\0';
-    return pos;
+    return result;
 }
 
 int mkostemp(char *tmpl, int flags) {
