@@ -98,7 +98,7 @@ ssize_t __readlink(const char *path, char *buf, size_t bufsiz) {
       return -1;
   }
 
-  if ((len > 0 buf[0] == '$') || (len > 1 && buf[0] == '/' && buf[1] == '$')) {
+  if ((len > 0 && buf[0] == '$') || (len > 1 && buf[0] == '/' && buf[1] == '$')) {
       // Not sure if this is possible, but double check in case:
       if (len < bufsiz) {
           buf[len] = '\0';
