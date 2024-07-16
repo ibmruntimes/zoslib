@@ -98,9 +98,13 @@ ssize_t __readlink(const char *path, char *buf, size_t bufsiz) {
       return -1;
   }
 
-  buf[len] = '\0'; // readlink doesn't null terminate
-
-  if (buf[0] == '$' || (len > 1 && buf[0] == '/' && buf[1] == '$')) {
+  if ((len > 0 buf[0] == '$') || (len > 1 && buf[0] == '/' && buf[1] == '$')) {
+      // Not sure if this is possible, but double check in case:
+      if (len < bufsiz) {
+          buf[len] = '\0';
+      } else {
+          buf[bufsiz - 1] = '\0';
+      }
       char resolved_path[PATH_MAX];
       if (realpath(path, resolved_path) == NULL) {
           return -1;

@@ -1142,50 +1142,50 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
 }
 
 ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream) {
-  char *buf = *lineptr;
-  size_t bufsize = *n;
-  size_t len = 0;
-  int c;
+    size_t pos;
+    int c;
 
-  if (buf == NULL || bufsize == 0) {
-    bufsize = 128;
-    buf = (char*)malloc(bufsize);
-    if (buf == NULL) {
-      return -1;
-    }
-    *lineptr = buf;
-    *n = bufsize;
-  }
-
-  while (1) {
-    c = fgetc(stream);
-    if (c == EOF || c == delimiter) {
-      break;
-    }
-
-    if (len + 1 >= bufsize) {
-      bufsize *= 2;
-      buf = (char*)realloc(buf, bufsize);
-      if (buf == NULL) {
+    if (lineptr == NULL || n == NULL || stream == NULL) {
+        errno = EINVAL;
         return -1;
-      }
-      *lineptr = buf;
-      *n = bufsize;
     }
 
-    buf[len++] = c;
-  }
+    if (*lineptr == NULL) {
+        *n = 128; // Start with a reasonable buffer size
+        *lineptr = (char *)malloc(*n);
+        if (*lineptr == NULL) {
+            errno = ENOMEM;
+            return -1;
+        }
+    }
 
-  buf[len] = '\0';
+    pos = 0;
 
-  if (c == EOF && len == 0) {
-    free(buf);
-    *lineptr = NULL;
-    *n = 0;
-    return -1;
-  }
+    while ((c = fgetc(stream)) != EOF) {
+        if (pos + 1 >= *n) {
+            size_t new_size = *n * 2;
+            char *new_ptr = (char *)realloc(*lineptr, new_size);
+            if (new_ptr == NULL) {
+                errno = ENOMEM;
+                return -1;
+            }
+            *lineptr = new_ptr;
+            *n = new_size;
+        }
 
-  return len;
+        (*lineptr)[pos++] = (char)c;
+
+        if (c == delimiter) {
+            break;
+        }
+    }
+
+    if (pos == 0 && c == EOF) {
+        return -1;
+    }
+
+    (*lineptr)[pos] = '\0';
+    return pos;
 }
 
 int mkostemp(char *tmpl, int flags) {
