@@ -789,6 +789,48 @@ void __memprintf(const char *format, ...) {
     fflush(fp_memprintf);
 }
 
+void __memprintfx(const char *format, ...) {
+  // Same as __memprintf but doesn't display process-id and thread-id;
+  // used by memory tracking functions.
+  if (!__doLogMemoryUsage())
+    return;
+
+  va_list args;
+  va_start(args, format);
+
+  static const char *fname = __getMemoryUsageLogFile();
+  static bool isstderr = !strcmp(fname, "stderr");
+  static bool isstdout = !strcmp(fname, "stdout");
+  if (!fp_memprintf) {
+    fp_memprintf = isstderr ? stderr : \
+                   isstdout ? stdout : \
+                   fopen(fname, "a+");
+  }
+  if (!fp_memprintf) {
+    va_end(args);
+    perror(fname);
+    __setLogMemoryUsage(false);
+    return;
+  }
+  vfprintf(fp_memprintf, format, args);
+  va_end(args);
+  fflush(fp_memprintf);
+}
+
+const char *__file_basename(const char *path) {
+  // Similar to basename(char*), but doesn't modify the given string.
+  // The difference is if path ends with /, which is unexpected for a filename,
+  // then it returns a pointer to that /.
+  static const char *dot = ".";
+  static const char *slash = "/";
+  if (!path || !*path) return dot;
+  if (path[0] == '/' && path[1] == '\0') return slash;
+  const char *p = strrchr(path, '/');
+  if (p && p[1] == '\0') return p;
+  if (p) return p+1;
+  return path;
+}
+
 // C Library Overrides
 //-----------------------------------------------------------------
 int __pipe_orig(int [2]) asm("pipe");
