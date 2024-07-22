@@ -139,16 +139,20 @@ char *strndup(const char *s, size_t n) {
   return dupStr;
 }
 
-void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen) {
-  size_t i;
-  const unsigned char *haystack_bytes = (const unsigned char *)haystack;
-  const unsigned char *needle_bytes = (const unsigned char *)needle;
+void *memmem(const void *l, size_t l_len, const void *s, size_t s_len) {
+  const char *cl = (const char *)l;
+  const char *cs = (const char *)s;
 
-  for (i = 0; i <= haystacklen - needlelen; i++) {
-    if (memcmp(&haystack_bytes[i], needle_bytes, needlelen) == 0) {
-      return (void *)&haystack_bytes[i];
-    }
-  }
+  if (l_len == 0 || s_len == 0 || l_len < s_len)
+    return NULL;
+
+  if (s_len == 1)
+    return memchr(l, (int)*cs, l_len);
+
+  size_t len = l_len - s_len + 1;
+  for (size_t i = 0; i < len; i++)
+    if (cs[0] == cl[i] && memcmp(cl + i, cs, s_len) == 0)
+        return (void *)(cl + i);
 
   return NULL;
 }
