@@ -93,7 +93,7 @@ char *__realpath_extended(const char __restrict__ *path, char __restrict__ *reso
 ssize_t __readlink_orig(const char *path, char *buf, size_t bufsiz) asm("@@A00202");
 
 ssize_t __readlink(const char *path, char *buf, size_t bufsiz) {
-  ssize_t len = __readlink_orig(path, buf, bufsiz - 1);
+  ssize_t len = __readlink_orig(path, buf, bufsiz);
   if (len < 0) {
       return -1;
   }
