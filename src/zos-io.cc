@@ -1164,37 +1164,44 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
   return getdelim(lineptr, n, '\n', stream);
 }
 
-int mkostemp(char *tmpl, int flags) {
-  if (strlen(tmpl) < 6 || strcmp(&tmpl[strlen(tmpl) - 6], "XXXXXX") != 0) {
-    errno = EINVAL;
-    return -1;
+// Adapted from Musl C (MIT license)
+void __randname(char *tmpl) {
+  const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (int i = 0; i < 6; ++i) {
+    tmpl[i] = charset[rand() % (sizeof(charset) - 1)];
   }
-  return mkstemp(tmpl);
 }
 
 int mkostemps(char *tmpl, int suffixlen, int flags) {
-  if (strlen(tmpl) < 6 + suffixlen || strcmp(&tmpl[strlen(tmpl) - 6 - suffixlen], "XXXXXX") != 0) {
+  size_t l = strlen(tmpl);
+  if (l < 6 || suffixlen > l - 6 || memcmp(tmpl + l - suffixlen - 6, "XXXXXX", 6) != 0) {
     errno = EINVAL;
     return -1;
   }
-  char *p = tmpl + strlen(tmpl) - suffixlen - 6;
-  *p = '\0';
-  int fd = mkostemp(tmpl, flags);
-  *p = 'X';
-  return fd;
+
+  int fd, retries = 100;
+
+  do {
+    __randname(tmpl + l - suffixlen - 6); 
+    fd = open(tmpl, flags | O_RDWR | O_CREAT | O_EXCL, 0600);
+    if (fd >= 0) {
+      __tag_new_file(fd);
+      return fd;
+    }
+  } while (--retries && errno == EEXIST);
+
+  memcpy(tmpl + l - suffixlen - 6, "XXXXXX", 6);
+  return -1; 
 }
 
 int mkstemps(char *tmpl, int suffixlen) {
-  if (strlen(tmpl) < 6 + suffixlen || strcmp(&tmpl[strlen(tmpl) - 6 - suffixlen], "XXXXXX") != 0) {
-    errno = EINVAL;
-    return -1;
-  }
-  char *p = tmpl + strlen(tmpl) - suffixlen - 6;
-  *p = '\0';
-  int fd = __mkstemp_ascii(tmpl);
-  *p = 'X';
-  return fd;
+  return mkostemps(tmpl, suffixlen, 0);
 }
+
+int mkostemp(char *tmpl, int flags) {
+  return mkostemps(tmpl, 0, flags);
+}
+
 
 #ifdef __cplusplus
 }
