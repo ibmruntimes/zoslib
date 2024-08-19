@@ -3184,12 +3184,12 @@ void __cyg_profile_func_enter(void* this_fn, void* call_site) {
   if (!__prof_isProfiling) {
     char profiling_file[PATH_MAX];
     sprintf(profiling_file, "%s-%lu.json", getprogname(), get_timestamp());
-    json_file = fopen(profiling_file, "w");
-    if (json_file == NULL) {
-      perror("Error opening file profiling file %s for write.", profiling_file);
+    __prof_json_file = fopen(profiling_file, "w");
+    if (__prof_json_file == NULL) {
+      fprintf(stderr, "Error opening file profiling file %s for write, errno: %d", profiling_file, errno);
       exit(1);
     }
-    fprintf(json_file, "[\n");
+    fprintf(__prof_json_file, "[\n");
     __prof_isProfiling = 1;
   }
 
