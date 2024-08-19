@@ -3148,6 +3148,68 @@ int __sysconf(int name) {
   }
 }
 
+
+// Instrumentation code - for profiling
+// When an application is built with zoslib and with the -finstrument-functions option
+// It will generate a json file in the cwd which can be analyzed using perfetto (or https://ui.perfetto.dev/)
+extern "C" {
+
+FILE* __prof_json_file = NULL;
+pthread_mutex_t __prof_mutex = PTHREAD_MUTEX_INITIALIZER;
+int __prof_isProfiling = 0;
+
+static inline uint64_t get_timestamp() {
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  return (uint64_t)ts.tv_nsec;
+}
+
+static void write_json_object(const char* name, const char* phase) {
+  pthread_mutex_lock(&__prof_mutex);
+  fprintf(__prof_json_file, "  {\"cat\": \"PERF\", \"name\": \"%s\", \"ph\": \"%s\", \"pid\": %d, \"tid\": \"%d\", \"ts\": %lu},\n", name, phase, getpid(), gettid(), get_timestamp());
+  pthread_mutex_unlock(&__prof_mutex);
+}
+
+__attribute__((destructor))
+void close_json_file() {
+  if (__prof_isProfiling)
+    if (__prof_json_file != NULL) {
+      fprintf(__prof_json_file, "]\n");
+      fclose(__prof_json_file);
+    }
+}
+
+__attribute__((no_instrument_function))
+void __cyg_profile_func_enter(void* this_fn, void* call_site) {
+  if (!__prof_isProfiling) {
+    char profiling_file[PATH_MAX];
+    sprintf(profiling_file, "%s-%lu.json", getprogname(), get_timestamp());
+    json_file = fopen(profiling_file, "w");
+    if (json_file == NULL) {
+      perror("Error opening file profiling file %s for write.", profiling_file);
+      exit(1);
+    }
+    fprintf(json_file, "[\n");
+    __prof_isProfiling = 1;
+  }
+
+  __stack_info si;
+  void *cur_dsa = dsa();
+
+  __iterate_stack_and_get(cur_dsa, &si);
+  write_json_object(si.entry_name, "B");
+}
+
+__attribute__((no_instrument_function))
+void __cyg_profile_func_exit(void* this_fn, void* call_site) {
+  __stack_info si;
+  void *cur_dsa = dsa();
+
+  __iterate_stack_and_get(cur_dsa, &si);
+  write_json_object(si.entry_name, "E");
+}
+} 
+
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;
 #endif
