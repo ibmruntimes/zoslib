@@ -82,7 +82,7 @@ static void check_env_vars() {
 __attribute__((no_instrument_function))
 static void write_json_object(const char* name, const char* phase) {
   pthread_mutex_lock(&__prof_mutex);
-  fprintf(__prof_json_file, "  {\"cat\": \"PERF\", \"name\": \"%s\", \"ph\": \"%s\", \"pid\": %d, \"tid\": \"%d\", \"ts\": %lu},\n", name, phase, getpid(), gettid(), get_timens());
+  fprintf(__prof_json_file, "  {\"cat\": \"PERF\", \"name\": \"%s\", \"ph\": \"%s\", \"pid\": %d, \"tid\": %d, \"ts\": %lu},\n", name, phase, getpid(), gettid(), get_timens());
   pthread_mutex_unlock(&__prof_mutex);
 }
 
