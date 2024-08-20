@@ -50,6 +50,7 @@ FILE* __prof_json_file = NULL;
 pthread_mutex_t __prof_mutex = PTHREAD_MUTEX_INITIALIZER;
 char __profiling_file[PATH_MAX] = {0};
 int __prof_isProfiling = 0;
+int __prof_isDisabled = 0;
 }
 
 extern "C" {
@@ -65,7 +66,7 @@ __attribute__((no_instrument_function))
 static void check_env_vars() {
   char* disable_prof = getenv("ZOSLIB_PROF_DISABLE");
   if (disable_prof != NULL) {
-    __prof_isProfiling = 0;
+    __prof_isDisabled = 1;
     return;
   }
 
@@ -90,17 +91,21 @@ __attribute__((destructor))
 void close_json_file() {
   if (__prof_isProfiling)
     if (__prof_json_file != NULL) {
-      fprintf(__prof_json_file, "]\n");
+      fprintf(__prof_json_file, "{} ]\n");
       fclose(__prof_json_file);
     }
 }
 
 __attribute__((no_instrument_function))
 void __cyg_profile_func_enter(void* this_fn, void* call_site) {
+  if (__prof_isDisabled)
+    return;
+
+  // On first call, check envars
   if (!__prof_isProfiling) {
     __prof_isProfiling = 1;
     check_env_vars();
-    if (!__prof_isProfiling) 
+    if (__prof_isDisabled)
       return;
     
     __prof_json_file = fopen(__profiling_file, "w");
@@ -120,6 +125,9 @@ void __cyg_profile_func_enter(void* this_fn, void* call_site) {
 
 __attribute__((no_instrument_function))
 void __cyg_profile_func_exit(void* this_fn, void* call_site) {
+  if (__prof_isDisabled)
+    return;
+
   __stack_info si;
   void *cur_dsa = dsa();
 
