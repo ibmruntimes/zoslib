@@ -39,8 +39,9 @@
 #include <unistd.h>
 
 // Instrumentation code - for profiling
-// When an application is built with zoslib and with the -finstrument-functions option
-// It will generate a json file in the cwd which can be analyzed using perfetto (or https://ui.perfetto.dev/)
+// when an application is built with zoslib, along with the -finstrument-functions option
+// it will generate a json file in the cwd (set ZOSLIB_PROF_PATH to override), which can be 
+// analyzed using chrome tracing or perfetto (https://ui.perfetto.dev/)
 #ifndef dsa
 #define dsa() ((unsigned long *)_gdsa())
 #endif
