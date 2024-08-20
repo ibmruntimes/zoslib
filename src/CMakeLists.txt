@@ -20,6 +20,7 @@ set(libsrc
   zos.cc
   zos-mount.c
   zos-mkdtemp.c
+  zos-instrumentation.cc
 )
 set(zoslib-help zoslib-help.cc)
 
