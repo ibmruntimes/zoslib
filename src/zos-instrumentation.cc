@@ -89,7 +89,7 @@ __attribute__((destructor))
 void close_json_file() {
   if (__prof_isProfiling)
     if (__prof_json_file != NULL) {
-      fprintf(__prof_json_file, "{} ]\n");
+      fprintf(__prof_json_file, "null ]}\n");
       fclose(__prof_json_file);
     }
 }
@@ -111,11 +111,11 @@ __Z_EXPORT void __cyg_profile_func_enter(void* this_fn, void* call_site) {
       fprintf(stderr, "Error opening file profiling file %s for write, errno: %d", __profiling_file, errno);
       exit(1);
     }
-    fprintf(__prof_json_file, "[\n");
+    fprintf(__prof_json_file, "{ \"traceEvents\": [\n");
   }
 
   __stack_info si;
-  void *cur_dsa = dsa();
+  void *cur_dsa = __dsa();
 
   __iterate_stack_and_get(cur_dsa, &si);
   write_json_object(si.entry_name, "B");
@@ -127,7 +127,7 @@ __Z_EXPORT void __cyg_profile_func_exit(void* this_fn, void* call_site) {
     return;
 
   __stack_info si;
-  void *cur_dsa = dsa();
+  void *cur_dsa = __dsa();
 
   __iterate_stack_and_get(cur_dsa, &si);
   write_json_object(si.entry_name, "E");

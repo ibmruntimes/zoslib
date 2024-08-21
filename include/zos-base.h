@@ -45,8 +45,8 @@
 extern "builtin" void *_gdsa();
 #endif
 
-#ifndef dsa
-#define dsa() ((unsigned long *)_gdsa())
+#ifndef __dsa
+#define __dsa() ((unsigned long *)_gdsa())
 #endif
 
 #include "zos-macros.h"

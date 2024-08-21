@@ -2438,7 +2438,7 @@ int *__get_stack_start() {
     return __main_thread_stack_top_address;
   }
   __stack_info si;
-  void *cur_dsa = dsa();
+  void *cur_dsa = __dsa();
 
   while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
     cur_dsa = si.prev_dsa;
