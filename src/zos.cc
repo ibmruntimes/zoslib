@@ -53,17 +53,6 @@
 #include <unordered_map>
 #include <vector>
 
-#if defined(__clang__) && !defined(__ibmxl__)
-#define _gdsa __builtin_s390_gdsa
-#else
-extern "builtin" void *_gdsa();
-#endif
-
-
-#ifndef dsa
-#define dsa() ((unsigned long *)_gdsa())
-#endif
-
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int (*epoll_create)(int) = 0;
 int (*epoll_create1)(int) = 0;
