@@ -91,6 +91,17 @@ void close_json_file() {
     if (__prof_json_file != NULL) {
       fprintf(__prof_json_file, "null ]}\n");
       fclose(__prof_json_file);
+
+      FILE *fp = popen("command -v gzip", "r");
+      if (fp != NULL) {
+        char path[PATH_MAX];
+        if (fgets(path, sizeof(path), fp) != NULL) {
+          char command[PATH_MAX];
+          snprintf(command, sizeof(command), "gzip -f %s 2>/dev/null", __profiling_file);
+          system(command); // Should we handle this if it fails?
+        }
+        pclose(fp);
+      }
     }
 }
 
