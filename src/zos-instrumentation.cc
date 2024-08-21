@@ -37,15 +37,12 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+#include "zos-macros.h"
 
 // Instrumentation code - for profiling
 // when an application is built with zoslib, along with the -finstrument-functions option
 // it will generate a json file in the cwd (set ZOSLIB_PROF_PATH to override), which can be 
 // analyzed using chrome tracing or perfetto (https://ui.perfetto.dev/)
-#ifndef dsa
-#define dsa() ((unsigned long *)_gdsa())
-#endif
-
 namespace {
 FILE* __prof_json_file = NULL;
 pthread_mutex_t __prof_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -98,7 +95,7 @@ void close_json_file() {
 }
 
 __attribute__((no_instrument_function))
-void __cyg_profile_func_enter(void* this_fn, void* call_site) {
+__Z_EXPORT void __cyg_profile_func_enter(void* this_fn, void* call_site) {
   if (__prof_isDisabled)
     return;
 
@@ -125,7 +122,7 @@ void __cyg_profile_func_enter(void* this_fn, void* call_site) {
 }
 
 __attribute__((no_instrument_function))
-void __cyg_profile_func_exit(void* this_fn, void* call_site) {
+__Z_EXPORT void __cyg_profile_func_exit(void* this_fn, void* call_site) {
   if (__prof_isDisabled)
     return;
 
