@@ -2605,7 +2605,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __ae_autoconvert_state(_CVTSTATE_ON);
   }
 
+#ifndef ZOSLIB_QUICK_STARTUP
   __main_thread_stack_top_address = __get_stack_start();
+#endif
 
   if (setEnvarHelpMap() != 0)
     return -1;
@@ -2653,8 +2655,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
 
   setProcessEnvars();
-
+#ifndef ZOSLIB_QUICK_STARTUP
   populateLEFunctionPointers();
+#endif
 
   _th = std::get_terminate();
   std::set_terminate(abort);
