@@ -53,6 +53,11 @@ if(ZOSLIB_GENERIC)
        ZOSLIB_GENERIC)
 endif()
 
+if(ZOSLIB_QUICK_STARTUP)
+  list(APPEND zoslib_defines
+       ZOSLIB_QUICK_STARTUP)
+endif()
+
 
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
