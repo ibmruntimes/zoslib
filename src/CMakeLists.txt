@@ -36,6 +36,10 @@ COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
   VERBATIM
 )
 
+if(${CMAKE_C_COMPILER} MATCHES clang)
+  set_source_files_properties(zos-getentropy.cc PROPERTIES COMPILE_FLAGS "-march=arch14")
+endif()
+
 add_library(libzoslib OBJECT ${libsrc})
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)

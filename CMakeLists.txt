@@ -86,7 +86,7 @@ else()
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -m64
-    -march=arch14
+    -march=arch10
     -mzos-target=zosv2r4
     -fno-short-enums
     -fzos-le-char-mode=ascii)
