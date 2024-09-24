@@ -45,6 +45,7 @@
 #pragma redefine_extname dup3 dup3_undefined
 #pragma redefine_extname shm_open shm_open_undefined
 #pragma redefine_extname utimensat utimensat_undefined
+#pragma redefine_extname fdopendir fdopendir_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H
