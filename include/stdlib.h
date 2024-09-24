@@ -50,6 +50,11 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 
+#undef realpath
+#undef mkstemp
+#undef malloc
+#undef free
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
