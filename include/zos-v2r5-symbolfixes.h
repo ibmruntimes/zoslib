@@ -23,7 +23,6 @@
 #pragma redefine_extname getrandom getrandom_undefined
 #pragma redefine_extname pipe2 pipe2_undefined
 #pragma redefine_extname fsstatfs fsstatfs_undefined
-#pragma redefine_extname getline getline_undefined
 #pragma redefine_extname dprintf dprintf_undefined
 #pragma redefine_extname dirfd dirfd_undefined
 #pragma redefine_extname fchmodat fchmodat_undefined
@@ -45,6 +44,11 @@
 #pragma redefine_extname setresgid setresgid_undefined
 #pragma redefine_extname dup3 dup3_undefined
 #pragma redefine_extname shm_open shm_open_undefined
+#pragma redefine_extname utimensat utimensat_undefined
+#pragma redefine_extname fdopendir fdopendir_undefined
+#pragma redefine_extname pthread_condattr_setclock pthread_condattr_setclock_undefined
+#pragma redefine_extname asprintf asprintf_undefined
+#pragma redefine_extname vasprintf vasprintf_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H

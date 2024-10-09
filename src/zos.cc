@@ -53,17 +53,6 @@
 #include <unordered_map>
 #include <vector>
 
-#if defined(__clang__) && !defined(__ibmxl__)
-#define _gdsa __builtin_s390_gdsa
-#else
-extern "builtin" void *_gdsa();
-#endif
-
-
-#ifndef dsa
-#define dsa() ((unsigned long *)_gdsa())
-#endif
-
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int (*epoll_create)(int) = 0;
 int (*epoll_create1)(int) = 0;
@@ -2449,7 +2438,7 @@ int *__get_stack_start() {
     return __main_thread_stack_top_address;
   }
   __stack_info si;
-  void *cur_dsa = dsa();
+  void *cur_dsa = __dsa();
 
   while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
     cur_dsa = si.prev_dsa;
@@ -2616,7 +2605,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __ae_autoconvert_state(_CVTSTATE_ON);
   }
 
+#ifndef ZOSLIB_QUICK_STARTUP
   __main_thread_stack_top_address = __get_stack_start();
+#endif
 
   if (setEnvarHelpMap() != 0)
     return -1;
@@ -2664,8 +2655,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
 
   setProcessEnvars();
-
+#ifndef ZOSLIB_QUICK_STARTUP
   populateLEFunctionPointers();
+#endif
 
   _th = std::get_terminate();
   std::set_terminate(abort);
@@ -3134,6 +3126,20 @@ extern "C" void __aligned_free(void *ptr) {
   free((reinterpret_cast<void**>(ptr))[-1]);
 #endif
 }
+
+// C Library overrides
+int __sysconf_orig(int ) asm("sysconf");
+
+// Add support for _SC_NPROCESSORS_ONLN
+int __sysconf(int name) {
+  switch (name) {
+    case _SC_NPROCESSORS_ONLN:
+      return __get_num_online_cpus();
+    default:
+      return __sysconf_orig(name); 
+  }
+}
+
 
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;

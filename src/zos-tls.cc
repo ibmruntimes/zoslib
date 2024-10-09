@@ -94,9 +94,8 @@ void *__tlsPtrFromAnchor(struct __tlsanchor *anchor, const void *initvalue) {
 }
 void * __tlsValue(tls_t *a) {
   void *val = NULL;
-  char * initvalue = (char *)malloc(sizeof(char)*(a->sz));
+  char *initvalue = (char *)calloc((sizeof(char)*(a->sz)), sizeof(char));
   assert(initvalue != NULL);
-  bzero(initvalue,a->sz);
   val = __tlsPtrAlloc(a->sz, &(a->key), &(a->once),(void *)initvalue);
   free(initvalue);
   return val;

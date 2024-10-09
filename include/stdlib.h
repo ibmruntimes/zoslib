@@ -34,6 +34,10 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define realpath __realpath_replaced
 #undef mkstemp
 #define mkstemp __mkstemp_replaced
+#undef malloc
+#define malloc __malloc_replaced
+#undef free
+#define free __free_replaced
 #endif
 
 #if defined(ZOSLIB_OVERRIDE_CLIB_GETENV) && defined(__NATIVE_ASCII_F)
@@ -46,6 +50,11 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB)
 
+#undef realpath
+#undef mkstemp
+#undef malloc
+#undef free
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -55,6 +64,8 @@ extern "C" {
  */
 #undef realpath
 __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm("__realpath_extended");
+__Z_EXPORT void* malloc(size_t size) __asm("__zoslib_malloc");
+__Z_EXPORT void free(void* ptr) __asm("__zoslib_free");
 
 #ifdef __NATIVE_ASCII_F
 /**
@@ -104,6 +115,9 @@ extern "C" {
  */
 __Z_EXPORT int getloadavg(double loadavg[], int nelem);
 __Z_EXPORT const char * getprogname(void);
+__Z_EXPORT int mkostemp(char *, int flags);
+__Z_EXPORT int mkstemps(char *, int suffixlen);
+__Z_EXPORT int mkostemps(char *, int suffixlen, int flags);
 #if defined(__cplusplus)
 }
 #endif
@@ -124,6 +138,8 @@ __Z_EXPORT char *mkdtemp(char *);
 #endif
 
 #if defined(__cplusplus)
+__Z_EXPORT void __zoslib_free(void* ptr);
+__Z_EXPORT void* __zoslib_malloc(size_t size);
 }
 #endif
 

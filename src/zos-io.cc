@@ -668,7 +668,7 @@ int __chgfdccsid(int fd, unsigned short ccsid) {
   memset(&attr, 0, sizeof(attr));
   attr.att_filetagchg = 1;
   attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
+  if (ccsid != FT_BINARY && ccsid != 0) {
     attr.att_filetag.ft_txtflag = 1;
   }
   return __fchattr(fd, &attr, sizeof(attr));
@@ -799,6 +799,8 @@ int __mkstemp_orig(char *) asm("@@A00184");
 FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
 struct utmpx *__getutxent_orig(void) asm("getutxent");
+int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) asm("@@PT3C");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1068,6 +1070,136 @@ bool __doLogMemoryAll() { return __gLogMemoryAll; }
 
 bool __doLogMemoryWarning() {
   return __gLogMemoryAll || __gLogMemoryWarning;
+}
+
+// pthread_create override to ensure that _CVTSTATE_OFF does not break multi-threaded programs
+typedef struct {
+    void *(*start_routine)(void *);
+    void *arg;
+} __ThreadArg;
+
+void *custom_start_routine(void *arg) {
+  __ThreadArg *threadArg = (__ThreadArg *)arg;
+
+  int cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
+  if (_CVTSTATE_OFF == cvstate) {
+    __ae_autoconvert_state(_CVTSTATE_ON);
+  }
+
+  return threadArg->start_routine(threadArg->arg);
+}
+
+int __pthread_create_extended(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) {
+  __ThreadArg *threadArg = (__ThreadArg *)malloc(sizeof(__ThreadArg));
+  threadArg->start_routine = start_routine;
+  threadArg->arg = arg;
+
+  return __pthread_create_orig(thread, attr, custom_start_routine, (void *)threadArg);
+}
+
+ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp) {
+  ssize_t result = 0;
+  size_t cur_len = 0;
+
+  if (lineptr == NULL || n == NULL || fp == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
+
+  if (*lineptr == NULL || *n == 0) {
+    *n = 128; /* TODO: find a good initial value */
+    *lineptr = (char *)malloc(*n);
+    if (*lineptr == NULL) {
+      errno = ENOMEM;
+      return -1;
+    }
+  }
+
+  while (1) {
+    int i = getc(fp);
+    if (i == EOF) {
+      if (cur_len == 0) {
+        return -1;
+      }
+      break;
+    }
+
+    if (cur_len + 1 >= *n) {
+      size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
+      size_t needed = 2 * *n + 1; /* double it */
+
+      if (needed_max < needed) {
+        needed = needed_max;
+      }
+      if (cur_len + 1 >= needed) {
+        errno = EOVERFLOW;
+        return -1;
+      }
+
+      char *new_lineptr = (char *)realloc(*lineptr, needed);
+      if (new_lineptr == NULL) {
+        errno = ENOMEM;
+        return -1;
+      }
+
+      *lineptr = new_lineptr;
+      *n = needed;
+    }
+
+    (*lineptr)[cur_len++] = i;
+
+    if (i == delimiter) {
+      break;
+    }
+  }
+
+  (*lineptr)[cur_len] = '\0';
+  result = cur_len;
+
+  return result;
+}
+
+ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
+  return getdelim(lineptr, n, '\n', stream);
+}
+
+// Adapted from Musl C (MIT license)
+void __randname(char *tmpl) {
+  const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (int i = 0; i < 6; ++i) {
+    tmpl[i] = charset[rand() % (sizeof(charset) - 1)];
+  }
+}
+
+int mkostemps(char *tmpl, int suffixlen, int flags) {
+  size_t l = strlen(tmpl);
+  if (l < 6 || suffixlen > l - 6 || memcmp(tmpl + l - suffixlen - 6, "XXXXXX", 6) != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+
+  int fd, retries = 100;
+
+  do {
+    __randname(tmpl + l - suffixlen - 6); 
+    fd = open(tmpl, flags | O_RDWR | O_CREAT | O_EXCL, 0600);
+    if (fd >= 0) {
+      __tag_new_file(fd);
+      return fd;
+    }
+  } while (--retries && errno == EEXIST);
+
+  memcpy(tmpl + l - suffixlen - 6, "XXXXXX", 6);
+  return -1; 
+}
+
+int mkstemps(char *tmpl, int suffixlen) {
+  return mkostemps(tmpl, suffixlen, 0);
+}
+
+int mkostemp(char *tmpl, int flags) {
+  return mkostemps(tmpl, 0, flags);
 }
 
 

@@ -90,6 +90,35 @@ char *__realpath_extended(const char __restrict__ *path, char __restrict__ *reso
    return __realpath_orig(path, resolved_path);
 }
 
+ssize_t __readlink_orig(const char *path, char *buf, size_t bufsiz) asm("@@A00202");
+
+__Z_EXPORT ssize_t __readlink(const char *path, char *buf, size_t bufsiz) {
+  ssize_t len = __readlink_orig(path, buf, bufsiz);
+  if (len < 0) {
+      return -1;
+  }
+
+  if ((len > 0 && buf[0] == '$') || (len > 1 && buf[0] == '/' && buf[1] == '$')) {
+      // Not sure if this is possible, but double check in case:
+      if (len < bufsiz) {
+          buf[len] = '\0';
+      } else {
+          buf[bufsiz - 1] = '\0';
+      }
+      char resolved_path[PATH_MAX];
+      if (realpath(path, resolved_path) == NULL) {
+          return -1;
+      }
+
+      len = snprintf(buf, bufsiz, "%s", resolved_path);
+      if (len >= bufsiz) {
+          errno = ENAMETOOLONG;
+          return -1;
+      }
+  }
+
+  return len;
+}
 
 void __bpx4kil(int pid, int signal, void *signal_options, int *return_value,
                int *return_code, int *reason_code) {

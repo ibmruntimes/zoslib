@@ -139,6 +139,53 @@ char *strndup(const char *s, size_t n) {
   return dupStr;
 }
 
+void *memmem(const void *l, size_t l_len, const void *s, size_t s_len) {
+  const char *cl = (const char *)l;
+  const char *cs = (const char *)s;
+
+  if (l_len == 0 || s_len == 0 || l_len < s_len)
+    return NULL;
+
+  if (s_len == 1)
+    return memchr(l, (int)*cs, l_len);
+
+  size_t len = l_len - s_len + 1;
+  for (size_t i = 0; i < len; i++)
+    if (cs[0] == cl[i] && memcmp(cl + i, cs, s_len) == 0)
+        return (void *)(cl + i);
+
+  return NULL;
+}
+
+// Adapted from Musl c's implementation (MIT license)
+int strverscmp(const char *l0, const char *r0)
+{
+	const unsigned char *l = (const void *)l0;
+	const unsigned char *r = (const void *)r0;
+	size_t i, dp, j;
+	int z = 1;
+	/* Find maximal matching prefix and track its maximal digit
+	 * suffix and whether those digits are all zeros. */
+	for (dp=i=0; l[i]==r[i]; i++) {
+		int c = l[i];
+		if (!c) return 0;
+		if (!isdigit(c)) dp=i+1, z=1;
+		else if (c!='0') z=0;
+	}
+	if (l[dp]!='0' && r[dp]!='0') {
+		/* If we're not looking at a digit sequence that began
+		 * with a zero, longest digit string is greater. */
+		for (j=i; isdigit(l[j]); j++)
+			if (!isdigit(r[j])) return 1;
+		if (isdigit(r[j])) return -1;
+	} else if (z && dp<i && (isdigit(l[i]) || isdigit(r[i]))) {
+		/* Otherwise, if common prefix of digit sequence is
+		 * all zeros, digits order less than non-digits. */
+		return (unsigned char)(l[i]-'0') - (unsigned char)(r[i]-'0');
+	}
+	return l[i] - r[i];
+}
+
 #if TEST
 int main() {
   printf("values: segv=%d total=%d\n", SIGSEGV, sigTotal);
