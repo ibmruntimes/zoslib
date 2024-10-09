@@ -46,6 +46,7 @@
 #pragma redefine_extname shm_open shm_open_undefined
 #pragma redefine_extname utimensat utimensat_undefined
 #pragma redefine_extname fdopendir fdopendir_undefined
+#pragma redefine_extname pthread_condattr_setclock pthread_condattr_setclock_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H
