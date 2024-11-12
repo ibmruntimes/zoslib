@@ -52,7 +52,7 @@ ZOSLIB is supported on the following hardware:
 * CMake 3.24.2-zos+
 * GNU Make 4.3+
 * IBM XL C/C++ V2.3.1 for z/OS V2.3 web deliverable (xlclang/xlcang++) or
-  IBM Open XL C/C++ 2.0 (clang/clang++)
+  IBM C/C++ for Open Enterprise Languages on z/OS 2.0.0 (clang/clang++)
 * Git
 * Ninja (optional)
 

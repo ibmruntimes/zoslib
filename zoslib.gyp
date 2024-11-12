@@ -32,7 +32,7 @@
           'include_dirs': ['include'],
         }, {
           'cflags': ['-fzos-le-char-mode=ascii', '-fgnu-keywords', '-fno-short-enums', '-mzos-target=zosv2r4'],
-          'include_dirs': ['include', 'include/c++/v1'],
+          'include_dirs': ['include'],
         }],
       ],
       'sources': [
