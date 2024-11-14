@@ -9,11 +9,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(libzoslib CXX C ASM)
 
-if(${CMAKE_C_COMPILER} MATCHES xlclang)
-  include_directories(BEFORE include)
-else()
-  include_directories(BEFORE include include/c++/v1)
-endif()
+include_directories(BEFORE include)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
