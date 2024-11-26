@@ -21,6 +21,8 @@ set(libsrc
   zos-mount.c
   zos-mkdtemp.c
   zos-instrumentation.cc
+  zos-pty.c
+  zos-cfmakeraw.c
 )
 set(zoslib-help zoslib-help.cc)
 
