@@ -158,8 +158,7 @@ void *memmem(const void *l, size_t l_len, const void *s, size_t s_len) {
 }
 
 // Adapted from Musl c's implementation (MIT license)
-int strverscmp(const char *l0, const char *r0)
-{
+int strverscmp(const char *l0, const char *r0) {
 	const unsigned char *l = (const void *)l0;
 	const unsigned char *r = (const void *)r0;
 	size_t i, dp, j;
@@ -184,6 +183,13 @@ int strverscmp(const char *l0, const char *r0)
 		return (unsigned char)(l[i]-'0') - (unsigned char)(r[i]-'0');
 	}
 	return l[i] - r[i];
+}
+
+/* Taken from Musl C: https://git.musl-libc.org/cgit/musl/tree/src/string/strcasestr.c (MIT license)*/
+char *strcasestr(const char *h, const char *n) {
+	size_t l = strlen(n);
+	for (; *h; h++) if (!strncasecmp(h, n, l)) return (char *)h;
+	return 0;
 }
 
 #if TEST

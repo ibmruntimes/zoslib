@@ -48,7 +48,7 @@
 #pragma redefine_extname fdopendir fdopendir_undefined
 #pragma redefine_extname pthread_condattr_setclock pthread_condattr_setclock_undefined
 #pragma redefine_extname asprintf asprintf_undefined
-#pragma redefine_extname vasprintf vasprintf_undefined
+#pragma redefine_extname eventfd eventfd_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H
