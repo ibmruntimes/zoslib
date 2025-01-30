@@ -49,6 +49,7 @@
 #pragma redefine_extname pthread_condattr_setclock pthread_condattr_setclock_undefined
 #pragma redefine_extname asprintf asprintf_undefined
 #pragma redefine_extname eventfd eventfd_undefined
+#pragma redefine_extname wait4 wait4_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H
