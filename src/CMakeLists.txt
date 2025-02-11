@@ -7,6 +7,7 @@
 ###############################################################################
 
 set(libsrc
+  zos-aligned-newdel.cc
   zos-bpx.cc
   zos-char-util.cc
   zos-getentropy.cc

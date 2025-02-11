@@ -1,0 +1,33 @@
+///////////////////////////////////////////////////////////////////////////////
+// Licensed Materials - Property of IBM
+// ZOSLIB
+// (C) Copyright IBM Corp. 2025. All Rights Reserved.
+// US Government Users Restricted Rights - Use, duplication
+// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+///////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+#include_next <new>
+
+#if defined(__clang__) && !defined(__ibmxl__) && defined(__cpp_aligned_new) && \
+    !_LIBCPP_HAS_ALIGNED_ALLOCATION
+
+#include "zos-macros.h"
+
+namespace std {
+  enum class align_val_t : std::size_t {};
+}
+
+__Z_EXPORT void* operator new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void* operator new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
+__Z_EXPORT void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
+
+__Z_EXPORT void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void operator delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
+
+#endif

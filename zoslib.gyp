@@ -28,15 +28,35 @@
       ],
       'conditions': [
         [ '"<!(echo $CC)" == "xlclang"', {
-          'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\''],
-          'include_dirs': ['include'],
+          'cflags': [
+            '-q64',
+            '-qascii',
+            '-qexportall',
+            '-Wno-missing-field-initializers',
+            '-qasmlib=//\\\'SYS1.MACLIB\\\'',
+          ],
         }, {
-          'cflags': ['-fzos-le-char-mode=ascii', '-fgnu-keywords', '-fno-short-enums', '-mzos-target=zosv2r4'],
-          'include_dirs': ['include', 'include/c++/v1'],
+          'cflags': [
+            '-faligned-allocation',
+            '-fgnu-keywords',
+            '-fno-short-enums',
+            '-fzos-le-char-mode=ascii',
+            '-m64',
+            '-march=arch14',
+            '-mzos-target=zosv2r4',
+          ],
+          'ldflags': [
+            '-m64',
+          ],
         }],
+      ],
+      'include_dirs': [
+        'include',
+        'include/c++/v1',
       ],
       'sources': [
         'src/zos.cc',
+        'src/zos-aligned-newdel.cc',
         'src/zos-bpx.cc',
         'src/zos-char-util.cc',
         'src/zos-getentropy.cc',
