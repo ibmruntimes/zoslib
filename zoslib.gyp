@@ -37,7 +37,6 @@
           ],
         }, {
           'cflags': [
-            '-faligned-allocation',
             '-fgnu-keywords',
             '-fno-short-enums',
             '-fzos-le-char-mode=ascii',

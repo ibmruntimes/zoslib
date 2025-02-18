@@ -13,8 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && defined(__cpp_aligned_new)
-// Compiled with -faligned-allocation
+#if defined(__clang__) && !defined(__ibmxl__)
 
 #include <new>
 
@@ -103,4 +102,4 @@ __Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXC
 }
 
 #endif  // #if !_LIBCPP_HAS_ALIGNED_ALLOCATION
-#endif  // #if defined(__clang__) && !defined(__ibmxl__) && defined(__cpp_aligned_new)
+#endif  // #if defined(__clang__) && !defined(__ibmxl__)

@@ -6,7 +6,8 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef __cpp_aligned_new
+#if defined(__clang__) && !defined(__ibmxl__) && defined(__cpp_aligned_new)
+// __cpp_aligned_new is defined with -faligned-allocation
 
 #include "zos.h"
 #include "gtest/gtest.h"
@@ -110,4 +111,4 @@ TEST(AlignedNewDel, TestAllocArr) {
 }
 
 }      // namespace
-#endif //  #ifdef __cpp_aligned_new
+#endif // __clang__ && !__ibmxl__

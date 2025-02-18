@@ -13,7 +13,6 @@ config("zoslib_config") {
   ]
   # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   cflags = [
-    "-faligned-allocation",
     "-fno-short-enums",
     "-fzos-le-char-mode=ascii",
     "-m64",

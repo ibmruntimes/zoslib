@@ -82,7 +82,6 @@ if(${CMAKE_C_COMPILER} MATCHES xlclang)
 else()
   # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   list(APPEND zoslib_cflags
-    -faligned-allocation
     -fgnu-keywords
     -fno-short-enums
     -fzos-le-char-mode=ascii
