@@ -13,12 +13,13 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__)
+#if defined(__clang__) && !defined(__ibmxl__) && \
+    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
+
+// _LIBCPP_HAS_ALIGNED_ALLOCATION is defined in libcxx/include/__config
 
 #include <new>
 
-// Defined in libcxx/include/__config
-#if !_LIBCPP_HAS_ALIGNED_ALLOCATION
 #include "zos-base.h"
 
 
@@ -101,5 +102,4 @@ __Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXC
   ::operator delete[](ptr, al);
 }
 
-#endif  // #if !_LIBCPP_HAS_ALIGNED_ALLOCATION
-#endif  // #if defined(__clang__) && !defined(__ibmxl__)
+#endif

@@ -9,7 +9,8 @@
 #pragma once
 #include_next <new>
 
-#if defined(__clang__) && !defined(__ibmxl__) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
+#if defined(__clang__) && !defined(__ibmxl__) && \
+    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
 #include "zos-macros.h"
 
