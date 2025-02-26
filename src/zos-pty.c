@@ -12,64 +12,87 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
 #include <pty.h>
 
-int openpty(int *master, int *slave, char *name, const struct termios *termp, const struct winsize *winp) {
-  int fd;
-  char master_dev[20], slave_dev[20];
+int openpty(int *master, int *slave, char *name, const struct termios *termp,
+            const struct winsize *winp) {
+  int mfd, sfd;
+  char *slave_name;
 
-  *master = -1;
-  *slave = -1;
-
-  // Iterating through the 4-digit ptyp and ttyp devices
-  int i=0;
-  for (; i < 10000; i++) {  // Maximum 9999 for 4-digit format
-    snprintf(master_dev, sizeof(master_dev), "/dev/ptyp%04d", i);
-    snprintf(slave_dev, sizeof(slave_dev), "/dev/ttyp%04d", i);
-
-    if ((*master = open(master_dev, O_RDWR | O_NOCTTY)) != -1) {
-      if (grantpt(*master) != 0)
-              goto error;
-
-      if (unlockpt(*master) != 0)
-              goto error;
-
-      if ((*slave = open(slave_dev, O_RDWR | O_NOCTTY)) != -1) {
-              break;  // Found an available pair
-      }
-
-      close(*master);
-      *master = -1;
-    }
+  /* Open the master pty device */
+  mfd = posix_openpt(O_RDWR | O_NOCTTY);
+  if (mfd < 0) {
+    perror("posix_openpt");
+    return -1;
   }
 
-  if(i == 10000)
-      goto error;
+  // Needed for z/OS so that the characters are not garbled if ptyp* is untagged
+  struct f_cnvrt cvtreq = {SETCVTON, 0, 1047};
+  fcntl(mfd, F_CONTROL_CVT, &cvtreq);
 
-  if (termp && tcsetattr(*slave, TCSAFLUSH, termp) == -1) {
-    perror("tcsetattr() error");
-    goto error;
+  if (grantpt(mfd) != 0) {
+    perror("grantpt");
+    close(mfd);
+    return -1;
   }
-  if (winp && ioctl(*slave, TIOCSWINSZ, winp) == -1) {
-    goto error;
+
+  if (unlockpt(mfd) != 0) {
+    perror("unlockpt");
+    close(mfd);
+    return -1;
   }
 
-  // ignoring name, not passed and size is unknown in the API
+  slave_name = ptsname(mfd);
+  if (slave_name == NULL) {
+    perror("ptsname");
+    close(mfd);
+    return -1;
+  }
 
+  /* Note: Ensure that the caller provides a buffer large enough to hold the
+   * name. */
+  if (name) {
+    strncpy(name, slave_name, 128);
+    name[127] = '\0'; // Ensure null-termination
+  }
+
+  /* Open the slave pty device */
+  sfd = open(slave_name, O_RDWR | O_NOCTTY);
+  if (sfd < 0) {
+    perror("open slave pty");
+    close(mfd);
+    return -1;
+  }
+
+  /* Set terminal attributes if provided */
+  if (termp && tcsetattr(sfd, TCSAFLUSH, termp) == -1) {
+    perror("tcsetattr");
+    close(sfd);
+    close(mfd);
+    return -1;
+  }
+
+  /* Set window size if provided */
+  if (winp && ioctl(sfd, TIOCSWINSZ, winp) == -1) {
+    perror("ioctl TIOCSWINSZ");
+    close(sfd);
+    close(mfd);
+    return -1;
+  }
+
+  *master = mfd;
+  *slave = sfd;
   return 0;
-
-error:
-  if (*slave != -1) {
-    close(*slave);
-    *slave = -1;
-  }
-  if (*master != -1) {
-    close(*master);
-    *master = -1;
-  }
-  return -1;
 }
-
 
 static int login_tty(int fd) {
   setsid();
@@ -84,7 +107,8 @@ static int login_tty(int fd) {
   return 0;
 }
 
-pid_t forkpty(int *amaster, char *name, const struct termios *termp, const struct winsize *winp) {
+pid_t forkpty(int *amaster, char *name, const struct termios *termp,
+              const struct winsize *winp) {
   int master, slave;
   if (openpty(&master, &slave, name, termp, winp) == -1) {
     return -1;
@@ -92,17 +116,17 @@ pid_t forkpty(int *amaster, char *name, const struct termios *termp, const struc
 
   pid_t pid = fork();
   switch (pid) {
-    case -1:
-      close(master);
-      close(slave);
-      return -1;
-    case 0:
-      close(master);
-      login_tty(slave);
-      return 0;
-    default:
-       close(slave);
-       *amaster = master;
-       return pid;
+  case -1:
+    close(master);
+    close(slave);
+    return -1;
+  case 0:
+    close(master);
+    login_tty(slave);
+    return 0;
+  default:
+    close(slave);
+    *amaster = master;
+    return pid;
   }
 }

@@ -20,15 +20,13 @@ extern "C" {
 /* Create pseudo tty master slave pair with NAME and set terminal
    attributes according to TERMP and WINP and return handles for both
    ends in AMASTER and ASLAVE.  */
-__Z_EXPORT extern int openpty (int *__amaster, int *__aslave, char *__name,
-                    const struct termios *__termp,
-                    const struct winsize *__winp);
+__Z_EXPORT extern int openpty(int *master, int *slave, char *name, const struct termios *termp,
+            const struct winsize *winp);
 
 /* Create child process and establish the slave pseudo terminal as the
    child's controlling terminal.  */
-__Z_EXPORT extern int forkpty (int *__amaster, char *__name,
-                    const struct termios *__termp,
-                    const struct winsize *__winp);
+__Z_EXPORT extern pid_t forkpty(int *amaster, char *name, const struct termios *termp,
+              const struct winsize *winp);
 
 
 #ifdef __cplusplus
