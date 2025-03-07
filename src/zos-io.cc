@@ -23,6 +23,7 @@
 #include <sys/inotify.h>
 #include <sys/file.h>
 #include <utmpx.h>
+#include <sys/uio.h>
 
 namespace {
 const char MEMLOG_LEVEL_WARNING = '1';
@@ -801,6 +802,7 @@ int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
 struct utmpx *__getutxent_orig(void) asm("getutxent");
 int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
                       void *(*start_routine)(void *), void *arg) asm("@@PT3C");
+ssize_t __writev_orig(int fd, const struct iovec *iov, int iovcnt) asm("writev");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1213,6 +1215,54 @@ int vasprintf(char **s, const char *fmt, va_list ap) {
 	return vsnprintf(*s, l+1U, fmt, ap);
 }
 
+static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
+  size_t total_len = 0;
+  for (int i = 0; i < iovcnt; i++) {
+    total_len += iov[i].iov_len;
+  }
+
+  // Use stack allocation for small buffers to avoid malloc overhead.
+  const size_t STACK_THRESHOLD = 1024;  // 1KB threshold (adjust as needed)
+  char *converted_buf = NULL;
+  bool using_heap = false;
+  if (total_len <= STACK_THRESHOLD) {
+    converted_buf = (char*)alloca(total_len);
+  }
+  else {
+    converted_buf = (char*)malloc(total_len);
+    if (!converted_buf)
+      return -1;  // Allocation failed
+    using_heap = true;
+  }
+
+  char *ptr = converted_buf;
+  for (int i = 0; i < iovcnt; i++) {
+    memcpy(ptr, iov[i].iov_base, iov[i].iov_len);
+    ptr += iov[i].iov_len;
+  }
+
+  // Write the entire converted buffer at once.
+  ssize_t written = write(fd, converted_buf, total_len);
+
+  if (using_heap) {
+    free(converted_buf);
+  }
+
+  return written;
+}
+
+ssize_t __writev_ascii(int fd, const struct iovec *iov, int iovcnt) {
+  if (!isatty(fd)) {
+    return __writev_orig(fd, iov, iovcnt);
+  }
+
+  int ccsid = __getfdccsid(fd);
+  if (ccsid == 1047 || ccsid == (65536 + 1047)) {
+    return ebcdic_writev(fd, iov, iovcnt);
+  }
+    
+  return __writev_orig(fd, iov, iovcnt);
+}
 
 #ifdef __cplusplus
 }
