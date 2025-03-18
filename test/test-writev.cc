@@ -43,6 +43,7 @@ protected:
     int master_fd, slave_fd;
 };
 
+// This tests the writev function when ASCII data is passed.
 TEST_F(WritevTest, AsciiDataWrite) {
     struct iovec iov[6];
     size_t total_len = 0;
@@ -68,6 +69,7 @@ TEST_F(WritevTest, AsciiDataWrite) {
     }
 }
 
+// This tests the writev function when EBCDIC data is passed.
 TEST_F(WritevTest, EbcdicDataWrite) {
     struct iovec iov[6];
     size_t total_len = 0;
