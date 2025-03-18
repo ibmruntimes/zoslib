@@ -14,7 +14,6 @@
 #include <termios.h>
 
 #include <errno.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -66,7 +65,7 @@ int openpty(int *master, int *slave, char *name, const struct termios *termp,
   }
 
   /* Open the slave pty device */
-  sfd = open(slave_name, O_RDWR | O_NOCTTY);
+  sfd = __open_ascii(slave_name, O_RDWR | O_NOCTTY);
   if (sfd < 0) {
     perror("open slave pty");
     close(mfd);
