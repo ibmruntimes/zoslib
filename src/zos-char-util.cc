@@ -540,25 +540,31 @@ int __file_needs_conversion_init(const char *name, int fd) {
       close(fd);
       return 0;
     }
-    int ccsid;
-    int am;
-    unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
-    if (ccsid == 1047 && len == cnt) {
-      if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
-        if (name) {
-          len = strlen(name);
-          char filename[len + 1];
-          _convert_e2a(filename, name, len);
-          dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
-                      "EBCDIC characters\n", filename);
-        } else {
-          dprintf(2, "Warning: File (null) is untagged and seems to contain "
-                      "EBCDIC characters\n");
-        }
-      }
+    if (cnt == 0) {
       fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
       return 1;
     }
+    else {
+      int ccsid;
+      int am;
+      unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
+      if (ccsid == 1047 && len == cnt) {
+        if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
+          if (name) {
+            len = strlen(name);
+            char filename[len + 1];
+            _convert_e2a(filename, name, len);
+            dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
+                        "EBCDIC characters\n", filename);
+          } else {
+            dprintf(2, "Warning: File (null) is untagged and seems to contain "
+                        "EBCDIC characters\n");
+          }
+        }
+        fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
+        return 1;
+      }     // ccsid and len
+    }       // cnt
   }         // seekable files
   return 0; // not seekable
 }
