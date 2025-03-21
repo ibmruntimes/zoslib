@@ -803,6 +803,7 @@ struct utmpx *__getutxent_orig(void) asm("getutxent");
 int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
                       void *(*start_routine)(void *), void *arg) asm("@@PT3C");
 ssize_t __writev_orig(int fd, const struct iovec *iov, int iovcnt) asm("writev");
+ssize_t __readv_orig(int fd, const struct iovec *iov, int iovcnt) asm("readv");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1215,6 +1216,7 @@ int vasprintf(char **s, const char *fmt, va_list ap) {
 	return vsnprintf(*s, l+1U, fmt, ap);
 }
 
+
 static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
   size_t total_len = 0;
   for (int i = 0; i < iovcnt; i++) {
@@ -1252,6 +1254,7 @@ static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
 }
 
 ssize_t __writev_ascii(int fd, const struct iovec *iov, int iovcnt) {
+
   if (!isatty(fd)) {
     return __writev_orig(fd, iov, iovcnt);
   }
@@ -1262,6 +1265,42 @@ ssize_t __writev_ascii(int fd, const struct iovec *iov, int iovcnt) {
   }
     
   return __writev_orig(fd, iov, iovcnt);
+}
+
+
+static ssize_t ebcdic_readv(int fd, const struct iovec *iov, int iovcnt) {
+    ssize_t total_read = 0;
+
+    for (int i = 0; i < iovcnt; i++) {
+        ssize_t bytes_read = read(fd, iov[i].iov_base, iov[i].iov_len);
+        if (bytes_read < 0) {
+            perror("read failed");
+            return -1;  // Return error if read fails
+        }
+        total_read += bytes_read;
+
+        // If fewer bytes were read than requested, stop early
+        if (bytes_read < (ssize_t)iov[i].iov_len) {
+            break;
+        }
+    }
+    return total_read;
+}
+
+
+ssize_t __readv_ascii(int fd, const struct iovec *iov, int iovcnt) {
+
+   if (!isatty(fd)) {
+     return __readv_orig(fd, iov, iovcnt);
+   }
+
+   int ccsid = __getfdccsid(fd);
+   if (ccsid == 1047 || ccsid == (65536 + 1047)) {
+     return ebcdic_readv(fd, iov, iovcnt);
+   }
+
+   return __readv_orig(fd, iov, iovcnt);
+
 }
 
 #ifdef __cplusplus
