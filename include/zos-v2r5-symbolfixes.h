@@ -53,7 +53,6 @@
 
 // Additional v2r5 functions based on analysis in https://github.com/orgs/zopencommunity/discussions/855#discussioncomment-12192678
 #pragma redefine_extname accept4 accept4_undefined
-#pragma redefine_extname clone clone_undefined
 #pragma redefine_extname epoll_create epoll_create_undefined
 #pragma redefine_extname epoll_create1 epoll_create1_undefined
 #pragma redefine_extname epoll_ctl epoll_ctl_undefined
