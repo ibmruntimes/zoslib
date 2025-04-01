@@ -18,6 +18,7 @@ extern "C" {
  * 
  */
 __Z_EXPORT extern ssize_t __writev_ascii(int fd, const struct iovec *iov, int iovcnt);
+__Z_EXPORT extern ssize_t __readv_ascii(int fd, const struct iovec *iov, int iovcnt);
 
 #if defined(__cplusplus)
 }
@@ -26,15 +27,19 @@ __Z_EXPORT extern ssize_t __writev_ascii(int fd, const struct iovec *iov, int io
 #if defined(ZOSLIB_OVERRIDE_CLIB)
 
 #undef writev
+#undef readv
 #define writev __writev_replaced
+#define readv __readv_replaced
 #include_next <sys/uio.h>
 #undef writev
+#undef readv
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 __Z_EXPORT extern ssize_t writev(int fd, const struct iovec *iov, int iovcnt) __asm("__writev_ascii");
+__Z_EXPORT extern ssize_t readv(int fd, const struct iovec *iov, int iovcnt) __asm("__readv_ascii");
 
 #if defined(__cplusplus)
 }
