@@ -1216,6 +1216,15 @@ int vasprintf(char **s, const char *fmt, va_list ap) {
 	return vsnprintf(*s, l+1U, fmt, ap);
 }
 
+int asprintf(char **s, const char *fmt, ...)
+{
+	int ret;
+	va_list ap;
+	va_start(ap, fmt);
+	ret = vasprintf(s, fmt, ap);
+	va_end(ap);
+	return ret;
+}
 
 static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
   size_t total_len = 0;

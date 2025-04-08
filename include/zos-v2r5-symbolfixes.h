@@ -46,7 +46,6 @@
 #pragma redefine_extname utimensat utimensat_undefined
 #pragma redefine_extname fdopendir fdopendir_undefined
 #pragma redefine_extname pthread_condattr_setclock pthread_condattr_setclock_undefined
-#pragma redefine_extname asprintf asprintf_undefined
 #pragma redefine_extname eventfd eventfd_undefined
 #pragma redefine_extname wait4 wait4_undefined
 #pragma redefine_extname madvise madvise_undefined
@@ -79,6 +78,7 @@
 #pragma redefine_extname umount2 umount2_undefined
 #pragma redefine_extname unshare unshare_undefined
 //#pragma redefine_extname vasprintf vasprintf_undefined // Defined in zoslib
+//#pragma redefine_extname asprintf asprintf_undefined // Defined in zoslib
 #pragma redefine_extname openat2 openat2_undefined
 #pragma redefine_extname syscall syscall_undefined
 #pragma redefine_extname fgetxattr fgetxattr_undefined
