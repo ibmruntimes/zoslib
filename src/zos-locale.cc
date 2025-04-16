@@ -196,5 +196,29 @@ double strtod_l(const char * __restrict__ str, char ** __restrict__ end, locale_
   SetAndRestore newloc(l);
   return strtod(str, end);
 }
+
+const char *getlocalename_l(int category, locale_t loc) {
+  if(loc == LC_GLOBAL_LOCALE) {
+    const char *result = setlocale (category, NULL);
+    return result;
+  }
+  switch (category) {
+    case LC_CTYPE:
+      return loc->lc_ctype.c_str();
+    case LC_NUMERIC:
+      return loc->lc_numeric.c_str();
+    case LC_TIME:
+      return loc->lc_time.c_str();
+    case LC_COLLATE:
+      return loc->lc_collate.c_str();
+    case LC_MONETARY:
+      return loc->lc_monetary.c_str();
+    case LC_MESSAGES:
+      return loc->lc_messages.c_str();
+    default:
+      return "";
+  }
+}
+
 }
 #endif
