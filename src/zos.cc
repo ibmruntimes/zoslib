@@ -239,7 +239,7 @@ int backtrace_w(void **input_buffer, int size) {
   while (size > 0 && !tbck_parms.__tf_is_main) {
     ____le_traceback_a(__TRACEBACK_FIELDS, &tbck_parms, &fc);
     if (fc.tok_sev >= 2) {
-      dprintf(2, "____le_traceback_a() service failed\n");
+      __dprintf(2, "____le_traceback_a() service failed\n");
       return 0;
     }
     *buffer = tbck_parms.__tf_dsa_addr;
@@ -344,7 +344,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       }
       ____le_traceback_a(__TRACEBACK_FIELDS, &tbck_parms, &fc);
       if (fc.tok_sev >= 2) {
-        dprintf(2, "____le_traceback_a() service failed\n");
+        __dprintf(2, "____le_traceback_a() service failed\n");
         free(return_buff);
         if (return_string != nullptr)
           *return_string = 0;
@@ -371,7 +371,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                    (char *)tbck_parms.__tf_entry_addr,
                                pu_name, stmt_id);
           else
-            dprintf(fd, " %d: 0x%p %s+0x%lx [%s:%s]\n", i + 1, return_addr,
+            __dprintf(fd, " %d: 0x%p %s+0x%lx [%s:%s]\n", i + 1, return_addr,
                     entry_name,
                     (char *)tbck_parms.__tf_call_instruction -
                         (char *)tbck_parms.__tf_entry_addr,
@@ -385,7 +385,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                (char *)tbck_parms.__tf_call_instruction -
                                    (char *)tbck_parms.__tf_entry_addr);
           else
-            dprintf(fd, " %d: 0x%p %s+0x%lx\n", i + 1, return_addr, entry_name,
+            __dprintf(fd, " %d: 0x%p %s+0x%lx\n", i + 1, return_addr, entry_name,
                     (char *)tbck_parms.__tf_call_instruction -
                         (char *)tbck_parms.__tf_entry_addr);
         }
@@ -396,14 +396,14 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                " %d: 0x%p %s [%s:%s]", i + 1, return_addr,
                                entry_name, pu_name, stmt_id);
           else
-            dprintf(fd, " %d 0x%p %s [%s:%s]\n", i + 1, return_addr, entry_name,
+            __dprintf(fd, " %d 0x%p %s [%s:%s]\n", i + 1, return_addr, entry_name,
                     pu_name, stmt_id);
         } else {
           if (fd == -1)
             cnt = __snprintf_a(stringpool, buff_end - stringpool,
                                " %d: 0x%p %s", i + 1, return_addr, entry_name);
           else
-            dprintf(fd, " %d: 0x%p %s\n", i + 1, return_addr, entry_name);
+            __dprintf(fd, " %d: 0x%p %s\n", i + 1, return_addr, entry_name);
         }
       }
       if (fd == -1) {
@@ -620,7 +620,7 @@ static void *_timer(void *parm) {
   }
   __zinit *zinit_ptr = __get_instance();
   zoslib_config_t &config = zinit_ptr->config;
-  dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
+  __dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
   raise(SIGABRT);
   return 0; // avoid compiler warning
 }
@@ -1308,7 +1308,7 @@ public:
       unsigned long k = (unsigned long)p;
       cache[k] = (unsigned long)segs * kMegaByte;
       if (mem_account())
-        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
+        __dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
                 (unsigned long)segs * kMegaByte);
     }
     return p;
@@ -1323,7 +1323,7 @@ public:
         unsigned long s = c->second;
         cache.erase(c);
         if (mem_account()) {
-          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
+          __dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
         }
       }
     }
@@ -1594,12 +1594,12 @@ void __atomic_store_real(int size, void *ptr, void *val, int memorder) {
       }
     }
     if (retry < 1) {
-      dprintf(2, "%s:%s:%d size=%d target=%p source=%p store failed\n",
+      __dprintf(2, "%s:%s:%d size=%d target=%p source=%p store failed\n",
               __FILE__, __FUNCTION__, __LINE__, size, ptr, val);
       abort();
     }
   } else {
-    dprintf(2, "%s:%s:%d size=%d target=%p source=%p not implimented\n",
+    __dprintf(2, "%s:%s:%d size=%d target=%p source=%p not implimented\n",
             __FILE__, __FUNCTION__, __LINE__, size, ptr, val);
     abort();
   }
