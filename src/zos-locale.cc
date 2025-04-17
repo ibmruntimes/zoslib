@@ -12,6 +12,9 @@
 #ifndef ZOSLIB_OVERRIDE_CLIB_LOCALE
 #define ZOSLIB_OVERRIDE_CLIB_LOCALE
 #endif
+#ifdef ZOSLIB_USE_CLIB_LOCALE
+#undef ZOSLIB_USE_CLIB_LOCALE
+#endif
 #include <locale.h>
 #include <stdlib.h>
 

@@ -14,7 +14,7 @@
 // For xlclang++, exclude these declarations unless ZOSLIB_OVERRIDE_CLIB_LOCALE
 // is defined even if ZOSLIB_OVERRIDE_CLIB is defined.
 
-#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE))
+#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && !defined(ZOSLIB_USE_CLIB_LOCALE)
 #include "zos-macros.h"
 
 #undef newlocale

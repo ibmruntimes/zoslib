@@ -1,4 +1,7 @@
 #define ZOSLIB_OVERRIDE_CLIB 1
+#ifdef ZOSLIB_USE_CLIB_LOCALE
+#undef ZOSLIB_USE_CLIB_LOCALE
+#endif
 
 #include "zos.h"
 #include <gtest/gtest.h>
