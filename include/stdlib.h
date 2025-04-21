@@ -80,7 +80,7 @@ __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 #endif
 #endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) */
 
-#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE))
+#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && !defined(ZOSLIB_USE_CLIB_LOCALE)
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -118,6 +118,7 @@ __Z_EXPORT const char * getprogname(void);
 __Z_EXPORT int mkostemp(char *, int flags);
 __Z_EXPORT int mkstemps(char *, int suffixlen);
 __Z_EXPORT int mkostemps(char *, int suffixlen, int flags);
+__Z_EXPORT void *reallocarray(void *ptr, size_t nmemb, size_t size);
 #if defined(__cplusplus)
 }
 #endif

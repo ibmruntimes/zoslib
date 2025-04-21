@@ -36,10 +36,10 @@ __Z_EXPORT int __open(const char *file, int oflag, int mode);
 #endif // ifdef TRACE_ON
 
 /**
- * Debug Printf.
- * \return returns total number of bytes written to file descriptor
- */
-__Z_EXPORT int dprintf(int fd, const char *, ...);
+  * Debug Printf.
+  * \return returns total number of bytes written to file descriptor
+  */
+__Z_EXPORT int __dprintf(int fd, const char *, ...);
 
 /**
  * Variadic Debug Printf.

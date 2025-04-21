@@ -14,7 +14,7 @@
 // For xlclang++, exclude these declarations unless ZOSLIB_OVERRIDE_CLIB_LOCALE
 // is defined even if ZOSLIB_OVERRIDE_CLIB is defined.
 
-#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE))
+#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && !defined(ZOSLIB_USE_CLIB_LOCALE)
 #include "zos-macros.h"
 
 #undef newlocale
@@ -53,7 +53,7 @@ __Z_EXPORT extern locale_t __c_locale() __asm("__zlc_locale_a");
 __Z_EXPORT extern locale_t newlocale(int category_mask, const char* locale, locale_t base) __asm("__zlnewlocale_a");
 __Z_EXPORT extern void freelocale(locale_t locobj) __asm("__zlfreelocale");
 __Z_EXPORT extern locale_t uselocale(locale_t newloc) __asm("__zluselocale_a");
-
+__Z_EXPORT extern const char *getlocalename_l(int category, locale_t locale);
 
 #if defined(__cplusplus)
 }

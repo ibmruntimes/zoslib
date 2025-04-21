@@ -152,7 +152,7 @@ int vdprintf(int fd, const char *fmt, va_list ap) {
   return len;
 }
 
-int dprintf(int fd, const char *fmt, ...) {
+int __dprintf(int fd, const char *fmt, ...) {
   va_list ap;
   int len;
   va_start(ap, fmt);
@@ -231,7 +231,7 @@ void __dump_title(int fd, const void *addr, size_t len, size_t bw,
     vdprintf(fd, format, ap);
     va_end(ap);
   } else {
-    dprintf(fd, "Dump: \"Address: Content in Hexdecimal, ASCII, EBCDIC\"\n");
+    __dprintf(fd, "Dump: \"Address: Content in Hexdecimal, ASCII, EBCDIC\"\n");
   }
   unsigned char line[2048];
   const unsigned char *buffer;
@@ -288,7 +288,7 @@ void __dump_title(int fd, const void *addr, size_t len, size_t bw,
     }
     line[b++] = '|';
     line[b++] = 0;
-    dprintf(fd, "%-.*s\n", b, line);
+    __dprintf(fd, "%-.*s\n", b, line);
     offset += sz;
     len -= sz;
   }
@@ -1226,6 +1226,44 @@ int asprintf(char **s, const char *fmt, ...)
 	return ret;
 }
 
+int dprintf(int fd, const char *format, ...) {
+  va_list args;
+  char *buffer;
+  int length, written;
+
+  // First, calculate the required length
+  va_start(args, format);
+  length = vsnprintf(NULL, 0, format, args); // Get the length of the formatted string
+  va_end(args);
+
+  if (length < 0) {
+      return -1;  // Return an error if formatting fails
+  }
+
+  buffer = (char *)malloc(length + 1);
+  if (!buffer) {
+      return -1;  // Return an error if memory allocation fails
+  }
+
+  // Format the string into the allocated buffer
+  va_start(args, format);
+  vsnprintf(buffer, length + 1, format, args);
+  va_end(args);
+
+  // Write the formatted string to the specified file descriptor
+  written = write(fd, buffer, length);
+
+  // Clean up
+  free(buffer);
+
+  // Check if the write operation was successful
+  if (written != length) {
+      return -1;  // Return an error if the write fails
+  }
+
+  return written;
+}
+
 static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
   size_t total_len = 0;
   for (int i = 0; i < iovcnt; i++) {
@@ -1310,6 +1348,23 @@ ssize_t __readv_ascii(int fd, const struct iovec *iov, int iovcnt) {
 
    return __readv_orig(fd, iov, iovcnt);
 
+}
+
+void *reallocarray(void *ptr, size_t nmemb, size_t size) {
+  // Check for multiplication overflow
+  if (nmemb > 0 && SIZE_MAX / nmemb < size) {
+    // Multiplication would overflow
+    errno = ENOMEM;
+    return NULL;
+  }
+  size_t s = nmemb * size;
+  // Check for size_t overflow
+  if (nmemb > 0 && s / nmemb != size) {
+    // Overflow detected
+    errno = ENOMEM;
+    return NULL;
+  }
+  return realloc(ptr, s);
 }
 
 #ifdef __cplusplus
