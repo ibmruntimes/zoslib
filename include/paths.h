@@ -9,5 +9,6 @@
 #ifndef ZOS_PATHS_H_
 
 #define _PATH_BSHELL        "/bin/sh"
+#define _PATH_VI            "/bin/vi"
 
 #endif

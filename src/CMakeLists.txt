@@ -23,6 +23,7 @@ set(libsrc
   zos-instrumentation.cc
   zos-pty.c
   zos-cfmakeraw.c
+  zos-signalfd.c
 )
 set(zoslib-help zoslib-help.cc)
 
