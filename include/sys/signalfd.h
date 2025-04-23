@@ -56,7 +56,7 @@ extern "C" {
 
 __Z_EXPORT extern int signalfd(int fd, const sigset_t *mask, int flags);
 
-__Z_EXPORT int signalfd_close(int fd);
+__Z_EXPORT extern int signalfd_close(int fd);
 
 #ifdef __cplusplus
 }
