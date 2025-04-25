@@ -62,7 +62,9 @@
 #pragma redefine_extname fremovexattr fremovexattr_undefined
 #pragma redefine_extname fsetxattr fsetxattr_undefined
 //#pragma redefine_extname getentropy getentropy_undefined // Defined in zoslib
+#ifndef ZOPEN_GETOPT
 #pragma redefine_extname getopt_long getopt_long_undefined
+#endif
 #pragma redefine_extname getpwent_r getpwent_r_undefined
 #pragma redefine_extname inet_aton inet_aton_undefined
 #pragma redefine_extname inotify_add_watch inotify_add_watch_undefined
