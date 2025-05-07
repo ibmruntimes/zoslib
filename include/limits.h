@@ -15,4 +15,8 @@
 #define PATH_MAX _XOPEN_PATH_MAX
 #endif
 
+#ifndef NAME_MAX
+#define NAME_MAX 255
+#endif
+
 #endif
