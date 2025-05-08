@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/signalfd.h>
+#include <string.h>
 
 static int signal_pipe[2] = {-1, -1};
 
