@@ -545,6 +545,13 @@ int __file_needs_conversion_init(const char *name, int fd) {
     unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
     if (ccsid == 1047 && len == cnt) {
       if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
+        if (am == 1) {
+          len = strlen(name);
+          char filename[len + 1];
+          _convert_e2a(filename, name, len);
+          dprintf(2, "Warning: File \"%s\" is ambiguous and seems to contain "
+                      "both EBCDIC or ASCII characters\n", filename);
+        }
         if (name) {
           len = strlen(name);
           char filename[len + 1];
