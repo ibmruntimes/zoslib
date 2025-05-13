@@ -76,6 +76,8 @@ if(${CMAKE_C_COMPILER} MATCHES xlclang)
     -qasmlib=sys1.maclib:sys1.modgen)
 
   target_link_options(zoslib PUBLIC "-Wl,DLL")
+  set(CMAKE_EXE_LINKER_FLAGS "-q64" CACHE STRING "" FORCE)
+  set(CMAKE_SHARED_LINKER_FLAGS "-q64" CACHE STRING "" FORCE)
 else()
   # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   list(APPEND zoslib_cflags
@@ -87,6 +89,8 @@ else()
     -fzos-le-char-mode=ascii)
 
   target_link_options(zoslib PUBLIC "--shared")
+  set(CMAKE_EXE_LINKER_FLAGS "-m64" CACHE STRING "" FORCE)
+  set(CMAKE_SHARED_LINKER_FLAGS "-m64" CACHE STRING "" FORCE)
 endif()
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
