@@ -554,7 +554,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
             len = strlen(name);
             char filename[len + 1];
             _convert_e2a(filename, name, len);
-            dprintf(2, "Warning: File \"%s\" is ambiguous and seems to contain "
+            __dprintf(2, "Warning: File \"%s\" is ambiguous and seems to contain "
                       "both EBCDIC or ASCII characters\n", filename);
           }
           if (name) {
