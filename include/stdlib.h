@@ -40,6 +40,13 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 #define free __free_replaced
 #endif
 
+// LE fix since posix_memalign is exposed in 2.5
+#if (__TARGET_LIB__ < 0x43010000)
+#undef posix_memalign
+#define posix_memalign __posix_memalign_replaced
+#endif
+
+
 #if defined(ZOSLIB_OVERRIDE_CLIB_GETENV) && defined(__NATIVE_ASCII_F)
 #undef getenv
 #define getenv __getenv_replaced
@@ -59,13 +66,17 @@ __Z_EXPORT int __mkstemp_ascii(char*);
 extern "C" {
 #endif
 
+#if (__TARGET_LIB__ < 0x43010000)
+#undef posix_memalign
+#endif
+
 /**
  * Same as original realpath, but this allocates a buffer if second parm is NULL as defined in Posix.1-2008
  */
 #undef realpath
 __Z_EXPORT char *realpath(const char * __restrict__, char * __restrict__) __asm("__realpath_extended");
-__Z_EXPORT void* malloc(size_t size) __asm("__zoslib_malloc");
-__Z_EXPORT void free(void* ptr) __asm("__zoslib_free");
+__Z_EXPORT void* malloc(size_t size) __THROW __asm("__zoslib_malloc") ;
+__Z_EXPORT void free(void* ptr) __THROW __asm("__zoslib_free") ;
 
 #ifdef __NATIVE_ASCII_F
 /**

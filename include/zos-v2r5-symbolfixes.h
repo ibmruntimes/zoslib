@@ -91,6 +91,7 @@
 #pragma redefine_extname lgetxattr lgetxattr_undefined
 #pragma redefine_extname listxattr listxattr_undefined
 #pragma redefine_extname llistxattr llistxattr_undefined
+#pragma redefine_extname poxis_memalign posix_memalign_undefined
 #endif
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H

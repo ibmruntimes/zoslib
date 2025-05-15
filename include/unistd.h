@@ -90,4 +90,8 @@ __Z_EXPORT int execvpe(const char *name, char *const argv[],
 #define _SC_NPROCESSORS_ONLN 58 /* match linux */
 #endif
 
+#ifndef _SC_NPROCESSORS_CONF
+#define _SC_NPROCESSORS_CONF _SC_NPROCESSORS_ONLN /* TODO: implement */
+#endif
+
 #endif
