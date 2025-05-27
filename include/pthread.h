@@ -9,7 +9,6 @@
 #ifndef ZOS_PTHREAD_H_
 #define ZOS_PTHREAD_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 #include <sys/types.h>
 

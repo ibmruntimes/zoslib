@@ -9,7 +9,6 @@
 #ifndef ZOS_UNISTD_H_
 #define ZOS_UNISTD_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 
 #if defined(__cplusplus)

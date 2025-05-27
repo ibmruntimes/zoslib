@@ -12,8 +12,6 @@
 #include "zos-macros.h"
 #include <sys/types.h>
 
-#define __XPLAT 1
-
 typedef struct __ffile FILE;
 
 #if defined(__cplusplus)

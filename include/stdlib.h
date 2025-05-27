@@ -9,7 +9,6 @@
 #ifndef ZOS_STDLIB_H_
 #define ZOS_STDLIB_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 #include <features.h>
 #ifndef __ibmxl__
