@@ -129,6 +129,8 @@ char *strpcpy(char *dest, const char *src) {
   return ptr + strlen(ptr);
 }
 
+#if !defined(ZOSLIB_TRACE_ALLOCS)
+// else it's defined in zos-allocs-trace.cc
 char *strndup(const char *s, size_t n) {
   size_t len = strnlen(s, n);
   char *dupStr = malloc(len + 1);
@@ -138,6 +140,7 @@ char *strndup(const char *s, size_t n) {
   }
   return dupStr;
 }
+#endif
 
 #if TEST
 int main() {
