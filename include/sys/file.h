@@ -9,7 +9,6 @@
 #ifndef ZOS_SYSFILE_H_
 #define ZOS_SYSFILE_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 
 #if (__EDC_TARGET < 0x42050000)
