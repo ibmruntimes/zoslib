@@ -11,7 +11,9 @@
 
 #include "zos-macros.h"
 
-#if (__EDC_TARGET < 0x42050000)
+#if (__TARGET_LIB__ < 0x42050000) || \
+    (__TARGET_LIB__ >= 0x42050000 && \
+    (((_POSIX_C_SOURCE + 0) < 200809L) && !defined(_XPLATFORM_SOURCE)))
 #include <sys/file.h>
 
 #define   LOCK_SH  0x01    // shared file lock

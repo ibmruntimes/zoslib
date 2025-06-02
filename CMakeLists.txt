@@ -54,7 +54,6 @@ if(ZOSLIB_QUICK_STARTUP)
        ZOSLIB_QUICK_STARTUP)
 endif()
 
-
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
 endif()
@@ -82,8 +81,8 @@ else()
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -m64
-    -march=arch10
-    -mzos-target=zosv2r4
+    -march=z13
+    -mzos-target=zosv2r5
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 
