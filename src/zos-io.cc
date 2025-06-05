@@ -715,21 +715,23 @@ int __disableautocvt(int fd) {
   return fcntl(fd, F_CONTROL_CVT, &req);
 }
 
-int __tag_new_file(int fd) {
+int __tag_new_file_fp(FILE* fp) {
+  int fd = fileno(fp);
   char* encode_file_new = getenv("_ENCODE_FILE_NEW");
-
-  struct file_tag tag;
 
   int ccsid = 819;
   int txtflag = 1;
 
+  struct file_tag tag;
+
   if (encode_file_new) {
-    if (strcmp(encode_file_new, "IBM-1047") == 0) {
-      ccsid = 1047;
-    } else if (strcmp(encode_file_new, "BINARY") == 0) {
-      // Set the file descriptor to binary mode
+    if (strcmp(encode_file_new, "BINARY") == 0) {
       ccsid = FT_BINARY;
       txtflag = 0;
+    } else {
+      unsigned short ccsidEncodeFileNew = __toCcsid(encode_file_new);
+      if (ccsidEncodeFileNew)
+        ccsid = ccsidEncodeFileNew;
     }
   }
 
@@ -739,6 +741,23 @@ int __tag_new_file(int fd) {
   tag.ft_rsvflags = 0;
 
   return fcntl(fd, F_SETTAG, &tag);
+}
+
+int __tag_new_file(int fd) {
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+  if (encode_file_new) {
+    if (strcmp(encode_file_new, "BINARY") == 0) {
+      return __setfdbinary(fd);
+    } else {
+      unsigned short ccsidEncodeFileNew = __toCcsid(encode_file_new);
+      if (ccsidEncodeFileNew)
+        ccsid = ccsidEncodeFileNew;
+    }
+  }
+
+  return __chgfdccsid(fd, ccsid);
 }
 
 int __chgfdcodeset(int fd, char* codeset) {
@@ -895,7 +914,7 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-      __tag_new_file(fd);
+      __tag_new_file_fp(fp);
       errno = old_errno;
     }
     // Enable auto-conversion of untagged files
