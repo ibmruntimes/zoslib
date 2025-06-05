@@ -718,18 +718,27 @@ int __disableautocvt(int fd) {
 int __tag_new_file(int fd) {
   char* encode_file_new = getenv("_ENCODE_FILE_NEW");
 
+  struct file_tag tag;
+
   int ccsid = 819;
+  int txtflag = 1;
 
   if (encode_file_new) {
     if (strcmp(encode_file_new, "IBM-1047") == 0) {
       ccsid = 1047;
     } else if (strcmp(encode_file_new, "BINARY") == 0) {
       // Set the file descriptor to binary mode
-      return __setfdbinary(fd);
+      ccsid = FT_BINARY;
+      txtflag = 0;
     }
   }
 
-  return __chgfdccsid(fd, ccsid);
+  tag.ft_ccsid = ccsid;
+  tag.ft_txtflag = txtflag;
+  tag.ft_deferred = 0;
+  tag.ft_rsvflags = 0;
+
+  return fcntl(fd, F_SETTAG, &tag);
 }
 
 int __chgfdcodeset(int fd, char* codeset) {
