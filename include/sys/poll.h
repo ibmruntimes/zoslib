@@ -10,7 +10,7 @@
 // So we include poll.h
 
 #ifndef __SYS_POLL_H_
-#define ___SYS_POLL_H_
+#define __SYS_POLL_H_
 
 #include <poll.h>
 
