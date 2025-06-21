@@ -191,7 +191,44 @@ char *strcasestr(const char *h, const char *n) {
 	for (; *h; h++) if (!strncasecmp(h, n, l)) return (char *)h;
 	return 0;
 }
-
+char * __strerror_orig(int) asm("@@A00177");
+// new strerror
+int strerror_r(int, char *, size_t);
+char *strerror(int err) {
+	if (!(getenv("ZOSLIB_ERROR_COMPAT"))) {
+			return __strerror_orig(err);
+	}
+	static char buf[256];
+	int res = strerror_r(err, buf, 256);
+	if (res) {
+		return NULL;
+	}
+	return buf;
+}
+int __strerror_r_orig(int, char *, size_t) asm("@@A00470");
+// new strerror_r
+int strerror_r(int err, char *buf, size_t buflen) {	
+	if (!(getenv("ZOSLIB_ERROR_COMPAT"))) {
+			return __strerror_r_orig(err, buf, buflen);
+	}
+	int res = __strerror_r_orig(err, buf, buflen);
+	if (res) {
+		return res;	
+	}
+	if (buflen >= 3 && buf[0] == 'E' && buf[1] == 'D' && buf[2] == 'C') {
+		int i = 0;
+		for (i; i < buflen - 9; i++) {
+			buf[i] = buf[i+9];
+			if (buf[i] == 0) {
+				break;
+			}
+		}
+		if (i > 0 && buf[i-1] == '.') {
+			buf[i-1] = 0;
+		}
+	}
+	return 0;
+}
 #if TEST
 int main() {
   printf("values: segv=%d total=%d\n", SIGSEGV, sigTotal);
