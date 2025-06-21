@@ -94,4 +94,6 @@
 #pragma redefine_extname poxis_memalign posix_memalign_undefined
 #endif
 
+#pragma redefine_extname fdopendir fdopendir_undefined
+
 #endif // ZOS_V2R5_SYMBOLFIXES_H
