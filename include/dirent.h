@@ -15,7 +15,9 @@
 
 
 #if defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_DIRENT)
-/* Modify function names in header to avoid conflict with new prototypes */
+/* Modify function names in header to avoid conflict with new prototypes 
+TODO: remove this when LE's fdopendir is fixed */
+
 #undef fdopendir
 #define fdopendir __fdopendir_replaced
 #endif
