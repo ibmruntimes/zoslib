@@ -9,36 +9,7 @@
 #ifndef ZOS_TIME_H_
 #define ZOS_TIME_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
-
-#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-#include_next <time.h>
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
-
-/**
- * Retrieves the time of the specified clock id
- * \param [in] clk_id clock id.
- * \param [out] tp structure to store the current time to.  
- * \return return 0 for success, or -1 for failure.
- */
-__Z_EXPORT extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
-__Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
-#if defined(__cplusplus)
-}
-#endif
-
-#else //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 
 #include_next <time.h>
 
@@ -74,7 +45,6 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
 __Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 }
-#endif
 #endif
 
 #endif

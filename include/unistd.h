@@ -9,7 +9,6 @@
 #ifndef ZOS_UNISTD_H_
 #define ZOS_UNISTD_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 
 #if defined(__cplusplus)
@@ -17,6 +16,8 @@ extern "C" {
 #endif
 __Z_EXPORT int __pipe_ascii(int [2]);
 __Z_EXPORT int __close(int);
+__Z_EXPORT int __sysconf(int name);
+
 #if defined(__cplusplus)
 }
 #endif
@@ -27,19 +28,28 @@ __Z_EXPORT int __close(int);
 #define pipe __pipe_replaced
 #undef close
 #define close __close_replaced
+#undef sysconf
+#define sysconf __sysconf_replaced
+#undef readlink
+#define readlink __readlink_replaced
 #include_next <unistd.h>
 #undef pipe
 #undef close
+#undef sysconf
+#undef readlink
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
 /**
  * Same as C pipe but tags pipes as ASCII (819)
  */
 __Z_EXPORT int pipe(int [2]) __asm("__pipe_ascii");
 __Z_EXPORT int close(int) __asm("__close");
+__Z_EXPORT int close(int) __asm("__close");
+__Z_EXPORT int sysconf(int name) __asm("__sysconf");
+__Z_EXPORT ssize_t readlink(const char *path, char *buf, size_t bufsiz) __asm("__readlink");
+
 
 #if defined(__cplusplus)
 }
@@ -73,6 +83,14 @@ __Z_EXPORT int execvpe(const char *name, char *const argv[],
 
 #if defined(__cplusplus)
 }
+#endif
+
+#ifndef _SC_NPROCESSORS_ONLN
+#define _SC_NPROCESSORS_ONLN 58 /* match linux */
+#endif
+
+#ifndef _SC_NPROCESSORS_CONF
+#define _SC_NPROCESSORS_CONF _SC_NPROCESSORS_ONLN /* TODO: implement */
 #endif
 
 #endif

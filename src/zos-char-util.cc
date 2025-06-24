@@ -496,6 +496,7 @@ public:
 };
 
 fdAttributeCache fdcache;
+#define FD_NEEDS_CONVERSION_ATTR 0x0000000000020000UL
 
 void __fd_close(int fd) { 
   if (!bfdcache_destroyed)
@@ -506,7 +507,7 @@ int __file_needs_conversion(int fd) {
   if (__get_no_tag_read_behaviour() == __NO_TAG_READ_STRICT)
     return 0;
   unsigned long attr = fdcache.get_attribute(fd);
-  if (attr == 0x0000000000020000UL) {
+  if (attr == FD_NEEDS_CONVERSION_ATTR) {
     return 1;
   }
   return 0;
@@ -527,7 +528,7 @@ int __file_needs_conversion_init(const char *name, int fd) {
   if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
     return 0;
   if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
-    fdcache.set_attribute(fd, 0x0000000000020000UL);
+    fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
     return 1;
   }
   if (lseek(fd, 1, SEEK_SET) == 1 && lseek(fd, 0, SEEK_SET) == 0) {
@@ -539,27 +540,38 @@ int __file_needs_conversion_init(const char *name, int fd) {
       close(fd);
       return 0;
     }
-    if (cnt > 8) {
+    if (cnt == 0) {
+      fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
+      return 1;
+    }
+    else {
       int ccsid;
       int am;
       unsigned len = strlen_ae((unsigned char *)buf, &ccsid, cnt, &am);
       if (ccsid == 1047 && len == cnt) {
         if (no_tag_read_behaviour == __NO_TAG_READ_DEFAULT_WITHWARNING) {
-          if (name) {
-            len = strlen(name) + 1;
-            char filename[len];
+          if (am == 1) {
+            len = strlen(name);
+            char filename[len + 1];
             _convert_e2a(filename, name, len);
-            dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
-                       "EBCDIC characters\n", filename);
+            __dprintf(2, "Warning: File \"%s\" is ambiguous and seems to contain "
+                      "both EBCDIC or ASCII characters\n", filename);
+          }
+          if (name) {
+            len = strlen(name);
+            char filename[len + 1];
+            _convert_e2a(filename, name, len);
+            __dprintf(2, "Warning: File \"%s\" is untagged and seems to contain "
+                        "EBCDIC characters\n", filename);
           } else {
-            dprintf(2, "Warning: File (null) is untagged and seems to contain "
-                       "EBCDIC characters\n");
+            __dprintf(2, "Warning: File (null) is untagged and seems to contain "
+                        "EBCDIC characters\n");
           }
         }
-        fdcache.set_attribute(fd, 0x0000000000020000UL);
+        fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
         return 1;
-      }
-    }       // cnt > 8
+      }     // ccsid and len
+    }       // cnt
   }         // seekable files
   return 0; // not seekable
 }
