@@ -11,7 +11,27 @@
 
 #include "zos-macros.h"
 
+#if defined(ZOSLIB_OVERRIDE_CLIB)
+#undef strerror
+#undef strerror_r
+#define strerror strerror_replaced
+#define strerror_r strerror_r_replaced
+
 #include_next <string.h>
+#undef strerror
+#undef strerror_r
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+__Z_EXPORT char *strerror(int err) __asm("__strerror_ascii");
+__Z_EXPORT int strerror_r(int err, char * buf, size_t buflen) __asm("__strerror_r_ascii");
+#if defined(__cplusplus)
+}
+#endif
+#else
+#include_next <string.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
