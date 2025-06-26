@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ptrace.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -123,6 +124,43 @@ __Z_EXPORT ssize_t __readlink(const char *path, char *buf, size_t bufsiz) {
   }
 
   return len;
+}
+
+__Z_EXPORT long ptrace(enum __ptrace_request request, ...) {
+  va_list ap;
+  pid_t pid = 0;
+  void *addr = 0;
+  uintptr_t data = 0;
+  void *buffer = 0;
+  int32_t retval = -1, retcode = 0, reason = 0;
+  int32_t req = request;
+
+  va_start(ap, request);
+  pid = va_arg(ap, pid_t);
+  addr = va_arg(ap, void *);
+  data = va_arg(ap, uintptr_t);
+  buffer = va_arg(ap, void *);
+  va_end(ap);
+
+  void *reg15 = __uss_base_address()[320 / 4];  // BPX4PTR offset
+
+  void *args[] = {
+      &req, &pid, &addr, (void **)&data, &buffer,
+      &retval, &retcode, &reason
+  };
+
+  __asm volatile(" basr 14,%0\n"
+                 : __ZL_NR("+",r15)(reg15)
+                 : __ZL_NR("",r1)(args)
+                 : "r0", "r14");
+
+  if (retcode != 0) {
+    errno = retcode;
+    return -1;
+  }
+  fprintf(stderr, "reason: %d\n", reason);
+
+  return retval;
 }
 
 void __bpx4kil(int pid, int signal, void *signal_options, int *return_value,
