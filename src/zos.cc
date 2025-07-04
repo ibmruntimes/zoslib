@@ -95,7 +95,6 @@ bool __is_backtrace_on_abort = true;
 bool __zoslib_terminated = false;
 bool __gMainTerminating = false;
 
-int __gMainThreadId = -1;
 pthread_t __gMainThreadSelf = {-1u};
 char __gArgsStr[PATH_MAX*2] = "";
 char __gChildInfo[32] = "";
@@ -207,8 +206,6 @@ extern "C" void __xfer_env(void) {
     ++start;
   }
 }
-
-extern "C" int gettid() { return (int)(pthread_self().__ & 0x7fffffff); }
 
 static void init_tf_parms_t(__tf_parms_t *parm, char *pu_name_buf, size_t len1,
                             char *entry_name_buf, size_t len2,
@@ -2479,7 +2476,6 @@ bool __zinit::isValidZOSLIBEnvar(std::string envar) {
 }
 
 __zinit::__zinit() {
-  __gMainThreadId = gettid();
   __gMainThreadSelf = pthread_self();
 
   update_memlogging(__get_instance(), nullptr);
