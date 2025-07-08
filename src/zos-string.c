@@ -198,7 +198,7 @@ char *__strerror_ascii(int err) {
 		return __strerror_orig(err);
 	}
 	static char buf[256];
-	int res = strerror_r(err, buf, 256);
+	int res = __strerror_r_ascii(err, buf, 256);
 	if (res) {
 		return NULL;
 	}
