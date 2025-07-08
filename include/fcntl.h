@@ -12,8 +12,6 @@
 #include "zos-macros.h"
 #include <sys/types.h>
 
-#define __XPLAT 1
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -51,14 +49,6 @@ __Z_EXPORT extern int creat(const char *filename, mode_t mode) __asm("__creat_as
 
 #include_next <fcntl.h>
 
-#endif
-
-#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-#define O_CLOEXEC   0x00001000
-#define O_DIRECT    0x00002000
-#define O_NOFOLLOW  0x00004000
-#define O_DIRECTORY 0x00008000
-#define O_PATH      0x00080000
 #endif
 
 #endif

@@ -9,11 +9,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(libzoslib CXX C ASM)
 
-if(${CMAKE_C_COMPILER} MATCHES xlclang)
-  include_directories(BEFORE include)
-else()
-  include_directories(BEFORE include include/c++/v1)
-endif()
+include_directories(BEFORE include)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
@@ -36,6 +32,7 @@ list(APPEND zoslib_defines
   _OPEN_MSGQ_EXT
   _OPEN_SYS_FILE_EXT=1
   _OPEN_SYS_SOCK_IPV6
+  _Packed=
   PATH_MAX=1024
   _UNIX03_SOURCE
   _UNIX03_THREADS
@@ -53,6 +50,10 @@ if(ZOSLIB_GENERIC)
        ZOSLIB_GENERIC)
 endif()
 
+if(ZOSLIB_QUICK_STARTUP)
+  list(APPEND zoslib_defines
+       ZOSLIB_QUICK_STARTUP)
+endif()
 
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
@@ -83,8 +84,8 @@ else()
   list(APPEND zoslib_cflags
     -fgnu-keywords
     -m64
-    -march=arch14
-    -mzos-target=zosv2r4
+    -march=z13
+    -mzos-target=zosv2r5
     -fno-short-enums
     -fzos-le-char-mode=ascii)
 
