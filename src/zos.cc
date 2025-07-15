@@ -3128,6 +3128,7 @@ extern "C" void __aligned_free(void *ptr) {
 }
 
 // aligned new and delete operators
+// TODO: remove when z/OS gets aligned allocation in C++
 namespace std {
     enum class align_val_t : std::size_t {};
 }
