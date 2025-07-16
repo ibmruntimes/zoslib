@@ -3127,6 +3127,32 @@ extern "C" void __aligned_free(void *ptr) {
 #endif
 }
 
+// aligned new and delete operators
+// TODO: remove when z/OS gets aligned allocation in C++
+namespace std {
+    enum class align_val_t : std::size_t {};
+}
+
+void* operator new(std::size_t size, std::align_val_t align) {
+    std::size_t alignment = static_cast<std::size_t>(align);
+    void* ptr = __aligned_malloc(size, alignment);
+    if (!ptr) throw std::bad_alloc();
+    return ptr;
+}
+void operator delete(void* ptr, std::align_val_t) noexcept {
+    __aligned_free(ptr);
+}
+void* operator new[](std::size_t size, std::align_val_t align) {
+    std::size_t alignment = static_cast<std::size_t>(align);
+    void* ptr = __aligned_malloc(size, alignment);
+    if (!ptr) throw std::bad_alloc();
+    return ptr;
+}
+void operator delete[](void * ptr, std::align_val_t) noexcept {
+  __aligned_free(ptr);
+}
+// end: aligned new and delete operators
+
 // C Library overrides
 int __sysconf_orig(int ) asm("sysconf");
 
