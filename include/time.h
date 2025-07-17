@@ -13,7 +13,9 @@
 
 #include_next <time.h>
 
-// __clockid_t is defined in sys/types.h #if __EDC_TARGET >= __EDC_LE4205 as
+/* TODO: Consider removing clock_gettime and nanosleep since they are 
+   now available on 2.5 and up */
+#if (__EDC_TARGET < 0x42050000)
 #ifndef __clockid_t
   #define __clockid_t    1
   typedef unsigned  int clockid_t;
@@ -45,6 +47,7 @@ __Z_EXPORT int clock_gettime(clockid_t cld_id, struct timespec * tp);
 __Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 }
+#endif
 #endif
 
 #endif
