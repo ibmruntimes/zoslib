@@ -53,17 +53,6 @@
 #include <unordered_map>
 #include <vector>
 
-#if defined(__clang__) && !defined(__ibmxl__)
-#define _gdsa __builtin_s390_gdsa
-#else
-extern "builtin" void *_gdsa();
-#endif
-
-
-#ifndef dsa
-#define dsa() ((unsigned long *)_gdsa())
-#endif
-
 #if defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 int (*epoll_create)(int) = 0;
 int (*epoll_create1)(int) = 0;
@@ -247,7 +236,7 @@ int backtrace_w(void **input_buffer, int size) {
   while (size > 0 && !tbck_parms.__tf_is_main) {
     ____le_traceback_a(__TRACEBACK_FIELDS, &tbck_parms, &fc);
     if (fc.tok_sev >= 2) {
-      dprintf(2, "____le_traceback_a() service failed\n");
+      __dprintf(2, "____le_traceback_a() service failed\n");
       return 0;
     }
     *buffer = tbck_parms.__tf_dsa_addr;
@@ -352,7 +341,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
       }
       ____le_traceback_a(__TRACEBACK_FIELDS, &tbck_parms, &fc);
       if (fc.tok_sev >= 2) {
-        dprintf(2, "____le_traceback_a() service failed\n");
+        __dprintf(2, "____le_traceback_a() service failed\n");
         free(return_buff);
         if (return_string != nullptr)
           *return_string = 0;
@@ -379,7 +368,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                    (char *)tbck_parms.__tf_entry_addr,
                                pu_name, stmt_id);
           else
-            dprintf(fd, " %d: 0x%p %s+0x%lx [%s:%s]\n", i + 1, return_addr,
+            __dprintf(fd, " %d: 0x%p %s+0x%lx [%s:%s]\n", i + 1, return_addr,
                     entry_name,
                     (char *)tbck_parms.__tf_call_instruction -
                         (char *)tbck_parms.__tf_entry_addr,
@@ -393,7 +382,7 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                (char *)tbck_parms.__tf_call_instruction -
                                    (char *)tbck_parms.__tf_entry_addr);
           else
-            dprintf(fd, " %d: 0x%p %s+0x%lx\n", i + 1, return_addr, entry_name,
+            __dprintf(fd, " %d: 0x%p %s+0x%lx\n", i + 1, return_addr, entry_name,
                     (char *)tbck_parms.__tf_call_instruction -
                         (char *)tbck_parms.__tf_entry_addr);
         }
@@ -404,14 +393,14 @@ void backtrace_symbols_w(void *const *buffer, int size, int fd,
                                " %d: 0x%p %s [%s:%s]", i + 1, return_addr,
                                entry_name, pu_name, stmt_id);
           else
-            dprintf(fd, " %d 0x%p %s [%s:%s]\n", i + 1, return_addr, entry_name,
+            __dprintf(fd, " %d 0x%p %s [%s:%s]\n", i + 1, return_addr, entry_name,
                     pu_name, stmt_id);
         } else {
           if (fd == -1)
             cnt = __snprintf_a(stringpool, buff_end - stringpool,
                                " %d: 0x%p %s", i + 1, return_addr, entry_name);
           else
-            dprintf(fd, " %d: 0x%p %s\n", i + 1, return_addr, entry_name);
+            __dprintf(fd, " %d: 0x%p %s\n", i + 1, return_addr, entry_name);
         }
       }
       if (fd == -1) {
@@ -628,7 +617,7 @@ static void *_timer(void *parm) {
   }
   __zinit *zinit_ptr = __get_instance();
   zoslib_config_t &config = zinit_ptr->config;
-  dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
+  __dprintf(2, "Sending abort: %s was set to %d seconds\n", config.RUNTIME_LIMIT_ENVAR, tp->secs);
   raise(SIGABRT);
   return 0; // avoid compiler warning
 }
@@ -1316,7 +1305,7 @@ public:
       unsigned long k = (unsigned long)p;
       cache[k] = (unsigned long)segs * kMegaByte;
       if (mem_account())
-        dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
+        __dprintf(2, "MEM_CACHE INSERTED: @%lx size %lu RMODE64\n", k,
                 (unsigned long)segs * kMegaByte);
     }
     return p;
@@ -1331,7 +1320,7 @@ public:
         unsigned long s = c->second;
         cache.erase(c);
         if (mem_account()) {
-          dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
+          __dprintf(2, "MEM_CACHE DELETED: @%lx size %lu RMODE64\n", k, s);
         }
       }
     }
@@ -1602,12 +1591,12 @@ void __atomic_store_real(int size, void *ptr, void *val, int memorder) {
       }
     }
     if (retry < 1) {
-      dprintf(2, "%s:%s:%d size=%d target=%p source=%p store failed\n",
+      __dprintf(2, "%s:%s:%d size=%d target=%p source=%p store failed\n",
               __FILE__, __FUNCTION__, __LINE__, size, ptr, val);
       abort();
     }
   } else {
-    dprintf(2, "%s:%s:%d size=%d target=%p source=%p not implimented\n",
+    __dprintf(2, "%s:%s:%d size=%d target=%p source=%p not implimented\n",
             __FILE__, __FUNCTION__, __LINE__, size, ptr, val);
     abort();
   }
@@ -2446,7 +2435,7 @@ int *__get_stack_start() {
     return __main_thread_stack_top_address;
   }
   __stack_info si;
-  void *cur_dsa = dsa();
+  void *cur_dsa = __dsa();
 
   while (__iterate_stack_and_get(cur_dsa, &si) != 0) {
     cur_dsa = si.prev_dsa;
@@ -2612,7 +2601,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __ae_autoconvert_state(_CVTSTATE_ON);
   }
 
+#ifndef ZOSLIB_QUICK_STARTUP
   __main_thread_stack_top_address = __get_stack_start();
+#endif
 
   if (setEnvarHelpMap() != 0)
     return -1;
@@ -2660,8 +2651,9 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
     __set_autocvt_on_fd_stream(STDERR_FILENO, 1047, 1, true);
 
   setProcessEnvars();
-
+#ifndef ZOSLIB_QUICK_STARTUP
   populateLEFunctionPointers();
+#endif
 
   _th = std::get_terminate();
   std::set_terminate(abort);
@@ -3130,6 +3122,46 @@ extern "C" void __aligned_free(void *ptr) {
   free((reinterpret_cast<void**>(ptr))[-1]);
 #endif
 }
+
+// aligned new and delete operators
+// TODO: remove when z/OS gets aligned allocation in C++
+namespace std {
+    enum class align_val_t : std::size_t {};
+}
+
+void* operator new(std::size_t size, std::align_val_t align) {
+    std::size_t alignment = static_cast<std::size_t>(align);
+    void* ptr = __aligned_malloc(size, alignment);
+    if (!ptr) throw std::bad_alloc();
+    return ptr;
+}
+void operator delete(void* ptr, std::align_val_t) noexcept {
+    __aligned_free(ptr);
+}
+void* operator new[](std::size_t size, std::align_val_t align) {
+    std::size_t alignment = static_cast<std::size_t>(align);
+    void* ptr = __aligned_malloc(size, alignment);
+    if (!ptr) throw std::bad_alloc();
+    return ptr;
+}
+void operator delete[](void * ptr, std::align_val_t) noexcept {
+  __aligned_free(ptr);
+}
+// end: aligned new and delete operators
+
+// C Library overrides
+int __sysconf_orig(int ) asm("sysconf");
+
+// Add support for _SC_NPROCESSORS_ONLN
+int __sysconf(int name) {
+  switch (name) {
+    case _SC_NPROCESSORS_ONLN:
+      return __get_num_online_cpus();
+    default:
+      return __sysconf_orig(name); 
+  }
+}
+
 
 #if defined(ZOSLIB_INITIALIZE)
 __init_zoslib __zoslib;

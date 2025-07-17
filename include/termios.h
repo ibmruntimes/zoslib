@@ -6,17 +6,21 @@
 //// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 /////////////////////////////////////////////////////////////////////////////////
 //
-#ifndef ZOS_LIMITS_H
-#define ZOS_LIMITS_H
+#ifndef ZOS_TERMIOS_H
+#define ZOS_TERMIOS_H
 
-#include_next <limits.h>
+#include "zos-macros.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX _XOPEN_PATH_MAX
+#include_next <termios.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#ifndef NAME_MAX
-#define NAME_MAX 255
+__Z_EXPORT void cfmakeraw(struct termios *termios_p);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
