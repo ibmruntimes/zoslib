@@ -340,7 +340,7 @@ struct __ptrace_read_u_blockreq
 };
 
 
-extern long int ptrace (enum __ptrace_request __request, ...);
+__Z_EXPORT long int ptrace (enum __ptrace_request __request, ...);
 
 
 #ifdef __cplusplus
