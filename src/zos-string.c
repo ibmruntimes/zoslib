@@ -192,6 +192,7 @@ char *strcasestr(const char *h, const char *n) {
 	return 0;
 }
 char * __strerror_orig(int) asm("@@A00177");
+int __strerror_r_ascii(int err, char *buf, size_t buflen);
 // Linux compat strerror override that removes the EDC prefix and '.' suffix
 char *__strerror_ascii(int err) {
 	if (!(getenv("ZOSLIB_ERROR_COMPAT"))) {
