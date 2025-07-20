@@ -6,10 +6,12 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ZOS_CPP_V1_NEW
+#define ZOS_CPP_V1_NEW
+
 #include_next <new>
 
-#if defined(__clang__) && !defined(__ibmxl__) && \
+#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
     defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
 #include "zos-macros.h"
@@ -18,16 +20,49 @@ namespace std {
   enum class align_val_t : std::size_t {};
 }
 
-__Z_EXPORT void* operator new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
-__Z_EXPORT void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
-__Z_EXPORT void* operator new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
-__Z_EXPORT void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
+__Z_EXPORT void* __operator_new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
+__Z_EXPORT void* __operator_new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void* __operator_new_ar(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC;
+__Z_EXPORT void* __operator_new_ar(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
 
-__Z_EXPORT void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT;
-__Z_EXPORT void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
-__Z_EXPORT void operator delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
-__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT;
-__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
-__Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void __operator_delete(void* ptr, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void __operator_delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void __operator_delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void __operator_delete_ar(void* ptr, std::align_val_t al) _NOEXCEPT;
+__Z_EXPORT void __operator_delete_ar(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
+__Z_EXPORT void __operator_delete_ar(void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
 
+void* operator new(size_t size, std::align_val_t al, const std::nothrow_t& t) _NOEXCEPT {
+  return __operator_new(size, al, t);
+}
+void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t& t) _NOEXCEPT {
+  return __operator_new_ar(size, al, t);
+}
+void* operator new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+  return __operator_new(size, al);
+}
+void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+  return __operator_new_ar(size, al);
+}
+
+void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT {
+  __operator_delete(ptr, al);
+}
+void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t& t) _NOEXCEPT {
+  __operator_delete(ptr, al, t);
+}
+void operator delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
+  __operator_delete(ptr, al);
+}
+void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT {
+  __operator_delete_ar(ptr, al);
+}
+void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t& t) _NOEXCEPT {
+  __operator_delete_ar(ptr, al, t);
+}
+void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
+  __operator_delete_ar(ptr, al);
+}
+
+#endif
 #endif
