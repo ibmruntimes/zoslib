@@ -24,6 +24,7 @@ set(libsrc
   zos-pty.c
   zos-cfmakeraw.c
   zos-signalfd.c
+  zos-error.cc
 )
 set(zoslib-help zoslib-help.cc)
 
