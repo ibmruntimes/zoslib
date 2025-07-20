@@ -90,8 +90,9 @@ static void __write_json_object(const char *name, const char *phase,
   if (delta_memory != 0) {
     __total_allocated_memory += delta_memory;
     fprintf(__prof_json_file,
-            "  {"cat": "%s", "name": "%s", "ph": "%s", "pid": "            %d, "tid": %d, "ts": %lu, "args": {"delta_memory": %ld, "            "total_memory": %zu}},
-"
+            "  {\"cat\": \"%s\", \"name\": \"%s\", \"ph\": \"%s\", \"pid\": "
+            "%d, \"tid\": %d, \"ts\": %lu, \"args\": {\"delta_memory\": %lld, "
+            "\"total_memory\": %zu}},\n",
             cat, name, phase, getpid(), gettid(), get_timens(), delta_memory,
             __total_allocated_memory);
   } else {
