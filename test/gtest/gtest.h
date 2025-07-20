@@ -369,6 +369,10 @@
 # include <TargetConditionals.h>
 #endif
 
+#ifdef __MVS__
+#include <zos.h>
+#endif
+
 // Brings in the definition of HAS_GLOBAL_STRING.  This must be done
 // BEFORE we test HAS_GLOBAL_STRING.
 #include <string>     // NOLINT
@@ -853,6 +857,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
      GTEST_OS_WINDOWS_MINGW || GTEST_OS_AIX || GTEST_OS_HPUX || \
      GTEST_OS_OPENBSD || GTEST_OS_QNX || GTEST_OS_FREEBSD || \
      GTEST_OS_NETBSD || GTEST_OS_FUCHSIA || GTEST_OS_DRAGONFLY || \
+     GTEST_OS_ZOS || \
      GTEST_OS_GNU_KFREEBSD)
 # define GTEST_HAS_DEATH_TEST 1
 #endif
