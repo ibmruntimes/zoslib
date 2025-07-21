@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && \
+#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
     defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
 // _LIBCPP_HAS_ALIGNED_ALLOCATION is defined in libcxx/include/__config

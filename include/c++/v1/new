@@ -6,10 +6,12 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ZOS_CPP_V1_NEW
+#define ZOS_CPP_V1_NEW
+
 #include_next <new>
 
-#if defined(__clang__) && !defined(__ibmxl__) && \
+#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
     defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
 #include "zos-macros.h"
@@ -30,4 +32,5 @@ __Z_EXPORT void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT;
 __Z_EXPORT void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT;
 __Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT;
 
+#endif
 #endif
