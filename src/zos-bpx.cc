@@ -135,7 +135,7 @@ __Z_EXPORT long ptrace(enum __ptrace_request request, ...) {
   int32_t retval = -1, retcode = 0, reason = 0;
   int32_t req = request;
 
-  va_start(ap, request);
+  va_start(ap, (int)request);
   pid = va_arg(ap, pid_t);
   addr = va_arg(ap, void *);
   data = va_arg(ap, uintptr_t);

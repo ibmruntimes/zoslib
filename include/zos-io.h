@@ -148,6 +148,13 @@ __Z_EXPORT int __getfdccsid(int fd);
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
 
 /**
+ * Set file descriptor to default CCSID
+ * \param [in] fd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __tag_new_file(int fd);
+
+/**
  * Returns true if logging of memory allocation and release is specified.
  */
 __Z_EXPORT bool __doLogMemoryUsage();
