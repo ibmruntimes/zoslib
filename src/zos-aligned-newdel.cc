@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
+#if defined(__clang__) && !defined(__ibmxl__) && \
     defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
 // _LIBCPP_HAS_ALIGNED_ALLOCATION is defined in libcxx/include/__config
@@ -41,14 +41,14 @@ static void* operator_new_aligned_impl(std::size_t size, std::align_val_t al) {
   return p;
 }
 
-void* __operator_new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+__Z_EXPORT void* operator new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
   void *p = operator_new_aligned_impl(size, al);
   if (p == nullptr)
     std::__throw_bad_alloc();
   return p;
 }
 
-void* __operator_new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void* operator new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
 #if !__EXCEPTIONS
   return operator_new_aligned_impl(size, al);
 #else
@@ -61,11 +61,11 @@ void* __operator_new(size_t size, std::align_val_t al, const std::nothrow_t&) _N
 #endif
 }
 
-void* __operator_new_ar(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+__Z_EXPORT void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
   return ::operator new(size, al);
 }
 
-void* __operator_new_ar(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
 #if !__EXCEPTIONS
   return __aligned_malloc(size, static_cast<size_t>(al));
 #else
@@ -78,27 +78,27 @@ void* __operator_new_ar(size_t size, std::align_val_t al, const std::nothrow_t&)
 #endif
 }
 
-void __operator_delete(void* ptr, std::align_val_t al) _NOEXCEPT {
+__Z_EXPORT void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT {
   __aligned_free(ptr);
 }
 
-void __operator_delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
   ::operator delete(ptr, al);
 }
 
-void __operator_delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
+__Z_EXPORT void operator delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
   ::operator delete(ptr, al);
 }
 
-void __operator_delete_ar(void* ptr, std::align_val_t al) _NOEXCEPT {
+__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT {
   ::operator delete(ptr, al);
 }
 
-void __operator_delete_ar(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
   ::operator delete[](ptr, al);
 }
 
-void __operator_delete_ar(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
+__Z_EXPORT void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
   ::operator delete[](ptr, al);
 }
 

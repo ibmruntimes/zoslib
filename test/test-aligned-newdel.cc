@@ -6,30 +6,25 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
-    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION && \
-    defined(__cpp_aligned_new)
+#if defined(__clang__) && !defined(__ibmxl__) && defined(__cpp_aligned_new) && \
+    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
 
-// __cpp_aligned_new is defined with -faligned-allocation which is required
-// if you supply your own aligned allocation functions, as is the case here.
+// __cpp_aligned_new is defined with -faligned-allocation which is required to
+// compile this test.
 
 #include "zos.h"
 #include "gtest/gtest.h"
 
 #include <new>
-#include <sys/resource.h>
 
 namespace {
 
 bool bHandlerCalled;
 
-size_t getMemlimit() {
-  struct rlimit lim;
-  if (getrlimit(RLIMIT_MEMLIMIT, &lim) == -1) {
-    perror("setrlimit");
-    exit(-1);
-  }
-  return lim.rlim_cur;
+size_t getPhysMemory() {
+  size_t pages = __get_num_frames();
+  size_t page_size = sysconf(_SC_PAGESIZE);
+  return pages * page_size;
 }
 
 void handler()
@@ -40,21 +35,20 @@ void handler()
 
 TEST(AlignedNewDel, TestBadAllocArrHandler) {
   size_t alignment = 8;
+  size_t maxmem = getPhysMemory();
   std::set_new_handler(handler);
-  size_t maxelems = getMemlimit() / sizeof(int);
-  auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[maxelems+1];
+  auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[maxmem];
   ASSERT_EQ(bHandlerCalled, true);
   ASSERT_EQ(ptr, nullptr);
 }
-
 
 #if __EXCEPTIONS
 TEST(AlignedNewDel, TestBadAllocArr) {
   size_t alignment = 8;
   bool gotex = false;
   try {
-    size_t maxelems = getMemlimit() / sizeof(int);
-    auto ptr = new(std::align_val_t(alignment)) int[maxelems+1];
+    size_t maxmem = getPhysMemory();
+    auto ptr = new(std::align_val_t(alignment)) int[maxmem];
     // This is so compiler doesn't optimize out the above call:
     ASSERT_EQ(ptr, nullptr);
   } catch (const std::bad_alloc& e) {
@@ -66,8 +60,8 @@ TEST(AlignedNewDel, TestBadAllocArr) {
 
 TEST(AlignedNewDel, TestBadAllocArrNoThrow) {
   size_t alignment = 8;
-  size_t maxelems = getMemlimit() / sizeof(int);
-  auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[maxelems+1];
+  size_t maxmem = getPhysMemory();
+  auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[maxmem];
   ASSERT_EQ(ptr, nullptr);
 }
 
