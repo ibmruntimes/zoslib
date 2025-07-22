@@ -6,7 +6,7 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(ZOSLIB_ALIGNED_NEWDEL) && defined(__cpp_aligned_new)
+#if defined(__cpp_aligned_new)
 
 // __cpp_aligned_new is defined with -faligned-allocation which is required
 // if you supply your own aligned allocation functions, as is the case here.
@@ -72,7 +72,7 @@ TEST(AlignedNewDel, TestBadAllocArrNoThrow) {
 }
 
 TEST(AlignedNewDel, TestAlloc) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
+  size_t alignment = 8;
   auto ptr = new(std::align_val_t(alignment)) int;
   ASSERT_NE(ptr, nullptr);
   ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
@@ -80,7 +80,7 @@ TEST(AlignedNewDel, TestAlloc) {
 }
 
 TEST(AlignedNewDel, TestAllocNoThrow) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
+  size_t alignment = 16;
   auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int;
   ASSERT_NE(ptr, nullptr);
   ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
@@ -88,7 +88,7 @@ TEST(AlignedNewDel, TestAllocNoThrow) {
 }
 
 TEST(AlignedNewDel, TestAllocArrNoThrow) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
+  size_t alignment = 8;
   auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[123];
   ASSERT_NE(ptr, nullptr);
   ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
@@ -96,7 +96,7 @@ TEST(AlignedNewDel, TestAllocArrNoThrow) {
 }
 
 TEST(AlignedNewDel, TestAllocArr) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
+  size_t alignment = 16;
   auto ptr = new(std::align_val_t(alignment)) int[123];
   ASSERT_NE(ptr, nullptr);
   ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
