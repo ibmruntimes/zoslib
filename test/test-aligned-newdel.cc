@@ -32,6 +32,8 @@ size_t getMemlimit() {
   return lim.rlim_cur;
 }
 
+#if __EXCEPTIONS
+
 void handler()
 {
   std::set_new_handler(nullptr);
@@ -48,7 +50,6 @@ TEST(AlignedNewDel, TestBadAllocArrHandler) {
 }
 
 
-#if __EXCEPTIONS
 TEST(AlignedNewDel, TestBadAllocArr) {
   size_t alignment = 8;
   bool gotex = false;
@@ -62,7 +63,8 @@ TEST(AlignedNewDel, TestBadAllocArr) {
   }
   ASSERT_EQ(gotex, true);
 }
-#endif
+
+#endif // __EXCEPTIONS
 
 TEST(AlignedNewDel, TestBadAllocArrNoThrow) {
   size_t alignment = 8;
