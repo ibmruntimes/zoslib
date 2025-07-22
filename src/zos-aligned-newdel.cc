@@ -88,19 +88,11 @@ __Z_EXPORT void __operator_delete_not_noe(void* ptr, std::align_val_t al, const 
   __operator_delete_noe(ptr, al);
 }
 
-__Z_EXPORT void __operator_delete_sz_noe(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
-  __operator_delete_noe(ptr, al);
-}
-
 __Z_EXPORT void __operator_delete_ar_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
   __operator_delete_noe(ptr, al);
 }
 
 __Z_EXPORT void __operator_delete_ar_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
-  __operator_delete_ar_noe(ptr, al);
-}
-
-__Z_EXPORT void __operator_delete_ar_sz_noe(void* ptr, size_t, std::align_val_t al) _NOEXCEPT {
   __operator_delete_ar_noe(ptr, al);
 }
 

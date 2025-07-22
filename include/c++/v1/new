@@ -30,10 +30,8 @@ void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC __a
 
 void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT __asm("__operator_delete_noe");
 void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("__operator_delete_not_noe");
-void operator delete(void* ptr, size_t, std::align_val_t al) _NOEXCEPT __asm("__operator_delete_sz_noe");
 void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT __asm("__operator_delete_ar_noe");
 void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("__operator_delete_ar_not_noe");
-void operator delete[](void* ptr, size_t, std::align_val_t al) _NOEXCEPT __asm("__operator_delete_sz_noe");
 
 #endif
 #endif

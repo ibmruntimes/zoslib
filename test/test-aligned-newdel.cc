@@ -97,22 +97,6 @@ TEST(AlignedNewDel, TestAllocArrNoThrow) {
   ::operator delete[](ptr, std::align_val_t(alignment), (std::nothrow));
 }
 
-TEST(AlignedNewDel, TestAllocArrNoThrowDelSize) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
-  auto ptr = new(std::align_val_t(alignment), (std::nothrow)) int[123];
-  ASSERT_NE(ptr, nullptr);
-  ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
-  ::operator delete[](ptr, std::align_val_t(alignment));
-}
-
-TEST(AlignedNewDel, TestAllocNoThrowDelSize) {
-  size_t alignment = sysconf(_SC_PAGESIZE);
-  auto ptr = new(std::align_val_t(alignment)) int;
-  ASSERT_NE(ptr, nullptr);
-  ASSERT_EQ(reinterpret_cast<size_t>(ptr) % alignment, 0);
-  ::operator delete(ptr, std::align_val_t(alignment));
-}
-
 TEST(AlignedNewDel, TestAllocArr) {
   size_t alignment = sysconf(_SC_PAGESIZE);
   auto ptr = new(std::align_val_t(alignment)) int[123];
