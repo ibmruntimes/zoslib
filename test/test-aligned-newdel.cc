@@ -6,9 +6,7 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
-    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION && \
-    defined(__cpp_aligned_new)
+#if defined(ZOSLIB_ALIGNED_NEWDEL) && defined(__cpp_aligned_new)
 
 // __cpp_aligned_new is defined with -faligned-allocation which is required
 // if you supply your own aligned allocation functions, as is the case here.

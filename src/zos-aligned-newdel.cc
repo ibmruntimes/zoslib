@@ -43,57 +43,57 @@ static void* operator_new_aligned_impl(std::size_t size, std::align_val_t al) {
 
 extern "C" {
 
-__Z_EXPORT void* __operator_new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+__Z_EXPORT void* zoslib_operator_new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
   void *p = operator_new_aligned_impl(size, al);
   if (p == nullptr)
     std::__throw_bad_alloc();
   return p;
 }
 
-__Z_EXPORT void* __operator_new_not_noe(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void* zoslib_operator_new_not_noe(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
 #if !__EXCEPTIONS
   return operator_new_aligned_impl(size, al);
 #else
   void* p = nullptr;
   try {
-    p = __operator_new(size, al);
+    p = zoslib_operator_new(size, al);
   } catch (...) {
   }
   return p;
 #endif
 }
 
-__Z_EXPORT void* __operator_new_ar(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
-  return __operator_new(size, al);
+__Z_EXPORT void* zoslib_operator_new_ar(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC {
+  return zoslib_operator_new(size, al);
 }
 
-__Z_EXPORT void* __operator_new_ar_not_noe(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+__Z_EXPORT void* zoslib_operator_new_ar_not_noe(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
 #if !__EXCEPTIONS
-  return __aligned_malloc(size, static_cast<size_t>(al));
+  return operator_new_aligned_impl(size, al);
 #else
   void* p = nullptr;
   try {
-    p = __operator_new_ar(size, al);
+    p = zoslib_operator_new_ar(size, al);
   } catch (...) {
   }
   return p;
 #endif
 }
 
-__Z_EXPORT void __operator_delete_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
+__Z_EXPORT void zoslib_operator_delete_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
   __aligned_free(ptr);
 }
 
-__Z_EXPORT void __operator_delete_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
-  __operator_delete_noe(ptr, al);
+__Z_EXPORT void zoslib_operator_delete_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+  zoslib_operator_delete_noe(ptr, al);
 }
 
-__Z_EXPORT void __operator_delete_ar_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
-  __operator_delete_noe(ptr, al);
+__Z_EXPORT void zoslib_operator_delete_ar_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
+  zoslib_operator_delete_noe(ptr, al);
 }
 
-__Z_EXPORT void __operator_delete_ar_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
-  __operator_delete_ar_noe(ptr, al);
+__Z_EXPORT void zoslib_operator_delete_ar_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
+  zoslib_operator_delete_ar_noe(ptr, al);
 }
 
 } // extern "C"
