@@ -25,6 +25,7 @@ set(libsrc
   zos-cfmakeraw.c
   zos-signalfd.c
   zos-error.cc
+  zos-fnmatch.c
 )
 set(zoslib-help zoslib-help.cc)
 
