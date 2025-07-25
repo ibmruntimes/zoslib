@@ -1,7 +1,9 @@
 #ifndef __ZOS_GET_ENTROPY_H_
 #define __ZOS_GET_ENTROPY_H_
 
-#if (__EDC_TARGET < 0x42050000) || defined(ZOSLIB_ENABLE_V2R5_FEATURES)
+#if (__TARGET_LIB__ < 0x42050000) || \
+    (__TARGET_LIB__ >= 0x42050000 && \
+    (((_POSIX_C_SOURCE + 0) < 200809L) && !defined(_XPLATFORM_SOURCE))) || defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #include "zos-macros.h"
 #include <sys/types.h>
 
