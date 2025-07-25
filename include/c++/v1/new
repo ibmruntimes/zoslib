@@ -14,8 +14,6 @@
 #if defined(ZOSLIB_ALIGNED_NEWDEL)
 
 #if __clang_major__ < 21
-// Starting with OpenXL 2.2 (__clang_major__=21), __cpp_aligned_new is defined as
-// it defines new/delete aligned operators, so align_val_t is defined.
 namespace std {
   enum class align_val_t : std::size_t {};
 }
