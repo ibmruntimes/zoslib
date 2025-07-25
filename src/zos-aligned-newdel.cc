@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Licensed Materials - Property of IBM
-// ZOSLIB
+// ZOSLIB_ALNEWDEL
 // (C) Copyright IBM Corp. 2025. All Rights Reserved.
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -13,10 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
-    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION
-
-// _LIBCPP_HAS_ALIGNED_ALLOCATION is defined in libcxx/include/__config
+#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L
 
 #include <new>
 

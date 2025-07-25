@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Licensed Materials - Property of IBM
-// ZOSLIB
+// ZOSLIB_ALNEWDEL
 // (C) Copyright IBM Corp. 2025. All Rights Reserved.
 // US Government Users Restricted Rights - Use, duplication
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -11,17 +11,15 @@
 
 #include_next <new>
 
-#if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L && \
-    defined(ZOSLIB_ALIGNED_NEWDEL) && !_LIBCPP_HAS_ALIGNED_ALLOCATION && \
-    defined(__cpp_aligned_new)
+#if defined(ZOSLIB_ALIGNED_NEWDEL)
 
-// __cpp_aligned_new is defined with -faligned-allocation.
-
-#include "zos-macros.h"
-
+#if __clang_major__ < 21
+// Starting with OpenXL 2.2 (__clang_major__=21), __cpp_aligned_new is defined as
+// it defines new/delete aligned operators, so align_val_t is defined.
 namespace std {
   enum class align_val_t : std::size_t {};
 }
+#endif
 
 void* operator new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_new_not_noe");
 void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_new_ar_not_noe");
