@@ -115,11 +115,11 @@ const char *sigabbrev_np(int signum) {
 size_t strnlen(const char *str, size_t maxlen) {
   char *op1 = (char *)str + maxlen;
   char *op2 = (char *)str;
-  asm volatile(" SRST %0,%1\n"
-               " jo *-4"
-               : "+r"(op1), "+r"(op2)
-               : __ZL_NR("",r0)(0)
-               :);
+  __asm volatile(" SRST %0,%1\n"
+                 " jo *-4"
+                 : "+r"(op1), "+r"(op2)
+                 : __ZL_NR("",r0)(0)
+                 :);
   return op1 - str;
 
 }

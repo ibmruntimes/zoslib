@@ -74,6 +74,7 @@ popd
 if [[ "${RUN_TESTS}" == "ON" ]]; then
   export GTEST_OUTPUT="xml:zoslib_a.xml"
   build/test/cctest_a
+  build/test/cctest_alnewdel_a
 
   export LIBPATH="${SCRIPT_DIR}/install/lib:$LIBPATH"
   export GTEST_OUTPUT="xml:zoslib.xml"

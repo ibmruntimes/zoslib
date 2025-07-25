@@ -9,13 +9,15 @@
 config("zoslib_config") {
   include_dirs = [
     "include",
+    "include/c++/v1",
   ]
   # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   cflags = [
-    "-march=arch14",
-    "-mzos-target=zosv2r4",
     "-fno-short-enums",
     "-fzos-le-char-mode=ascii",
+    "-m64",
+    "-march=arch14",
+    "-mzos-target=zosv2r4",
   ]
 }
 
@@ -37,12 +39,17 @@ shared_library("zoslib") {
     "include/zos-sys-info.h",
     "include/zos-tls.h",
     "src/zos.cc",
+    "src/zos-aligned-newdel.cc",
     "src/zos-bpx.cc",
     "src/zos-char-util.cc",
     "src/zos-getentropy.cc",
     "src/zos-io.cc",
+    "src/zos-locale.cc",
+    "src/zos-mkdtemp.c",
+    "src/zos-mount.c",
     "src/zos-semaphore.cc",
     "src/zos-spawn.cc",
+    "src/zos-string.c",
     "src/zos-sys-info.cc",
     "src/zos-tls.cc",
   ]
