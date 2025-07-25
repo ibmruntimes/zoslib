@@ -40,7 +40,7 @@ extern "C" {
 __Z_EXPORT int pthread_create(pthread_t *thread,
                           const pthread_attr_t *attr,
                           void *(*start_routine)(void *),
-                          void *arg) asm("__pthread_create_extended");
+                          void *arg) __asm("__pthread_create_extended");
 
 #if defined(__cplusplus)
 }
