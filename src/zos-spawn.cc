@@ -150,6 +150,7 @@ int posix_spawnattr_init(posix_spawnattr_t* attr){
     return EINVAL;
   attr->flags = 0;
   attr->mask = 0;
+  sigemptyset(&attr->def);
   return 0;
 }
 
@@ -172,6 +173,14 @@ int posix_spawnattr_setflags(posix_spawnattr_t* attr, short flags) {
 int posix_spawnattr_destroy(posix_spawnattr_t* attr) {
   if (attr==nullptr)
     return EINVAL;
+  return 0;
+}
+
+int posix_spawnattr_setsigdefault(posix_spawnattr_t *attr, const sigset_t *def)
+{
+  if (attr==nullptr)
+    return EINVAL;
+  attr->def = *def;
   return 0;
 }
 
@@ -205,6 +214,14 @@ int posix_spawn(pid_t *pid, const char *path,
     if (attr && attr->flags & POSIX_SPAWN_SETSIGMASK) {
       if ((rc=sigprocmask(SIG_SETMASK, attr->mask, 0)) < 0)
         return rc;      
+    }
+
+    if (attr && (attr->flags & POSIX_SPAWN_SETSIGDEF)) {
+      for (int sig = 1; sig < NSIG; ++sig) {
+        if (sigismember(&attr->def, sig)) {
+          signal(sig, SIG_DFL);
+        }
+      }
     }
 
     if (attr && attr->flags & POSIX_SPAWN_SETPGROUP) {
