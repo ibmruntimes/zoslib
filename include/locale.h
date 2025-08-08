@@ -16,7 +16,7 @@
 
 #if !defined(__ibmxl__) && \
     (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && \
-    (defined(ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE) && ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE == 1)
+    (!defined(ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE) || ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE == 1)
 
 #include "zos-macros.h"
 
