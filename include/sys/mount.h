@@ -19,6 +19,8 @@
 #define MNT_WAIT        1
 #define MNT_NOWAIT      2 /* only NOWAIT supported with getmntinfo */
 
+#define	MNT_RDONLY	0x00000001
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -38,11 +40,11 @@ struct statfs {
   uid_t	 f_owner;    /* user that mounted the file system */
   short	 f_reserved1;	     /* reserved for future use */
   short	 f_type;     /* type of file system (reserved) */
-  long	 f_flags;    /* copy of mount flags (reserved) */
   long	 f_reserved2[2];     /* reserved for future use */
 #else
-  long   f_reserved[16];           /* reserved as 0 */
+  long   f_reserved[15];           /* reserved as 0 */
 #endif
+  long   f_flags;    /* copy of mount flags (reserved) */
   char	 f_fstypename[MFSNAMELEN]; /* fs type name */
   char	 f_mntonname[MNAMELEN];    /* directory on which mounted */
   char	 f_mntfromname[MNAMELEN];  /* mounted file system */

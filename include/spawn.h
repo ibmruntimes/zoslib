@@ -31,6 +31,7 @@ typedef struct posix_spawn_file_actions_t {
 
 typedef struct posix_spawnattr_t {
   sigset_t *mask;
+  sigset_t def;
   short flags;
 } posix_spawnattr_t;
 
@@ -47,6 +48,7 @@ __Z_EXPORT int posix_spawnattr_init(posix_spawnattr_t *);
 __Z_EXPORT int posix_spawnattr_setsigmask(posix_spawnattr_t *, sigset_t *mask);
 __Z_EXPORT int posix_spawnattr_setflags(posix_spawnattr_t *, short flags);
 __Z_EXPORT int posix_spawnattr_destroy(posix_spawnattr_t *);
+__Z_EXPORT int posix_spawnattr_setsigdefault(posix_spawnattr_t *attr, const sigset_t *def);
 
 __Z_EXPORT int posix_spawn(pid_t *pid, const char *path,
                 const posix_spawn_file_actions_t *act,
