@@ -178,6 +178,14 @@ locale_t uselocale(locale_t new_loc) {
   return prev_loc;
 }
 
+locale_t duplocale(locale_t old)
+{
+  locale_t new_l = new locale_struct;
+  if (!new_l) return 0;
+  *new_l = *old;
+  return new_l;
+}
+
 struct SetAndRestore {
   explicit SetAndRestore(locale_t l) {
     if (l == (locale_t)0) {
