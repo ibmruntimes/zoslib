@@ -90,7 +90,10 @@ __Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
 #endif
 #endif /* defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_STDLIB) */
 
-#if !defined(__ibmxl__) && (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && !defined(ZOSLIB_USE_CLIB_LOCALE)
+#if !defined(__ibmxl__) && \
+    (defined(ZOSLIB_OVERRIDE_CLIB) || defined(ZOSLIB_OVERRIDE_CLIB_LOCALE)) && \
+    (!defined(ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE) || ZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE == 1)
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
