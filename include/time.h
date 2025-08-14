@@ -50,4 +50,13 @@ __Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #endif
 #endif
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+__Z_EXPORT time_t timegm(struct tm *tm);
+
+#if defined(__cplusplus)
+}
+#endif
+
 #endif
