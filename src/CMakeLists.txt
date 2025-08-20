@@ -27,6 +27,7 @@ set(libsrc
   zos-error.cc
   zos-fnmatch.c
   zos-time.c
+  zos-filesystem.cc
 )
 set(zoslib-help zoslib-help.cc)
 
