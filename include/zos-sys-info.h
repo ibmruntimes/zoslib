@@ -154,6 +154,14 @@ __Z_EXPORT bool __is_vef1_available();
  */
 __Z_EXPORT char *__get_cpu_model(char *buffer, size_t size);
 
+/**
+ * Returns the current date and time as yyyy-mm-dd hh:mm:ss, so ts should
+ * be minimum char ts[20].
+ * \param ts pointer to the buffer where the timestemp is to be stored
+ * \return pointer to the buffer, or NULL if `sprintf()` failed.
+ */
+__Z_EXPORT char *__get_timestamp(char *ts);
+
 __Z_EXPORT int getloadavg(double loadavg[], int nelem);
 
 #ifdef __cplusplus

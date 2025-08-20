@@ -575,12 +575,6 @@ unsigned long __get_libvec_base(void);
 __Z_EXPORT int __update_envar_names(zoslib_config_t *const config);
 
 /**
- * Tell zoslib that the main process is terminating, for its diagnostics.
- *
- */
-__Z_EXPORT void __mainTerminating();
-
-/**
  * Returns the program's directory as an absolute path
  */
 __Z_EXPORT char* __getprogramdir();
@@ -720,4 +714,39 @@ template <std::size_t N> __Z_EXPORT std::bitset<N>
 __zinit* __get_instance();
 
 #endif // __cplusplus
+#ifdef ZOSLIB_TRACE_ALLOCS
+#ifdef __cplusplus
+extern "C" {
+#endif
+__Z_EXPORT void heapreport();
+__Z_EXPORT void *__zalloc_trace(size_t len, size_t alignment,
+                                const char *pfname, int linenum);
+__Z_EXPORT void *__zalloc_for_fd_trace(size_t len, const char *filename, int fd,
+                                       off_t offset,
+                                       const char *pfname, int linenum);
+__Z_EXPORT void *anon_mmap_trace(void *_, size_t len,
+                                const char *pfname, int linenum);
+__Z_EXPORT void *roanon_mmap_trace(void *_, size_t len, int prot, int flags,
+                                   const char *filename, int fd, off_t offset,
+                                   const char *pfname, int linenum);
+__Z_EXPORT void __display_alloc_stats(bool bDestroy, bool bDisplayAll);
+#ifdef __cplusplus
+}
+#endif
+
+#undef __zalloc
+#undef __zalloc_for_fd
+#undef anon_mmap
+#undef roanon_mmap
+
+#define __zalloc(len,alignment) \
+        __zalloc_trace(len,alignment,__FILE__,__LINE__)
+#define __zalloc_for_fd(len,filename,fd,offset) \
+        __zalloc_for_fd_trace(len,filename,fd,offset,__FILE__,__LINE__)
+#define anon_mmap(addr,len) \
+        anon_mmap_trace(addr,len,__FILE__,__LINE__)
+#define roanon_mmap(addr,len,prot,flags,filename,fd,offset) \
+        roanon_mmap_trace(addr,len,prot,flags,filename,fd,offset,__FILE__,__LINE__)
+
+#endif // ZOSLIB_TRACE_ALLOCS
 #endif // ZOS_BASE_H_
