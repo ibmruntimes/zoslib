@@ -29,5 +29,14 @@ TODO: remove this when LE's fdopendir is fixed */
 
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+int scandir(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
