@@ -681,7 +681,7 @@ int __chgpathccsid(char* pathname, unsigned short ccsid) {
   memset(&attr, 0, sizeof(attr));
   attr.att_filetagchg = 1;
   attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
+  if (ccsid != FT_BINARY && ccsid != 0) {
     attr.att_filetag.ft_txtflag = 1;
   }
   return __chattr(pathname, &attr, sizeof(attr));
