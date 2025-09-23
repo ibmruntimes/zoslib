@@ -30,24 +30,27 @@
 #undef stpcpy
 #undef stpncpy
 #define stpcpy stpcpy_replaced
-#define stpncpy stpcpy_replaced
+#define stpncpy stpncpy_replaced
 #endif
 
 #include_next <string.h>
+
 #undef strerror
 #undef strerror_r
 #undef strnlen
+#undef strsignal
+#undef strpcpy
 
 /* These functions do not currently work under V2R5 
    TODO: Remove once LE headers have been updated
 */
 #if (__TARGET_LIB__ <= 0x42050000) 
-#undef strpcpy
-#undef strsignal
+#undef stpncpy
+#undef stpcpy
 #endif
 
-#undef stpcpy
-#undef stpncpy
+
+
 
 
 #ifdef __cplusplus
