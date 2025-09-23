@@ -29,12 +29,11 @@
       'conditions': [
         [ '"<!(echo $CC)" == "xlclang"', {
           'cflags': ['-q64', '-qascii', '-qexportall', '-Wno-missing-field-initializers', '-qasmlib=//\\\'SYS1.MACLIB\\\''],
-          'include_dirs': ['include'],
         }, {
           'cflags': ['-fzos-le-char-mode=ascii', '-fgnu-keywords', '-fno-short-enums', '-mzos-target=zosv2r4'],
-          'include_dirs': ['include', 'include/c++/v1'],
         }],
       ],
+      'include_dirs': ['include'],
       'sources': [
         'src/zos.cc',
         'src/zos-bpx.cc',

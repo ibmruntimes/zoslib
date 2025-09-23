@@ -9,7 +9,6 @@
 #ifndef ZOS_SYS_SOCKET_H_
 #define ZOS_SYS_SOCKET_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 
 #if defined(__cplusplus)
@@ -28,28 +27,6 @@ __Z_EXPORT int __socketpair_ascii(int domain, int type, int protocol, int sv[2])
 __Z_EXPORT int socketpair(int domain, int type, int protocol, int sv[2]) __asm("__socketpair_ascii");
 #else
 #include_next <sys/socket.h>
-#endif
-
-#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-
-#include <sys/types.h>
-
-/* epoll_ctl options */
-#define SOCK_CLOEXEC  0x00001000
-#define SOCK_NONBLOCK 16
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-#ifdef _OE_SOCKETS
-__Z_EXPORT extern int (*accept4)(int s, struct sockaddr * addr,
-               socklen_t * addrlen, int flags);
-#endif
-
-#if defined(__cplusplus)
-}
-#endif
 #endif
 
 #endif

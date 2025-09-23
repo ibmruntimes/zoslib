@@ -23,6 +23,8 @@
 #include <sys/inotify.h>
 #include <sys/file.h>
 #include <utmpx.h>
+#include <sys/uio.h>
+#include <dirent.h>
 
 namespace {
 const char MEMLOG_LEVEL_WARNING = '1';
@@ -151,7 +153,7 @@ int vdprintf(int fd, const char *fmt, va_list ap) {
   return len;
 }
 
-int dprintf(int fd, const char *fmt, ...) {
+int __dprintf(int fd, const char *fmt, ...) {
   va_list ap;
   int len;
   va_start(ap, fmt);
@@ -230,7 +232,7 @@ void __dump_title(int fd, const void *addr, size_t len, size_t bw,
     vdprintf(fd, format, ap);
     va_end(ap);
   } else {
-    dprintf(fd, "Dump: \"Address: Content in Hexdecimal, ASCII, EBCDIC\"\n");
+    __dprintf(fd, "Dump: \"Address: Content in Hexdecimal, ASCII, EBCDIC\"\n");
   }
   unsigned char line[2048];
   const unsigned char *buffer;
@@ -287,7 +289,7 @@ void __dump_title(int fd, const void *addr, size_t len, size_t bw,
     }
     line[b++] = '|';
     line[b++] = 0;
-    dprintf(fd, "%-.*s\n", b, line);
+    __dprintf(fd, "%-.*s\n", b, line);
     offset += sz;
     len -= sz;
   }
@@ -668,7 +670,7 @@ int __chgfdccsid(int fd, unsigned short ccsid) {
   memset(&attr, 0, sizeof(attr));
   attr.att_filetagchg = 1;
   attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
+  if (ccsid != FT_BINARY && ccsid != 0) {
     attr.att_filetag.ft_txtflag = 1;
   }
   return __fchattr(fd, &attr, sizeof(attr));
@@ -679,7 +681,7 @@ int __chgpathccsid(char* pathname, unsigned short ccsid) {
   memset(&attr, 0, sizeof(attr));
   attr.att_filetagchg = 1;
   attr.att_filetag.ft_ccsid = ccsid;
-  if (ccsid != FT_BINARY) {
+  if (ccsid != FT_BINARY && ccsid != 0) {
     attr.att_filetag.ft_txtflag = 1;
   }
   return __chattr(pathname, &attr, sizeof(attr));
@@ -714,17 +716,45 @@ int __disableautocvt(int fd) {
   return fcntl(fd, F_CONTROL_CVT, &req);
 }
 
+int __tag_new_file_fp(FILE* fp) {
+  int fd = fileno(fp);
+  char* encode_file_new = getenv("_ENCODE_FILE_NEW");
+
+  int ccsid = 819;
+  int txtflag = 1;
+
+  struct file_tag tag;
+
+  if (encode_file_new) {
+    if (strcmp(encode_file_new, "BINARY") == 0) {
+      ccsid = FT_BINARY;
+      txtflag = 0;
+    } else {
+      unsigned short ccsidEncodeFileNew = __toCcsid(encode_file_new);
+      if (ccsidEncodeFileNew)
+        ccsid = ccsidEncodeFileNew;
+    }
+  }
+
+  tag.ft_ccsid = ccsid;
+  tag.ft_txtflag = txtflag;
+  tag.ft_deferred = 0;
+  tag.ft_rsvflags = 0;
+
+  return fcntl(fd, F_SETTAG, &tag);
+}
+
 int __tag_new_file(int fd) {
   char* encode_file_new = getenv("_ENCODE_FILE_NEW");
 
   int ccsid = 819;
-
   if (encode_file_new) {
-    if (strcmp(encode_file_new, "IBM-1047") == 0) {
-      ccsid = 1047;
-    } else if (strcmp(encode_file_new, "BINARY") == 0) {
-      // Set the file descriptor to binary mode
+    if (strcmp(encode_file_new, "BINARY") == 0) {
       return __setfdbinary(fd);
+    } else {
+      unsigned short ccsidEncodeFileNew = __toCcsid(encode_file_new);
+      if (ccsidEncodeFileNew)
+        ccsid = ccsidEncodeFileNew;
     }
   }
 
@@ -799,6 +829,10 @@ int __mkstemp_orig(char *) asm("@@A00184");
 FILE *__fopen_orig(const char *filename, const char *mode) asm("@@A00246");
 int __mkfifo_orig(const char *pathname, mode_t mode) asm("@@A00133");
 struct utmpx *__getutxent_orig(void) asm("getutxent");
+int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) asm("@@PT3C");
+ssize_t __writev_orig(int fd, const struct iovec *iov, int iovcnt) asm("writev");
+ssize_t __readv_orig(int fd, const struct iovec *iov, int iovcnt) asm("readv");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -881,7 +915,7 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   if (fp) {
     int fd = fileno(fp);
     if (is_new_file) {
-      __tag_new_file(fd);
+      __tag_new_file_fp(fp);
       errno = old_errno;
     }
     // Enable auto-conversion of untagged files
@@ -1070,6 +1104,336 @@ bool __doLogMemoryWarning() {
   return __gLogMemoryAll || __gLogMemoryWarning;
 }
 
+// pthread_create override to ensure that _CVTSTATE_OFF does not break multi-threaded programs
+typedef struct {
+    void *(*start_routine)(void *);
+    void *arg;
+} __ThreadArg;
+
+void *custom_start_routine(void *arg) {
+  __ThreadArg *threadArg = (__ThreadArg *)arg;
+
+  int cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
+  if (_CVTSTATE_OFF == cvstate) {
+    __ae_autoconvert_state(_CVTSTATE_ON);
+  }
+
+  return threadArg->start_routine(threadArg->arg);
+}
+
+int __pthread_create_extended(pthread_t *thread, const pthread_attr_t *attr,
+                      void *(*start_routine)(void *), void *arg) {
+  __ThreadArg *threadArg = (__ThreadArg *)malloc(sizeof(__ThreadArg));
+  threadArg->start_routine = start_routine;
+  threadArg->arg = arg;
+
+  return __pthread_create_orig(thread, attr, custom_start_routine, (void *)threadArg);
+}
+
+ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp) {
+  ssize_t result = 0;
+  size_t cur_len = 0;
+
+  if (lineptr == NULL || n == NULL || fp == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
+
+  if (*lineptr == NULL || *n == 0) {
+    *n = 128; /* TODO: find a good initial value */
+    *lineptr = (char *)malloc(*n);
+    if (*lineptr == NULL) {
+      errno = ENOMEM;
+      return -1;
+    }
+  }
+
+  while (1) {
+    int i = getc(fp);
+    if (i == EOF) {
+      if (cur_len == 0) {
+        return -1;
+      }
+      break;
+    }
+
+    if (cur_len + 1 >= *n) {
+      size_t needed_max = SSIZE_MAX < SIZE_MAX ? (size_t)SSIZE_MAX + 1 : SIZE_MAX;
+      size_t needed = 2 * *n + 1; /* double it */
+
+      if (needed_max < needed) {
+        needed = needed_max;
+      }
+      if (cur_len + 1 >= needed) {
+        errno = EOVERFLOW;
+        return -1;
+      }
+
+      char *new_lineptr = (char *)realloc(*lineptr, needed);
+      if (new_lineptr == NULL) {
+        errno = ENOMEM;
+        return -1;
+      }
+
+      *lineptr = new_lineptr;
+      *n = needed;
+    }
+
+    (*lineptr)[cur_len++] = i;
+
+    if (i == delimiter) {
+      break;
+    }
+  }
+
+  (*lineptr)[cur_len] = '\0';
+  result = cur_len;
+
+  return result;
+}
+
+ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
+  return getdelim(lineptr, n, '\n', stream);
+}
+
+// Adapted from Musl C (MIT license)
+void __randname(char *tmpl) {
+  const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (int i = 0; i < 6; ++i) {
+    tmpl[i] = charset[rand() % (sizeof(charset) - 1)];
+  }
+}
+
+int mkostemps(char *tmpl, int suffixlen, int flags) {
+  size_t l = strlen(tmpl);
+  if (l < 6 || suffixlen > l - 6 || memcmp(tmpl + l - suffixlen - 6, "XXXXXX", 6) != 0) {
+    errno = EINVAL;
+    return -1;
+  }
+
+  int fd, retries = 100;
+
+  do {
+    __randname(tmpl + l - suffixlen - 6); 
+    fd = open(tmpl, flags | O_RDWR | O_CREAT | O_EXCL, 0600);
+    if (fd >= 0) {
+      __tag_new_file(fd);
+      return fd;
+    }
+  } while (--retries && errno == EEXIST);
+
+  memcpy(tmpl + l - suffixlen - 6, "XXXXXX", 6);
+  return -1; 
+}
+
+int mkstemps(char *tmpl, int suffixlen) {
+  return mkostemps(tmpl, suffixlen, 0);
+}
+
+int mkostemp(char *tmpl, int flags) {
+  return mkostemps(tmpl, 0, flags);
+}
+
+// Adapted from Musl C (MIT License)
+int vasprintf(char **s, const char *fmt, va_list ap) {
+	va_list ap2;
+	va_copy(ap2, ap);
+	int l = vsnprintf(0, 0, fmt, ap2);
+	va_end(ap2);
+
+	if (l<0 || !(*s=(char*)malloc(l+1U))) return -1;
+	return vsnprintf(*s, l+1U, fmt, ap);
+}
+
+int asprintf(char **s, const char *fmt, ...)
+{
+	int ret;
+	va_list ap;
+	va_start(ap, fmt);
+	ret = vasprintf(s, fmt, ap);
+	va_end(ap);
+	return ret;
+}
+
+int dprintf(int fd, const char *format, ...) {
+  va_list args;
+  char *buffer;
+  int length, written;
+
+  // First, calculate the required length
+  va_start(args, format);
+  length = vsnprintf(NULL, 0, format, args); // Get the length of the formatted string
+  va_end(args);
+
+  if (length < 0) {
+      return -1;  // Return an error if formatting fails
+  }
+
+  buffer = (char *)malloc(length + 1);
+  if (!buffer) {
+      return -1;  // Return an error if memory allocation fails
+  }
+
+  // Format the string into the allocated buffer
+  va_start(args, format);
+  vsnprintf(buffer, length + 1, format, args);
+  va_end(args);
+
+  // Write the formatted string to the specified file descriptor
+  written = write(fd, buffer, length);
+
+  // Clean up
+  free(buffer);
+
+  // Check if the write operation was successful
+  if (written != length) {
+      return -1;  // Return an error if the write fails
+  }
+
+  return written;
+}
+
+static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
+  size_t total_len = 0;
+  for (int i = 0; i < iovcnt; i++) {
+    total_len += iov[i].iov_len;
+  }
+
+  // Use stack allocation for small buffers to avoid malloc overhead.
+  const size_t STACK_THRESHOLD = 1024;  // 1KB threshold (adjust as needed)
+  char *converted_buf = NULL;
+  bool using_heap = false;
+  if (total_len <= STACK_THRESHOLD) {
+    converted_buf = (char*)alloca(total_len);
+  }
+  else {
+    converted_buf = (char*)malloc(total_len);
+    if (!converted_buf)
+      return -1;  // Allocation failed
+    using_heap = true;
+  }
+
+  char *ptr = converted_buf;
+  for (int i = 0; i < iovcnt; i++) {
+    memcpy(ptr, iov[i].iov_base, iov[i].iov_len);
+    ptr += iov[i].iov_len;
+  }
+
+  // Write the entire converted buffer at once.
+  ssize_t written = write(fd, converted_buf, total_len);
+
+  if (using_heap) {
+    free(converted_buf);
+  }
+
+  return written;
+}
+
+ssize_t __writev_ascii(int fd, const struct iovec *iov, int iovcnt) {
+
+  if (!isatty(fd)) {
+    return __writev_orig(fd, iov, iovcnt);
+  }
+
+  int ccsid = __getfdccsid(fd);
+  if (ccsid == 1047 || ccsid == (65536 + 1047)) {
+    return ebcdic_writev(fd, iov, iovcnt);
+  }
+    
+  return __writev_orig(fd, iov, iovcnt);
+}
+
+
+static ssize_t ebcdic_readv(int fd, const struct iovec *iov, int iovcnt) {
+    ssize_t total_read = 0;
+
+    for (int i = 0; i < iovcnt; i++) {
+        ssize_t bytes_read = read(fd, iov[i].iov_base, iov[i].iov_len);
+        if (bytes_read < 0) {
+            perror("read failed");
+            return -1;  // Return error if read fails
+        }
+        total_read += bytes_read;
+
+        // If fewer bytes were read than requested, stop early
+        if (bytes_read < (ssize_t)iov[i].iov_len) {
+            break;
+        }
+    }
+    return total_read;
+}
+
+
+ssize_t __readv_ascii(int fd, const struct iovec *iov, int iovcnt) {
+
+   if (!isatty(fd)) {
+     return __readv_orig(fd, iov, iovcnt);
+   }
+
+   int ccsid = __getfdccsid(fd);
+   if (ccsid == 1047 || ccsid == (65536 + 1047)) {
+     return ebcdic_readv(fd, iov, iovcnt);
+   }
+
+   return __readv_orig(fd, iov, iovcnt);
+
+}
+
+void *reallocarray(void *ptr, size_t nmemb, size_t size) {
+  // Check for multiplication overflow
+  if (nmemb > 0 && SIZE_MAX / nmemb < size) {
+    // Multiplication would overflow
+    errno = ENOMEM;
+    return NULL;
+  }
+  size_t s = nmemb * size;
+  // Check for size_t overflow
+  if (nmemb > 0 && s / nmemb != size) {
+    // Overflow detected
+    errno = ENOMEM;
+    return NULL;
+  }
+  return realloc(ptr, s);
+}
+
+int scandir(const char *path, struct dirent ***res,
+        int (*sel)(const struct dirent *),
+        int (*cmp)(const struct dirent **, const struct dirent **))
+{
+  DIR *d = opendir(path);
+  struct dirent *de, **names=0, **tmp;
+  size_t cnt=0, len=0;
+  int old_errno = errno;
+
+  if (!d) return -1;
+
+  while ((errno=0), (de = readdir(d))) {
+    if (sel && !sel(de)) continue;
+    if (cnt >= len) {
+      len = 2*len+1;
+      if (len > SIZE_MAX/sizeof *names) break;
+      tmp = (struct dirent **) realloc(names, len * sizeof *names);
+      if (!tmp) break;
+      names = tmp;
+    }
+    names[cnt] = (struct dirent *)malloc(de->d_reclen);
+    if (!names[cnt]) break;
+    memcpy(names[cnt++], de, de->d_reclen);
+  }
+
+  closedir(d);
+
+  if (errno) {
+    if (names) while (cnt-->0) free(names[cnt]);
+    free(names);
+    return -1;
+  }
+  errno = old_errno;
+
+  if (cmp) qsort(names, cnt, sizeof *names, (int (*)(const void *, const void *))cmp);
+  *res = names;
+  return cnt;
+}
 
 #ifdef __cplusplus
 }

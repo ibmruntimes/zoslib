@@ -36,10 +36,10 @@ __Z_EXPORT int __open(const char *file, int oflag, int mode);
 #endif // ifdef TRACE_ON
 
 /**
- * Debug Printf.
- * \return returns total number of bytes written to file descriptor
- */
-__Z_EXPORT int dprintf(int fd, const char *, ...);
+  * Debug Printf.
+  * \return returns total number of bytes written to file descriptor
+  */
+__Z_EXPORT int __dprintf(int fd, const char *, ...);
 
 /**
  * Variadic Debug Printf.
@@ -146,6 +146,13 @@ __Z_EXPORT int __getfdccsid(int fd);
  * \return returns 0 if successful, or -1 on failure.
  */
 __Z_EXPORT int __setfdccsid(int fd, int t_ccsid);
+
+/**
+ * Set file descriptor to default CCSID
+ * \param [in] fd file descriptor.
+ * \return returns 0 if successful, or -1 on failure.
+ */
+__Z_EXPORT int __tag_new_file(int fd);
 
 /**
  * Returns true if logging of memory allocation and release is specified.

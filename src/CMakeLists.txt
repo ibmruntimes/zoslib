@@ -20,6 +20,14 @@ set(libsrc
   zos.cc
   zos-mount.c
   zos-mkdtemp.c
+  zos-instrumentation.cc
+  zos-pty.c
+  zos-cfmakeraw.c
+  zos-signalfd.c
+  zos-error.cc
+  zos-fnmatch.c
+  zos-time.c
+  zos-filesystem.cc
 )
 set(zoslib-help zoslib-help.cc)
 
@@ -34,6 +42,10 @@ COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
   COMMENT "Generate celquopt.s.o object"
   VERBATIM
 )
+
+if(${CMAKE_C_COMPILER} MATCHES clang)
+  set_source_files_properties(zos-getentropy.cc PROPERTIES COMPILE_FLAGS "-march=arch14")
+endif()
 
 add_library(libzoslib OBJECT ${libsrc})
 

@@ -85,6 +85,9 @@ int getmntinfo(struct statfs **statfsp, int flags)
     memcpy(statfs[i].f_mntonname, on, onlen+1);
 
     strcpy(statfs[i].f_fstypename, (type > NUM_FSTYPE) ? fstype[0] : fstype[type]);
+
+    if(mntlst->tbl[i].mnt3_mode.mntentfsmoderdonly)
+      statfs[i].f_flags |= MNT_RDONLY;
   }
   free(mntlst);
 

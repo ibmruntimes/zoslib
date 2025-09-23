@@ -12,7 +12,7 @@ namespace {
 class CLIBOverrides : public ::testing::Test {
     virtual void SetUp() {
       // Make sure default untagged read mode is set
-      setenv("UNTAGGED_READ_MODE", "AUTO", 1);
+      setenv("__UNTAGGED_READ_MODE", "AUTO", 1);
       temp_path = tmpnam(NULL);
       fd = open(temp_path, O_CREAT | O_WRONLY, 0660);
     }
@@ -52,6 +52,74 @@ TEST_F(CLIBOverrides, open) {
     fd = open(temp_path, O_CREAT | O_RDONLY, S_IRUSR);
     EXPECT_EQ(__getfdccsid(fd), 0x10000 + 819);
     close(fd);
+
+    // Test heuristic on 1 byte content
+    {
+    char buff[] = "A";
+    __a2e_s(buff);
+    char* buff2 = (char*)malloc(sizeof(buff));
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    __setfdccsid(fd, 0); 
+    write(fd, buff, sizeof(buff) - 1);
+    close(fd);
+    struct stat st;
+    stat(temp_path, &st);
+
+    fd = open(temp_path, O_RDONLY);
+    int needs = __file_needs_conversion(fd);
+    EXPECT_EQ(needs, 1);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    memset(buff2, 0, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
+    __e2a_s(buff);
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    close(fd);
+    free(buff2);
+    }
+
+    // Test heuristic on several chars
+    {
+    char buff[] = "Hello world!";
+    __a2e_s(buff);
+    char* buff2 = (char*)malloc(sizeof(buff));
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    __setfdccsid(fd, 0); 
+    write(fd, buff, sizeof(buff) - 1);
+    close(fd);
+    struct stat st;
+    stat(temp_path, &st);
+
+    fd = open(temp_path, O_RDONLY);
+    int needs = __file_needs_conversion(fd);
+    EXPECT_EQ(needs, 1);
+    EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
+    memset(buff2, 0, sizeof(buff));
+    read(fd, buff2, sizeof(buff));
+    __e2a_s(buff);
+    EXPECT_EQ(strcmp(buff, buff2), 0);
+    close(fd);
+    free(buff2);
+    }
+
+    // Test heuristic on non-EBCDIC content
+    {
+    char buff[] = "Hello";
+    remove(temp_path);
+    fd = open(temp_path, O_CREAT | O_WRONLY, 0777);
+    __setfdccsid(fd, 0); 
+    write(fd, buff, sizeof(buff) - 1);
+    close(fd);
+    struct stat st;
+    stat(temp_path, &st);
+
+    fd = open(temp_path, O_RDONLY);
+    int needs = __file_needs_conversion(fd);
+    EXPECT_EQ(needs, 0);
+    EXPECT_EQ(__getfdccsid(fd), 0);
+    close(fd);
+    }
 
     char buff[] = "This is a test";
     char* buff2 = (char*)malloc(sizeof(buff));

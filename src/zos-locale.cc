@@ -12,6 +12,9 @@
 #ifndef ZOSLIB_OVERRIDE_CLIB_LOCALE
 #define ZOSLIB_OVERRIDE_CLIB_LOCALE
 #endif
+#ifdef ZOSLIB_USE_CLIB_LOCALE
+#undef ZOSLIB_USE_CLIB_LOCALE
+#endif
 #include <locale.h>
 #include <stdlib.h>
 
@@ -175,6 +178,14 @@ locale_t uselocale(locale_t new_loc) {
   return prev_loc;
 }
 
+locale_t duplocale(locale_t old)
+{
+  locale_t new_l = new locale_struct;
+  if (!new_l) return 0;
+  *new_l = *old;
+  return new_l;
+}
+
 struct SetAndRestore {
   explicit SetAndRestore(locale_t l) {
     if (l == (locale_t)0) {
@@ -196,5 +207,29 @@ double strtod_l(const char * __restrict__ str, char ** __restrict__ end, locale_
   SetAndRestore newloc(l);
   return strtod(str, end);
 }
+
+const char *getlocalename_l(int category, locale_t loc) {
+  if(loc == LC_GLOBAL_LOCALE) {
+    const char *result = setlocale (category, NULL);
+    return result;
+  }
+  switch (category) {
+    case LC_CTYPE:
+      return loc->lc_ctype.c_str();
+    case LC_NUMERIC:
+      return loc->lc_numeric.c_str();
+    case LC_TIME:
+      return loc->lc_time.c_str();
+    case LC_COLLATE:
+      return loc->lc_collate.c_str();
+    case LC_MONETARY:
+      return loc->lc_monetary.c_str();
+    case LC_MESSAGES:
+      return loc->lc_messages.c_str();
+    default:
+      return "";
+  }
+}
+
 }
 #endif

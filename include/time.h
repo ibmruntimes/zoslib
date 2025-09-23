@@ -9,40 +9,13 @@
 #ifndef ZOS_TIME_H_
 #define ZOS_TIME_H_
 
-#define __XPLAT 1
 #include "zos-macros.h"
 
-#if (__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
 #include_next <time.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-typedef enum {
-  CLOCK_REALTIME,
-  CLOCK_MONOTONIC,
-  CLOCK_HIGHRES,
-  CLOCK_THREAD_CPUTIME_ID
-} clockid_t;
-
-/**
- * Retrieves the time of the specified clock id
- * \param [in] clk_id clock id.
- * \param [out] tp structure to store the current time to.  
- * \return return 0 for success, or -1 for failure.
- */
-__Z_EXPORT extern int (*clock_gettime)(clockid_t cld_id, struct timespec * tp);
-__Z_EXPORT extern int (*nanosleep)(const struct timespec*, struct timespec*);
-#if defined(__cplusplus)
-}
-#endif
-
-#else //!(__EDC_TARGET < 0x42050000) && defined(ZOSLIB_ENABLE_V2R5_FEATURES)
-
-#include_next <time.h>
-
-// __clockid_t is defined in sys/types.h #if __EDC_TARGET >= __EDC_LE4205 as
+/* TODO: Consider removing clock_gettime and nanosleep since they are 
+   now available on 2.5 and up */
+#if (__EDC_TARGET < 0x42050000)
 #ifndef __clockid_t
   #define __clockid_t    1
   typedef unsigned  int clockid_t;
@@ -75,6 +48,15 @@ __Z_EXPORT int nanosleep(const struct timespec*, struct timespec*);
 #if defined(__cplusplus)
 }
 #endif
+#endif
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+__Z_EXPORT time_t timegm(struct tm *tm);
+
+#if defined(__cplusplus)
+}
 #endif
 
 #endif
