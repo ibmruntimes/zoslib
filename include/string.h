@@ -14,12 +14,21 @@
 #if defined(ZOSLIB_OVERRIDE_CLIB)
 #undef strerror
 #undef strerror_r
+#undef strnlen 
+#undef strpcpy
+#undef strsignal
+#define strnlen strnlen_replaced
+#define strpcpy strpcpy_replaced
+#define strsignal strsignal_replaced
 #define strerror strerror_replaced
 #define strerror_r strerror_r_replaced
 
 #include_next <string.h>
 #undef strerror
 #undef strerror_r
+#undef strnlen
+#undef strpcpy
+#undef strsignal
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,11 +46,13 @@ __Z_EXPORT int strerror_r(int err, char * buf, size_t buflen) __asm("__strerror_
 extern "C" {
 #endif
 
+
+/* TODO: remove these once the z/OS APAR that enables them becomes more mainstream */
 __Z_EXPORT size_t strnlen(const char *, size_t );
 __Z_EXPORT char *strpcpy(char *, const char *);
-__Z_EXPORT char *strndup(const char *s, size_t n);
-
 __Z_EXPORT char *strsignal(int );
+
+__Z_EXPORT char *strndup(const char *s, size_t n);
 __Z_EXPORT const char *sigdescr_np(int);
 __Z_EXPORT const char *sigabbrev_np(int);
 __Z_EXPORT void *memmem(const void *haystack, size_t haystacklen, const void *needle, size_t needlelen);
