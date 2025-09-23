@@ -23,12 +23,32 @@
 #define strerror strerror_replaced
 #define strerror_r strerror_r_replaced
 
+/* These functions do not currently work under V2R5 
+   TODO: Remove once LE headers have been updated
+*/
+#if (__TARGET_LIB__ <= 0x42050000) 
+#undef stpcpy
+#undef stpncpy
+#define stpcpy stpcpy_replaced
+#define stpncpy stpcpy_replaced
+#endif
+
 #include_next <string.h>
 #undef strerror
 #undef strerror_r
 #undef strnlen
+
+/* These functions do not currently work under V2R5 
+   TODO: Remove once LE headers have been updated
+*/
+#if (__TARGET_LIB__ <= 0x42050000) 
 #undef strpcpy
 #undef strsignal
+#endif
+
+#undef stpcpy
+#undef stpncpy
+
 
 #ifdef __cplusplus
 extern "C" {
