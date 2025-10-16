@@ -16,18 +16,45 @@
 #if defined(__clang__) && !defined(__ibmxl__) && __cplusplus >= 201703L
 
 #include <new>
+#include <assert.h>
+#include <errno.h>
 
-#include "zos-base.h"
+namespace {
+
+void *aligned_malloc(size_t size, size_t alignment) {
+  if (size == 0 || size == (size_t)-1)
+    return nullptr;
+  if (alignment % 8 != 0 || (alignment & (alignment - 1)) != 0) {
+    errno = EINVAL;
+    return nullptr;
+  }
+  size_t req_size = size + alignment;
+  void *ptr = malloc(req_size);
+  if (ptr == nullptr || alignment == 0)
+    return ptr;
+  size_t sptr = reinterpret_cast<size_t>(ptr);
+  size_t mod = sptr % alignment;
+  size_t offset = alignment - mod;
+  assert(offset >= sizeof(void*));
+  void **ptr_aligned = reinterpret_cast<void**>(sptr + offset);
+  ptr_aligned[-1] = ptr;
+  return ptr_aligned;
+}
 
 
-static void* operator_new_aligned_impl(std::size_t size, std::align_val_t al) {
+void aligned_free(void *ptr) {
+  free((reinterpret_cast<void**>(ptr))[-1]);
+}
+
+
+void* operator_new_aligned_impl(std::size_t size, std::align_val_t al) {
   if (size == 0)
     size = 1;
   if (static_cast<size_t>(al) < sizeof(void*))
     al = std::align_val_t(sizeof(void*));
 
   void* p;
-  while ((p =__aligned_malloc(size, static_cast<size_t>(al))) == nullptr) {
+  while ((p = aligned_malloc(size, static_cast<size_t>(al))) == nullptr) {
     // If malloc fails and there is a new_handler, call it to try free up memory
     std::new_handler nh = std::get_new_handler();
     if (nh)
@@ -37,6 +64,8 @@ static void* operator_new_aligned_impl(std::size_t size, std::align_val_t al) {
   }
   return p;
 }
+} // namespace
+
 
 extern "C" {
 
@@ -78,7 +107,7 @@ __Z_EXPORT void* zoslib_operator_new_ar_not_noe(size_t size, std::align_val_t al
 }
 
 __Z_EXPORT void zoslib_operator_delete_noe(void* ptr, std::align_val_t al) _NOEXCEPT {
-  __aligned_free(ptr);
+  aligned_free(ptr);
 }
 
 __Z_EXPORT void zoslib_operator_delete_not_noe(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT {
