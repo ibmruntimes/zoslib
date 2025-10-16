@@ -24,24 +24,44 @@ New files are created with encoding IBM-1047 and tagged IBM-1047.
 New files are created without translation and are tagged as BINARY.
 
 .TP
-.B __UNTAGGED_READ_MODE=AUTO
+.B __UNTAGGED_FILE_ENCODING=AUTO
 (default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of datawill be read and checked, if it is found to be in CCSID 1047, data is converted
 
 .TP
-.B __UNTAGGED_READ_MODE=ASCII
+.B __UNTAGGED_FILE_ENCODING=ASCII
 always convert data from CCSID 1047 to CCSID 819
 
 .TP
-.B __UNTAGGED_READ_MODE=NO
-changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off
+.B __UNTAGGED_FILE_ENCODING=NO
+changes the __UNTAGGED_FILE_ENCODING behavior to ignore files tagged with CCSID 1047 and txtflag turned off
 
 .TP
-.B __UNTAGGED_READ_MODE=STRICT
+.B __UNTAGGED_FILE_ENCODING=STRICT
 for no explicit conversion of data
 
 .TP
-.B __UNTAGGED_READ_MODE=WARN
+.B __UNTAGGED_FILE_ENCODING=WARN
 for same behavior as "AUTO" but issue a warning if conversion occurs
+
+.TP
+.B __UNTAGGED_READ_MODE=AUTO
+DEPRECATED: use __UNTAGGED_FILE_ENCODING. (default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of datawill be read and checked, if it is found to be in CCSID 1047, data is converted
+
+.TP
+.B __UNTAGGED_READ_MODE=ASCII
+DEPRECATED: use __UNTAGGED_FILE_ENCODING. always convert data from CCSID 1047 to CCSID 819
+
+.TP
+.B __UNTAGGED_READ_MODE=NO
+DEPRECATED: use __UNTAGGED_FILE_ENCODING. changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off
+
+.TP
+.B __UNTAGGED_READ_MODE=STRICT
+DEPRECATED: use __UNTAGGED_FILE_ENCODING. for no explicit conversion of data
+
+.TP
+.B __UNTAGGED_READ_MODE=WARN
+DEPRECATED: use __UNTAGGED_FILE_ENCODING. for same behavior as "AUTO" but issue a warning if conversion occurs
 
 .TP
 .B __MEMORY_USAGE_LOG_LEVEL
@@ -56,9 +76,9 @@ name of the log file associated with __MEMORY_USAGE_LOG_LEVEL, including 'stdout
 set to toggle debug ZOSLIB mode
 
 .SH EXAMPLES
-To set the __UNTAGGED_READ_MODE environment variable to STRICT and disable explicit conversion of data:
+To set the __UNTAGGED_FILE_ENCODING environment variable to STRICT and disable explicit conversion of data:
 
-.B export __UNTAGGED_READ_MODE=STRICT
+.B export __UNTAGGED_FILE_ENCODING=STRICT
 
 This will cause ZOSLIB to not perform any explicit conversion of data for untagged files or files tagged with CCSID 1047 and txtflag turned off.
 

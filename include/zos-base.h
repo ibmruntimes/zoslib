@@ -62,6 +62,7 @@ extern "builtin" void *_gdsa();
 #define RUNTIME_LIMIT_ENVAR_DEFAULT "__RUNTIMELIMIT"
 #define CCSID_GUESS_BUF_SIZE_DEFAULT "__CCSIDGUESSBUFSIZE"
 #define UNTAGGED_READ_MODE_DEFAULT "__UNTAGGED_READ_MODE"
+#define UNTAGGED_FILE_ENCODING_DEFAULT "__UNTAGGED_FILE_ENCODING"
 #define UNTAGGED_READ_MODE_CCSID1047_DEFAULT "__UNTAGGED_READ_MODE_CCSID1047"
 #define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 #define MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_LEVEL"
@@ -484,6 +485,10 @@ typedef struct __Z_EXPORT zoslib_config {
    */
   const char *UNTAGGED_READ_MODE_ENVAR = UNTAGGED_READ_MODE_DEFAULT;
   /**
+   * String to indicate the envar to be used to toggle the untagged file encoding.
+   */
+  const char *UNTAGGED_FILE_ENCODING_ENVAR = UNTAGGED_FILE_ENCODING_DEFAULT;
+  /**
    * String to indicate the envar to be used to toggle the untagged 1047 read
    * mode.
    */
@@ -537,6 +542,10 @@ typedef struct __Z_EXPORT zoslib_config {
    * string to indicate the envar to be used to toggle the untagged read mode
    */
   const char *UNTAGGED_READ_MODE_ENVAR;
+  /**
+   * string to indicate the envar to be used to toggle the untagged file encoding
+   */
+  const char *UNTAGGED_FILE_ENCODING_ENVAR;
   /**
    * string to indicate the envar to be used to toggle the untagged 1047 read
    * mode
