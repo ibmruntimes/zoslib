@@ -7,55 +7,18 @@
 ###############################################################################
 
 {
+  'target_defaults': {
+  },
   'targets': [
     {
       'target_name': 'zoslib',
       'type': 'static_library',
-      'defines': [
-        '_AE_BIMODAL=1',
-        '_ALL_SOURCE',
-        '_ENHANCED_ASCII_EXT=0xFFFFFFFF',
-        '_LARGE_TIME_API',
-        '_OPEN_MSGQ_EXT',
-        '_OPEN_SYS_FILE_EXT=1',
-        '_OPEN_SYS_SOCK_IPV6',
-        'PATH_MAX=1024',
-        '_UNIX03_SOURCE',
-        '_UNIX03_THREADS',
-        '_UNIX03_WITHDRAWN',
-        '_XOPEN_SOURCE=600',
-        '_XOPEN_SOURCE_EXTENDED',
-      ],
-      'conditions': [
-        [ '"<!(echo $CC)" == "xlclang"', {
-          'cflags': [
-            '-q64',
-            '-qascii',
-            '-qexportall',
-            '-Wno-missing-field-initializers',
-            '-qasmlib=//\\\'SYS1.MACLIB\\\'',
-          ],
-        }, {
-          'cflags': [
-            '-fgnu-keywords',
-            '-fno-short-enums',
-            '-fzos-le-char-mode=ascii',
-            '-m64',
-            '-march=arch14',
-            '-mzos-target=zosv2r4',
-          ],
-          'ldflags': [
-            '-m64',
-          ],
-        }],
-      ],
       'include_dirs': [
         'include',
-        'include/c++/v1',
       ],
       'sources': [
+        'src/celquopt.s',
         'src/zos.cc',
-        'src/zos-aligned-newdel.cc',
         'src/zos-bpx.cc',
         'src/zos-char-util.cc',
         'src/zos-getentropy.cc',
@@ -68,8 +31,23 @@
         'src/zos-string.c',
         'src/zos-sys-info.cc',
         'src/zos-tls.cc',
-        'src/celquopt.s',
       ],
-    }
+      # Undefine ZOSLIB_ALIGNED_NEWDEL so libzoslib.so isn't affected by the
+      # overridden new and delete operators when zoslib is built as part of a
+      # project that defines the macro.
+      'defines!': [
+        'ZOSLIB_ALIGNED_NEWDEL'
+      ],
+    },
+    {
+      'target_name': 'zoslib_alnewdel',
+      'type': 'static_library',
+      'sources': [
+        'src/alnewdel/zos-aligned-newdel.cc',
+      ],
+      'include_dirs+': [
+        'include/c++/v1',
+      ],
+    },
   ],
 }

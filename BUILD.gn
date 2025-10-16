@@ -7,23 +7,14 @@
 ###############################################################################
 
 config("zoslib_config") {
-  include_dirs = [
-    "include",
-    "include/c++/v1",
-  ]
-  # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
-  cflags = [
-    "-fno-short-enums",
-    "-fzos-le-char-mode=ascii",
-    "-m64",
-    "-march=arch14",
-    "-mzos-target=zosv2r4",
-  ]
 }
 
 shared_library("zoslib") {
   output_name = "zoslib"
 
+  include_dirs = [
+    "include",
+  ]
   sources = [
     "include/csrsic.h",
     "include/edcwccwi.h",
@@ -39,7 +30,6 @@ shared_library("zoslib") {
     "include/zos-sys-info.h",
     "include/zos-tls.h",
     "src/zos.cc",
-    "src/zos-aligned-newdel.cc",
     "src/zos-bpx.cc",
     "src/zos-char-util.cc",
     "src/zos-getentropy.cc",
@@ -54,5 +44,24 @@ shared_library("zoslib") {
     "src/zos-tls.cc",
   ]
 
+  configs += [ ":zoslib_config" ]
+
+  # Undefine ZOSLIB_ALIGNED_NEWDEL so libzoslib.so isn't affected by the
+  # overridden new and delete operators when zoslib is built as part of a
+  # project that defines the macro.
+  cflags = [
+    "-UZOSLIB_ALIGNED_NEWDEL",
+  ]
+}
+
+static_library("zoslib_alnewdel") {
+  output_name = "zoslib_alnewdel"
+
+  include_dirs = [
+    "include/c++/v1",
+  ]
+  sources = [
+    "src/alnewdel/zos-aligned-newdel.cc",
+  ]
   configs += [ ":zoslib_config" ]
 }
