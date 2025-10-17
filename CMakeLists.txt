@@ -99,7 +99,7 @@ target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
 
 target_compile_definitions(libzoslib_alnewdel PRIVATE ${zoslib_defines} ${zoslib_alnewdel_defines})
 target_compile_options(libzoslib_alnewdel PRIVATE ${zoslib_cflags})
-target_include_directories(libzoslib_alnewdel PRIVATE ${CMAKE_SOURCE_DIR}/include/c++/v1)
+target_include_directories(libzoslib_alnewdel PRIVATE ${CMAKE_SOURCE_DIR}/include-wrappers/c++)
 
 target_compile_definitions(zoslib-help PRIVATE ${zoslib_defines})
 target_compile_options(zoslib-help PRIVATE ${zoslib_cflags})

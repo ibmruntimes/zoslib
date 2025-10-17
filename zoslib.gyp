@@ -46,7 +46,7 @@
         'src/alnewdel/zos-aligned-newdel.cc',
       ],
       'include_dirs+': [
-        'include/c++/v1',
+        'include-wrappers/c++',
       ],
     },
   ],

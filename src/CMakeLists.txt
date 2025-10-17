@@ -21,7 +21,7 @@ set(libsrc
   zos-mount.c
   zos-mkdtemp.c
 )
-set(libalnewdel zos-aligned-newdel.cc)
+set(libalnewdel alnewdel/zos-aligned-newdel.cc)
 set(zoslib-help zoslib-help.cc)
 
 set(CELQUOPT_OBJECT "${CMAKE_CURRENT_BINARY_DIR}/celquopt.s.o")

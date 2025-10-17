@@ -18,7 +18,7 @@ target_include_directories(cctest_a PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(cctest_a PRIVATE ${zoslib_defines})
 target_compile_options(cctest_a PRIVATE ${zoslib_cflags})
 
-target_include_directories(cctest_alnewdel_a PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/include/c++/v1)
+target_include_directories(cctest_alnewdel_a PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/include-wrappers/c++)
 target_compile_definitions(cctest_alnewdel_a PRIVATE ${zoslib_defines} ${zoslib_alnewdel_defines})
 target_compile_options(cctest_alnewdel_a PRIVATE ${zoslib_cflags} -faligned-allocation)
 

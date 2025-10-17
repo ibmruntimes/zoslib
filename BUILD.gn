@@ -58,7 +58,7 @@ static_library("zoslib_alnewdel") {
   output_name = "zoslib_alnewdel"
 
   include_dirs = [
-    "include/c++/v1",
+    "include-wrappers/c++",
   ]
   sources = [
     "src/alnewdel/zos-aligned-newdel.cc",
