@@ -1,0 +1,33 @@
+///////////////////////////////////////////////////////////////////////////////
+// Licensed Materials - Property of IBM
+// ZOSLIB_ALNEWDEL
+// (C) Copyright IBM Corp. 2025. All Rights Reserved.
+// US Government Users Restricted Rights - Use, duplication
+// or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+///////////////////////////////////////////////////////////////////////////////
+
+#ifndef ZOS_INCLUDE_WRAPPERS_CPP_NEW
+#define ZOS_INCLUDE_WRAPPERS_CPP_NEW
+
+#include_next <new>
+
+#if defined(ZOSLIB_ALIGNED_NEWDEL)
+
+#if __clang_major__ < 21
+namespace std {
+  enum class align_val_t : std::size_t {};
+}
+#endif
+
+void* operator new(size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_new_not_noe");
+void* operator new[](size_t size, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_new_ar_not_noe");
+void* operator new(std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC __asm("zoslib_operator_new");
+void* operator new[](std::size_t size, std::align_val_t al) _THROW_BAD_ALLOC __asm("zoslib_operator_new_ar");
+
+void operator delete(void* ptr, std::align_val_t al) _NOEXCEPT __asm("zoslib_operator_delete_noe");
+void operator delete(void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_delete_not_noe");
+void operator delete[](void* ptr, std::align_val_t al) _NOEXCEPT __asm("zoslib_operator_delete_ar_noe");
+void operator delete[](void* ptr, std::align_val_t al, const std::nothrow_t&) _NOEXCEPT __asm("zoslib_operator_delete_ar_not_noe");
+
+#endif
+#endif

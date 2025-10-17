@@ -21,6 +21,7 @@ set(libsrc
   zos-mount.c
   zos-mkdtemp.c
 )
+set(libalnewdel alnewdel/zos-aligned-newdel.cc)
 set(zoslib-help zoslib-help.cc)
 
 set(CELQUOPT_OBJECT "${CMAKE_CURRENT_BINARY_DIR}/celquopt.s.o")
@@ -36,13 +37,17 @@ COMMAND /bin/as -mgoff -o ${CELQUOPT_OBJECT} ${CELQUOPT_SOURCE}
 )
 
 add_library(libzoslib OBJECT ${libsrc})
+add_library(libzoslib_alnewdel OBJECT ${libalnewdel})
 
 add_library(zoslib SHARED $<TARGET_OBJECTS:libzoslib>)
 add_library(zoslib_a STATIC $<TARGET_OBJECTS:libzoslib> ${CELQUOPT_OBJECT})
+add_library(zoslib_alnewdel_a STATIC $<TARGET_OBJECTS:libzoslib_alnewdel>)
 add_executable(zoslib-help ${zoslib-help})
 target_link_libraries(zoslib-help libzoslib)
+target_compile_options(zoslib_alnewdel_a PRIVATE ${zoslib_cflags})
 
 set_target_properties(zoslib_a PROPERTIES OUTPUT_NAME zoslib)
+set_target_properties(zoslib_alnewdel_a PROPERTIES OUTPUT_NAME zoslib_alnewdel)
 
 install(
     DIRECTORY ${PROJECT_BINARY_DIR}/lib/

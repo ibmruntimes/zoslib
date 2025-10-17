@@ -9,11 +9,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(libzoslib CXX C ASM)
 
-if(${CMAKE_C_COMPILER} MATCHES xlclang)
-  include_directories(BEFORE include)
-else()
-  include_directories(BEFORE include include/c++/v1)
-endif()
+include_directories(BEFORE include)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
@@ -27,6 +23,8 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-m64" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "-m64" CACHE STRING "" FORCE)
 
 list(APPEND zoslib_defines
   _AE_BIMODAL=1
@@ -41,7 +39,12 @@ list(APPEND zoslib_defines
   _UNIX03_THREADS
   _UNIX03_WITHDRAWN
   _XOPEN_SOURCE=600
-  _XOPEN_SOURCE_EXTENDED)
+  _XOPEN_SOURCE_EXTENDED
+)
+
+list(APPEND zoslib_alnewdel_defines
+  ZOSLIB_ALIGNED_NEWDEL
+)
 
 if(ENABLE_STATIC_INIT)
   list(APPEND zoslib_defines
@@ -73,7 +76,8 @@ if(${CMAKE_C_COMPILER} MATCHES xlclang)
     -qtune=10
     -qarch=10
     -qasm
-    -qasmlib=sys1.maclib:sys1.modgen)
+    -qasmlib=sys1.maclib:sys1.modgen
+  )
 
   target_link_options(zoslib PUBLIC "-Wl,DLL")
   set(CMAKE_EXE_LINKER_FLAGS "-q64" CACHE STRING "" FORCE)
@@ -82,11 +86,12 @@ else()
   # min arch14 is required for zos-getentropy.cc to use PRNO instruction.
   list(APPEND zoslib_cflags
     -fgnu-keywords
+    -fno-short-enums
+    -fzos-le-char-mode=ascii
     -m64
     -march=arch14
     -mzos-target=zosv2r4
-    -fno-short-enums
-    -fzos-le-char-mode=ascii)
+  )
 
   target_link_options(zoslib PUBLIC "--shared")
   set(CMAKE_EXE_LINKER_FLAGS "-m64" CACHE STRING "" FORCE)
@@ -95,6 +100,10 @@ endif()
 
 target_compile_definitions(libzoslib PRIVATE ${zoslib_defines})
 target_compile_options(libzoslib PRIVATE ${zoslib_cflags})
+
+target_compile_definitions(libzoslib_alnewdel PRIVATE ${zoslib_defines} ${zoslib_alnewdel_defines})
+target_compile_options(libzoslib_alnewdel PRIVATE ${zoslib_cflags})
+target_include_directories(libzoslib_alnewdel PRIVATE ${CMAKE_SOURCE_DIR}/include-wrappers/c++)
 
 target_compile_definitions(zoslib-help PRIVATE ${zoslib_defines})
 target_compile_options(zoslib-help PRIVATE ${zoslib_cflags})
