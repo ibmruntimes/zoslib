@@ -6,8 +6,8 @@
 // or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZOS_CPP_V1_NEW
-#define ZOS_CPP_V1_NEW
+#ifndef ZOS_INCLUDE_WRAPPERS_CPP_NEW
+#define ZOS_INCLUDE_WRAPPERS_CPP_NEW
 
 #include_next <new>
 
