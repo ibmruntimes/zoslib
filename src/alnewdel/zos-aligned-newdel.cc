@@ -19,6 +19,10 @@
 #include <assert.h>
 #include <errno.h>
 
+#ifndef __Z_EXPORT
+#define __Z_EXPORT __attribute__((visibility("default")))
+#endif
+
 namespace {
 
 void *aligned_malloc(size_t size, size_t alignment) {
