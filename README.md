@@ -222,6 +222,10 @@ or:
 clang++ -fzos-le-char-mode=ascii $(pkg-config --cflags --libs zoslib) random.cc -o random
 ```
 
+Note: pkg-config automatically includes the following flags:
+- Compile flags: `-DZOSLIB_OVERRIDE_CLIB=1 -DZOSLIB_OVERRIDE_CLIB_GETENV=1 -DZOSLIB_OVERRIDE_CLIB_LOCALE_FORCE`
+- Libraries: `-lzoslib` and `celquopt.s.o`
+
 4. To run the application, enter the following command:
 ``` bash
 ./random 2
