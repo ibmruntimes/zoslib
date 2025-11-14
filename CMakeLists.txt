@@ -7,7 +7,7 @@
 ###############################################################################
 
 cmake_minimum_required(VERSION 3.24)
-project(libzoslib CXX C ASM)
+project(libzoslib VERSION 4.0.0 LANGUAGES CXX C ASM)
 
 include_directories(BEFORE include)
 
@@ -103,3 +103,15 @@ endif()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX "." CACHE PATH "install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+# Configure and install pkgconfig file
+set(ZOSLIB_VERSION "${PROJECT_VERSION}")
+configure_file(
+  ${CMAKE_SOURCE_DIR}/zoslib.pc.in
+  ${CMAKE_BINARY_DIR}/zoslib.pc
+  @ONLY
+)
+install(
+  FILES ${CMAKE_BINARY_DIR}/zoslib.pc
+  DESTINATION lib/pkgconfig
+)

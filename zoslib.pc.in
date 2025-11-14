@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: zoslib
+Description: ZOSLIB - A z/OS C/C++ Library providing POSIX APIs, EBCDIC/ASCII conversion, and diagnostic utilities
+Version: @ZOSLIB_VERSION@
+URL: https://github.com/ibmruntimes/zoslib
+Libs: -L${libdir} -lzoslib
+Cflags: -I${includedir}
