@@ -106,6 +106,16 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 # Configure and install pkgconfig file
 set(ZOSLIB_VERSION "${PROJECT_VERSION}")
+# Allow users to specify extra flags and libs via CMake variables
+if(NOT DEFINED ZOSLIB_EXTRA_CFLAGS)
+  set(ZOSLIB_EXTRA_CFLAGS "")
+endif()
+if(NOT DEFINED ZOSLIB_EXTRA_LIBS)
+  set(ZOSLIB_EXTRA_LIBS "")
+endif()
+if(NOT DEFINED ZOSLIB_PRIVATE_LIBS)
+  set(ZOSLIB_PRIVATE_LIBS "")
+endif()
 configure_file(
   ${CMAKE_SOURCE_DIR}/zoslib.pc.in
   ${CMAKE_BINARY_DIR}/zoslib.pc

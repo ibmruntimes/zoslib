@@ -7,5 +7,6 @@ Name: zoslib
 Description: ZOSLIB - A z/OS C/C++ Library providing POSIX APIs, EBCDIC/ASCII conversion, and diagnostic utilities
 Version: @ZOSLIB_VERSION@
 URL: https://github.com/ibmruntimes/zoslib
-Libs: -L${libdir} -lzoslib
-Cflags: -I${includedir}
+Libs: -L${libdir} -lzoslib@ZOSLIB_EXTRA_LIBS@
+Libs.private:@ZOSLIB_PRIVATE_LIBS@
+Cflags: -I${includedir}@ZOSLIB_EXTRA_CFLAGS@
