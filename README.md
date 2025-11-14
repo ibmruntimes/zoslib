@@ -135,6 +135,12 @@ After ZOSLIB has finished building, install it from `build`:
 $ cmake --build . --target install
 ```
 
+The install step will place:
+- Libraries (`libzoslib.a`, `libzoslib.so`, and sidedeck) in `install/lib`
+- Header files in `install/include`
+- pkg-config file (`zoslib.pc`) in `install/lib/pkgconfig`
+- Helper utilities in `install/bin`
+
 ## Quick Start
 
 Once we have ZOSLIB built and installed, let's attempt to build our first
@@ -196,14 +202,24 @@ In the `main` function, we make use of two ZOSLIB definitions,
 `__zoslib_version` to obtain the ZOSLIB version, and `getentropy` to generate
 a list of random values.
 
-3. To compile and link the application, enter the following command:
+3. To compile and link the application, enter one of the following commands:
 
+Using explicit paths:
 ``` bash
 xlclang++ -qascii -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
 ```
 or:
 ``` bash
 clang++ -fzos-le-char-mode=ascii -I path/to/zoslib/include -L path/to/build/lib -lzoslib random.cc -o random
+```
+
+Using pkg-config (if zoslib is installed):
+``` bash
+xlclang++ -qascii $(pkg-config --cflags --libs zoslib) random.cc -o random
+```
+or:
+``` bash
+clang++ -fzos-le-char-mode=ascii $(pkg-config --cflags --libs zoslib) random.cc -o random
 ```
 
 4. To run the application, enter the following command:
