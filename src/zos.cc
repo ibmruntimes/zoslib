@@ -2431,7 +2431,7 @@ void *__iterate_stack_and_get(void *dsaptr, __stack_info *si) {
   }
 
   memcpy(&epname_length, (void *)((long)ppa1_ptr + offset_lth), 2);
-  epname_length = MIN((unsigned long)epname_length, sizeof(si->entry_name));
+  epname_length = MIN((unsigned long)epname_length, sizeof(si->entry_name) - 1);
   si->entry_name[epname_length] = 0;
   strncpy((char *)si->entry_name,
           (char *)((long)ppa1_ptr + offset_lth + sizeof(epname_length)),
