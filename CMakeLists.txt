@@ -103,3 +103,17 @@ endif()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX "." CACHE PATH "install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+set(ZOSLIB_PC_LIBS "" CACHE STRING "Extra libraries for zoslib.pc Libs line")
+set(ZOSLIB_PC_CFLAGS "" CACHE STRING "Extra CFLAGS for zoslib.pc Cflags line")
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/zoslib.pc.in
+  ${CMAKE_BINARY_DIR}/zoslib.pc
+  @ONLY
+)
+
+install(
+  FILES ${CMAKE_BINARY_DIR}/zoslib.pc
+  DESTINATION lib/pkgconfig
+)
