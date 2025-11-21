@@ -34,6 +34,7 @@
 #ifndef	_FTS_H_
 #define	_FTS_H_
 
+#include "zos-macros.h"
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -141,12 +142,12 @@ typedef struct _ftsent {
 #ifdef __cplusplus
 extern "C" {
 #endif
-FTSENT	*fts_children(FTS *, int);
-int	 fts_close(FTS *);
-FTS	*fts_open(char * const *, int,
+__Z_EXPORT FTSENT	*fts_children(FTS *, int);
+__Z_EXPORT int	 fts_close(FTS *);
+__Z_EXPORT FTS	*fts_open(char * const *, int,
     int (*)(const FTSENT **, const FTSENT **));
-FTSENT	*fts_read(FTS *);
-int	 fts_set(FTS *, FTSENT *, int);
+__Z_EXPORT FTSENT	*fts_read(FTS *);
+__Z_EXPORT int	 fts_set(FTS *, FTSENT *, int);
 #ifdef __cplusplus
 }
 #endif
