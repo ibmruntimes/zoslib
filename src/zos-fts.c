@@ -123,7 +123,7 @@ static int	 fts_safe_changedir(const FTS *, const FTSENT *, int,
 #undef FTS_WHITEOUT
 #endif
 
-FTS * __Z_EXPORT
+__Z_EXPORT FTS *
 fts_open(char * const *argv, int options,
     int (*compar)(const FTSENT **, const FTSENT **))
 {
@@ -267,7 +267,7 @@ fts_load(FTS *sp, FTSENT *p)
 	sp->fts_dev = p->fts_dev;
 }
 
-int __Z_EXPORT
+__Z_EXPORT int
 fts_close(FTS *sp)
 {
 	FTSENT *freep, *p;
@@ -340,7 +340,7 @@ fts_close(FTS *sp)
 
 #endif /* !defined(__FTS_COMPAT_TAILINGSLASH) */
 
-FTSENT * __Z_EXPORT
+__Z_EXPORT FTSENT *
 fts_read(FTS *sp)
 {
 	FTSENT *p, *tmp;
@@ -546,7 +546,7 @@ name:		t = sp->fts_path + NAPPEND(p->fts_parent);
  * reasons.
  */
 /* ARGSUSED */
-int __Z_EXPORT
+__Z_EXPORT int
 fts_set(FTS *sp, FTSENT *p, int instr)
 {
 
@@ -562,7 +562,7 @@ fts_set(FTS *sp, FTSENT *p, int instr)
 	return (0);
 }
 
-FTSENT * __Z_EXPORT
+__Z_EXPORT FTSENT *
 fts_children(FTS *sp, int instr)
 {
 	FTSENT *p;
