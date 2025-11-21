@@ -28,6 +28,7 @@ set(libsrc
   zos-fnmatch.c
   zos-time.c
   zos-filesystem.cc
+  zos-fts.c
 )
 set(zoslib-help zoslib-help.cc)
 
