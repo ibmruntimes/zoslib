@@ -8,7 +8,7 @@
 
 // Test basic FTS open and close
 TEST(FtsTest, OpenClose) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -19,7 +19,7 @@ TEST(FtsTest, OpenClose) {
 
 // Test FTS reading entries
 TEST(FtsTest, ReadEntries) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -34,7 +34,7 @@ TEST(FtsTest, ReadEntries) {
 
 // Test FTS with logical walk
 TEST(FtsTest, LogicalWalk) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_LOGICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -47,7 +47,7 @@ TEST(FtsTest, LogicalWalk) {
 
 // Test FTS children function
 TEST(FtsTest, Children) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -67,7 +67,7 @@ TEST(FtsTest, Children) {
 
 // Test FTS_NOCHDIR option
 TEST(FtsTest, NoChdirOption) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL | FTS_NOCHDIR, NULL);
   ASSERT_NE(fts, nullptr);
@@ -80,7 +80,7 @@ TEST(FtsTest, NoChdirOption) {
 
 // Test FTS error handling
 TEST(FtsTest, InvalidPath) {
-  char *paths[] = {(char*)"/nonexistent/path/that/should/not/exist", NULL};
+  char *paths[] = {(char*)"/nonexistent/path/that/should/not/exist", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -99,7 +99,7 @@ TEST(FtsTest, InvalidPath) {
 
 // Test FTS set function
 TEST(FtsTest, SetInstruction) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, NULL);
   ASSERT_NE(fts, nullptr);
@@ -120,7 +120,7 @@ static int compare_entries(const FTSENT **a, const FTSENT **b) {
 }
 
 TEST(FtsTest, WithComparator) {
-  char *paths[] = {(char*)".", NULL};
+  char *paths[] = {(char*)".", nullptr};
   
   FTS *fts = fts_open(paths, FTS_PHYSICAL, compare_entries);
   ASSERT_NE(fts, nullptr);
