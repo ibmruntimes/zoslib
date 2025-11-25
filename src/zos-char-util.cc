@@ -528,8 +528,25 @@ int __file_needs_conversion_init(const char *name, int fd) {
   if (no_tag_read_behaviour == __NO_TAG_READ_STRICT)
     return 0;
   if (no_tag_read_behaviour == __NO_TAG_READ_V6) {
-    fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
-    return 1;
+    // User explicitly specified a CCSID for untagged files
+    int untagged_ccsid = __get_untagged_file_ccsid();
+
+    // Note: Current conversion infrastructure only supports EBCDIC (1047) to ASCII (819).
+    // For other CCSIDs specified via __UNTAGGED_FILE_ENCODING, we assume the user
+    // knows the file is in that encoding and needs conversion.
+    // Full arbitrary CCSID conversion support would require iconv() integration.
+
+    if (untagged_ccsid == 1047 || untagged_ccsid == 819 || untagged_ccsid == 0) {
+      // Standard EBCDIC or ASCII - use existing conversion path
+      fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
+      return 1;
+    } else {
+      // For other CCSIDs (like UTF-8), mark for conversion but note limitation
+      // The actual conversion will still be 1047->819, so this may not work as expected
+      // TODO: Implement full iconv() support for arbitrary CCSID conversions
+      fdcache.set_attribute(fd, FD_NEEDS_CONVERSION_ATTR);
+      return 1;
+    }
   }
   if (lseek(fd, 1, SEEK_SET) == 1 && lseek(fd, 0, SEEK_SET) == 0) {
     // seekable file (real file)
