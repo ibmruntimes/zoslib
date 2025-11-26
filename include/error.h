@@ -15,7 +15,11 @@
 extern "C" {
 #endif
 
-__Z_EXPORT void error(int status, int errnum, const char *format, ...);
+__Z_EXPORT void __error(int status, int errnum, const char *format, ...);
+
+#ifdef ZOSLIB_OVERRIDE_CLIB_ERROR
+__Z_EXPORT void error(int status, int errnum, const char *format, ...) __asm("__error");
+#endif
 
 #ifdef __cplusplus
 }

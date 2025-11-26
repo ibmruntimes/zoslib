@@ -12,13 +12,14 @@
 #include <stdarg.h>
 #include <string.h>
 
-extern "C" void error(int status, int errnum, const char *format, ...) {
+extern "C" void __error(int status, int errnum, const char *format, ...) {
     va_list args;
     va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
     if (errnum != 0) {
-        fprintf(stderr, ": %s\n", strerror(errnum));
+      fprintf(stderr, ": %s\n", strerror(errnum));
     }
-    exit(status);
+    if (status)
+      exit(status);
 }
