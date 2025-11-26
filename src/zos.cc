@@ -902,11 +902,8 @@ extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
 static notagread_t no_tag_read_behaviour;
 static int no_tag_ignore_ccsid1047;
 
-static notagread_t get_no_tag_read_behaviour(const char *new_envar, const char *old_envar) {
-  char *ntr = __getenv_a(new_envar);
-  if (!ntr) {
-    ntr = __getenv_a(old_envar);
-  }
+static notagread_t get_no_tag_read_behaviour(const char *envar) {
+  char *ntr = __getenv_a(envar);
   if (ntr && !strcmp(ntr, "AUTO")) {
     return __NO_TAG_READ_DEFAULT;
   } else if (ntr && !strcmp(ntr, "WARN")) {
@@ -2265,11 +2262,9 @@ int __update_envar_settings(const char *envar) {
     }
   }
 
-  if (force_update_all ||
-      strcmp(envar, config.UNTAGGED_FILE_ENCODING_ENVAR) == 0 ||
-      strcmp(envar, config.UNTAGGED_READ_MODE_ENVAR) == 0) {
+  if (force_update_all || strcmp(envar, config.UNTAGGED_READ_MODE_ENVAR) == 0) {
     no_tag_read_behaviour =
-        get_no_tag_read_behaviour(config.UNTAGGED_FILE_ENCODING_ENVAR, config.UNTAGGED_READ_MODE_ENVAR);
+        get_no_tag_read_behaviour(config.UNTAGGED_READ_MODE_ENVAR);
   }
 
   if (force_update_all ||
@@ -2675,51 +2670,29 @@ int __zinit::setEnvarHelpMap() {
   envarHelpMap.clear();
 
   envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_FILE_ENCODING_ENVAR, std::string("AUTO")),
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("NO")),
+      "changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with "
+      "CCSID 1047 and txtflag turned off"));
+
+  envarHelpMap.insert(std::make_pair(
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("AUTO")),
       "(default) for handling of reading untagged files or files tagged with "
       "CCSID 1047 and txtflag turned off, up to 4k of data"
       "will be read and checked, if it is found to be in CCSID 1047, data is "
       "converted from CCSID 1047 to CCSID 819"));
 
   envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_FILE_ENCODING_ENVAR, std::string("STRICT")),
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("STRICT")),
       "for no explicit conversion of data"));
 
 #if defined(ZOSLIB_GENERIC)
   envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_FILE_ENCODING_ENVAR, std::string("ASCII")),
+      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("ASCII")),
       "always convert data from CCSID 1047 to CCSID 819"));
 #else
   envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_FILE_ENCODING_ENVAR, std::string("V6")),
-      "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data "
-      "from CCSID 1047 to CCSID 819"));
-#endif
-
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("NO")),
-      "DEPRECATED: use __UNTAGGED_FILE_ENCODING. changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with "
-      "CCSID 1047 and txtflag turned off"));
-
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("AUTO")),
-      "DEPRECATED: use __UNTAGGED_FILE_ENCODING. (default) for handling of reading untagged files or files tagged with "
-      "CCSID 1047 and txtflag turned off, up to 4k of data"
-      "will be read and checked, if it is found to be in CCSID 1047, data is "
-      "converted from CCSID 1047 to CCSID 819"));
-
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("STRICT")),
-      "DEPRECATED: use __UNTAGGED_FILE_ENCODING. for no explicit conversion of data"));
-
-#if defined(ZOSLIB_GENERIC)
-  envarHelpMap.insert(std::make_pair(
-      zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("ASCII")),
-      "DEPRECATED: use __UNTAGGED_FILE_ENCODING. always convert data from CCSID 1047 to CCSID 819"));
-#else
-  envarHelpMap.insert(std::make_pair(
       zoslibEnvar(config.UNTAGGED_READ_MODE_ENVAR, std::string("V6")),
-      "DEPRECATED: use __UNTAGGED_FILE_ENCODING. for same behavior as Node.js for z/OS V6/V8, i.e. always convert data "
+      "for same behavior as Node.js for z/OS V6/V8, i.e. always convert data "
       "from CCSID 1047 to CCSID 819"));
 #endif
 

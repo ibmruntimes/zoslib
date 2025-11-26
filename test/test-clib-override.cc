@@ -222,29 +222,3 @@ TEST_F(CLIBOverrides, socketpair) {
 #endif
 }
 } // namespace
-
-TEST_F(CLIBOverrides, untagged_file_encoding) {
-    // __UNTAGGED_FILE_ENCODING should take precedence over __UNTAGGED_READ_MODE
-    setenv("__UNTAGGED_READ_MODE", "STRICT", 1);
-    setenv("__UNTAGGED_FILE_ENCODING", "AUTO", 1);
-    __update_envar_settings(NULL);
-
-    // Should auto-convert untagged files to EBCDIC 1047
-    fd = open("/etc/profile", O_RDONLY);
-    if (fd != -1) {
-      EXPECT_EQ(__getfdccsid(fd), 0x10000 + 1047);
-      close(fd);
-    }
-
-    // Check if STRICT is honored
-    setenv("__UNTAGGED_FILE_ENCODING", "STRICT", 1);
-    __update_envar_settings(NULL);
-    fd = open("/etc/profile", O_RDONLY);
-    if (fd != -1) {
-      EXPECT_EQ(__getfdccsid(fd), 0);
-      close(fd);
-    }
-
-    unsetenv("__UNTAGGED_READ_MODE");
-    unsetenv("__UNTAGGED_FILE_ENCODING");
-}
