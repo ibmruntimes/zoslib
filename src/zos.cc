@@ -901,27 +901,204 @@ extern "C" int __getexepath(char *path, int pathlen, pid_t pid) {
 
 static notagread_t no_tag_read_behaviour;
 static int no_tag_ignore_ccsid1047;
+static int untagged_file_ccsid;
+
+// Internal types for __UNTAGGED_FILE_ENCODING parsing
+typedef enum {
+  ZOS_UNTAGGED_POLICY_DETECT = 0,
+  ZOS_UNTAGGED_POLICY_IGNORE = 1,
+  ZOS_UNTAGGED_POLICY_WARN = 2,
+  ZOS_UNTAGGED_POLICY_CCSID = 3
+} zos_untagged_policy_t;
+
+typedef struct {
+  zos_untagged_policy_t policy;
+  int ccsid;
+  int from_new_variable;
+} zos_untagged_policy_result_t;
+
+/**
+ * Check if a string is a valid numeric CCSID.
+ */
+static int parse_numeric_ccsid(const char *str) {
+  if (!str || !*str)
+    return -1;
+
+  char *endptr;
+  long val = strtol(str, &endptr, 10);
+
+  if (*endptr != '\0' || val <= 0 || val > 65535)
+    return -1;
+
+  return (int)val;
+}
+
+/**
+ * Map encoding name to CCSID using z/OS __toCcsid().
+ */
+static int encoding_name_to_ccsid(const char *encoding_name) {
+  if (!encoding_name || !*encoding_name)
+    return -1;
+
+  errno = 0;
+  __ccsid_t ccsid = __toCcsid((char *)encoding_name);
+
+  if (ccsid == 0 && errno != 0)
+    return -1;
+
+  if (ccsid > 0)
+    return (int)ccsid;
+
+  return -1;
+}
+
+/**
+ * Parse __UNTAGGED_FILE_ENCODING environment variable.
+ */
+static int parse_new_untagged_variable(const char *value,
+                                        zos_untagged_policy_result_t *result) {
+  if (!value || !*value)
+    return 0;
+
+  // Check for semantic tokens first
+  if (strcasecmp(value, "DETECT") == 0 || strcasecmp(value, "AUTO") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_DETECT;
+    result->ccsid = 0;
+    result->from_new_variable = 1;
+    return 1;
+  }
+
+  if (strcasecmp(value, "IGNORE") == 0 || strcasecmp(value, "STRICT") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_IGNORE;
+    result->ccsid = 0;
+    result->from_new_variable = 1;
+    return 1;
+  }
+
+  if (strcasecmp(value, "WARN") == 0 || strcasecmp(value, "WARNING") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_WARN;
+    result->ccsid = 0;
+    result->from_new_variable = 1;
+    return 1;
+  }
+
+  // Try parsing as numeric CCSID
+  int ccsid = parse_numeric_ccsid(value);
+  if (ccsid > 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_CCSID;
+    result->ccsid = ccsid;
+    result->from_new_variable = 1;
+    return 1;
+  }
+
+  // Try parsing as encoding name
+  ccsid = encoding_name_to_ccsid(value);
+  if (ccsid > 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_CCSID;
+    result->ccsid = ccsid;
+    result->from_new_variable = 1;
+    return 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Parse legacy __UNTAGGED_READ_MODE environment variable.
+ */
+static int parse_legacy_untagged_variable(const char *value,
+                                           zos_untagged_policy_result_t *result) {
+  if (!value || !*value)
+    return 0;
+
+  if (strcasecmp(value, "AUTO") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_DETECT;
+    result->ccsid = 0;
+    result->from_new_variable = 0;
+    return 1;
+  }
+
+  if (strcasecmp(value, "STRICT") == 0 || strcasecmp(value, "NO") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_IGNORE;
+    result->ccsid = 0;
+    result->from_new_variable = 0;
+    return 1;
+  }
+
+  if (strcasecmp(value, "WARN") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_WARN;
+    result->ccsid = 0;
+    result->from_new_variable = 0;
+    return 1;
+  }
+
+  if (strcasecmp(value, "ASCII") == 0 || strcasecmp(value, "V6") == 0) {
+    result->policy = ZOS_UNTAGGED_POLICY_CCSID;
+    result->ccsid = 819;
+    result->from_new_variable = 0;
+    return 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Get policy for handling untagged files from environment variables.
+ * Parses both __UNTAGGED_FILE_ENCODING (new) and __UNTAGGED_READ_MODE (legacy).
+ * The new variable takes precedence if both are set.
+ */
+static zos_untagged_policy_result_t get_untagged_policy_from_env(void) {
+  zos_untagged_policy_result_t result;
+
+  // Initialize to default (DETECT)
+  result.policy = ZOS_UNTAGGED_POLICY_DETECT;
+  result.ccsid = 0;
+  result.from_new_variable = 0;
+
+  // Try new variable first (takes precedence)
+  char *new_value = __getenv_a("__UNTAGGED_FILE_ENCODING");
+  if (new_value && parse_new_untagged_variable(new_value, &result)) {
+    return result;
+  }
+
+  // Fall back to legacy variable
+  char *legacy_value = __getenv_a("__UNTAGGED_READ_MODE");
+  if (legacy_value && parse_legacy_untagged_variable(legacy_value, &result)) {
+    return result;
+  }
+
+  return result;
+}
 
 static notagread_t get_no_tag_read_behaviour(const char *envar) {
-  char *ntr = __getenv_a(envar);
-  if (ntr && !strcmp(ntr, "AUTO")) {
-    return __NO_TAG_READ_DEFAULT;
-  } else if (ntr && !strcmp(ntr, "WARN")) {
-    return __NO_TAG_READ_DEFAULT_WITHWARNING;
-#if defined(ZOSLIB_GENERIC)
-  } else if (ntr && !strcmp(ntr, "ASCII")) {
-#else
-  } else if (ntr && !strcmp(ntr, "V6")) {
-#endif
-    return __NO_TAG_READ_V6;
-  } else if (ntr && !strcmp(ntr, "STRICT")) {
-    return __NO_TAG_READ_STRICT;
+  // Use the new unified parser that handles both old and new environment variables
+  zos_untagged_policy_result_t policy = get_untagged_policy_from_env();
+
+  // Store the CCSID if specified
+  untagged_file_ccsid = policy.ccsid;
+
+  // Map new policy enum to legacy notagread_t enum
+  switch (policy.policy) {
+    case ZOS_UNTAGGED_POLICY_DETECT:
+      return __NO_TAG_READ_DEFAULT;
+    case ZOS_UNTAGGED_POLICY_WARN:
+      return __NO_TAG_READ_DEFAULT_WITHWARNING;
+    case ZOS_UNTAGGED_POLICY_IGNORE:
+      return __NO_TAG_READ_STRICT;
+    case ZOS_UNTAGGED_POLICY_CCSID:
+      // When explicit CCSID is specified, use V6 mode (forced conversion)
+      return __NO_TAG_READ_V6;
+    default:
+      return __NO_TAG_READ_DEFAULT;
   }
-  return __NO_TAG_READ_DEFAULT; // default
 }
 
 extern "C" notagread_t __get_no_tag_read_behaviour() {
   return no_tag_read_behaviour;
+}
+
+extern "C" int __get_untagged_file_ccsid() {
+  return untagged_file_ccsid;
 }
 
 static int get_no_tag_ignore_ccsid1047(const char *envar) {

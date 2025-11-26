@@ -24,24 +24,46 @@ New files are created with encoding IBM-1047 and tagged IBM-1047.
 New files are created without translation and are tagged as BINARY.
 
 .TP
-.B __UNTAGGED_READ_MODE=AUTO
-(default) for handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off, up to 4k of datawill be read and checked, if it is found to be in CCSID 1047, data is converted
+.B __UNTAGGED_FILE_ENCODING
+(Recommended) Declares the encoding for untagged files. Takes precedence over __UNTAGGED_READ_MODE when both are set. Supports:
+.RS
+.IP \(bu 2
+.B DETECT
+\- (default) automatic detection, read up to 4k and check if CCSID 1047, then convert
+.IP \(bu 2
+.B IGNORE
+\- no conversion, treat untagged files as binary
+.IP \(bu 2
+.B WARN
+\- same as DETECT but issue a warning when conversion occurs
+.IP \(bu 2
+.B Numeric CCSID
+\- e.g., "1047", "819", "1208" - treat untagged files as that encoding
+.IP \(bu 2
+.B Encoding names
+\- e.g., "IBM-1047", "ISO8859-1", "UTF-8", "ASCII" - mapped to corresponding CCSID
+.RE
 
 .TP
-.B __UNTAGGED_READ_MODE=ASCII
-always convert data from CCSID 1047 to CCSID 819
-
-.TP
-.B __UNTAGGED_READ_MODE=NO
-changes the __UNTAGGED_READ_MODE behavior to ignore files tagged with CCSID 1047 and txtflag turned off
-
-.TP
-.B __UNTAGGED_READ_MODE=STRICT
-for no explicit conversion of data
-
-.TP
-.B __UNTAGGED_READ_MODE=WARN
-for same behavior as "AUTO" but issue a warning if conversion occurs
+.B __UNTAGGED_READ_MODE
+(Legacy/Compatibility) For handling of reading untagged files or files tagged with CCSID 1047 and txtflag turned off. When both __UNTAGGED_FILE_ENCODING and __UNTAGGED_READ_MODE are set, __UNTAGGED_FILE_ENCODING takes precedence. Supports:
+.RS
+.IP \(bu 2
+.B AUTO
+\- (default) automatic detection, same as DETECT
+.IP \(bu 2
+.B ASCII
+\- always convert data from CCSID 1047 to CCSID 819
+.IP \(bu 2
+.B NO
+\- ignore files tagged with CCSID 1047 and txtflag turned off
+.IP \(bu 2
+.B STRICT
+\- no explicit conversion of data, same as IGNORE
+.IP \(bu 2
+.B WARN
+\- same as AUTO but issue a warning if conversion occurs
+.RE
 
 .TP
 .B __MEMORY_USAGE_LOG_LEVEL
@@ -56,11 +78,35 @@ name of the log file associated with __MEMORY_USAGE_LOG_LEVEL, including 'stdout
 set to toggle debug ZOSLIB mode
 
 .SH EXAMPLES
-To set the __UNTAGGED_READ_MODE environment variable to STRICT and disable explicit conversion of data:
+To declare that untagged files should be treated as UTF-8:
+
+.B export __UNTAGGED_FILE_ENCODING=UTF-8
+
+This will cause ZOSLIB to treat all untagged files as UTF-8 (CCSID 1208) and perform appropriate conversion.
+
+To declare that untagged files should be treated as EBCDIC (CCSID 1047):
+
+.B export __UNTAGGED_FILE_ENCODING=1047
+
+This will cause ZOSLIB to treat all untagged files as CCSID 1047 and perform conversion to ASCII.
+
+To disable conversion of untagged files:
+
+.B export __UNTAGGED_FILE_ENCODING=IGNORE
+
+This will cause ZOSLIB to not perform any explicit conversion of data for untagged files.
+
+To enable automatic detection with warnings:
+
+.B export __UNTAGGED_FILE_ENCODING=WARN
+
+This will cause ZOSLIB to automatically detect encoding for untagged files and issue a warning when conversion occurs.
+
+To use the legacy mode (for backwards compatibility):
 
 .B export __UNTAGGED_READ_MODE=STRICT
 
-This will cause ZOSLIB to not perform any explicit conversion of data for untagged files or files tagged with CCSID 1047 and txtflag turned off.
+This will cause ZOSLIB to not perform any explicit conversion of data for untagged files or files tagged with CCSID 1047 and txtflag turned off. Note that __UNTAGGED_FILE_ENCODING takes precedence if both are set.
 
 To set the STDOUT CCSID to 819 (ASCII):
 
