@@ -158,7 +158,6 @@ __Z_EXPORT long ptrace(enum __ptrace_request request, ...) {
     errno = retcode;
     return -1;
   }
-  fprintf(stderr, "reason: %d\n", reason);
 
   return retval;
 }
