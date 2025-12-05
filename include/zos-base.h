@@ -460,6 +460,7 @@ __Z_EXPORT void __tb(void);
 
 __Z_EXPORT notagread_t __get_no_tag_read_behaviour();
 __Z_EXPORT int __get_no_tag_ignore_ccsid1047();
+__Z_EXPORT int __get_untagged_file_ccsid();
 
 #ifdef __cplusplus
 /**
