@@ -2545,6 +2545,92 @@ __init_zoslib::__init_zoslib(const zoslib_config_t &config) {
   __get_instance()->initialize(config);
 }
 
+#define PGTH_CURRENT  1
+#define PGTHAPATH     0x20
+
+int
+__get_executable_path(char * exepath, size_t buflen)
+{
+  #pragma pack(1)
+  struct {
+      int pid;
+      unsigned long thid;
+      char accesspid;
+      char accessthid;
+      char asid[2];
+      char loginname[8];
+      char flag;
+      char len;
+  } input_data;
+
+  union {
+      struct {
+          char gthb[4];
+          int pid;
+          unsigned long thid;
+          char accesspid;
+          char accessthid[3];
+          int lenused;
+          int offsetProcess;
+          int offsetConTTY;
+          int offsetPath;
+          int offsetCommand;
+          int offsetFileData;
+          int offsetThread;
+      } output_data;
+      char buf[2048];
+  } output_buf;
+      struct output_path_type {
+      char gthe[4];
+      short int len;
+      char path[1024];
+  };
+#pragma pack()
+
+  int input_length;
+  int output_length;
+  void* input_address;
+  void* output_address;
+  struct output_path_type* output_path;
+  int rv;
+  int rc;
+  int rsn;
+
+  input_length = sizeof(input_data);
+  output_length = sizeof(output_buf);
+  output_address = &output_buf;
+  input_address = &input_data;
+  memset(&input_data, 0, sizeof(input_data));
+  input_data.flag = PGTHAPATH;
+  input_data.pid = getpid();
+  input_data.accesspid = PGTH_CURRENT;
+
+  __bpx4gth(&input_length, &input_address,
+            &output_length, &output_address,
+            &rv, &rc, &rsn);
+
+  if (rv == -1) {
+      errno = rc;
+      return -1;
+  }
+
+  // Check first byte (PGTHBLIMITE): A = the section was completely filled in
+  __e2a_l((char*)&output_buf.output_data.offsetPath, 1);
+  assert(((output_buf.output_data.offsetPath >>24) & 0xFF) == 'A');
+
+  // Path offset is in the lowest 3 bytes (PGTHBOFFE):
+  output_path = (struct output_path_type*) ((char*) (&output_buf) +
+      (output_buf.output_data.offsetPath & 0x00FFFFFF));
+  if (output_path->len >= (short int)buflen) {
+      errno = ENOBUFS;
+      return -1;
+  }
+
+  __e2a_l(output_path->path, output_path->len);
+  realpath(output_path->path, exepath);
+  return 0;
+}
+
 static bool get_env_var(const std::string var_name, std::string& value) {
     const char* var_value = getenv(var_name.c_str());
     if (var_value == nullptr) {
@@ -2557,41 +2643,32 @@ static bool get_env_var(const std::string var_name, std::string& value) {
 typedef int (*zoslib_env_hook_func)(char*);
 
 static void setProcessEnvars() {
-  std::vector<char> argv(512, 0);
-  std::vector<char> directory(512, 0);
-  W_PSPROC buf;
-  int token = 0;
-  pid_t mypid = getpid();
-  memset(&buf, 0, sizeof(buf));
-  buf.ps_pathlen = argv.size();
-  buf.ps_pathptr = &argv[0];
-  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
-    // Found our process
-    if (buf.ps_pid == mypid) {
+  std::vector<char> exePath(PATH_MAX, 0);
 
-      // Resolve path to find true location of executable
-      if (realpath(&argv[0], &directory[0]) == NULL)
-        break;
+  if (__get_executable_path(exePath.data(), exePath.size()) != 0) {
+    perror("__get_executable_path failed");
+    return;
+  }
 
-      // Get executable directory
-      dirname(&directory[0]);
+  std::vector<char> exeDir(exePath.begin(),
+                            exePath.begin() + strlen(exePath.data()) + 1);
+  dirname(exeDir.data());
 
-      // Get parent directory
-      std::vector<char> parent(directory.begin(), directory.end());
-      dirname(&parent[0]);
+  std::vector<char> parent(exeDir.begin(),
+                           exeDir.begin() + strlen(exeDir.data()) + 1);
+  dirname(parent.data());
 
-      void* handle = dlopen(0,0);
-      if (handle == 0) {
-        perror("Failed to dlopen executable");
-        return;
-      }
+  void *handle = dlopen(nullptr, 0);
+  if (!handle) {
+    perror("dlopen failed");
+    return;
+  }
 
-      zoslib_env_hook_func zoslib_env_hook_ptr = (zoslib_env_hook_func)dlsym(handle, "zoslib_env_hook");
-      if (zoslib_env_hook_ptr != NULL) {
-        zoslib_env_hook_ptr(reinterpret_cast<char*> (&parent[0]));
-      }
-      break;
-    }
+  zoslib_env_hook_func zoslib_env_hook_ptr =
+      (zoslib_env_hook_func)dlsym(handle, "zoslib_env_hook");
+
+  if (zoslib_env_hook_ptr != NULL) {
+      zoslib_env_hook_ptr(parent.data());
   }
 }
 
@@ -3044,52 +3121,26 @@ extern "C" int chdir_long(char *dir) {
 }
 
 extern "C" const char* getprogname() {
-  char argv[PATH_MAX];
-  W_PSPROC buf;
-  int token = 0;
-  pid_t mypid = getpid();
+  static char fullpath[PATH_MAX];
 
-  memset(&buf, 0, sizeof(buf));
-  buf.ps_pathlen = PATH_MAX;
-  buf.ps_pathptr = &argv[0];
-
-  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
-    if (buf.ps_pid == mypid) {
-      // return the basename of the found executable
-      return strdup(basename(buf.ps_pathptr));
-    }
+  if (__get_executable_path(fullpath, sizeof(fullpath)) == 0) {
+    return strdup(basename(fullpath));
   }
-
   return NULL;
 }
 
-extern "C" char* __getprogramdir() {
-  char argv[PATH_MAX];
-  W_PSPROC buf;
-  int token = 0;
-  pid_t mypid = getpid();
+extern "C" char * __getprogramdir() {
+  char fullpath[PATH_MAX];
 
-  memset(&buf, 0, sizeof(buf));
-  buf.ps_pathlen = PATH_MAX;
-  buf.ps_pathptr = &argv[0];
+  if (__get_executable_path(fullpath, sizeof(fullpath)) != 0)
+    return NULL;
 
-  while ((token = w_getpsent(token, &buf, sizeof(buf))) > 0) {
-    if (buf.ps_pid == mypid) {
-      // Resolve path to find the true location of the executable.
-      char* parent = __realpath_extended(argv, NULL); // realpath allocates parent
+  char *result = strdup(fullpath);
+  if (!result)
+    return NULL;
 
-      if (parent == NULL) {
-        // handle error or return an appropriate value
-        return NULL;
-      }
-
-      // Get the parent directory.
-      dirname(parent);
-      return parent;
-    }
-  }
-
-  return NULL;
+  dirname(result);
+  return result;
 }
 
 extern "C" void *__aligned_malloc(size_t size, size_t alignment) {

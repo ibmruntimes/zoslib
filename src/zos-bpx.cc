@@ -208,7 +208,7 @@ void __bpx4gth(int *input_length, void **input_address, int *output_length,
   __asm volatile(" basr 14,%0\n"
                  : __ZL_NR("+",r15)(reg15)
                  : __ZL_NR("",r1)(&argv)
-                 : "r0");
+                 : "r0", "r14");
 }
 
 void __bpx4lcr(int pathname_length, char *pathname, int attributes_length,
