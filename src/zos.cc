@@ -760,13 +760,13 @@ extern "C" int __getargcv(int *argc, char ***argv, pid_t pid) {
       int offsetFileData;
       int offsetThread;
     } __AttrPacked output_data;
-    char buf[2048];
+    char buf[16384];
   } __AttrPacked output_buf;
 
   struct output_cmd_type {
     char gthe[4];
     short int len __AttrPacked;
-    char cmd[2048];
+    char cmd[16384];
   } __AttrPacked;
 #if defined(__clang__) && !defined(__ibmxl__)
 #else
@@ -3180,9 +3180,11 @@ extern "C" void __aligned_free(void *ptr) {
 
 // aligned new and delete operators
 // TODO: remove when z/OS gets aligned allocation in C++
+#ifndef __cpp_aligned_new
 namespace std {
     enum class align_val_t : std::size_t {};
 }
+#endif
 
 void* operator new(std::size_t size, std::align_val_t align) {
     std::size_t alignment = static_cast<std::size_t>(align);
