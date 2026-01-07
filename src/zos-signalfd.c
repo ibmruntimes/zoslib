@@ -16,7 +16,7 @@
 
 static int signal_pipe[2] = {-1, -1};
 
-void sigHandler(int signo, siginfo_t *info, void *ucontext) {
+static void sigHandler(int signo, siginfo_t *info, void *ucontext) {
   struct signalfd_siginfo siginfo;
 
   memset(&siginfo, 0, sizeof(struct signalfd_siginfo));

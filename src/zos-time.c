@@ -23,7 +23,7 @@
 
 const char __utc[] = "UTC";
 
-int __month_to_secs(int month, int is_leap)
+static int __month_to_secs(int month, int is_leap)
 {
         static const int secs_through_month[] = {
                 0, 31*86400, 59*86400, 90*86400,
@@ -34,7 +34,7 @@ int __month_to_secs(int month, int is_leap)
         return t;
 }
 
-long long __year_to_secs(long long year, int *is_leap)
+static long long __year_to_secs(long long year, int *is_leap)
 {
   if (year-2ULL <= 136) {
     int y = year;

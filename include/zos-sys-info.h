@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /* CPU model number length */
 #define ZOSCPU_MODEL_LENGTH 4

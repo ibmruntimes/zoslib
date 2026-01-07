@@ -43,7 +43,7 @@ enum {
   TempLen = sizeof(XXXXXX)-1
 };
 
-char *real_mkdtemp(CodePage_t cp, char *templ) {
+static char *real_mkdtemp(CodePage_t cp, char *templ) {
   if (!templ) {
     errno=EINVAL;
     return NULL;

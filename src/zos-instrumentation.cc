@@ -192,7 +192,7 @@ __attribute__((no_instrument_function)) void *__zoslib_malloc(size_t size) {
   return ptr;
 }
 
-__attribute__((no_instrument_function))
+__attribute__((no_instrument_function)) static
 size_t malloc_usable_size(void *ptr) {
   if (ptr == NULL) {
     return 0;
