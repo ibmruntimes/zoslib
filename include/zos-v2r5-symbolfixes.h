@@ -96,5 +96,6 @@
 
 //TODO: remove this when LE's fdopendir is fixed
 #pragma redefine_extname fdopendir fdopendir_undefined
+#pragma redefine_extname stpcpy stpcpy_undefined
 
 #endif // ZOS_V2R5_SYMBOLFIXES_H
