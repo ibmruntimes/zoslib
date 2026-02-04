@@ -834,6 +834,8 @@ int __pthread_create_orig(pthread_t *thread, const pthread_attr_t *attr,
                       void *(*start_routine)(void *), void *arg) asm("@@PT3C");
 ssize_t __writev_orig(int fd, const struct iovec *iov, int iovcnt) asm("writev");
 ssize_t __readv_orig(int fd, const struct iovec *iov, int iovcnt) asm("readv");
+ssize_t __write_orig(int fd, const void *buf, size_t count) asm("write");
+ssize_t __read_orig(int fd, void *buf, size_t count) asm("read");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -997,6 +999,43 @@ int __mkstemp_ascii(char * tmpl) {
   return ret;
 }
 
+int __mkstemp_ds_file(char * tmpl) {
+  int fd;
+  if (IS_DATASET(tmpl)) {
+    DEBUG_PRINT0("calling mkstemp-dataset\n");
+    fd = mkstemp_dataset(tmpl);
+  } else {
+    DEBUG_PRINT0("calling mkstemp-file\n");
+    fd = __mkstemp_ascii(tmpl);
+    if (fd >= 0) {
+      ADD_FD(fd);
+    }
+  }
+  return fd;
+}
+
+ssize_t __write_ds_file(int fd, const void *buf, size_t count) {
+  if (IS_FD(fd)) {
+    DEBUG_PRINT0("calling write-file\n");
+    return __write_orig(fd, buf, count);
+  } 
+  else if(IS_DD(fd)) {
+    DEBUG_PRINT0("calling write-dataset\n");
+    return write_dataset(fd, buf, count);
+  }
+}
+
+ssize_t __read_ds_file(int fd, void *buf, size_t count) {
+  if (IS_FD(fd)) {
+    DEBUG_PRINT0("calling read-file\n");
+    return __read_orig(fd, buf, count);
+  } 
+  else if(IS_DD(fd)) {
+    DEBUG_PRINT0("calling read-dataset\n");
+    return read_dataset(fd, buf, count);
+  }
+}
+
 int __close(int fd) {
   if (IS_FD(fd)) {
     DEBUG_PRINT0("calling close-file\n");
@@ -1004,7 +1043,8 @@ int __close(int fd) {
     if (ret >= 0)
       __fd_close(fd);
     return ret;
-  } else {
+  } 
+  else if(IS_DD(fd)) {
     DEBUG_PRINT0("calling close-dataset\n");
     return close_dataset(fd);
   }
@@ -1305,7 +1345,7 @@ int dprintf(int fd, const char *format, ...) {
   va_end(args);
 
   // Write the formatted string to the specified file descriptor
-  written = write(fd, buffer, length);
+  written = __write_orig(fd, buffer, length);
 
   // Clean up
   free(buffer);
@@ -1345,7 +1385,7 @@ static ssize_t ebcdic_writev(int fd, const struct iovec *iov, int iovcnt) {
   }
 
   // Write the entire converted buffer at once.
-  ssize_t written = write(fd, converted_buf, total_len);
+  ssize_t written = __write_orig(fd, converted_buf, total_len);
 
   if (using_heap) {
     free(converted_buf);
@@ -1373,7 +1413,7 @@ static ssize_t ebcdic_readv(int fd, const struct iovec *iov, int iovcnt) {
     ssize_t total_read = 0;
 
     for (int i = 0; i < iovcnt; i++) {
-        ssize_t bytes_read = read(fd, iov[i].iov_base, iov[i].iov_len);
+        ssize_t bytes_read = __read_orig(fd, iov[i].iov_base, iov[i].iov_len);
         if (bytes_read < 0) {
             perror("read failed");
             return -1;  // Return error if read fails

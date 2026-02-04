@@ -22,6 +22,7 @@ extern "C" {
 __Z_EXPORT char *__realpath_extended(const char * __restrict__, char * __restrict__);
 #ifdef __NATIVE_ASCII_F
 __Z_EXPORT int __mkstemp_ascii(char*);
+__Z_EXPORT int __mkstemp_ds_file(char*);
 #endif
 #if defined(__cplusplus)
 }
@@ -82,7 +83,7 @@ __Z_EXPORT void free(void* ptr) __THROW __asm("__zoslib_free") ;
  * Same as C mkstemp but tags fd as ASCII (819)
  */
 #undef mkstemp
-__Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ascii");
+__Z_EXPORT int mkstemp(char*) __asm("__mkstemp_ds_file");
 #endif /* __NATIVE_ASCII_F */
 
 #if defined(__cplusplus)

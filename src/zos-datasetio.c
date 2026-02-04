@@ -70,7 +70,7 @@ static char* generate_name(char* tmplate)
   return tmplate;
 }
 
-static int mkstemp_dataset(char* tmplate)
+int mkstemp_dataset(char* tmplate)
 {
   void* dd;
   int fd = -1;
@@ -201,7 +201,7 @@ int open_dataset(const char* name, int flags, mode_t mode)
   return fd;
 }
 
-static ssize_t write_dataset(int fd, const void* buf, size_t count)
+ssize_t write_dataset(int fd, const void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
 
@@ -236,7 +236,7 @@ static ssize_t write_dataset(int fd, const void* buf, size_t count)
   }
 }
 
-static ssize_t read_dataset(int fd, void* buf, size_t count)
+ssize_t read_dataset(int fd, void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
 
@@ -288,44 +288,6 @@ int close_dataset(int fd)
     set_entry_error(dentry, DSIO_ERR_CLOSE_FAILED, "fclose() failed");
   }
   return rc;
-}
-
-ssize_t read_zos(int fd, void* buf, size_t count) 
-{
-  if (IS_FD(fd)) {
-    DEBUG_PRINT0("calling read-file\n");
-    return read(fd, buf, count);
-  } else {
-    DEBUG_PRINT0("calling read-dataset\n");
-    return read_dataset(fd, buf, count);
-  }
-}
-
-ssize_t write_zos(int fd, const void* buf, size_t count) 
-{
-  if (IS_FD(fd)) {
-    DEBUG_PRINT0("calling write-file\n");
-    return write(fd, buf, count);
-  } else {
-    DEBUG_PRINT0("calling write-dataset\n");
-    return write_dataset(fd, buf, count);
-  }
-}
-
-int mkstemp_zos(char* tmplate) 
-{
-  int fd;
-  if (IS_DATASET(tmplate)) {
-    DEBUG_PRINT0("calling mkstemp-dataset\n");
-    fd = mkstemp_dataset(tmplate);
-  } else {
-    DEBUG_PRINT0("calling mkstemp-file\n");
-    fd = mkstemp(tmplate);
-    if (fd >= 0) {
-      ADD_FD(fd);
-    }
-  }
-  return fd;
 }
 
 char* temp_dataset_name(char* result)
