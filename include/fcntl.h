@@ -18,6 +18,7 @@ extern "C" {
 /**
  * Same as C open but tags new files as ASCII (819)
  */
+__Z_EXPORT extern int __open_ds_file(const char *filename, int opts, ...);
 __Z_EXPORT extern int __open_ascii(const char *filename, int opts, ...);
 __Z_EXPORT extern int __creat_ascii(const char *filename, mode_t mode);
 #if defined(__cplusplus)
@@ -38,7 +39,7 @@ __Z_EXPORT extern int __creat_ascii(const char *filename, mode_t mode);
 extern "C" {
 #endif
 
-__Z_EXPORT extern int open(const char *filename, int opts, ...) __asm("__open_ascii");
+__Z_EXPORT extern int open(const char *filename, int opts, ...) __asm("__open_ds_file");
 __Z_EXPORT extern int creat(const char *filename, mode_t mode) __asm("__creat_ascii");
 
 #if defined(__cplusplus)

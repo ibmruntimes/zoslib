@@ -29,6 +29,7 @@ set(libsrc
   zos-time.c
   zos-filesystem.cc
   zos-fts.c
+  zos-datasetio.c
 )
 set(zoslib-help zoslib-help.cc)
 

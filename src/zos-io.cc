@@ -25,6 +25,7 @@
 #include <utmpx.h>
 #include <sys/uio.h>
 #include <dirent.h>
+#include "zos-datasetio.h"
 
 namespace {
 const char MEMLOG_LEVEL_WARNING = '1';
@@ -902,6 +903,26 @@ int __open_ascii(const char *filename, int opts, ...) {
   return fd;
 }
 
+int __open_ds_file(const char *filename, int opts, ...) {
+  int fd;
+  va_list ap;
+  va_start(ap, opts);
+  int perms = va_arg(ap, int);
+
+  if (IS_DATASET(filename)) {
+    DEBUG_PRINT0("calling open-dataset\n");
+    fd = open_dataset(filename, opts, perms);
+  } else {
+    DEBUG_PRINT0("calling open-file\n");
+    fd = __open_ascii(filename, opts, perms);
+    if (fd >= 0) {
+      ADD_FD(fd);
+    }
+  }
+  va_end(ap);
+  return fd;
+}
+
 int __creat_ascii(const char *filename, mode_t mode) {
   return __open_ascii(filename, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
@@ -977,12 +998,16 @@ int __mkstemp_ascii(char * tmpl) {
 }
 
 int __close(int fd) {
-  int ret = __close_orig(fd);
-  if (ret < 0)
+  if (IS_FD(fd)) {
+    DEBUG_PRINT0("calling close-file\n");
+    int ret = __close_orig(fd);
+    if (ret >= 0)
+      __fd_close(fd);
     return ret;
-
-  __fd_close(fd);
-  return ret;
+  } else {
+    DEBUG_PRINT0("calling close-dataset\n");
+    return close_dataset(fd);
+  }
 }
 
 int __socketpair_ascii(int domain, int type, int protocol, int sv[2]) {
