@@ -968,6 +968,15 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
   return fp;
 }
 
+FILE *__fopen_ds_file(const char *filename, const char *mode) {
+  if (IS_DATASET(filename)) {
+    return __fopen_orig(filename, mode);
+  }
+  else {
+    return __fopen_ascii(filename, mode);
+  }
+}
+
 int __pipe_ascii(int fd[2]) {
   int ret = __pipe_orig(fd);
   if (ret < 0)

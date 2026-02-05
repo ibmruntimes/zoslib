@@ -21,6 +21,7 @@ extern "C" {
  * Same as C open but tags new files as ASCII (819)
  */
 __Z_EXPORT extern FILE *__fopen_ascii(const char *filename, const char *mode);
+__Z_EXPORT extern FILE *__fopen_ds_file(const char *filename, const char *mode);
 
 #if defined(__cplusplus)
 }
@@ -37,7 +38,7 @@ __Z_EXPORT extern FILE *__fopen_ascii(const char *filename, const char *mode);
 extern "C" {
 #endif
 
-__Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) __asm("__fopen_ascii");
+__Z_EXPORT extern FILE *fopen(const char *filename, const char *mode) __asm("__fopen_ds_file");
 __Z_EXPORT ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 __Z_EXPORT ssize_t getdelim(char **lineptr, size_t *n, int delimiter, FILE *stream);
 __Z_EXPORT int vasprintf(char **strp, const char *fmt, va_list ap);
