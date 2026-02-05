@@ -433,9 +433,7 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
  * lseek() - File Positioning
  * ======================================================================== */
 
-#undef lseek
-
-static off_t lseek_dataset(int fd, off_t offset, int whence) {
+off_t lseek_dataset(int fd, off_t offset, int whence) {
     void* dd = GET_DD(fd);
     DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*)dd;
     FILE* fp = dentry->file_ptr;
@@ -470,16 +468,6 @@ static off_t lseek_dataset(int fd, off_t offset, int whence) {
     
     log_trace("lseek: fd=%d, offset=%ld, whence=%d, new_pos=%ld", fd, offset, whence, pos);
     return (off_t)pos;
-}
-
-off_t lseek_zos(int fd, off_t offset, int whence) {
-    if (IS_FD(fd)) {
-        DEBUG_PRINT0("calling lseek-file\n");
-        return lseek(fd, offset, whence);
-    } else {
-        DEBUG_PRINT0("calling lseek-dataset\n");
-        return lseek_dataset(fd, offset, whence);
-    }
 }
 
 /* ========================================================================

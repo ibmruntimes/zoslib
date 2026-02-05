@@ -30,6 +30,7 @@ int close_dataset(int fd);
 int mkstemp_dataset(char* tmplate);
 ssize_t write_dataset(int fd, const void* buf, size_t count);
 ssize_t read_dataset(int fd, void* buf, size_t count);
+off_t lseek_dataset(int fd, off_t offset, int whence);
 
 /*
  * The following functions are only required for testing, 

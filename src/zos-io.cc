@@ -836,6 +836,7 @@ ssize_t __writev_orig(int fd, const struct iovec *iov, int iovcnt) asm("writev")
 ssize_t __readv_orig(int fd, const struct iovec *iov, int iovcnt) asm("readv");
 ssize_t __write_orig(int fd, const void *buf, size_t count) asm("write");
 ssize_t __read_orig(int fd, void *buf, size_t count) asm("read");
+off_t __lseek_orig(int fd, off_t offset, int whence) asm("lseek");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1056,6 +1057,17 @@ int __close(int fd) {
   else if(IS_DD(fd)) {
     DEBUG_PRINT0("calling close-dataset\n");
     return close_dataset(fd);
+  }
+}
+
+off_t __lseek_ds_file(int fd, off_t offset, int whence) {
+  if (IS_FD(fd)) {
+    DEBUG_PRINT0("calling lseek-file\n");
+    return __lseek_orig(fd, offset, whence);
+  }
+  else {
+    DEBUG_PRINT0("calling lseek-dataset\n");
+    return lseek_dataset(fd, offset, whence);
   }
 }
 

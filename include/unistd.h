@@ -20,6 +20,7 @@ __Z_EXPORT int __close(int);
 __Z_EXPORT int __sysconf(int name);
 __Z_EXPORT ssize_t __write_ds_file(int fd, const void *buf, size_t count);
 __Z_EXPORT ssize_t __read_ds_file(int fd, void *buf, size_t count);
+__Z_EXPORT off_t __lseek_ds_file(int fd, off_t offset, int whence);
 
 #if defined(__cplusplus)
 }
@@ -60,7 +61,7 @@ __Z_EXPORT int sysconf(int name) __asm("__sysconf");
 __Z_EXPORT ssize_t readlink(const char *path, char *buf, size_t bufsiz) __asm("__readlink");
 __Z_EXPORT ssize_t write(int fd, const void *buf, size_t count) __asm("__write_ds_file");
 __Z_EXPORT ssize_t read(int fd, void *buf, size_t count) __asm("__read_ds_file");
-
+__Z_EXPORT off_t lseek(int fd, off_t offset, int whence) __asm("__lseek_ds_file");
 
 #if defined(__cplusplus)
 }
