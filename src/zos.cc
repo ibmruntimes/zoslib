@@ -15,6 +15,7 @@
 #include "edcwccwi.h"
 #include "zos-getentropy.h"
 #include "zos.h"
+#include "zos-datasetio.h"
 
 #include <_Ccsid.h>
 #include <_Nascii.h>
@@ -2673,6 +2674,10 @@ static void setProcessEnvars() {
 }
 
 int __zinit::initialize(const zoslib_config_t &aconfig) {
+  ADD_FD(STDIN_FILENO);
+  ADD_FD(STDOUT_FILENO);
+  ADD_FD(STDERR_FILENO);
+
   memcpy(&config, &aconfig, sizeof(config));
   __galloc_info = new __Cache;
 

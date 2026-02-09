@@ -21,5 +21,6 @@
 #include "zos-base.h"
 #include "zos-semaphore.h"
 #include "zos-sys-info.h"
+#include "zos-datasetio.h"
 
 #endif // ZOS_H_
