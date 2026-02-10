@@ -426,10 +426,6 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
 
 
 /* ========================================================================
- * PHASE 1 SYSTEM CALL IMPLEMENTATIONS
- * ======================================================================== */
-
-/* ========================================================================
  * lseek() - File Positioning
  * ======================================================================== */
 
@@ -474,10 +470,8 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
  * fstat() / stat() - File Metadata
  * ======================================================================== */
 
-#undef fstat
-#undef stat
-
 /* Helper function to read ISPF statistics from PDS member */
+#if 0
 static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
     if (!fp || !stats) {
         return -1;
@@ -496,7 +490,7 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
     
     /* Get member name from fldata */
     char member_name[9] = {0};
-    if (fdata.__dsname != NULL) {
+    if (fdata.__dsname == NULL) {
         return -1;  /* No member name */
     }
     memcpy(member_name, fdata.__dsname, 8);
@@ -505,70 +499,166 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
     /* Use the ISPF reader module to get statistics */
     return read_member_ispf_stats(fp, member_name, stats);
 }
+#endif
 
-static int fstat_dataset(int fd, struct stat *statbuf) {
+int fstat_dataset(int fd, struct stat *statbuf) {
     if (!statbuf) {
         errno = EINVAL;
         return -1;
     }
     
     void* dd = GET_DD(fd);
+    if (!dd) {
+        errno = EBADF;
+        return -1;
+    }
+    
     DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*)dd;
     FILE* fp = dentry->file_ptr;
     
+    if (!fp) {
+        set_entry_error(dentry, DSIO_ERR_INVALID_FD, "Invalid file pointer");
+        errno = EBADF;
+        return -1;
+    }
+    
     /* Initialize stat buffer */
     memset(statbuf, 0, sizeof(struct stat));
+    
+    /* Ensure metadata is loaded */
+    if (!dentry->metadata_loaded) {
+        if (load_metadata_from_file(dentry) != 0) {
+            log_warn("fstat: Failed to load metadata, continuing with limited info");
+        }
+    }
     
     /* Use fldata() to get dataset information */
     fldata_t fdata;
     if (fldata(fp, NULL, &fdata) != 0) {
         set_entry_error(dentry, DSIO_ERR_FLDATA_FAILED, "fldata() failed");
+        errno = EIO;
         return -1;
     }
     
-    /* Get file size using fseek/ftell */
-    long current_pos = ftell(fp);
-    if (fseek(fp, 0, SEEK_END) == 0) {
-        long size = ftell(fp);
-        if (size >= 0) {
-            statbuf->st_size = size;
-        }
-        fseek(fp, current_pos, SEEK_SET);  /* Restore position */
+    /* Get file size using utility function */
+    ssize_t size = dsio_get_size(fd);
+    if (size >= 0) {
+        statbuf->st_size = size;
+    } else {
+        log_warn("fstat: Failed to get file size");
+        statbuf->st_size = 0;
     }
     
-    /* Fill in stat structure with dataset information */
-    statbuf->st_mode = S_IFREG | S_IRUSR | S_IWUSR;  /* Regular file, user r/w */
+    /* Determine file mode based on dataset type */
+    mode_t mode = S_IFREG;  /* Regular file by default */
+    
+    /* Check if PDS/PDSE without member (acts like directory) */
+    if ((dsio_is_pds(fd) || dsio_is_pdse(fd)) && !dsio_has_member(fd)) {
+        mode = S_IFDIR;
+    }
+    
+    /* Set permissions based on readonly status */
+    if (dsio_is_readonly(fd)) {
+        mode |= S_IRUSR | S_IRGRP | S_IROTH;  /* Read-only */
+    } else {
+        mode |= S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;  /* Read-write for user */
+    }
+    
+    /* Add execute permission for directories */
+    if (mode & S_IFDIR) {
+        mode |= S_IXUSR | S_IXGRP | S_IXOTH;
+    }
+    
+    statbuf->st_mode = mode;
     statbuf->st_nlink = 1;
-    statbuf->st_blksize = fdata.__blksize;
     
-    /* Calculate blocks used */
-    if (statbuf->st_size > 0 && statbuf->st_blksize > 0) {
-        statbuf->st_blocks = (statbuf->st_size + statbuf->st_blksize - 1) / statbuf->st_blksize;
-    }
-    
-    /* Use enhanced metadata if available */
+    /* Set block size from metadata or fldata */
     if (dentry->metadata_loaded && dentry->blksize > 0) {
         statbuf->st_blksize = dentry->blksize;
-        statbuf->st_blocks = (statbuf->st_size + dentry->blksize - 1) / dentry->blksize;
+    } else if (fdata.__blksize > 0) {
+        statbuf->st_blksize = fdata.__blksize;
+    } else {
+        statbuf->st_blksize = 4096;  /* Default */
     }
     
-    log_debug("fstat: fd=%d, size=%ld, blksize=%ld, blocks=%ld",
-              fd, (long)statbuf->st_size, (long)statbuf->st_blksize, (long)statbuf->st_blocks);
+    /* Calculate blocks used (in 512-byte units for POSIX compatibility) */
+    if (statbuf->st_size > 0) {
+        statbuf->st_blocks = (statbuf->st_size + 511) / 512;
+    }
+    
+    /* Set device and inode numbers (simulated for datasets) */
+    statbuf->st_dev = 0x5A05;  /* 'ZOS' in hex */
+    
+    /* Generate pseudo-inode from dataset name components */
+    unsigned long inode = 0;
+    if (dentry->hlq[0]) {
+        for (int i = 0; dentry->hlq[i] && i < DSIO_MAX_QUALIFIER; i++) {
+            inode = (inode * 31) + (unsigned char)dentry->hlq[i];
+        }
+    }
+    if (dentry->member_name[0]) {
+        for (int i = 0; dentry->member_name[i] && i < DSIO_MAX_MEMBER_NAME; i++) {
+            inode = (inode * 31) + (unsigned char)dentry->member_name[i];
+        }
+    }
+    statbuf->st_ino = inode ? inode : 1;
+    
+    /* Set user and group IDs */
+    statbuf->st_uid = getuid();
+    statbuf->st_gid = getgid();
+    
+    /* Try to get ISPF statistics for timestamps (PDS members only) */
+    int has_ispf = 0;
+    if (dsio_has_member(fd) && (dsio_is_pds(fd) || dsio_is_pdse(fd))) {
+        struct ispf_stats ispf_stats;
+	/*
+        if (read_ispf_stats(fp, &ispf_stats) == 0) {
+            has_ispf = 1;
+            
+            // Convert struct tm to time_t
+            statbuf->st_ctime = mktime(&ispf_stats.create_time);
+            statbuf->st_atime = statbuf->st_ctime;
+            
+            statbuf->st_mtime = mktime(&ispf_stats.mod_time);
+            if (statbuf->st_mtime == -1) {
+                statbuf->st_mtime = statbuf->st_ctime;
+            }
+            
+            log_debug("fstat: Using ISPF stats - created=%ld, modified=%ld, ver=%d.%d",
+                      (long)statbuf->st_ctime, (long)statbuf->st_mtime,
+                      ispf_stats.ver_num, ispf_stats.mod_num);
+        }
+    	*/
+    }
+    
+    /* If no ISPF stats, try file system times or use current time */
+    if (!has_ispf) {
+        int fileno_val = fileno(fp);
+        struct stat fs_stat;
+        
+        if (fileno_val >= 0 && fstat(fileno_val, &fs_stat) == 0) {
+            statbuf->st_atime = fs_stat.st_atime;
+            statbuf->st_mtime = fs_stat.st_mtime;
+            statbuf->st_ctime = fs_stat.st_ctime;
+            log_trace("fstat: Using file system timestamps");
+        } else {
+            /* Fallback to current time */
+            time_t now = time(NULL);
+            statbuf->st_atime = now;
+            statbuf->st_mtime = now;
+            statbuf->st_ctime = now;
+            log_trace("fstat: Using current time for timestamps");
+        }
+    }
+    
+    log_debug("fstat: fd=%d, size=%ld, blksize=%ld, blocks=%ld, mode=%o, inode=%lu",
+              fd, (long)statbuf->st_size, (long)statbuf->st_blksize, 
+              (long)statbuf->st_blocks, statbuf->st_mode, (unsigned long)statbuf->st_ino);
     
     return 0;
 }
 
-int fstat_zos(int fd, struct stat *statbuf) {
-    if (IS_FD(fd)) {
-        DEBUG_PRINT0("calling fstat-file\n");
-        return fstat(fd, statbuf);
-    } else {
-        DEBUG_PRINT0("calling fstat-dataset\n");
-        return fstat_dataset(fd, statbuf);
-    }
-}
-
-static int stat_dataset(const char *pathname, struct stat *statbuf) {
+int stat_dataset(const char *pathname, struct stat *statbuf) {
     if (!pathname || !statbuf) {
         errno = EINVAL;
         return -1;
@@ -584,16 +674,6 @@ static int stat_dataset(const char *pathname, struct stat *statbuf) {
     close_dataset(fd);
     
     return result;
-}
-
-int stat_zos(const char *pathname, struct stat *statbuf) {
-    if (IS_DATASET(pathname)) {
-        DEBUG_PRINT0("calling stat-dataset\n");
-        return stat_dataset(pathname, statbuf);
-    } else {
-        DEBUG_PRINT0("calling stat-file\n");
-        return stat(pathname, statbuf);
-    }
 }
 
 /* ========================================================================

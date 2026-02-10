@@ -20,6 +20,8 @@ extern "C" {
  * Same as C mkfifo but tags FIFO special files as ASCII (819)
  */
 __Z_EXPORT extern int __mkfifo_ascii(const char *pathname, mode_t mode);
+__Z_EXPORT extern int __stat_ds_file(const char *path, struct stat *buf);
+__Z_EXPORT extern int __fstat_ds_file(int fd, struct stat *buf);
 
 #if defined(__cplusplus)
 }
@@ -29,14 +31,22 @@ __Z_EXPORT extern int __mkfifo_ascii(const char *pathname, mode_t mode);
 
 #undef mkfifo
 #define mkfifo __mkfifo_replaced
+#undef stat
+#define stat(x,y) __stat_replaced(x,y)
+#undef fstat
+#define fstat(x,y) __fstat_replaced(x,y)
 #include_next <sys/stat.h>
 #undef mkfifo 
+#undef stat
+#undef fstat
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 __Z_EXPORT extern int mkfifo(const char *pathname, mode_t mode) __asm("__mkfifo_ascii");
+__Z_EXPORT extern int stat(const char *path, struct stat *buf) __asm("__stat_ds_file");
+__Z_EXPORT extern int fstat(int fd, struct stat *buf) __asm("__fstat_ds_file");
 
 #if defined(__cplusplus)
 }

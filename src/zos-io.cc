@@ -837,6 +837,10 @@ ssize_t __readv_orig(int fd, const struct iovec *iov, int iovcnt) asm("readv");
 ssize_t __write_orig(int fd, const void *buf, size_t count) asm("write");
 ssize_t __read_orig(int fd, void *buf, size_t count) asm("read");
 off_t __lseek_orig(int fd, off_t offset, int whence) asm("lseek");
+//#pragma map(__stat_orig, "stat") 
+//#pragma map(__fstat_orig, "fstat")
+int __stat_orig(const char *path, struct stat *buf) asm("stat");
+int __fstat_orig(int fd, struct stat *buf) asm("fstat");
 
 int utmpxname(char * file) {
   char buf[PATH_MAX];
@@ -1070,6 +1074,23 @@ off_t __lseek_ds_file(int fd, off_t offset, int whence) {
     return lseek_dataset(fd, offset, whence);
   }
 }
+
+int __stat_ds_file(const char *pathname, struct stat *statbuf) {
+  if (IS_DATASET(pathname)) {
+    return stat_dataset(pathname, statbuf);
+  } else {
+    return __stat_orig(pathname, statbuf);
+  }
+}
+
+int __fstat_ds_file(int fd, struct stat *statbuf) {
+  if (IS_DD(fd)) {
+    return fstat_dataset(fd, statbuf);
+  } else {
+    return __fstat_orig(fd, statbuf);
+  }
+}
+
 
 int __socketpair_ascii(int domain, int type, int protocol, int sv[2]) {
   int ret = __socketpair_orig(domain, type, protocol, sv);

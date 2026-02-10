@@ -31,6 +31,8 @@ int mkstemp_dataset(char* tmplate);
 ssize_t write_dataset(int fd, const void* buf, size_t count);
 ssize_t read_dataset(int fd, void* buf, size_t count);
 off_t lseek_dataset(int fd, off_t offset, int whence);
+int stat_dataset(const char* pathname, struct stat *statbuf);
+int fstat_dataset(int fd, struct stat *statbuf);
 
 /*
  * The following functions are only required for testing, 
