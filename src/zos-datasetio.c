@@ -193,7 +193,7 @@ int open_dataset(const char* name, int flags, mode_t mode)
   fd = GET_DUMMY_FD();
   ADD_DD(fd, dentry);
   
-  log_info("Opened dataset: %s (fd=%d, RECFM=%s, LRECL=%d)",
+  DEBUG_PRINT1("Opened dataset: %s (fd=%d, RECFM=%s, LRECL=%d)\n",
            name, fd,
            dsio_recfm_to_string(dentry->recfm),
            dentry->lrecl);
@@ -212,6 +212,7 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   DEBUG_PRINT1("In Write, File ccsid: %d\n", dentry->file_ccsid);
   DEBUG_PRINT1("In Write, Program ccsid: %d\n", dentry->program_ccsid);
   DEBUG_PRINT1("In Write, Conversion state %d\n", dentry->conversion_state);
+  DEBUG_PRINT1("write_dataset fd %d count %d\n", fd, count);
 
   char* write_buffer = (char *)malloc(count);
   if (write_buffer == NULL) {
@@ -228,7 +229,7 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   if (rc == count) {
     /* Update statistics on successful write */
     update_write_stats(dentry, rc);
-    log_trace("Wrote %zu bytes to fd=%d", rc, fd);
+    DEBUG_PRINT1("Wrote %zu bytes to fd=%d\n", rc, fd);
     return (ssize_t) rc;
   } else {
     set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "fwrite() returned fewer bytes than requested");
@@ -247,14 +248,14 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
   DEBUG_PRINT1("In Read, File ccsid: %d\n", dentry->file_ccsid);
   DEBUG_PRINT1("In Read, Program ccsid: %d\n", dentry->program_ccsid);
   DEBUG_PRINT1("In Read, Conversion state %d\n", dentry->conversion_state);
-
+  DEBUG_PRINT1("read_dataset fd %d count %d\n", fd, count);
   size_t rc = fread(buf, 1, count, fp);
 
   if (rc > 0) {
     buf = convertBuffer(buf, dentry->file_ccsid, dentry->program_ccsid);
     /* Update statistics on successful read */
     update_read_stats(dentry, rc);
-    log_trace("Read %zu bytes from fd=%d", rc, fd);
+    DEBUG_PRINT1("Read %zu bytes from fd=%d\n", rc, fd);
   } else if (rc == 0 && ferror(fp)) {
     set_entry_error(dentry, DSIO_ERR_READ_FAILED, "fread() failed");
     return -1;
@@ -270,7 +271,7 @@ int close_dataset(int fd)
   DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*) (dd);
   FILE* fp = dentry->file_ptr;
 
-  log_info("Closing dataset fd=%d (read=%zu bytes, wrote=%zu bytes, ops=%zu/%zu)",
+  DEBUG_PRINT1("Closing dataset fd=%d (read=%zu bytes, wrote=%zu bytes, ops=%zu/%zu)\n",
            fd, dentry->bytes_read, dentry->bytes_written,
            dentry->read_operations, dentry->write_operations);
 
@@ -430,10 +431,41 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
  * ======================================================================== */
 
 off_t lseek_dataset(int fd, off_t offset, int whence) {
+    /* Validate file descriptor */
+    if (fd < 0 || fd >= MAX_FDS) {
+        errno = EBADF;
+        log_error("lseek_dataset: Invalid fd=%d", fd);
+        return -1;
+    }
+    
     void* dd = GET_DD(fd);
+    if (!dd) {
+        errno = EBADF;
+        log_error("lseek_dataset: No dataset descriptor for fd=%d", fd);
+        return -1;
+    }
+    
+    /* Check if this is actually a dataset fd (not a regular file fd) */
+    if (IS_FD(fd)) {
+        errno = EINVAL;
+        log_error("lseek_dataset: fd=%d is not a dataset descriptor", fd);
+        return -1;
+    }
+    
     DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*)dd;
+    if (!dentry->file_ptr) {
+        errno = EBADF;
+        set_entry_error(dentry, DSIO_ERR_INVALID_FD, "Invalid file pointer");
+        log_error("lseek_dataset: NULL file pointer for fd=%d", fd);
+        return -1;
+    }
+    
     FILE* fp = dentry->file_ptr;
     
+    /* Log the seek operation with correct format specifiers */
+    DEBUG_PRINT1("lseek_dataset fd=%d offset=%lld whence=%d\n", fd, (long long)offset, whence);
+    
+    /* Validate whence parameter */
     int fseek_whence;
     switch (whence) {
         case SEEK_SET:
@@ -448,22 +480,78 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
         default:
             errno = EINVAL;
             set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "Invalid whence parameter");
+            log_error("lseek_dataset: Invalid whence=%d for fd=%d", whence, fd);
             return -1;
     }
     
-    if (fseek(fp, offset, fseek_whence) != 0) {
+    /* Load metadata if not already loaded to check record format constraints */
+    if (!dentry->metadata_loaded) {
+        if (load_metadata_from_file(dentry) != 0) {
+            DEBUG_PRINT1("lseek_dataset: Failed to load metadata for fd=%d, continuing anyway", fd);
+        }
+    }
+    
+    /* Check for dataset-specific constraints based on record format
+     * Note: On z/OS, fseek/ftell behavior varies by record format:
+     * - Fixed (F, FB): Seeking works by byte offset, relatively predictable
+     * - Variable (V, VB): Seeking by byte offset is problematic due to RDWs
+     * - Undefined (U): Seeking is unreliable and not recommended
+     * - ASA formats: Additional complexity with carriage control characters
+     */
+    if (dentry->metadata_loaded) {
+        dsio_recfm_t recfm = dentry->recfm;
+        
+        /* Variable-length records: seeking by byte offset doesn't align with record boundaries */
+        if (recfm == DSIO_RECFM_V || recfm == DSIO_RECFM_VB || 
+            recfm == DSIO_RECFM_VA || recfm == DSIO_RECFM_VBA) {
+            DEBUG_PRINT1("lseek_dataset: Seeking in variable-length dataset (RECFM=%s) - byte offsets may not align with record boundaries",
+                     dsio_recfm_to_string(recfm));
+        }
+        
+        /* Undefined format: seeking is not reliable */
+        if (recfm == DSIO_RECFM_U) {
+            DEBUG_PRINT0("lseek_dataset: Seeking in undefined format dataset (RECFM=U) is not recommended and may produce unexpected results");
+        }
+        
+        /* For fixed-length records, automatically align offset to record boundaries */
+        if ((recfm == DSIO_RECFM_F || recfm == DSIO_RECFM_FB || 
+             recfm == DSIO_RECFM_FA || recfm == DSIO_RECFM_FBA) && 
+            whence == SEEK_SET && dentry->lrecl > 0) {
+            /* Check if offset aligns with record boundaries */
+            if (offset % dentry->lrecl != 0) {
+                off_t aligned_offset = (offset / dentry->lrecl) * dentry->lrecl;
+                DEBUG_PRINT1("lseek_dataset: Offset %lld not aligned with LRECL %d, rounding down to %lld\n",
+                         (long long)offset, dentry->lrecl, (long long)aligned_offset);
+                offset = aligned_offset;
+            }
+        }
+    }
+    
+    /* Perform the seek operation using fseeko() to handle off_t properly */
+    if (fseeko(fp, offset, fseek_whence) != 0) {
+        int saved_errno = errno;
         set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "fseek() failed");
+        DEBUG_PRINT1("lseek_dataset: fseek() failed for fd=%d, offset=%lld, whence=%d, errno=%d (%s)",
+                 fd, (long long)offset, whence, saved_errno, strerror(saved_errno));
+        errno = saved_errno;
         return -1;
     }
     
-    long pos = ftell(fp);
+    /* Get the new position using ftello() to return off_t */
+    off_t pos = ftello(fp);
     if (pos < 0) {
-        set_entry_error(dentry, DSIO_ERR_FTELL_FAILED, "ftell() failed");
+        int saved_errno = errno;
+        set_entry_error(dentry, DSIO_ERR_FTELL_FAILED, "ftello() failed");
+        DEBUG_PRINT1("lseek_dataset: ftello() failed for fd=%d, errno=%d (%s)", 
+                 fd, saved_errno, strerror(saved_errno));
+        errno = saved_errno;
         return -1;
     }
     
-    log_trace("lseek: fd=%d, offset=%ld, whence=%d, new_pos=%ld", fd, offset, whence, pos);
-    return (off_t)pos;
+    DEBUG_PRINT1("lseek_dataset: fd=%d, offset=%lld, whence=%d, new_pos=%lld\n",
+             fd, (long long)offset, whence, (long long)pos);
+    
+    return pos;
 }
 
 /* ========================================================================
@@ -502,6 +590,7 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
 #endif
 
 int fstat_dataset(int fd, struct stat *statbuf) {
+    DEBUG_PRINT1("Enter fstat_dataset %d\n", 0);
     if (!statbuf) {
         errno = EINVAL;
         return -1;
@@ -521,6 +610,7 @@ int fstat_dataset(int fd, struct stat *statbuf) {
         errno = EBADF;
         return -1;
     }
+    DEBUG_PRINT1("fstat_dataset %d\n", 1);
     
     /* Initialize stat buffer */
     memset(statbuf, 0, sizeof(struct stat));
@@ -651,7 +741,7 @@ int fstat_dataset(int fd, struct stat *statbuf) {
         }
     }
     
-    log_debug("fstat: fd=%d, size=%ld, blksize=%ld, blocks=%ld, mode=%o, inode=%lu",
+    DEBUG_PRINT1("fstat: fd=%d, size=%ld, blksize=%ld, blocks=%ld, mode=%o, inode=%lu",
               fd, (long)statbuf->st_size, (long)statbuf->st_blksize, 
               (long)statbuf->st_blocks, statbuf->st_mode, (unsigned long)statbuf->st_ino);
     
@@ -1222,6 +1312,29 @@ void dsio_log(dsio_log_level_t level, const char* format, ...) {
     fflush(stream);
 }
 
+void dsio_debug_print(const char* str) {
+    if (g_log_stream == NULL) {
+        g_log_stream = fopen("zoslib.debug.log", "a");
+    }
+    if (g_log_stream) {
+        fprintf(g_log_stream, "%s", str);
+        fflush(g_log_stream);
+    }
+}
+
+void dsio_debug_printf(const char* format, ...) {
+    if (g_log_stream == NULL) {
+        g_log_stream = fopen("zoslib.debug.log", "a");
+    }
+    if (g_log_stream) {
+        va_list args;
+        va_start(args, format);
+        vfprintf(g_log_stream, format, args);
+        va_end(args);
+        fflush(g_log_stream);
+    }
+}
+
 void log_error(const char* format, ...) {
     if (DSIO_LOG_ERROR > g_log_level) return;
     
@@ -1788,7 +1901,7 @@ ssize_t dsio_get_size(int fd) {
     if (!entry->file_ptr) {
         return -1;
     }
-    
+#if 0 
     /* Get file size */
     long current_pos = ftell(entry->file_ptr);
     if (current_pos < 0) {
@@ -1803,6 +1916,23 @@ ssize_t dsio_get_size(int fd) {
     fseek(entry->file_ptr, current_pos, SEEK_SET);
     
     return (ssize_t)size;
+#endif
+    long long total = 0;
+    char buf[8192];
+
+    long cur = ftell(entry->file_ptr);
+    fseek(entry->file_ptr, 0, SEEK_SET);
+
+    while (1) {
+        size_t n = fread(buf, 1, sizeof(buf), entry->file_ptr);
+        total += n;
+        if (n == 0)
+            break;
+    }
+    DEBUG_PRINT1("get_size fd %d size %d\n", fd, total);
+
+    fseek(entry->file_ptr, cur, SEEK_SET);
+    return (ssize_t)total;
 }
 
 int dsio_flush(int fd) {

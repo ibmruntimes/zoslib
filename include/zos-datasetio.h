@@ -321,8 +321,16 @@ int dsio_flush(int fd);
 #define GET_DD(fd)    (descriptor_table[(fd)])
 #define CLEAR_DD(fd)  (descriptor_table[(fd)] = 0)
 
-#define IS_FD(slot)   ((((unsigned long long) (descriptor_table[(slot)])) & INV_ADDR_BIT) != 0)
-#define IS_DD(slot)   ((((unsigned long long) (descriptor_table[(slot)])) & INV_ADDR_BIT) == 0)
+/* Validate descriptor slot is within bounds and occupied */
+#define IS_VALID_SLOT(slot)  ((slot) >= 0 && (slot) < MAX_FDS && descriptor_table[(slot)] != NULL)
+
+/* Check if slot contains a file descriptor (has INV_ADDR_BIT set) */
+#define IS_FD(slot)   (IS_VALID_SLOT(slot) && \
+                       ((((unsigned long long) (descriptor_table[(slot)])) & INV_ADDR_BIT) != 0))
+
+/* Check if slot contains a dataset descriptor (no INV_ADDR_BIT) */
+#define IS_DD(slot)   (IS_VALID_SLOT(slot) && \
+                       ((((unsigned long long) (descriptor_table[(slot)])) & INV_ADDR_BIT) == 0))
 
 typedef struct DatasetEntry {
   FILE* file_ptr;
@@ -344,12 +352,12 @@ typedef struct DatasetDir {
 #define GET_DUMMY_FD()   (open("/dev/null", O_WRONLY, 0))
 #define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
 
-#ifdef DEBUG
-  #define DEBUG_PRINT0(str) puts(str)
-  #define DEBUG_PRINT1(fmt,field) (printf(fmt,field))
+#if 1
+  #define DEBUG_PRINT0(str) dsio_debug_print(str)
+  #define DEBUG_PRINT1(fmt, ...) dsio_debug_printf(fmt, __VA_ARGS__)
 #else
   #define DEBUG_PRINT0(str)
-  #define DEBUG_PRINT1(fmt,field)
+  #define DEBUG_PRINT1(fmt, ...)
 #endif
 
 /* ========================================================================
@@ -446,6 +454,9 @@ void log_warn(const char* format, ...);
 void log_info(const char* format, ...);
 void log_debug(const char* format, ...);
 void log_trace(const char* format, ...);
+
+void dsio_debug_print(const char* str);
+void dsio_debug_printf(const char* format, ...);
 
 /* CCSID conversion helpers */
 void* convert_ebcdic_to_ascii(void* buf, size_t len);
