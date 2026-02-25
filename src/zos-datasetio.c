@@ -89,7 +89,7 @@ int mkstemp_dataset(char* tmplate)
   }
 
   /* Use enhanced entry creation */
-  DatasetEntryEnhanced* dentry = create_enhanced_entry(dd, 1047);
+  DatasetEntry* dentry = create_entry(dd, 1047);
   if (!dentry) {
     fclose(dd);
     return -1;
@@ -178,7 +178,7 @@ int open_dataset(const char* name, int flags, mode_t mode)
   }
 
   /* Use enhanced entry creation with metadata loading */
-  DatasetEntryEnhanced* dentry = create_enhanced_entry(dd, 1047);
+  DatasetEntry* dentry = create_entry(dd, 1047);
   if (!dentry) {
     fclose(dd);
     return -1;
@@ -205,7 +205,7 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
 
-  DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*) (dd);
+  DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
   DEBUG_PRINT1("In Write, File ptr ccsid: %p\n", dentry->file_ptr);
@@ -241,7 +241,7 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
 
-  DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*) (dd);
+  DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
   DEBUG_PRINT1("In Read, File ptr ccsid: %p\n", dentry->file_ptr);
@@ -268,7 +268,7 @@ int close_dataset(int fd)
 {
   void* dd = GET_DD(fd);
 
-  DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*) (dd);
+  DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
   DEBUG_PRINT1("Closing dataset fd=%d (read=%zu bytes, wrote=%zu bytes, ops=%zu/%zu)\n",
@@ -283,7 +283,7 @@ int close_dataset(int fd)
     close(fd);
     
     /* Deallocate enhanced DatasetEntry */
-    free_enhanced_entry(dentry);
+    free_entry(dentry);
     CLEAR_DD(fd);
   } else {
     set_entry_error(dentry, DSIO_ERR_CLOSE_FAILED, "fclose() failed");
@@ -452,7 +452,7 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
         return -1;
     }
     
-    DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*)dd;
+    DatasetEntry* dentry = (DatasetEntry*)dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
         set_entry_error(dentry, DSIO_ERR_INVALID_FD, "Invalid file pointer");
@@ -602,7 +602,7 @@ int fstat_dataset(int fd, struct stat *statbuf) {
         return -1;
     }
     
-    DatasetEntryEnhanced* dentry = (DatasetEntryEnhanced*)dd;
+    DatasetEntry* dentry = (DatasetEntry*)dd;
     FILE* fp = dentry->file_ptr;
     
     if (!fp) {
@@ -976,7 +976,7 @@ dsio_error_t dsio_get_last_error(int fd) {
         return DSIO_ERR_INVALID_FD;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     return entry->last_error;
 }
 
@@ -986,7 +986,7 @@ const char* dsio_get_error_message(int fd) {
         return "Invalid file descriptor";
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     return entry->error_message;
 }
 
@@ -996,12 +996,12 @@ void dsio_clear_error(int fd) {
         return;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     entry->last_error = DSIO_SUCCESS;
     entry->error_message[0] = '\0';
 }
 
-void set_entry_error(DatasetEntryEnhanced* entry, dsio_error_t error, const char* message) {
+void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* message) {
     if (!entry) return;
     
     entry->last_error = error;
@@ -1404,7 +1404,7 @@ void log_trace(const char* format, ...) {
  * STATISTICS IMPLEMENTATION
  * ======================================================================== */
 
-void update_read_stats(DatasetEntryEnhanced* entry, size_t bytes) {
+void update_read_stats(DatasetEntry* entry, size_t bytes) {
     if (!entry || !entry->stats_enabled) return;
     
     entry->bytes_read += bytes;
@@ -1416,7 +1416,7 @@ void update_read_stats(DatasetEntryEnhanced* entry, size_t bytes) {
     }
 }
 
-void update_write_stats(DatasetEntryEnhanced* entry, size_t bytes) {
+void update_write_stats(DatasetEntry* entry, size_t bytes) {
     if (!entry || !entry->stats_enabled) return;
     
     entry->bytes_written += bytes;
@@ -1454,7 +1454,7 @@ int dsio_get_stats(int fd, dsio_stats_t* stats) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     stats->bytes_read = entry->bytes_read;
     stats->bytes_written = entry->bytes_written;
@@ -1473,7 +1473,7 @@ int dsio_reset_stats(int fd) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     entry->bytes_read = 0;
     entry->bytes_written = 0;
@@ -1505,7 +1505,7 @@ void dsio_reset_global_stats(void) {
  * This would use fldata() to get actual dataset attributes
  * ======================================================================== */
 
-int load_metadata_from_file(DatasetEntryEnhanced* entry) {
+int load_metadata_from_file(DatasetEntry* entry) {
     if (!entry || !entry->file_ptr) {
         return -1;
     }
@@ -1587,10 +1587,10 @@ static dsio_dsorg_t detect_dsorg_from_fldata(const fldata_t* fdata) {
     return DSIO_DSORG_UNKNOWN;
 }
 
-DatasetEntryEnhanced* create_enhanced_entry(FILE* fp, unsigned short file_ccsid) {
-    DatasetEntryEnhanced* entry = calloc(1, sizeof(DatasetEntryEnhanced));
+DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid) {
+    DatasetEntry* entry = calloc(1, sizeof(DatasetEntry));
     if (!entry) {
-        log_error("Failed to allocate DatasetEntryEnhanced");
+        log_error("Failed to allocate DatasetEntry");
         return NULL;
     }
     
@@ -1610,13 +1610,13 @@ DatasetEntryEnhanced* create_enhanced_entry(FILE* fp, unsigned short file_ccsid)
     return entry;
 }
 
-void free_enhanced_entry(DatasetEntryEnhanced* entry) {
+void free_entry(DatasetEntry* entry) {
     if (entry) {
         free(entry);
     }
 }
 
-int parse_and_store_name(DatasetEntryEnhanced* entry, const char* dataset_name) {
+int parse_and_store_name(DatasetEntry* entry, const char* dataset_name) {
     if (!entry || !dataset_name) {
         return -1;
     }
@@ -1658,7 +1658,7 @@ int dsio_get_metadata(int fd, dsio_metadata_t* metadata) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     /* Ensure metadata is loaded */
     if (!entry->metadata_loaded) {
@@ -1692,7 +1692,7 @@ int dsio_get_recfm(int fd, dsio_recfm_t* recfm) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->metadata_loaded) {
         if (load_metadata_from_file(entry) != 0) {
             return -1;
@@ -1711,7 +1711,7 @@ int dsio_get_lrecl(int fd, uint16_t* lrecl) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->metadata_loaded) {
         if (load_metadata_from_file(entry) != 0) {
             return -1;
@@ -1730,7 +1730,7 @@ int dsio_get_dsorg(int fd, dsio_dsorg_t* dsorg) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->metadata_loaded) {
         if (load_metadata_from_file(entry) != 0) {
             return -1;
@@ -1747,7 +1747,7 @@ int dsio_get_ccsid(int fd, uint16_t* file_ccsid, uint16_t* program_ccsid) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     if (file_ccsid) {
         *file_ccsid = entry->file_ccsid;
@@ -1767,7 +1767,7 @@ int dsio_get_member_name(int fd, char* member, size_t len) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     strncpy(member, entry->member_name, len - 1);
     member[len - 1] = '\0';
     
@@ -1782,7 +1782,7 @@ int dsio_get_hlq(int fd, char* hlq, size_t len) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     strncpy(hlq, entry->hlq, len - 1);
     hlq[len - 1] = '\0';
     
@@ -1797,7 +1797,7 @@ int dsio_get_llq(int fd, char* llq, size_t len) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     strncpy(llq, entry->llq, len - 1);
     llq[len - 1] = '\0';
     
@@ -1838,7 +1838,7 @@ int dsio_has_member(int fd) {
         return 0;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     return entry->is_pds_member;
 }
 
@@ -1848,7 +1848,7 @@ int dsio_is_readonly(int fd) {
         return 0;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     return entry->readonly;
 }
 
@@ -1870,7 +1870,7 @@ int dsio_is_empty(int fd) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
         return -1;
     }
@@ -1897,7 +1897,7 @@ ssize_t dsio_get_size(int fd) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
         return -1;
     }
@@ -1941,7 +1941,7 @@ int dsio_flush(int fd) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
         return -1;
     }
@@ -1962,7 +1962,7 @@ int dsio_set_ccsid_config(int fd, const dsio_ccsid_config_t* config) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     /* Store CCSID configuration */
     entry->file_ccsid = config->source_ccsid;
@@ -1983,7 +1983,7 @@ int dsio_get_ccsid_config(int fd, dsio_ccsid_config_t* config) {
         return -1;
     }
     
-    DatasetEntryEnhanced* entry = ENTRY_TO_ENHANCED(dd);
+    DatasetEntry* entry = ENTRY_TO(dd);
     
     config->source_ccsid = entry->file_ccsid;
     config->target_ccsid = entry->program_ccsid;

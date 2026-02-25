@@ -333,42 +333,7 @@ int dsio_flush(int fd);
                        ((((unsigned long long) (descriptor_table[(slot)])) & INV_ADDR_BIT) == 0))
 
 typedef struct DatasetEntry {
-  FILE* file_ptr;
-  unsigned short file_ccsid;
-  unsigned short process_ccsid;
-  unsigned short program_ccsid;
-  unsigned char conversion_state;
-} DatasetEntry;
-
-/* Directory structure for PDS/PDSE member listing */
-typedef struct DatasetDir {
-  char dataset_name[256];
-  char** member_list;
-  int member_count;
-  int current_index;
-  int is_dataset_dir;
-} DatasetDir;
-
-#define GET_DUMMY_FD()   (open("/dev/null", O_WRONLY, 0))
-#define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
-
-#if 1
-  #define DEBUG_PRINT0(str) dsio_debug_print(str)
-  #define DEBUG_PRINT1(fmt, ...) dsio_debug_printf(fmt, __VA_ARGS__)
-#else
-  #define DEBUG_PRINT0(str)
-  #define DEBUG_PRINT1(fmt, ...)
-#endif
-
-/* ========================================================================
- * ENHANCED INTERNAL STRUCTURES
- * ======================================================================== */
-
-extern void* descriptor_table[MAX_FDS];
-
-/* Enhanced DatasetEntry structure */
-typedef struct DatasetEntryEnhanced {
-    /* Original fields from DatasetEntry */
+    /* Original fields */
     FILE* file_ptr;
     unsigned short file_ccsid;
     unsigned short process_ccsid;
@@ -402,7 +367,35 @@ typedef struct DatasetEntryEnhanced {
     int metadata_loaded;
     int stats_enabled;
     
-} DatasetEntryEnhanced;
+} DatasetEntry;
+
+/* Directory structure for PDS/PDSE member listing */
+typedef struct DatasetDir {
+  char dataset_name[256];
+  char** member_list;
+  int member_count;
+  int current_index;
+  int is_dataset_dir;
+} DatasetDir;
+
+#define GET_DUMMY_FD()   (open("/dev/null", O_WRONLY, 0))
+#define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
+
+#if 1
+  #define DEBUG_PRINT0(str) dsio_debug_print(str)
+  #define DEBUG_PRINT1(fmt, ...) dsio_debug_printf(fmt, __VA_ARGS__)
+#else
+  #define DEBUG_PRINT0(str)
+  #define DEBUG_PRINT1(fmt, ...)
+#endif
+
+/* ========================================================================
+ * ENHANCED INTERNAL STRUCTURES
+ * ======================================================================== */
+
+extern void* descriptor_table[MAX_FDS];
+
+
 
 /* Global statistics */
 typedef struct {
@@ -426,24 +419,24 @@ extern int g_debug_enabled;
  * INTERNAL HELPER FUNCTIONS
  * ======================================================================== */
 
-/* Create enhanced dataset entry */
-DatasetEntryEnhanced* create_enhanced_entry(FILE* fp, unsigned short file_ccsid);
+/* Create dataset entry */
+DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid);
 
-/* Free enhanced dataset entry */
-void free_enhanced_entry(DatasetEntryEnhanced* entry);
+/* Free dataset entry */
+void free_entry(DatasetEntry* entry);
 
 /* Load metadata from FILE* using fldata() */
-int load_metadata_from_file(DatasetEntryEnhanced* entry);
+int load_metadata_from_file(DatasetEntry* entry);
 
 /* Parse dataset name and extract components */
-int parse_and_store_name(DatasetEntryEnhanced* entry, const char* dataset_name);
+int parse_and_store_name(DatasetEntry* entry, const char* dataset_name);
 
 /* Set error on entry */
-void set_entry_error(DatasetEntryEnhanced* entry, dsio_error_t error, const char* message);
+void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* message);
 
 /* Update statistics */
-void update_read_stats(DatasetEntryEnhanced* entry, size_t bytes);
-void update_write_stats(DatasetEntryEnhanced* entry, size_t bytes);
+void update_read_stats(DatasetEntry* entry, size_t bytes);
+void update_write_stats(DatasetEntry* entry, size_t bytes);
 void update_global_stats_open(void);
 void update_global_stats_close(void);
 void update_global_stats_error(void);
@@ -469,8 +462,8 @@ int extract_member_name(const char* name, char* member, size_t len);
 int extract_qualifiers(const char* name, char* hlq, char* llq, size_t len);
 
 /* Utility macros */
-#define ENTRY_TO_ENHANCED(entry) ((DatasetEntryEnhanced*)(entry))
-#define IS_ENHANCED_ENTRY(entry) ((entry) && ((DatasetEntryEnhanced*)(entry))->metadata_loaded >= 0)
+#define ENTRY_TO(entry) ((DatasetEntry*)(entry))
+#define IS_ENTRY(entry) ((entry) && ((DatasetEntry*)(entry))->metadata_loaded >= 0)
 
 /* Error message templates */
 #define ERR_MSG_INVALID_NAME "Invalid dataset name: %s"
