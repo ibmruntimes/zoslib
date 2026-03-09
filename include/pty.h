@@ -11,6 +11,7 @@
 
 #include "zos-macros.h"
 #include <termios.h>
+#include <sys/ioctl.h>
 
 #ifdef __cplusplus
 extern "C" {

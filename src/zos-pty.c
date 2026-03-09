@@ -9,18 +9,16 @@
 #define _AE_BIMODAL 1
 
 #include "zos-base.h"
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <termios.h>
-
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <pty.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
-#include <pty.h>
 
 int openpty(int *master, int *slave, char *name, const struct termios *termp,
             const struct winsize *winp) {
@@ -60,8 +58,8 @@ int openpty(int *master, int *slave, char *name, const struct termios *termp,
   /* Note: Ensure that the caller provides a buffer large enough to hold the
    * name. */
   if (name) {
-    strncpy(name, slave_name, 128);
-    name[127] = '\0'; // Ensure null-termination
+    strncpy(name, slave_name, TTY_NAME_MAX);
+    name[TTY_NAME_MAX - 1] = '\0'; // Ensure null-termination
   }
 
   /* Open the slave pty device */
@@ -94,11 +92,16 @@ int openpty(int *master, int *slave, char *name, const struct termios *termp,
 }
 
 static int login_tty(int fd) {
-  setsid();
+  if (setsid() == -1) {
+    return -1;
+  }
 
-  dup2(fd, STDIN_FILENO);
-  dup2(fd, STDOUT_FILENO);
-  dup2(fd, STDERR_FILENO);
+  if (dup2(fd, STDIN_FILENO) == -1 ||
+      dup2(fd, STDOUT_FILENO) == -1 ||
+      dup2(fd, STDERR_FILENO) == -1) {
+    return -1;
+  }
+
   if (fd > STDERR_FILENO) {
     close(fd);
   }
@@ -121,11 +124,15 @@ pid_t forkpty(int *amaster, char *name, const struct termios *termp,
     return -1;
   case 0:
     close(master);
-    login_tty(slave);
+    if (login_tty(slave) == -1) {
+      _exit(1);
+    }
     return 0;
   default:
     close(slave);
-    *amaster = master;
+    if (amaster) {
+      *amaster = master;
+    }
     return pid;
   }
 }
