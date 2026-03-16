@@ -197,6 +197,11 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     dentry->file_ptr = dd;
   }
 
+  /* Optimization: Since we are already buffering in rec_buf to handle record boundaries, 
+   * disabling C runtime buffering (_IONBF) avoids an unnecessary internal memcpy inside fwrite. 
+   */
+  setvbuf(dentry->file_ptr, NULL, _IONBF, 0);
+
   /*
    * Buffer sizing:
    * - For FB: use blksize to enable multi-record I/O
@@ -292,74 +297,75 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
 
   const char* src = (const char*) buf;
   size_t total_written = 0;
+  size_t pos = 0;
 
-  for (size_t i = 0; i < count; i++) {
-    char c = src[i];
-
-    if (c == '\n') {
-      /* Flush current buffer as a record */
+  while (pos < count) {
+    /* How many bytes can we fit in the current record? */
+    size_t space_in_rec = dentry->reclen - dentry->rec_buf_pos;
+    size_t remaining = count - pos;
+    size_t scan_len = (remaining < space_in_rec) ? remaining : space_in_rec;
+    
+    /* Look for newline in the current available record space */
+    const char* nl = memchr(src + pos, '\n', scan_len);
+    
+    if (nl) {
+      /* Copy everything up to the newline */
+      size_t to_copy = nl - (src + pos);
+      if (to_copy > 0) {
+        memcpy(dentry->rec_buf + dentry->rec_buf_pos, src + pos, to_copy);
+        dentry->rec_buf_pos += to_copy;
+      }
+      
+      /* Record finalized by newline - flush it */
       if (dentry->is_fixed_recfm) {
         /* Pad FB record to reclen with spaces */
-        while (dentry->rec_buf_pos < dentry->reclen && dentry->rec_buf_pos < dentry->rec_buf_size) {
+        while (dentry->rec_buf_pos < dentry->reclen) {
           dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
         }
       }
 
       if (dentry->rec_buf_pos > 0) {
-        /* Convert CCSID before writing */
         if (dentry->conversion_state == SETCVTON) {
-          void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
-                                                 dentry->program_ccsid, dentry->file_ccsid);
-          if (conv_result == NULL) {
-            fprintf(stderr, "ERROR: CCSID conversion failed during write\n");
-            errno = EILSEQ;
-            return total_written > 0 ? (ssize_t) total_written : -1;
-          }
+          dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                              dentry->program_ccsid, dentry->file_ccsid);
         }
 
-        size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
-        if (rc != dentry->rec_buf_pos) {
-          fprintf(stderr, "ERROR: fwrite() wrote %zu bytes, expected %zu\n", 
-                  rc, dentry->rec_buf_pos);
+        if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
           return total_written > 0 ? (ssize_t) total_written : -1;
         }
         dentry->rec_buf_pos = 0;
+        dentry->dirty = 0;
       } else if (!dentry->is_fixed_recfm) {
-        /* For VB datasets, write an empty record if newline is encountered at start of record */
         fwrite("", 1, 0, fp);
       }
-      total_written++; /* count the newline as a written byte */
+      
+      pos += to_copy + 1; /* skip the data and the newline */
+      total_written += to_copy + 1;
+      dentry->dirty = 1;
     } else {
-      /* If record is full, flush it before adding current character */
+      /* No newline found in this record's space - copy what we can */
+      size_t to_copy = scan_len;
+      if (to_copy > 0) {
+        memcpy(dentry->rec_buf + dentry->rec_buf_pos, src + pos, to_copy);
+        dentry->rec_buf_pos += to_copy;
+        dentry->dirty = 1;
+      }
+      
+      pos += to_copy;
+      total_written += to_copy;
+
+      /* If record is full (no newline), flush it as a complete record */
       if (dentry->rec_buf_pos >= dentry->reclen) {
         if (dentry->conversion_state == SETCVTON) {
-          void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
-                                                 dentry->program_ccsid, dentry->file_ccsid);
-          if (conv_result == NULL) {
-            fprintf(stderr, "ERROR: CCSID conversion failed during record overflow flush\n");
-            errno = EILSEQ;
-            return total_written > 0 ? (ssize_t) total_written : -1;
-          }
+          dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                              dentry->program_ccsid, dentry->file_ccsid);
         }
 
-        size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
-        if (rc != dentry->rec_buf_pos) {
-          fprintf(stderr, "ERROR: fwrite() wrote %zu bytes during overflow, expected %zu\n", 
-                  rc, dentry->rec_buf_pos);
+        if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
           return total_written > 0 ? (ssize_t) total_written : -1;
         }
         dentry->rec_buf_pos = 0;
-      }
-
-      /* Add character to buffer (with explicit bounds check) */
-      if (dentry->rec_buf_pos < dentry->rec_buf_size) {
-        dentry->rec_buf[dentry->rec_buf_pos++] = c;
-        total_written++;
-      } else {
-        fprintf(stderr, "ERROR: Buffer overflow in write_dataset (pos %zu >= size %zu)\n",
-                dentry->rec_buf_pos, dentry->rec_buf_size);
-        errno = ENOBUFS;
-        return total_written > 0 ? (ssize_t) total_written : -1;
+        dentry->dirty = 0;
       }
     }
   }
@@ -371,24 +377,53 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
 ssize_t read_dataset(int fd, void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
+  if (!dd) {
+    errno = EBADF;
+    return -1;
+  }
 
   DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
+  /* If there are pending writes, we should flush them before reading 
+   * However, for FB binary mode, the C runtime should handle it if it was opened with ab+ or rb+
+   * But we are bypassing C runtime buffering with _IONBF and doing our own buffering in rec_buf.
+   */
+  if (dentry->dirty && dentry->rec_buf_pos > 0) {
+    /* Flush pending write buffer */
+    if (dentry->is_fixed_recfm) {
+      while (dentry->rec_buf_pos < dentry->reclen) {
+        dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
+      }
+    }
+    if (dentry->conversion_state == SETCVTON) {
+      dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                          dentry->program_ccsid, dentry->file_ccsid);
+    }
+    fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
+    dentry->rec_buf_pos = 0;
+    dentry->dirty = 0;
+  }
+  
+  /* If the buffer currently contains data that was read, we don't clear it yet.
+   * If it was used for writing (and just flushed), dentry->rec_buf_pos is 0.
+   * If we are switching from write to read, we might need to reset rec_buf_len.
+   */
+  if (dentry->dirty) {
+    dentry->rec_buf_len = 0;
+    dentry->rec_buf_pos = 0;
+    dentry->dirty = 0;
+  }
+
   DEBUG_PRINT1("read_dataset: fd=%d count=%zu offset=%zu recfm=%s\n", 
             fd, count, dentry->stream_offset, 
             dsio_recfm_to_string(dentry->recfm));
-  DEBUG_PRINT1("In Read, File ccsid: %d\n", dentry->file_ccsid);
-  DEBUG_PRINT1("In Read, Program ccsid: %d\n", dentry->program_ccsid);
-  DEBUG_PRINT1("In Read, Conversion state %d\n", dentry->conversion_state);
-  DEBUG_PRINT1("In Read, RECFM=%s LRECL=%zu BLKSIZE=%zu\n", 
-               dsio_recfm_to_string(dentry->recfm), dentry->reclen, dentry->blksize);
 
   char* dst = (char*) buf;
   size_t bytes_copied = 0;
 
   while (bytes_copied < count) {
-    /* If a newline is pending between records, emit it */
+    /* Fast-path: Emit pending newline */
     if (dentry->newline_pending) {
       dst[bytes_copied++] = '\n';
       dentry->newline_pending = 0;
@@ -396,115 +431,60 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
       continue;
     }
 
-    /* If internal buffer has data, serve from it */
+    /* Fast-path: Serve from existing buffer data using memcpy */
     if (dentry->rec_buf_pos < dentry->rec_buf_len) {
       size_t avail = dentry->rec_buf_len - dentry->rec_buf_pos;
       
-      /* FB Optimization: limit copy to the current record boundary to allow \n insertion */
+      /* Record boundaries for fixed-format: insert newline after each LRECL */
       if (dentry->is_fixed_recfm && dentry->reclen > 0) {
         size_t pos_in_rec = dentry->rec_buf_pos % dentry->reclen;
         size_t rec_avail = dentry->reclen - pos_in_rec;
         if (avail > rec_avail) avail = rec_avail;
       }
 
-      size_t to_copy = (count - bytes_copied < avail) 
-                        ? (count - bytes_copied) : avail;
-      
-      DEBUG_PRINT1("BEFORE memcpy: count=%zu, bytes_copied=%zu, avail=%zu, to_copy=%zu, rec_buf_pos=%zu, rec_buf_len=%zu, dst_offset=%zu\n",
-                   count, bytes_copied, avail, to_copy, dentry->rec_buf_pos, dentry->rec_buf_len, bytes_copied);
-      
+      size_t to_copy = (count - bytes_copied < avail) ? (count - bytes_copied) : avail;
       memcpy(dst + bytes_copied, dentry->rec_buf + dentry->rec_buf_pos, to_copy);
       
-      DEBUG_PRINT1("AFTER memcpy: copied %zu bytes from rec_buf[%zu] to dst[%zu]\n",
-                   to_copy, dentry->rec_buf_pos, bytes_copied);
-      
-      size_t old_pos = dentry->rec_buf_pos;
       dentry->rec_buf_pos += to_copy;
       bytes_copied += to_copy;
       dentry->stream_offset += to_copy;
 
-      /* If we've reached a record boundary (FB) or end of buffer, mark newline pending */
+      /* Check for record boundary after copying */
       if (dentry->is_fixed_recfm && dentry->reclen > 0) {
-        /* Check if we crossed a record boundary during this copy */
-        size_t old_rec = old_pos / dentry->reclen;
-        size_t new_rec = dentry->rec_buf_pos / dentry->reclen;
-        if (new_rec > old_rec && (dentry->rec_buf_pos % dentry->reclen) == 0) {
+        if ((dentry->rec_buf_pos % dentry->reclen) == 0) {
           dentry->newline_pending = 1;
         }
       } else if (dentry->rec_buf_pos >= dentry->rec_buf_len) {
-        /* For VB/U, end of buffer is the end of the single record we read */
         dentry->newline_pending = 1;
       }
       continue;
     }
 
-    /* Buffer exhausted â read next block (FB) or record (VB/U) */
+    /* Slow-path: Read next block/record from dataset */
     size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
-    if (rc == 0) {
-      /* EOF or error */
-      DEBUG_PRINT1("In Read, EOF reached at offset=%zu\n", dentry->stream_offset);
-      log_debug("read_dataset: fd=%d EOF reached at offset=%zu", fd, dentry->stream_offset);
-      break;
-    }
+    if (rc == 0) break; /* EOF or error */
     
-    DEBUG_PRINT1("In Read, fread returned %zu bytes\n", rc);
-    log_trace("read_dataset: fd=%d read %zu bytes from dataset", fd, rc);
-
-    /* CRITICAL: Validate VB record length doesn't exceed buffer size */
-    if (!dentry->is_fixed_recfm && rc > dentry->rec_buf_size) {
-      log_error("FATAL: VB record length %zu exceeds buffer size %zu (fd=%d)", 
-                rc, dentry->rec_buf_size, fd);
-      log_error("Dataset may be corrupted or DCB LRECL is incorrect");
-      set_entry_error(dentry, DSIO_ERR_RECORD_TOO_LONG,
-                      "VB record exceeds buffer size (possible corruption)");
-      errno = EFBIG;
-      return -1;
-    }
-
-    /* Strip trailing spaces for fixed-format records */
+    /* Strip trailing spaces from fixed-length records */
     if (dentry->is_fixed_recfm) {
       while (rc > 0 && dentry->rec_buf[rc - 1] == ' ') {
         rc--;
       }
     }
 
-    /* Convert CCSID after reading the whole block/record */
+    /* Convert CCSID of the newly read data in-place */
     if (dentry->conversion_state == SETCVTON && rc > 0) {
-      DEBUG_PRINT1("In Read, converting %zu bytes from CCSID %d to %d\n", 
-                   rc, dentry->file_ccsid, dentry->program_ccsid);
-      log_trace("read_dataset: fd=%d converting %zu bytes from CCSID %d to %d", 
-                fd, rc, dentry->file_ccsid, dentry->program_ccsid);
-      void* conv_result = dsio_convert_buffer(dentry->rec_buf, rc,
-                                              dentry->file_ccsid,
-                                              dentry->program_ccsid);
-      if (conv_result == NULL) {
-        DEBUG_PRINT1("CCSID conversion failed: fd=%d from=%d to=%d", 
-                  fd, dentry->file_ccsid, dentry->program_ccsid);
-        set_entry_error(dentry, DSIO_ERR_CCSID_CONVERSION,
-                        "CCSID conversion failed during read");
-        errno = EILSEQ;
-        return -1;
-      }
-      DEBUG_PRINT1("In Read, CCSID conversion successful %d\n", 1);
+      dsio_convert_buffer(dentry->rec_buf, rc, dentry->file_ccsid, dentry->program_ccsid);
     }
 
     dentry->rec_buf_len = rc;
     dentry->rec_buf_pos = 0;
   }
 
-  /* Update statistics before returning */
   if (bytes_copied > 0) {
     update_read_stats(dentry, bytes_copied);
   }
 
-  DEBUG_PRINT1("In Read, returning %zu bytes (requested=%zu)\n", bytes_copied, count);
-  log_trace("read_dataset: fd=%d returning %zu bytes (requested=%zu)", 
-            fd, bytes_copied, count);
-
-  if (bytes_copied == 0 && count > 0) {
-    return 0; /* EOF */
-  }
-  return (ssize_t) bytes_copied;
+  return (bytes_copied == 0 && count > 0) ? 0 : (ssize_t) bytes_copied;
 }
 
 int close_dataset(int fd)
@@ -515,9 +495,8 @@ int close_dataset(int fd)
   FILE* fp = dentry->file_ptr;
 
   /* Flush any partial record remaining in the write buffer */
-  if (dentry->rec_buf_pos > 0 && 
+  if (dentry->dirty && dentry->rec_buf_pos > 0 &&
       (dentry->open_flags & (O_WRONLY | O_RDWR))) {
-    
     /* For FB datasets, pad final record to reclen with spaces */
     if (dentry->is_fixed_recfm) {
       while (dentry->rec_buf_pos < dentry->reclen) {
