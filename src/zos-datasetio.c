@@ -106,6 +106,117 @@ int mkstemp_dataset(char* tmplate)
   return fd;
 }
 
+/*
+ * create_dataset_fd - Open a dataset, create a DatasetEntry, register it, and return an fd.
+ *
+ * Handles the full lifecycle: fopen, fldata query, FB/FBS reopen optimization,
+ * buffer allocation, and DD table registration.
+ * Returns a valid fd on success, -1 on failure (all resources cleaned up).
+ */
+int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
+{
+  /*
+   * Performance recommendations per IBM z/OS documentation:
+   * https://www.ibm.com/docs/en/zos/3.1.0?topic=considerations-accessing-mvs-data-sets
+   *
+   * We initially open with type=record to query attributes via fldata().
+   * For FB/FBS datasets, we then reopen in plain binary mode for
+   * multi-record I/O. For V/U, we keep type=record.
+   */
+  const char* fopen_mode;
+  if (flags & O_RDONLY) {
+    fopen_mode = "rb,type=record,recfm=+";
+  } else if (flags & O_WRONLY) {
+    fopen_mode = (flags & O_APPEND) ? "ab,type=record,recfm=+,noseek" : "wb,type=record,recfm=+,noseek";
+  } else if (flags & O_RDWR) {
+    fopen_mode = (flags & O_APPEND) ? "ab+,type=record,recfm=+" : "rb+,type=record,recfm=+";
+  } else {
+    fopen_mode = "rb,type=record,recfm=+";
+  }
+
+  DEBUG_PRINT1("Open with mode %s\n", fopen_mode);
+  FILE* dd = fopen(name, fopen_mode);
+  if (!dd) {
+    perror("dataset open failed");
+    return -1;
+  }
+
+  DatasetEntry* dentry = create_entry(dd, file_ccsid);
+  if (!dentry) {
+    fclose(dd);
+    return -1;
+  }
+  dentry->open_flags = flags;
+  dentry->conversion_state = SETCVTON; /* Default to conversion on */
+
+  /*
+   * Query dataset attributes via fldata().
+   * IBM recommendation: "If you are using FB or FBS files, use binary I/O
+   * instead of record I/O. This way, you can read or write more than one
+   * record at a time."
+   */
+  fldata_t fld;
+  if (fldata(dd, NULL, &fld) == 0) {
+    dentry->recfm = fld.__recfmF ? 2 /* F */ :
+                    fld.__recfmV ? 1 /* V */ :
+                    fld.__recfmU ? 3 /* U */ : 0;
+    dentry->reclen = fld.__maxreclen > 0 ? fld.__maxreclen : 80;
+    dentry->blksize = fld.__blksize > 0 ? fld.__blksize : dentry->reclen;
+    dentry->is_fixed_recfm = (fld.__recfmF && !fld.__recfmV && !fld.__recfmU) ? 1 : 0;
+  } else {
+    /* Default to FB80 if fldata fails */
+    dentry->recfm = 2;
+    dentry->reclen = 80;
+    dentry->blksize = 80;
+    dentry->is_fixed_recfm = 1;
+  }
+
+  /*
+   * For FB/FBS datasets, reopen in plain binary mode (without type=record)
+   * so we can read/write multiple records per fread/fwrite call.
+   */
+  if (dentry->is_fixed_recfm) {
+    fclose(dd);
+    dd = NULL;
+    const char* reopen_mode;
+    if (flags & O_RDONLY) {
+      reopen_mode = "rb,recfm=+";
+    } else if (flags & O_WRONLY) {
+      reopen_mode = (flags & O_APPEND) ? "ab,recfm=+,noseek" : "wb,recfm=+,noseek";
+    } else if (flags & O_RDWR) {
+      reopen_mode = (flags & O_APPEND) ? "ab+,recfm=+" : "rb+,recfm=+";
+    } else {
+      reopen_mode = "rb,recfm=+";
+    }
+    DEBUG_PRINT1("FB optimization: reopening with mode %s\n", reopen_mode);
+    dd = fopen(name, reopen_mode);
+    if (!dd) {
+      free(dentry);
+      return -1;
+    }
+    dentry->file_ptr = dd;
+  }
+
+  /*
+   * Buffer sizing:
+   * - For FB: use blksize to enable multi-record I/O
+   * - For V/U: use maxreclen (one record at a time via type=record)
+   */
+  dentry->rec_buf_size = dentry->is_fixed_recfm ? dentry->blksize : dentry->reclen;
+
+  /* Allocate record buffer (+1 for potential null terminator during conversion) */
+  dentry->rec_buf = malloc(dentry->rec_buf_size + 1);
+  if (!dentry->rec_buf) {
+    fclose(dd);
+    free(dentry);
+    return -1;
+  }
+
+  int fd = GET_DUMMY_FD();
+  ADD_DD(fd, dentry);
+  return fd;
+}
+
 int open_dataset(const char* name, int flags, mode_t mode) 
 {
   /* Start with support for the following 'access mode' flags:
@@ -120,37 +231,27 @@ int open_dataset(const char* name, int flags, mode_t mode)
    * does not already exist - we want this to be a failure
    * https://tech.mikefulton.ca/fopen_pdse_member
    */
-
-  void* dd;
-  const char* fopen_mode;
-  unsigned short file_ccsid;
-
-  int fd = -1;
+  /*
+   * Validate flags before delegating to create_dataset_fd,
+   * which handles opening, attribute detection, and registration.
+   */
   bool pds_member = strchr(name, '(');
+  DEBUG_PRINT1("open_dataset: name %s, flags %d, mode %d\n", name, flags, mode);
 
   if ((flags & O_APPEND) && (pds_member)) {
+    DEBUG_PRINT1("open_dataset: O_APPEND not supported for PDS member %s\n", name);
     errno = EINVAL;
     return -1;
-  } else if (flags & O_RDONLY) {
-    fopen_mode = "r,recfm=+";
-  } else if (flags & O_WRONLY) {
-    if (flags & O_APPEND) {
-      fopen_mode = "a,recfm=+";
-    } else {
-      fopen_mode = "w,recfm=+";
-    }
-  } else if (flags & O_RDWR) {
-    if (flags & O_APPEND) {
-      fopen_mode = "a+,recfm=+";
-    } else {
-      fopen_mode = "r+,recfm=+";
-    }
-  } else {
+  }
+
+  if (!(flags & (O_RDONLY | O_WRONLY | O_RDWR))) {
+    DEBUG_PRINT1("open_dataset: Missing access mode in flags %d\n", flags);
     errno = EINVAL;
     return -1;
   }
 
   if ((flags & O_LARGEFILE) || (flags & O_NOCTTY) || (flags & O_NONBLOCK)) {
+    DEBUG_PRINT1("open_dataset: Unsupported flags in %d\n", flags);
     errno = EACCES;
     return -1;
   }
@@ -165,76 +266,106 @@ int open_dataset(const char* name, int flags, mode_t mode)
       /* No support for sequential datasets or DDNames being created through open
        * of a dataset at this point
        */
+      DEBUG_PRINT1("open_dataset: O_CREAT not supported for non-PDS member %s\n", name);
       errno = EINVAL;
       return -1;
     }
   }
 
-  DEBUG_PRINT1("Open with mode %s\n", fopen_mode);
-  dd = fopen(name, fopen_mode);
-  if (!dd) {
-    perror("dataset open failed");
-    return -1;
-  }
-
-  /* Use enhanced entry creation with metadata loading */
-  DatasetEntry* dentry = create_entry(dd, 1047);
-  if (!dentry) {
-    fclose(dd);
-    return -1;
-  }
-  
-  /* Parse and store dataset name components */
-  parse_and_store_name(dentry, name);
-  
-  /* Update global statistics */
-  update_global_stats_open();
-  
-  fd = GET_DUMMY_FD();
-  ADD_DD(fd, dentry);
-  
-  DEBUG_PRINT1("Opened dataset: %s (fd=%d, RECFM=%s, LRECL=%d)\n",
-           name, fd,
-           dsio_recfm_to_string(dentry->recfm),
-           dentry->lrecl);
-  
-  return fd;
+  return create_dataset_fd(name, 1047, flags);
 }
 
 ssize_t write_dataset(int fd, const void* buf, size_t count)
 {
   void* dd = GET_DD(fd);
+  if (!dd) {
+    errno = EBADF;
+    return -1;
+  }
 
   DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
-  DEBUG_PRINT1("In Write, File ptr ccsid: %p\n", dentry->file_ptr);
   DEBUG_PRINT1("In Write, File ccsid: %d\n", dentry->file_ccsid);
   DEBUG_PRINT1("In Write, Program ccsid: %d\n", dentry->program_ccsid);
   DEBUG_PRINT1("In Write, Conversion state %d\n", dentry->conversion_state);
-  DEBUG_PRINT1("write_dataset fd %d count %d\n", fd, count);
 
-  char* write_buffer = (char *)malloc(count);
-  if (write_buffer == NULL) {
-    set_entry_error(dentry, DSIO_ERR_ALLOC_FAILED, "Memory allocation failed for write buffer");
-    fprintf(stderr, "Memory allocation failed\n");
-    return -1;
-  }
-  memcpy(write_buffer, buf, count);
+  const char* src = (const char*) buf;
+  size_t total_written = 0;
 
-  write_buffer = convertBuffer(write_buffer, dentry->program_ccsid, dentry->file_ccsid);
-  size_t rc = fwrite(write_buffer, 1, count, fp);
-  free(write_buffer);
-  
-  if (rc == count) {
-    /* Update statistics on successful write */
-    update_write_stats(dentry, rc);
-    DEBUG_PRINT1("Wrote %zu bytes to fd=%d\n", rc, fd);
-    return (ssize_t) rc;
-  } else {
-    set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "fwrite() returned fewer bytes than requested");
-    return -1;
+  for (size_t i = 0; i < count; i++) {
+    char c = src[i];
+
+    if (c == '\n') {
+      /* Flush current buffer as a record */
+      if (dentry->is_fixed_recfm) {
+        /* Pad FB record to reclen with spaces */
+        while (dentry->rec_buf_pos < dentry->reclen && dentry->rec_buf_pos < dentry->rec_buf_size) {
+          dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
+        }
+      }
+
+      if (dentry->rec_buf_pos > 0) {
+        /* Convert CCSID before writing */
+        if (dentry->conversion_state == SETCVTON) {
+          void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                                                 dentry->program_ccsid, dentry->file_ccsid);
+          if (conv_result == NULL) {
+            fprintf(stderr, "ERROR: CCSID conversion failed during write\n");
+            errno = EILSEQ;
+            return total_written > 0 ? (ssize_t) total_written : -1;
+          }
+        }
+
+        size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
+        if (rc != dentry->rec_buf_pos) {
+          fprintf(stderr, "ERROR: fwrite() wrote %zu bytes, expected %zu\n", 
+                  rc, dentry->rec_buf_pos);
+          return total_written > 0 ? (ssize_t) total_written : -1;
+        }
+        dentry->rec_buf_pos = 0;
+      } else if (!dentry->is_fixed_recfm) {
+        /* For VB datasets, write an empty record if newline is encountered at start of record */
+        fwrite("", 1, 0, fp);
+      }
+      total_written++; /* count the newline as a written byte */
+    } else {
+      /* If record is full, flush it before adding current character */
+      if (dentry->rec_buf_pos >= dentry->reclen) {
+        if (dentry->conversion_state == SETCVTON) {
+          void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                                                 dentry->program_ccsid, dentry->file_ccsid);
+          if (conv_result == NULL) {
+            fprintf(stderr, "ERROR: CCSID conversion failed during record overflow flush\n");
+            errno = EILSEQ;
+            return total_written > 0 ? (ssize_t) total_written : -1;
+          }
+        }
+
+        size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
+        if (rc != dentry->rec_buf_pos) {
+          fprintf(stderr, "ERROR: fwrite() wrote %zu bytes during overflow, expected %zu\n", 
+                  rc, dentry->rec_buf_pos);
+          return total_written > 0 ? (ssize_t) total_written : -1;
+        }
+        dentry->rec_buf_pos = 0;
+      }
+
+      /* Add character to buffer (with explicit bounds check) */
+      if (dentry->rec_buf_pos < dentry->rec_buf_size) {
+        dentry->rec_buf[dentry->rec_buf_pos++] = c;
+        total_written++;
+      } else {
+        fprintf(stderr, "ERROR: Buffer overflow in write_dataset (pos %zu >= size %zu)\n",
+                dentry->rec_buf_pos, dentry->rec_buf_size);
+        errno = ENOBUFS;
+        return total_written > 0 ? (ssize_t) total_written : -1;
+      }
+    }
   }
+
+  dentry->stream_offset += total_written;
+  return (ssize_t) total_written;
 }
 
 ssize_t read_dataset(int fd, void* buf, size_t count)
@@ -244,24 +375,136 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
   DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
-  DEBUG_PRINT1("In Read, File ptr ccsid: %p\n", dentry->file_ptr);
+  DEBUG_PRINT1("read_dataset: fd=%d count=%zu offset=%zu recfm=%s\n", 
+            fd, count, dentry->stream_offset, 
+            dsio_recfm_to_string(dentry->recfm));
   DEBUG_PRINT1("In Read, File ccsid: %d\n", dentry->file_ccsid);
   DEBUG_PRINT1("In Read, Program ccsid: %d\n", dentry->program_ccsid);
   DEBUG_PRINT1("In Read, Conversion state %d\n", dentry->conversion_state);
-  DEBUG_PRINT1("read_dataset fd %d count %d\n", fd, count);
-  size_t rc = fread(buf, 1, count, fp);
+  DEBUG_PRINT1("In Read, RECFM=%s LRECL=%zu BLKSIZE=%zu\n", 
+               dsio_recfm_to_string(dentry->recfm), dentry->reclen, dentry->blksize);
 
-  if (rc > 0) {
-    buf = convertBuffer(buf, dentry->file_ccsid, dentry->program_ccsid);
-    /* Update statistics on successful read */
-    update_read_stats(dentry, rc);
-    DEBUG_PRINT1("Read %zu bytes from fd=%d\n", rc, fd);
-  } else if (rc == 0 && ferror(fp)) {
-    set_entry_error(dentry, DSIO_ERR_READ_FAILED, "fread() failed");
-    return -1;
+  char* dst = (char*) buf;
+  size_t bytes_copied = 0;
+
+  while (bytes_copied < count) {
+    /* If a newline is pending between records, emit it */
+    if (dentry->newline_pending) {
+      dst[bytes_copied++] = '\n';
+      dentry->newline_pending = 0;
+      dentry->stream_offset++;
+      continue;
+    }
+
+    /* If internal buffer has data, serve from it */
+    if (dentry->rec_buf_pos < dentry->rec_buf_len) {
+      size_t avail = dentry->rec_buf_len - dentry->rec_buf_pos;
+      
+      /* FB Optimization: limit copy to the current record boundary to allow \n insertion */
+      if (dentry->is_fixed_recfm && dentry->reclen > 0) {
+        size_t pos_in_rec = dentry->rec_buf_pos % dentry->reclen;
+        size_t rec_avail = dentry->reclen - pos_in_rec;
+        if (avail > rec_avail) avail = rec_avail;
+      }
+
+      size_t to_copy = (count - bytes_copied < avail) 
+                        ? (count - bytes_copied) : avail;
+      
+      DEBUG_PRINT1("BEFORE memcpy: count=%zu, bytes_copied=%zu, avail=%zu, to_copy=%zu, rec_buf_pos=%zu, rec_buf_len=%zu, dst_offset=%zu\n",
+                   count, bytes_copied, avail, to_copy, dentry->rec_buf_pos, dentry->rec_buf_len, bytes_copied);
+      
+      memcpy(dst + bytes_copied, dentry->rec_buf + dentry->rec_buf_pos, to_copy);
+      
+      DEBUG_PRINT1("AFTER memcpy: copied %zu bytes from rec_buf[%zu] to dst[%zu]\n",
+                   to_copy, dentry->rec_buf_pos, bytes_copied);
+      
+      size_t old_pos = dentry->rec_buf_pos;
+      dentry->rec_buf_pos += to_copy;
+      bytes_copied += to_copy;
+      dentry->stream_offset += to_copy;
+
+      /* If we've reached a record boundary (FB) or end of buffer, mark newline pending */
+      if (dentry->is_fixed_recfm && dentry->reclen > 0) {
+        /* Check if we crossed a record boundary during this copy */
+        size_t old_rec = old_pos / dentry->reclen;
+        size_t new_rec = dentry->rec_buf_pos / dentry->reclen;
+        if (new_rec > old_rec && (dentry->rec_buf_pos % dentry->reclen) == 0) {
+          dentry->newline_pending = 1;
+        }
+      } else if (dentry->rec_buf_pos >= dentry->rec_buf_len) {
+        /* For VB/U, end of buffer is the end of the single record we read */
+        dentry->newline_pending = 1;
+      }
+      continue;
+    }
+
+    /* Buffer exhausted â read next block (FB) or record (VB/U) */
+    size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
+    if (rc == 0) {
+      /* EOF or error */
+      DEBUG_PRINT1("In Read, EOF reached at offset=%zu\n", dentry->stream_offset);
+      log_debug("read_dataset: fd=%d EOF reached at offset=%zu", fd, dentry->stream_offset);
+      break;
+    }
+    
+    DEBUG_PRINT1("In Read, fread returned %zu bytes\n", rc);
+    log_trace("read_dataset: fd=%d read %zu bytes from dataset", fd, rc);
+
+    /* CRITICAL: Validate VB record length doesn't exceed buffer size */
+    if (!dentry->is_fixed_recfm && rc > dentry->rec_buf_size) {
+      log_error("FATAL: VB record length %zu exceeds buffer size %zu (fd=%d)", 
+                rc, dentry->rec_buf_size, fd);
+      log_error("Dataset may be corrupted or DCB LRECL is incorrect");
+      set_entry_error(dentry, DSIO_ERR_RECORD_TOO_LONG,
+                      "VB record exceeds buffer size (possible corruption)");
+      errno = EFBIG;
+      return -1;
+    }
+
+    /* Strip trailing spaces for fixed-format records */
+    if (dentry->is_fixed_recfm) {
+      while (rc > 0 && dentry->rec_buf[rc - 1] == ' ') {
+        rc--;
+      }
+    }
+
+    /* Convert CCSID after reading the whole block/record */
+    if (dentry->conversion_state == SETCVTON && rc > 0) {
+      DEBUG_PRINT1("In Read, converting %zu bytes from CCSID %d to %d\n", 
+                   rc, dentry->file_ccsid, dentry->program_ccsid);
+      log_trace("read_dataset: fd=%d converting %zu bytes from CCSID %d to %d", 
+                fd, rc, dentry->file_ccsid, dentry->program_ccsid);
+      void* conv_result = dsio_convert_buffer(dentry->rec_buf, rc,
+                                              dentry->file_ccsid,
+                                              dentry->program_ccsid);
+      if (conv_result == NULL) {
+        DEBUG_PRINT1("CCSID conversion failed: fd=%d from=%d to=%d", 
+                  fd, dentry->file_ccsid, dentry->program_ccsid);
+        set_entry_error(dentry, DSIO_ERR_CCSID_CONVERSION,
+                        "CCSID conversion failed during read");
+        errno = EILSEQ;
+        return -1;
+      }
+      DEBUG_PRINT1("In Read, CCSID conversion successful %d\n", 1);
+    }
+
+    dentry->rec_buf_len = rc;
+    dentry->rec_buf_pos = 0;
   }
 
-  return (ssize_t) rc;
+  /* Update statistics before returning */
+  if (bytes_copied > 0) {
+    update_read_stats(dentry, bytes_copied);
+  }
+
+  DEBUG_PRINT1("In Read, returning %zu bytes (requested=%zu)\n", bytes_copied, count);
+  log_trace("read_dataset: fd=%d returning %zu bytes (requested=%zu)", 
+            fd, bytes_copied, count);
+
+  if (bytes_copied == 0 && count > 0) {
+    return 0; /* EOF */
+  }
+  return (ssize_t) bytes_copied;
 }
 
 int close_dataset(int fd)
@@ -271,22 +514,45 @@ int close_dataset(int fd)
   DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
-  DEBUG_PRINT1("Closing dataset fd=%d (read=%zu bytes, wrote=%zu bytes, ops=%zu/%zu)\n",
-           fd, dentry->bytes_read, dentry->bytes_written,
-           dentry->read_operations, dentry->write_operations);
+  /* Flush any partial record remaining in the write buffer */
+  if (dentry->rec_buf_pos > 0 && 
+      (dentry->open_flags & (O_WRONLY | O_RDWR))) {
+    
+    /* For FB datasets, pad final record to reclen with spaces */
+    if (dentry->is_fixed_recfm) {
+      while (dentry->rec_buf_pos < dentry->reclen) {
+        dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
+      }
+    }
+
+    /* Convert CCSID before writing */
+    if (dentry->conversion_state == SETCVTON) {
+      void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                                             dentry->program_ccsid, dentry->file_ccsid);
+      if (conv_result == NULL) {
+        fprintf(stderr, "WARNING: CCSID conversion failed during close\n");
+        /* Continue with close despite conversion error */
+      }
+    }
+
+    /* Write final record */
+    size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
+    if (rc != dentry->rec_buf_pos) {
+      fprintf(stderr, "WARNING: Final record write incomplete (%zu of %zu bytes)\n", 
+              rc, dentry->rec_buf_pos);
+      /* Continue with close despite write error */
+    }
+  }
 
   int rc = fclose(fp);
   if (!rc) {
-    /* Update global statistics */
-    update_global_stats_close();
-    
     close(fd);
-    
-    /* Deallocate enhanced DatasetEntry */
-    free_entry(dentry);
+    /* Free record buffer and deallocate DatasetEntry */
+    if (dentry->rec_buf) {
+      free(dentry->rec_buf);
+    }
+    free(dentry);
     CLEAR_DD(fd);
-  } else {
-    set_entry_error(dentry, DSIO_ERR_CLOSE_FAILED, "fclose() failed");
   }
   return rc;
 }
@@ -431,127 +697,118 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
  * ======================================================================== */
 
 off_t lseek_dataset(int fd, off_t offset, int whence) {
-    /* Validate file descriptor */
-    if (fd < 0 || fd >= MAX_FDS) {
-        errno = EBADF;
-        log_error("lseek_dataset: Invalid fd=%d", fd);
-        return -1;
-    }
+    DEBUG_PRINT0("calling lseek-dataset\n");
     
+    /* Validate fd */
     void* dd = GET_DD(fd);
     if (!dd) {
         errno = EBADF;
-        log_error("lseek_dataset: No dataset descriptor for fd=%d", fd);
-        return -1;
+        return (off_t)-1;
     }
     
-    /* Check if this is actually a dataset fd (not a regular file fd) */
-    if (IS_FD(fd)) {
-        errno = EINVAL;
-        log_error("lseek_dataset: fd=%d is not a dataset descriptor", fd);
-        return -1;
-    }
-    
-    DatasetEntry* dentry = (DatasetEntry*)dd;
+    DatasetEntry* dentry = (DatasetEntry*) dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
-        set_entry_error(dentry, DSIO_ERR_INVALID_FD, "Invalid file pointer");
-        log_error("lseek_dataset: NULL file pointer for fd=%d", fd);
-        return -1;
+        return (off_t)-1;
     }
-    
     FILE* fp = dentry->file_ptr;
     
-    /* Log the seek operation with correct format specifiers */
-    DEBUG_PRINT1("lseek_dataset fd=%d offset=%lld whence=%d\n", fd, (long long)offset, whence);
-    
-    /* Validate whence parameter */
-    int fseek_whence;
+    /* Calculate target position */
+    off_t target;
     switch (whence) {
         case SEEK_SET:
-            fseek_whence = SEEK_SET;
+            target = offset;
             break;
+            
         case SEEK_CUR:
-            fseek_whence = SEEK_CUR;
+            target = (off_t)dentry->stream_offset + offset;
             break;
-        case SEEK_END:
-            fseek_whence = SEEK_END;
+            
+        case SEEK_END: {
+            /* Use dsio_get_size for accurate size calculation */
+            ssize_t file_size = dsio_get_size(fd);
+            if (file_size < 0) {
+                return (off_t)-1;
+            }
+            target = (off_t)file_size + offset;
             break;
+        }
+        
         default:
             errno = EINVAL;
-            set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "Invalid whence parameter");
-            log_error("lseek_dataset: Invalid whence=%d for fd=%d", whence, fd);
-            return -1;
+            return (off_t)-1;
     }
     
-    /* Load metadata if not already loaded to check record format constraints */
-    if (!dentry->metadata_loaded) {
-        if (load_metadata_from_file(dentry) != 0) {
-            DEBUG_PRINT1("lseek_dataset: Failed to load metadata for fd=%d, continuing anyway", fd);
-        }
+    /* Validate target */
+    if (target < 0) {
+        errno = EINVAL;
+        return (off_t)-1;
     }
     
-    /* Check for dataset-specific constraints based on record format
-     * Note: On z/OS, fseek/ftell behavior varies by record format:
-     * - Fixed (F, FB): Seeking works by byte offset, relatively predictable
-     * - Variable (V, VB): Seeking by byte offset is problematic due to RDWs
-     * - Undefined (U): Seeking is unreliable and not recommended
-     * - ASA formats: Additional complexity with carriage control characters
-     */
-    if (dentry->metadata_loaded) {
-        dsio_recfm_t recfm = dentry->recfm;
+    /* Check if already at target */
+    if ((size_t)target == dentry->stream_offset) {
+        return (off_t)target;
+    }
+    
+    /* Handle backward seek */
+    if ((size_t)target < dentry->stream_offset) {
+        rewind(fp);
+        dentry->stream_offset = 0;
+        dentry->rec_buf_pos = 0;
+        dentry->rec_buf_len = 0;
+        dentry->newline_pending = 0;
+    }
+    
+    /* Handle forward seek */
+    if (dentry->is_fixed_recfm && dentry->reclen > 0) {
+        /* FB: Optimize by calculating native position directly */
+        size_t delta = (size_t)target - dentry->stream_offset;
+        size_t records_to_skip = delta / (dentry->reclen + 1);
+        size_t byte_in_record = delta % (dentry->reclen + 1);
         
-        /* Variable-length records: seeking by byte offset doesn't align with record boundaries */
-        if (recfm == DSIO_RECFM_V || recfm == DSIO_RECFM_VB || 
-            recfm == DSIO_RECFM_VA || recfm == DSIO_RECFM_VBA) {
-            DEBUG_PRINT1("lseek_dataset: Seeking in variable-length dataset (RECFM=%s) - byte offsets may not align with record boundaries",
-                     dsio_recfm_to_string(recfm));
+        /* Handle seeking to newline position */
+        if (byte_in_record == dentry->reclen) {
+            dentry->newline_pending = 1;
+            byte_in_record = 0;
+            records_to_skip++;
         }
         
-        /* Undefined format: seeking is not reliable */
-        if (recfm == DSIO_RECFM_U) {
-            DEBUG_PRINT0("lseek_dataset: Seeking in undefined format dataset (RECFM=U) is not recommended and may produce unexpected results");
+        /* Calculate native file position */
+        long current_native = ftell(fp);
+        if (current_native < 0) {
+            errno = EIO;
+            return (off_t)-1;
         }
         
-        /* For fixed-length records, automatically align offset to record boundaries */
-        if ((recfm == DSIO_RECFM_F || recfm == DSIO_RECFM_FB || 
-             recfm == DSIO_RECFM_FA || recfm == DSIO_RECFM_FBA) && 
-            whence == SEEK_SET && dentry->lrecl > 0) {
-            /* Check if offset aligns with record boundaries */
-            if (offset % dentry->lrecl != 0) {
-                off_t aligned_offset = (offset / dentry->lrecl) * dentry->lrecl;
-                DEBUG_PRINT1("lseek_dataset: Offset %lld not aligned with LRECL %d, rounding down to %lld\n",
-                         (long long)offset, dentry->lrecl, (long long)aligned_offset);
-                offset = aligned_offset;
+        long target_native = current_native + (records_to_skip * dentry->reclen) + byte_in_record;
+        
+        if (fseek(fp, target_native, SEEK_SET) != 0) {
+            errno = EIO;
+            return (off_t)-1;
+        }
+        
+        dentry->stream_offset = (size_t)target;
+        dentry->rec_buf_pos = 0;
+        dentry->rec_buf_len = 0;
+        
+    } else {
+        /* VB/U: Must read and discard (no optimization possible) */
+        while (dentry->stream_offset < (size_t)target) {
+            char discard[4096];  /* Larger buffer for efficiency */
+            size_t need = (size_t)target - dentry->stream_offset;
+            size_t chunk = need < sizeof(discard) ? need : sizeof(discard);
+            ssize_t n = read_dataset(fd, discard, chunk);
+            if (n <= 0) {
+                /* EOF reached before target */
+                break;
             }
         }
     }
     
-    /* Perform the seek operation using fseeko() to handle off_t properly */
-    if (fseeko(fp, offset, fseek_whence) != 0) {
-        int saved_errno = errno;
-        set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "fseek() failed");
-        DEBUG_PRINT1("lseek_dataset: fseek() failed for fd=%d, offset=%lld, whence=%d, errno=%d (%s)",
-                 fd, (long long)offset, whence, saved_errno, strerror(saved_errno));
-        errno = saved_errno;
-        return -1;
-    }
+    DEBUG_PRINT1("lseek_dataset: fd=%d target=%lld final=%zu\n",
+                 fd, (long long)target, dentry->stream_offset);
     
-    /* Get the new position using ftello() to return off_t */
-    off_t pos = ftello(fp);
-    if (pos < 0) {
-        int saved_errno = errno;
-        set_entry_error(dentry, DSIO_ERR_FTELL_FAILED, "ftello() failed");
-        DEBUG_PRINT1("lseek_dataset: ftello() failed for fd=%d, errno=%d (%s)", 
-                 fd, saved_errno, strerror(saved_errno));
-        errno = saved_errno;
-        return -1;
-    }
-    
-    DEBUG_PRINT1("lseek_dataset: fd=%d, offset=%lld, whence=%d, new_pos=%lld\n",
-             fd, (long long)offset, whence, (long long)pos);
-    
-    return pos;
+    return (off_t)dentry->stream_offset;
 }
 
 /* ========================================================================
@@ -589,9 +846,11 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
 }
 #endif
 
-int fstat_dataset(int fd, struct stat *statbuf) {
-    DEBUG_PRINT1("Enter fstat_dataset %d\n", 0);
-    if (!statbuf) {
+int fstat_dataset(int fd, struct stat *buf) {
+    DEBUG_PRINT0("calling fstat-dataset\n");
+    
+    /* Validate parameters */
+    if (!buf) {
         errno = EINVAL;
         return -1;
     }
@@ -602,148 +861,36 @@ int fstat_dataset(int fd, struct stat *statbuf) {
         return -1;
     }
     
-    DatasetEntry* dentry = (DatasetEntry*)dd;
-    FILE* fp = dentry->file_ptr;
-    
-    if (!fp) {
-        set_entry_error(dentry, DSIO_ERR_INVALID_FD, "Invalid file pointer");
+    DatasetEntry* dentry = (DatasetEntry*) dd;
+    if (!dentry->file_ptr) {
         errno = EBADF;
         return -1;
     }
-    DEBUG_PRINT1("fstat_dataset %d\n", 1);
-    
+
     /* Initialize stat buffer */
-    memset(statbuf, 0, sizeof(struct stat));
+    memset(buf, 0, sizeof(struct stat));
+    buf->st_mode = S_IFREG | 0666;
+    buf->st_nlink = 1;
+    buf->st_uid = getuid();
+    buf->st_gid = getgid();
+    buf->st_blksize = dentry->blksize;
     
-    /* Ensure metadata is loaded */
-    if (!dentry->metadata_loaded) {
-        if (load_metadata_from_file(dentry) != 0) {
-            log_warn("fstat: Failed to load metadata, continuing with limited info");
-        }
-    }
-    
-    /* Use fldata() to get dataset information */
-    fldata_t fdata;
-    if (fldata(fp, NULL, &fdata) != 0) {
-        set_entry_error(dentry, DSIO_ERR_FLDATA_FAILED, "fldata() failed");
-        errno = EIO;
+    /* Set timestamps to current time */
+    time_t now = time(NULL);
+    buf->st_atime = now;
+    buf->st_mtime = now;
+    buf->st_ctime = now;
+
+    /* Use dsio_get_size helper to calculate emulated stream size */
+    ssize_t size = dsio_get_size(fd);
+    if (size < 0) {
+        /* Error already set by dsio_get_size */
         return -1;
     }
     
-    /* Get file size using utility function */
-    ssize_t size = dsio_get_size(fd);
-    if (size >= 0) {
-        statbuf->st_size = size;
-    } else {
-        log_warn("fstat: Failed to get file size");
-        statbuf->st_size = 0;
-    }
+    buf->st_size = (off_t)size;
     
-    /* Determine file mode based on dataset type */
-    mode_t mode = S_IFREG;  /* Regular file by default */
-    
-    /* Check if PDS/PDSE without member (acts like directory) */
-    if ((dsio_is_pds(fd) || dsio_is_pdse(fd)) && !dsio_has_member(fd)) {
-        mode = S_IFDIR;
-    }
-    
-    /* Set permissions based on readonly status */
-    if (dsio_is_readonly(fd)) {
-        mode |= S_IRUSR | S_IRGRP | S_IROTH;  /* Read-only */
-    } else {
-        mode |= S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;  /* Read-write for user */
-    }
-    
-    /* Add execute permission for directories */
-    if (mode & S_IFDIR) {
-        mode |= S_IXUSR | S_IXGRP | S_IXOTH;
-    }
-    
-    statbuf->st_mode = mode;
-    statbuf->st_nlink = 1;
-    
-    /* Set block size from metadata or fldata */
-    if (dentry->metadata_loaded && dentry->blksize > 0) {
-        statbuf->st_blksize = dentry->blksize;
-    } else if (fdata.__blksize > 0) {
-        statbuf->st_blksize = fdata.__blksize;
-    } else {
-        statbuf->st_blksize = 4096;  /* Default */
-    }
-    
-    /* Calculate blocks used (in 512-byte units for POSIX compatibility) */
-    if (statbuf->st_size > 0) {
-        statbuf->st_blocks = (statbuf->st_size + 511) / 512;
-    }
-    
-    /* Set device and inode numbers (simulated for datasets) */
-    statbuf->st_dev = 0x5A05;  /* 'ZOS' in hex */
-    
-    /* Generate pseudo-inode from dataset name components */
-    unsigned long inode = 0;
-    if (dentry->hlq[0]) {
-        for (int i = 0; dentry->hlq[i] && i < DSIO_MAX_QUALIFIER; i++) {
-            inode = (inode * 31) + (unsigned char)dentry->hlq[i];
-        }
-    }
-    if (dentry->member_name[0]) {
-        for (int i = 0; dentry->member_name[i] && i < DSIO_MAX_MEMBER_NAME; i++) {
-            inode = (inode * 31) + (unsigned char)dentry->member_name[i];
-        }
-    }
-    statbuf->st_ino = inode ? inode : 1;
-    
-    /* Set user and group IDs */
-    statbuf->st_uid = getuid();
-    statbuf->st_gid = getgid();
-    
-    /* Try to get ISPF statistics for timestamps (PDS members only) */
-    int has_ispf = 0;
-    if (dsio_has_member(fd) && (dsio_is_pds(fd) || dsio_is_pdse(fd))) {
-        struct ispf_stats ispf_stats;
-	/*
-        if (read_ispf_stats(fp, &ispf_stats) == 0) {
-            has_ispf = 1;
-            
-            // Convert struct tm to time_t
-            statbuf->st_ctime = mktime(&ispf_stats.create_time);
-            statbuf->st_atime = statbuf->st_ctime;
-            
-            statbuf->st_mtime = mktime(&ispf_stats.mod_time);
-            if (statbuf->st_mtime == -1) {
-                statbuf->st_mtime = statbuf->st_ctime;
-            }
-            
-            log_debug("fstat: Using ISPF stats - created=%ld, modified=%ld, ver=%d.%d",
-                      (long)statbuf->st_ctime, (long)statbuf->st_mtime,
-                      ispf_stats.ver_num, ispf_stats.mod_num);
-        }
-    	*/
-    }
-    
-    /* If no ISPF stats, try file system times or use current time */
-    if (!has_ispf) {
-        int fileno_val = fileno(fp);
-        struct stat fs_stat;
-        
-        if (fileno_val >= 0 && fstat(fileno_val, &fs_stat) == 0) {
-            statbuf->st_atime = fs_stat.st_atime;
-            statbuf->st_mtime = fs_stat.st_mtime;
-            statbuf->st_ctime = fs_stat.st_ctime;
-            log_trace("fstat: Using file system timestamps");
-        } else {
-            /* Fallback to current time */
-            time_t now = time(NULL);
-            statbuf->st_atime = now;
-            statbuf->st_mtime = now;
-            statbuf->st_ctime = now;
-            log_trace("fstat: Using current time for timestamps");
-        }
-    }
-    
-    DEBUG_PRINT1("fstat: fd=%d, size=%ld, blksize=%ld, blocks=%ld, mode=%o, inode=%lu",
-              fd, (long)statbuf->st_size, (long)statbuf->st_blksize, 
-              (long)statbuf->st_blocks, statbuf->st_mode, (unsigned long)statbuf->st_ino);
+    DEBUG_PRINT1("fstat_dataset: fd=%d size=%lld\n", fd, (long long)buf->st_size);
     
     return 0;
 }
@@ -1865,74 +2012,158 @@ int dsio_get_max_reclen(int fd) {
 }
 
 int dsio_is_empty(int fd) {
-    void* dd = GET_DD(fd);
-    if (!dd || IS_FD(fd)) {
-        return -1;
-    }
-    
-    DatasetEntry* entry = ENTRY_TO(dd);
-    if (!entry->file_ptr) {
-        return -1;
-    }
-    
-    /* Check file size */
-    long current_pos = ftell(entry->file_ptr);
-    if (current_pos < 0) {
-        return -1;
-    }
-    
-    if (fseek(entry->file_ptr, 0, SEEK_END) != 0) {
-        return -1;
-    }
-    
-    long size = ftell(entry->file_ptr);
-    fseek(entry->file_ptr, current_pos, SEEK_SET);
-    
+    ssize_t size = dsio_get_size(fd);
+    if (size < 0) return -1;
     return (size == 0) ? 1 : 0;
 }
 
+/*
+ * Helper function to calculate emulated stream size for VB datasets
+ * by reading all records and summing their lengths (with newlines).
+ * This is a one-time cost that gets cached.
+ */
+static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
+    size_t total_size = 0;
+    size_t rec_count = 0;
+    
+    DEBUG_PRINT1("calculate_vb_emulated_size: ENTER rec_buf_size=%zu\n", entry->rec_buf_size);
+    
+    if (!entry->is_fixed_recfm) {
+        /* VB/U: Already in type=record mode, save and restore position */
+        fpos_t saved_pos;
+        if (fgetpos(fp, &saved_pos) != 0) {
+            DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (fgetpos failed) %d\n", 1);
+            return -1;
+        }
+        
+        if (fseek(fp, 0, SEEK_SET) != 0) {
+            fsetpos(fp, &saved_pos);
+            DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (fseek failed) %d\n", 1);
+            return -1;
+        }
+        
+        /* Read each record */
+        while (1) {
+            size_t rc = fread(entry->rec_buf, 1, entry->rec_buf_size, fp);
+            if (rc == 0) break;  /* EOF */
+            
+            DEBUG_PRINT1("calculate_vb_emulated_size: Read record #%zu, raw_length=%zu\n", rec_count + 1, rc);
+            
+            /* Validate VB record length doesn't exceed buffer */
+            if (rc > entry->rec_buf_size) {
+                fprintf(stderr, "ERROR: VB record length %zu exceeds buffer size %zu\n",
+                        rc, entry->rec_buf_size);
+                fsetpos(fp, &saved_pos);
+                errno = EFBIG;
+                DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (record too large) %d\n", 1);
+                return -1;
+            }
+            
+            size_t original_rc = rc;
+            /* Strip trailing spaces */
+            while (rc > 0 && entry->rec_buf[rc - 1] == ' ') {
+                rc--;
+            }
+            
+            DEBUG_PRINT1("calculate_vb_emulated_size: Record #%zu stripped from %zu to %zu bytes\n",
+                         rec_count + 1, original_rc, rc);
+            
+            total_size += rc + 1;  /* +1 for newline */
+            rec_count++;
+            
+            DEBUG_PRINT1("calculate_vb_emulated_size: Running total=%zu bytes, rec_count=%zu\n",
+                         total_size, rec_count);
+        }
+        
+        /* Restore position */
+        if (fsetpos(fp, &saved_pos) != 0) {
+            DEBUG_PRINT1("WARNING: Failed to restore file position after size calculation %d\n", 1);
+        }
+    }
+    
+    DEBUG_PRINT1("calculate_vb_emulated_size: RETURN %zu bytes (%zu records) for %s dataset\n", 
+                 total_size, rec_count, entry->is_fixed_recfm ? "FB" : "VB");
+    
+    return (ssize_t)total_size;
+}
+
 ssize_t dsio_get_size(int fd) {
+    DEBUG_PRINT1("dsio_get_size: ENTER fd=%d\n", fd);
+    
     void* dd = GET_DD(fd);
     if (!dd || IS_FD(fd)) {
+        errno = EBADF;
+        DEBUG_PRINT1("dsio_get_size: RETURN -1 (invalid fd) %d\n", 1);
         return -1;
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
-        return -1;
-    }
-#if 0 
-    /* Get file size */
-    long current_pos = ftell(entry->file_ptr);
-    if (current_pos < 0) {
+        errno = EBADF;
+        DEBUG_PRINT1("dsio_get_size: RETURN -1 (no file_ptr) %d\n", 1);
         return -1;
     }
     
-    if (fseek(entry->file_ptr, 0, SEEK_END) != 0) {
+    FILE* fp = entry->file_ptr;
+    
+    /* For VB datasets, check if we have cached size */
+    if (!entry->is_fixed_recfm && entry->vb_size_calculated) {
+        DEBUG_PRINT1("dsio_get_size: RETURN %zu (cached VB size)\n", entry->vb_cached_size);
+        return (ssize_t)entry->vb_cached_size;
+    }
+    
+    /* Calculate emulated stream size from native file size */
+    fpos_t pos;
+    if (fgetpos(fp, &pos) != 0) {
         return -1;
     }
     
-    long size = ftell(entry->file_ptr);
-    fseek(entry->file_ptr, current_pos, SEEK_SET);
-    
-    return (ssize_t)size;
-#endif
-    long long total = 0;
-    char buf[8192];
-
-    long cur = ftell(entry->file_ptr);
-    fseek(entry->file_ptr, 0, SEEK_SET);
-
-    while (1) {
-        size_t n = fread(buf, 1, sizeof(buf), entry->file_ptr);
-        total += n;
-        if (n == 0)
-            break;
+    if (fseek(fp, 0, SEEK_END) != 0) {
+        fsetpos(fp, &pos);
+        return -1;
     }
-    DEBUG_PRINT1("get_size fd %d size %d\n", fd, total);
-
-    fseek(entry->file_ptr, cur, SEEK_SET);
-    return (ssize_t)total;
+    
+    long native_size = ftell(fp);
+    if (native_size < 0) {
+        fsetpos(fp, &pos);
+        DEBUG_PRINT1("dsio_get_size: RETURN -1 (ftell failed) %d\n", 1);
+        return -1;
+    }
+    
+    DEBUG_PRINT1("dsio_get_size: native_size=%ld, is_fixed_recfm=%d, reclen=%zu\n",
+                 native_size, entry->is_fixed_recfm, entry->reclen);
+    
+    if (fsetpos(fp, &pos) != 0) {
+        DEBUG_PRINT1("WARNING: fsetpos() failed in dsio_get_size %d\n", 1);
+    }
+    
+    /* Calculate emulated stream size based on record format */
+    ssize_t emulated_size;
+    
+    if (entry->is_fixed_recfm && entry->reclen > 0) {
+        /* FB: native_size is total bytes, add newlines */
+        size_t num_records = native_size / entry->reclen;
+        emulated_size = (ssize_t)(native_size + num_records);
+        DEBUG_PRINT1("dsio_get_size: FB calculation - native=%ld, reclen=%zu, num_records=%zu, emulated=%zd\n",
+                     native_size, entry->reclen, num_records, emulated_size);
+    } else {
+        /* VB/U: Calculate by reading all records (one-time cost) */
+        DEBUG_PRINT1("dsio_get_size: Calculating VB emulated size...%d\n", 1);
+        emulated_size = calculate_vb_emulated_size(fp, entry);
+        if (emulated_size >= 0) {
+            /* Cache the result for future calls */
+            entry->vb_cached_size = (size_t)emulated_size;
+            entry->vb_size_calculated = 1;
+            DEBUG_PRINT1("dsio_get_size: VB size calculated and cached: %zd\n", emulated_size);
+        } else {
+            DEBUG_PRINT1("dsio_get_size: VB size calculation failed %d\n", 1);
+        }
+    }
+    
+    DEBUG_PRINT1("dsio_get_size: RETURN %zd (fd=%d, native=%ld, emulated=%zd)\n", 
+                 emulated_size, fd, native_size, emulated_size);
+    
+    return emulated_size;
 }
 
 int dsio_flush(int fd) {

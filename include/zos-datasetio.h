@@ -367,6 +367,20 @@ typedef struct DatasetEntry {
     int metadata_loaded;
     int stats_enabled;
     
+    /* Record buffer for stream emulation */
+    char*   rec_buf;          /* internal record I/O buffer */
+    size_t  rec_buf_size;     /* allocated size (= blksize or reclen) */
+    size_t  rec_buf_len;      /* valid bytes currently in buffer */
+    size_t  rec_buf_pos;      /* current read position within buffer */
+    size_t  stream_offset;    /* virtual byte offset for lseek */
+    int     newline_pending;  /* 1 if we need to emit \n before next record */
+    size_t  reclen;           /* logical record length from fldata */
+    int     is_fixed_recfm;   /* 1 if FB/FBS - use binary I/O, not type=record */
+    int     open_flags;       /* original O_RDONLY/O_WRONLY/O_RDWR flags */
+    
+    /* VB size caching */
+    int     vb_size_calculated; /* 1 if VB size has been calculated */
+    size_t  vb_cached_size;     /* Cached emulated size for VB datasets */
 } DatasetEntry;
 
 /* Directory structure for PDS/PDSE member listing */
