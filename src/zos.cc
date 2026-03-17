@@ -2678,6 +2678,10 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   ADD_FD(STDOUT_FILENO);
   ADD_FD(STDERR_FILENO);
 
+  extern int g_debug_enabled;
+  char* env = getenv("ZOSLIB_DEBUG");
+  g_debug_enabled = (env && (strcmp(env, "1") == 0 || strcasecmp(env, "ON") == 0)) ? 1 : 0;
+
   memcpy(&config, &aconfig, sizeof(config));
   __galloc_info = new __Cache;
 

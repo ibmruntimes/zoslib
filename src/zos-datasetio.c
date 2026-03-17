@@ -219,6 +219,13 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
   }
 
   int fd = GET_DUMMY_FD();
+  if (fd < 0) {
+    DEBUG_PRINT1("create_dataset_fd: ERROR - GET_DUMMY_FD failed, errno=%d\n", errno);
+    fclose(dd);
+    free(dentry);
+    return -1;
+  }
+  DEBUG_PRINT1("create_dataset_fd: Assigned dummy fd %d\n", fd);
   ADD_DD(fd, dentry);
   return fd;
 }
@@ -278,7 +285,9 @@ int open_dataset(const char* name, int flags, mode_t mode)
     }
   }
 
-  return create_dataset_fd(name, 1047, flags);
+  int fd = create_dataset_fd(name, 1047, flags);
+  DEBUG_PRINT1("open_dataset: create_dataset_fd returned fd %d\n", fd);
+  return fd;
 }
 
 ssize_t write_dataset(int fd, const void* buf, size_t count)
@@ -438,8 +447,8 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
       
       /* Record boundaries for fixed-format: insert newline after each LRECL */
       if (dentry->is_fixed_recfm && dentry->reclen > 0) {
-        size_t pos_in_rec = dentry->rec_buf_pos % dentry->reclen;
-        size_t rec_avail = dentry->reclen - pos_in_rec;
+        size_t pos_in_stream = dentry->stream_offset % (dentry->reclen + 1);
+        size_t rec_avail = dentry->reclen - pos_in_stream;
         if (avail > rec_avail) avail = rec_avail;
       }
 
@@ -452,7 +461,7 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
 
       /* Check for record boundary after copying */
       if (dentry->is_fixed_recfm && dentry->reclen > 0) {
-        if ((dentry->rec_buf_pos % dentry->reclen) == 0) {
+        if ((dentry->stream_offset % (dentry->reclen + 1)) == dentry->reclen) {
           dentry->newline_pending = 1;
         }
       } else if (dentry->rec_buf_pos >= dentry->rec_buf_len) {
@@ -462,16 +471,15 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
     }
 
     /* Slow-path: Read next block/record from dataset */
-    size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
-    if (rc == 0) break; /* EOF or error */
-    
-    /* Strip trailing spaces from fixed-length records */
-    if (dentry->is_fixed_recfm) {
-      while (rc > 0 && dentry->rec_buf[rc - 1] == ' ') {
-        rc--;
-      }
-    }
+    if (dentry->eof_reached) break;
 
+    size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
+    if (rc == 0) {
+      dentry->eof_reached = 1;
+      dentry->newline_pending = 1;
+      break; /* Will emit newline on next loop or return if bytes_copied > 0 */
+    }
+    
     /* Convert CCSID of the newly read data in-place */
     if (dentry->conversion_state == SETCVTON && rc > 0) {
       dsio_convert_buffer(dentry->rec_buf, rc, dentry->file_ccsid, dentry->program_ccsid);
@@ -677,18 +685,20 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
  * ======================================================================== */
 
 off_t lseek_dataset(int fd, off_t offset, int whence) {
-    DEBUG_PRINT0("calling lseek-dataset\n");
+    DEBUG_PRINT1("lseek_dataset: ENTER fd=%d, offset=%lld, whence=%d\n", fd, (long long)offset, whence);
     
     /* Validate fd */
     void* dd = GET_DD(fd);
     if (!dd) {
         errno = EBADF;
+        DEBUG_PRINT1("lseek_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
         return (off_t)-1;
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
+        DEBUG_PRINT1("lseek_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
         return (off_t)-1;
     }
     FILE* fp = dentry->file_ptr;
@@ -827,23 +837,26 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
 #endif
 
 int fstat_dataset(int fd, struct stat *buf) {
-    DEBUG_PRINT0("calling fstat-dataset\n");
+    DEBUG_PRINT1("fstat_dataset: ENTER fd=%d\n", fd);
     
     /* Validate parameters */
     if (!buf) {
         errno = EINVAL;
+        DEBUG_PRINT1("fstat_dataset: ERROR - NULL buffer for fd %d\n", fd);
         return -1;
     }
     
     void* dd = GET_DD(fd);
     if (!dd) {
         errno = EBADF;
+        DEBUG_PRINT1("fstat_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
         return -1;
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
+        DEBUG_PRINT1("fstat_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
         return -1;
     }
 
@@ -1460,9 +1473,17 @@ void dsio_log(dsio_log_level_t level, const char* format, ...) {
     fflush(stream);
 }
 
+extern void __console(const void *p_in, int len_i);
+
 void dsio_debug_print(const char* str) {
+    if (g_debug_enabled <= 0) return;
+    
     if (g_log_stream == NULL) {
         g_log_stream = fopen("zoslib.debug.log", "a");
+        if (g_log_stream == NULL) {
+            __console(str, strlen(str));
+            return;
+        }
     }
     if (g_log_stream) {
         fprintf(g_log_stream, "%s", str);
@@ -1471,14 +1492,23 @@ void dsio_debug_print(const char* str) {
 }
 
 void dsio_debug_printf(const char* format, ...) {
+    if (g_debug_enabled <= 0) return;
+
+    char buf[1024];
+    va_list args;
+    va_start(args, format);
+    int len = vsnprintf(buf, sizeof(buf), format, args);
+    va_end(args);
+
     if (g_log_stream == NULL) {
         g_log_stream = fopen("zoslib.debug.log", "a");
+        if (g_log_stream == NULL) {
+            __console(buf, len);
+            return;
+        }
     }
     if (g_log_stream) {
-        va_list args;
-        va_start(args, format);
-        vfprintf(g_log_stream, format, args);
-        va_end(args);
+        fprintf(g_log_stream, "%s", buf);
         fflush(g_log_stream);
     }
 }

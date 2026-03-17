@@ -379,6 +379,7 @@ typedef struct DatasetEntry {
     int     is_fixed_recfm;   /* 1 if FB/FBS - use binary I/O, not type=record */
     int     open_flags;       /* original O_RDONLY/O_WRONLY/O_RDWR flags */
     int     dirty;            /* 1 if buffer has pending writes */
+    int     eof_reached;      /* 1 if we reached physical EOF */
     
     /* VB size caching */
     int     vb_size_calculated; /* 1 if VB size has been calculated */
@@ -398,8 +399,8 @@ typedef struct DatasetDir {
 #define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
 
 #if 1
-  #define DEBUG_PRINT0(str) do { if (g_debug_enabled) dsio_debug_print(str); } while(0)
-  #define DEBUG_PRINT1(fmt, ...) do { if (g_debug_enabled) dsio_debug_printf(fmt, __VA_ARGS__); } while(0)
+  #define DEBUG_PRINT0(str) dsio_debug_print(str)
+  #define DEBUG_PRINT1(fmt, ...) dsio_debug_printf(fmt, __VA_ARGS__)
 #else
   #define DEBUG_PRINT0(str)
   #define DEBUG_PRINT1(fmt, ...)
