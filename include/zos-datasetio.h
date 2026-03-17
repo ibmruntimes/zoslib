@@ -351,6 +351,7 @@ typedef struct DatasetEntry {
     uint32_t blksize;
     
     /* Dataset name components */
+    char full_path[DSIO_MAX_DATASET_NAME + 1];
     char member_name[DSIO_MAX_MEMBER_NAME + 1];
     char hlq[DSIO_MAX_QUALIFIER + 1];
     char llq[DSIO_MAX_QUALIFIER + 1];

@@ -146,6 +146,7 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     fclose(dd);
     return -1;
   }
+  parse_and_store_name(dentry, name);
   dentry->open_flags = flags;
   dentry->conversion_state = SETCVTON; /* Default to conversion on */
 
@@ -255,7 +256,7 @@ int open_dataset(const char* name, int flags, mode_t mode)
     return -1;
   }
 
-  if ((flags & O_LARGEFILE) || (flags & O_NOCTTY) || (flags & O_NONBLOCK)) {
+  if ((flags & O_LARGEFILE) || (flags & O_NONBLOCK)) {
     DEBUG_PRINT1("open_dataset: Unsupported flags in %d\n", flags);
     errno = EACCES;
     return -1;
@@ -848,6 +849,27 @@ int fstat_dataset(int fd, struct stat *buf) {
 
     /* Initialize stat buffer */
     memset(buf, 0, sizeof(struct stat));
+    
+    /* 
+     * Provide non-zero st_dev and st_ino to prevent tools (like ggrep) from 
+     * incorrectly assuming all datasets are the same file (since st_dev=0, st_ino=0 
+     * is often returned for both).
+     */
+    buf->st_dev = 0xFFFF; /* Magic value for MVS Datasets */
+    
+    /* Simple Jenkins hash for st_ino based on the dataset name */
+    uint32_t hash = 0;
+    const char* key = dentry->full_path;
+    while (*key) {
+        hash += (unsigned char)(*key++);
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+    }
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
+    hash += (hash << 15);
+    buf->st_ino = (ino_t)(hash ? hash : 1);
+
     buf->st_mode = S_IFREG | 0666;
     buf->st_nlink = 1;
     buf->st_uid = getuid();
@@ -1754,6 +1776,9 @@ int parse_and_store_name(DatasetEntry* entry, const char* dataset_name) {
     }
     
     /* Store components */
+    strncpy(entry->full_path, dataset_name, DSIO_MAX_DATASET_NAME);
+    entry->full_path[DSIO_MAX_DATASET_NAME] = '\0';
+
     strncpy(entry->hlq, parts.hlq, DSIO_MAX_QUALIFIER);
     entry->hlq[DSIO_MAX_QUALIFIER] = '\0';
     
