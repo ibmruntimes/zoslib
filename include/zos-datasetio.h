@@ -246,32 +246,6 @@ void dsio_enable_debug(int enable);
 /* Log a message (internal use) */
 void dsio_log(dsio_log_level_t level, const char* format, ...);
 
-/* ========================================================================
- * STATISTICS AND MONITORING
- * ======================================================================== */
-
-/* I/O statistics */
-typedef struct {
-    size_t bytes_read;            /* Total bytes read */
-    size_t bytes_written;         /* Total bytes written */
-    size_t read_operations;       /* Number of read calls */
-    size_t write_operations;      /* Number of write calls */
-    size_t open_operations;       /* Number of open calls */
-    size_t close_operations;      /* Number of close calls */
-    size_t errors;                /* Number of errors */
-} dsio_stats_t;
-
-/* Get statistics for a file descriptor */
-int dsio_get_stats(int fd, dsio_stats_t* stats);
-
-/* Reset statistics for a file descriptor */
-int dsio_reset_stats(int fd);
-
-/* Get global statistics */
-void dsio_get_global_stats(dsio_stats_t* stats);
-
-/* Reset global statistics */
-void dsio_reset_global_stats(void);
 
 /* ========================================================================
  * UTILITY FUNCTIONS
@@ -358,15 +332,8 @@ typedef struct DatasetEntry {
     int is_pds_member;
     int readonly;
     
-    /* I/O statistics */
-    size_t bytes_read;
-    size_t bytes_written;
-    size_t read_operations;
-    size_t write_operations;
-    
     /* State flags */
     int metadata_loaded;
-    int stats_enabled;
     
     /* Record buffer for stream emulation */
     char*   rec_buf;          /* internal record I/O buffer */
@@ -386,14 +353,7 @@ typedef struct DatasetEntry {
     size_t  vb_cached_size;     /* Cached emulated size for VB datasets */
 } DatasetEntry;
 
-/* Directory structure for PDS/PDSE member listing */
-typedef struct DatasetDir {
-  char dataset_name[256];
-  char** member_list;
-  int member_count;
-  int current_index;
-  int is_dataset_dir;
-} DatasetDir;
+
 
 #define GET_DUMMY_FD()   (open("/dev/null", O_WRONLY, 0))
 #define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
@@ -404,11 +364,11 @@ typedef struct DatasetDir {
 #endif
 
 #if ZOSLIB_DATASET_LOGGING
-  #define DSIO_LOG_ERROR(fmt, ...) do { if (g_debug_enabled) log_error(fmt, ##__VA_ARGS__); } while(0)
-  #define DSIO_LOG_WARN(fmt, ...) do { if (g_debug_enabled) log_warn(fmt, ##__VA_ARGS__); } while(0)
-  #define DSIO_LOG_INFO(fmt, ...) do { if (g_debug_enabled) log_info(fmt, ##__VA_ARGS__); } while(0)
-  #define DSIO_LOG_DEBUG(fmt, ...) do { if (g_debug_enabled) log_debug(fmt, ##__VA_ARGS__); } while(0)
-  #define DSIO_LOG_TRACE(fmt, ...) do { if (g_debug_enabled) log_trace(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_ERROR(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_ERROR) log_error(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_WARN(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_WARN) log_warn(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_INFO(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_INFO) log_info(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_DEBUG(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_DEBUG) log_debug(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_TRACE(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_TRACE) log_trace(fmt, ##__VA_ARGS__); } while(0)
 #else
   #define DSIO_LOG_ERROR(fmt, ...) ((void)0)
   #define DSIO_LOG_WARN(fmt, ...) ((void)0)
@@ -425,20 +385,7 @@ extern void* descriptor_table[MAX_FDS];
 
 
 
-/* Global statistics */
-typedef struct {
-    size_t total_bytes_read;
-    size_t total_bytes_written;
-    size_t total_read_operations;
-    size_t total_write_operations;
-    size_t total_open_operations;
-    size_t total_close_operations;
-    size_t total_errors;
-    int stats_enabled;
-} GlobalStats;
-
 /* Global state */
-extern GlobalStats g_stats;
 extern dsio_log_level_t g_log_level;
 extern FILE* g_log_stream;
 extern int g_debug_enabled;
@@ -462,12 +409,6 @@ int parse_and_store_name(DatasetEntry* entry, const char* dataset_name);
 /* Set error on entry */
 void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* message);
 
-/* Update statistics */
-void update_read_stats(DatasetEntry* entry, size_t bytes);
-void update_write_stats(DatasetEntry* entry, size_t bytes);
-void update_global_stats_open(void);
-void update_global_stats_close(void);
-void update_global_stats_error(void);
 
 /* Logging helpers */
 void log_error(const char* format, ...);

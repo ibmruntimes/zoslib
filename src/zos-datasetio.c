@@ -93,7 +93,7 @@ int mkstemp_dataset(char* tmplate)
   }
   
   parse_and_store_name(dentry, tmplate);
-  update_global_stats_open();
+
 
   fd = GET_DUMMY_FD();
   ADD_DD(fd, dentry);
@@ -487,7 +487,7 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
   }
 
   if (bytes_copied > 0) {
-    update_read_stats(dentry, bytes_copied);
+
   }
 
   return (bytes_copied == 0 && count > 0) ? 0 : (ssize_t) bytes_copied;
@@ -897,171 +897,13 @@ int stat_dataset(const char *pathname, struct stat *statbuf) {
     return result;
 }
 
-/* ========================================================================
- * opendir() / readdir() / closedir() - Directory Operations for PDS/PDSE
- * ======================================================================== */
-
-#undef opendir
-#undef readdir
-#undef closedir
-
-/* Helper function to read PDS directory using BPAM or simple approach */
-static int read_pds_directory(const char* dataset_name, char*** member_list, int* member_count) {
-    /* This is a simplified implementation
-     * A full implementation would use BPAM to read the directory
-     * For now, we'll use a simple approach with fopen and directory reading
-     */
-    
-    *member_list = NULL;
-    *member_count = 0;
-    
-    /* Try to open the PDS as a directory */
-    /* In z/OS, we can list members by opening the PDS and reading directory blocks */
-    /* This is a placeholder - real implementation would use BPAM services */
-    
-    DSIO_LOG_WARN("PDS directory reading not fully implemented yet for: %s", dataset_name);
-    
-    /* For now, return empty directory */
-    /* TODO: Implement actual BPAM directory reading */
-    
-    return 0;
-}
-
-static DIR* opendir_dataset(const char *name) {
-    if (!name) {
-        errno = EINVAL;
-        return NULL;
-    }
-    
-    /* Check if this is a PDS/PDSE (no member specified) */
-    if (strchr(name, '(') != NULL) {
-        /* Member specified - not a directory */
-        errno = ENOTDIR;
-        DSIO_LOG_ERROR("opendir: Cannot open PDS member as directory: %s", name);
-        return NULL;
-    }
-    
-    /* Allocate directory structure */
-    DatasetDir* dir = calloc(1, sizeof(DatasetDir));
-    if (!dir) {
-        errno = ENOMEM;
-        return NULL;
-    }
-    
-    strncpy(dir->dataset_name, name, sizeof(dir->dataset_name) - 1);
-    dir->is_dataset_dir = 1;
-    dir->current_index = 0;
-    
-    /* Read PDS directory */
-    if (read_pds_directory(name, &dir->member_list, &dir->member_count) != 0) {
-        free(dir);
-        errno = EIO;
-        DSIO_LOG_ERROR("opendir: Failed to read PDS directory: %s", name);
-        return NULL;
-    }
-    
-
-    
-    return (DIR*)dir;
-}
-
-DIR* opendir_zos(const char *name) {
-    if (IS_DATASET(name)) {
-        DSIO_LOG_DEBUG("calling opendir-dataset\n");
-        return opendir_dataset(name);
-    } else {
-        DSIO_LOG_DEBUG("calling opendir-file\n");
-        return opendir(name);
-    }
-}
-
-static struct dirent* readdir_dataset(DIR *dirp) {
-    if (!dirp) {
-        errno = EINVAL;
-        return NULL;
-    }
-    
-    DatasetDir* dir = (DatasetDir*)dirp;
-    
-    /* Check if we've read all members */
-    if (dir->current_index >= dir->member_count) {
-        return NULL; /* End of directory */
-    }
-    
-    /* Allocate dirent structure (static for simplicity) */
-    static struct dirent entry;
-    memset(&entry, 0, sizeof(entry));
-    
-    /* Copy member name */
-    strncpy(entry.d_name, dir->member_list[dir->current_index], sizeof(entry.d_name) - 1);
-    
-    dir->current_index++;
-    
-
-    
-    return &entry;
-}
-
-struct dirent* readdir_zos(DIR *dirp) {
-    if (!dirp) {
-        return NULL;
-    }
-    
-    /* Check if this is a dataset directory */
-    DatasetDir* dir = (DatasetDir*)dirp;
-    if (dir->is_dataset_dir) {
-        DSIO_LOG_DEBUG("calling readdir-dataset\n");
-        return readdir_dataset(dirp);
-    } else {
-        DSIO_LOG_DEBUG("calling readdir-file\n");
-        return readdir(dirp);
-    }
-}
-
-static int closedir_dataset(DIR *dirp) {
-    if (!dirp) {
-        errno = EINVAL;
-        return -1;
-    }
-    
-    DatasetDir* dir = (DatasetDir*)dirp;
-    
-    /* Free member list */
-    if (dir->member_list) {
-        for (int i = 0; i < dir->member_count; i++) {
-            free(dir->member_list[i]);
-        }
-        free(dir->member_list);
-    }
-    
-
-    
-    free(dir);
-    return 0;
-}
-
-int closedir_zos(DIR *dirp) {
-    if (!dirp) {
-        return -1;
-    }
-    
-    /* Check if this is a dataset directory */
-    DatasetDir* dir = (DatasetDir*)dirp;
-    if (dir->is_dataset_dir) {
-        DSIO_LOG_DEBUG("calling closedir-dataset\n");
-        return closedir_dataset(dirp);
-    } else {
-        DSIO_LOG_DEBUG("calling closedir-file\n");
-        return closedir(dirp);
-    }
-}
 
 // Made with Bob - Phase 1 System Calls
  
 
 /* Global state */
-GlobalStats g_stats = {0};
-dsio_log_level_t g_log_level = DSIO_LOG_ERROR;
+
+dsio_log_level_t g_log_level = DSIO_LOG_DEBUG;
 FILE* g_log_stream = NULL;
 int g_debug_enabled = 0;
 
@@ -1145,7 +987,7 @@ void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* messag
     }
     
     DSIO_LOG_ERROR("Error %d: %s", error, entry->error_message);
-    update_global_stats_error();
+
 }
 
 /* ========================================================================
@@ -1552,101 +1394,6 @@ void log_trace(const char* format, ...) {
  * STATISTICS IMPLEMENTATION
  * ======================================================================== */
 
-void update_read_stats(DatasetEntry* entry, size_t bytes) {
-    if (!entry || !entry->stats_enabled) return;
-    
-    entry->bytes_read += bytes;
-    entry->read_operations++;
-    
-    if (g_stats.stats_enabled) {
-        g_stats.total_bytes_read += bytes;
-        g_stats.total_read_operations++;
-    }
-}
-
-void update_write_stats(DatasetEntry* entry, size_t bytes) {
-    if (!entry || !entry->stats_enabled) return;
-    
-    entry->bytes_written += bytes;
-    entry->write_operations++;
-    
-    if (g_stats.stats_enabled) {
-        g_stats.total_bytes_written += bytes;
-        g_stats.total_write_operations++;
-    }
-}
-
-void update_global_stats_open(void) {
-    if (g_stats.stats_enabled) {
-        g_stats.total_open_operations++;
-    }
-}
-
-void update_global_stats_close(void) {
-    if (g_stats.stats_enabled) {
-        g_stats.total_close_operations++;
-    }
-}
-
-void update_global_stats_error(void) {
-    if (g_stats.stats_enabled) {
-        g_stats.total_errors++;
-    }
-}
-
-int dsio_get_stats(int fd, dsio_stats_t* stats) {
-    if (!stats) return -1;
-    
-    void* dd = GET_DD(fd);
-    if (!dd || IS_FD(fd)) {
-        return -1;
-    }
-    
-    DatasetEntry* entry = ENTRY_TO(dd);
-    
-    stats->bytes_read = entry->bytes_read;
-    stats->bytes_written = entry->bytes_written;
-    stats->read_operations = entry->read_operations;
-    stats->write_operations = entry->write_operations;
-    stats->open_operations = 1; /* This fd was opened once */
-    stats->close_operations = 0; /* Not closed yet */
-    stats->errors = (entry->last_error != DSIO_SUCCESS) ? 1 : 0;
-    
-    return 0;
-}
-
-int dsio_reset_stats(int fd) {
-    void* dd = GET_DD(fd);
-    if (!dd || IS_FD(fd)) {
-        return -1;
-    }
-    
-    DatasetEntry* entry = ENTRY_TO(dd);
-    
-    entry->bytes_read = 0;
-    entry->bytes_written = 0;
-    entry->read_operations = 0;
-    entry->write_operations = 0;
-    
-    return 0;
-}
-
-void dsio_get_global_stats(dsio_stats_t* stats) {
-    if (!stats) return;
-    
-    stats->bytes_read = g_stats.total_bytes_read;
-    stats->bytes_written = g_stats.total_bytes_written;
-    stats->read_operations = g_stats.total_read_operations;
-    stats->write_operations = g_stats.total_write_operations;
-    stats->open_operations = g_stats.total_open_operations;
-    stats->close_operations = g_stats.total_close_operations;
-    stats->errors = g_stats.total_errors;
-}
-
-void dsio_reset_global_stats(void) {
-    memset(&g_stats, 0, sizeof(g_stats));
-    g_stats.stats_enabled = 1; /* Re-enable after reset */
-}
 
 /* ========================================================================
  * METADATA IMPLEMENTATION (Partial - showing key functions)
@@ -1744,7 +1491,6 @@ DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid) {
     entry->program_ccsid = 819; /* ASCII */
     entry->conversion_state = 1; /* SETCVTON */
     entry->last_error = DSIO_SUCCESS;
-    entry->stats_enabled = 1;
     entry->metadata_loaded = 0;
     
     /* Try to load metadata */
