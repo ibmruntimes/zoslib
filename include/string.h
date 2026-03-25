@@ -27,9 +27,7 @@
    TODO: Remove once LE headers have been updated
 */
 #if (__TARGET_LIB__ <= 0x42050000) 
-#undef stpcpy
 #undef stpncpy
-#define stpcpy stpcpy_replaced
 #define stpncpy stpncpy_replaced
 #endif
 
@@ -46,7 +44,6 @@
 */
 #if (__TARGET_LIB__ <= 0x42050000) 
 #undef stpncpy
-#undef stpcpy
 #endif
 
 
@@ -73,6 +70,7 @@ extern "C" {
 /* TODO: remove these once the z/OS APAR that enables them becomes more mainstream */
 __Z_EXPORT size_t strnlen(const char *, size_t );
 __Z_EXPORT char *strpcpy(char *, const char *);
+__Z_EXPORT char *stpcpy(char *dest, const char *src);
 __Z_EXPORT char *strsignal(int );
 
 __Z_EXPORT char *strndup(const char *s, size_t n);

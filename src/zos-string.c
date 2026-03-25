@@ -129,6 +129,12 @@ char *strpcpy(char *dest, const char *src) {
   return ptr + strlen(ptr);
 }
 
+char *stpcpy(char *dest, const char *src) {
+  size_t len = strlen(src);
+  memcpy(dest, src, len + 1);
+  return dest + len;
+}
+
 char *strndup(const char *s, size_t n) {
   size_t len = strnlen(s, n);
   char *dupStr = malloc(len + 1);

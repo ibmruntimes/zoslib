@@ -34,4 +34,19 @@ TEST(StrndupTest, CheckStrndupFunctionality) {
   free(zero_length_copied);
 }
 
+TEST(StpcpyTest, CheckStpcpyFunctionality) {
+  const char *src = "hello";
+  char dest[10];
+  char *ret = stpcpy(dest, src);
+  EXPECT_STREQ(dest, "hello");
+  EXPECT_EQ(ret, dest + strlen(src));
+  EXPECT_EQ(*ret, '\0');
+
+  const char *src2 = " world";
+  char *ret2 = stpcpy(ret, src2);
+  EXPECT_STREQ(dest, "hello world");
+  EXPECT_EQ(ret2, dest + strlen("hello world"));
+  EXPECT_EQ(*ret2, '\0');
+}
+
 } // namespace
