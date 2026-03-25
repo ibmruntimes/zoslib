@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include <env.h>
 #include <unistd.h>
 #include <dynit.h>
@@ -18,10 +19,6 @@
 #include <ctype.h>
 
 #include "zos-datasetio.h"
-#include "ispf.h"
-#include "ztime.h"
-#include "ihapds.h"
-#include "ispf_reader.h"
 
 void* descriptor_table[MAX_FDS] = { 0 };
 
@@ -805,36 +802,6 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
  * fstat() / stat() - File Metadata
  * ======================================================================== */
 
-/* Helper function to read ISPF statistics from PDS member */
-#if 0
-static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
-    if (!fp || !stats) {
-        return -1;
-    }
-    
-    /* Get file data to check if this is a PDS member */
-    fldata_t fdata;
-    if (fldata(fp, NULL, &fdata) != 0) {
-        return -1;
-    }
-    
-    /* Check if this is a PDS/PDSE member */
-    if (fdata.__dsorgPO == 0) {
-        return -1;  /* Not a PDS/PDSE */
-    }
-    
-    /* Get member name from fldata */
-    char member_name[9] = {0};
-    if (fdata.__dsname == NULL) {
-        return -1;  /* No member name */
-    }
-    memcpy(member_name, fdata.__dsname, 8);
-    member_name[8] = '\0';
-    
-    /* Use the ISPF reader module to get statistics */
-    return read_member_ispf_stats(fp, member_name, stats);
-}
-#endif
 
 int fstat_dataset(int fd, struct stat *buf) {
     DSIO_LOG_DEBUG("fstat_dataset: ENTER fd=%d\n", fd);
@@ -950,7 +917,7 @@ static int read_pds_directory(const char* dataset_name, char*** member_list, int
     
     /* Try to open the PDS as a directory */
     /* In z/OS, we can list members by opening the PDS and reading directory blocks */
-    /* This is a placeholder - real implementation would use BPAM or ISPF services */
+    /* This is a placeholder - real implementation would use BPAM services */
     
     DSIO_LOG_WARN("PDS directory reading not fully implemented yet for: %s", dataset_name);
     

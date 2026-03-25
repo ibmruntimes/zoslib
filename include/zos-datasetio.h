@@ -404,11 +404,11 @@ typedef struct DatasetDir {
 #endif
 
 #if ZOSLIB_DATASET_LOGGING
-  #define DSIO_LOG_ERROR(fmt, ...) log_error(fmt, ##__VA_ARGS__)
-  #define DSIO_LOG_WARN(fmt, ...) log_warn(fmt, ##__VA_ARGS__)
-  #define DSIO_LOG_INFO(fmt, ...) log_info(fmt, ##__VA_ARGS__)
-  #define DSIO_LOG_DEBUG(fmt, ...) log_debug(fmt, ##__VA_ARGS__)
-  #define DSIO_LOG_TRACE(fmt, ...) log_trace(fmt, ##__VA_ARGS__)
+  #define DSIO_LOG_ERROR(fmt, ...) do { if (g_debug_enabled) log_error(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_WARN(fmt, ...) do { if (g_debug_enabled) log_warn(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_INFO(fmt, ...) do { if (g_debug_enabled) log_info(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_DEBUG(fmt, ...) do { if (g_debug_enabled) log_debug(fmt, ##__VA_ARGS__); } while(0)
+  #define DSIO_LOG_TRACE(fmt, ...) do { if (g_debug_enabled) log_trace(fmt, ##__VA_ARGS__); } while(0)
 #else
   #define DSIO_LOG_ERROR(fmt, ...) ((void)0)
   #define DSIO_LOG_WARN(fmt, ...) ((void)0)
