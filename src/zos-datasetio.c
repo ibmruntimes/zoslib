@@ -23,6 +23,8 @@
 void* descriptor_table[MAX_FDS] = { 0 };
 
 static dsio_recfm_t detect_recfm_from_fldata(const fldata_t* fdata);
+static int map_dsio_error_to_errno(dsio_error_t dsio_err);
+
 static dsio_dsorg_t detect_dsorg_from_fldata(const fldata_t* fdata);
 
 static const char DATASET_CHAR[] = "ABCDEFGHIJKLMNOPQRSTUVWYZ$#@";
@@ -135,12 +137,14 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
   FILE* dd = fopen(name, fopen_mode);
   if (!dd) {
     perror("dataset open failed");
+    errno = EIO;
     return -1;
   }
 
   DatasetEntry* dentry = create_entry(dd, file_ccsid);
   if (!dentry) {
     fclose(dd);
+    errno = ENOMEM;
     return -1;
   }
   parse_and_store_name(dentry, name);
@@ -189,7 +193,9 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     DSIO_LOG_DEBUG("FB optimization: reopening with mode %s\n", reopen_mode);
     dd = fopen(name, reopen_mode);
     if (!dd) {
+      set_entry_error(dentry, DSIO_ERR_OPEN_FAILED, "Failed to reopen dataset in binary mode");
       free(dentry);
+      errno = map_dsio_error_to_errno(DSIO_ERR_OPEN_FAILED);
       return -1;
     }
     dentry->file_ptr = dd;
@@ -210,16 +216,20 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
   /* Allocate record buffer (+1 for potential null terminator during conversion) */
   dentry->rec_buf = malloc(dentry->rec_buf_size + 1);
   if (!dentry->rec_buf) {
+    set_entry_error(dentry, DSIO_ERR_ALLOC_FAILED, "Failed to allocate record buffer");
     fclose(dd);
     free(dentry);
+    errno = map_dsio_error_to_errno(DSIO_ERR_ALLOC_FAILED);
     return -1;
   }
 
   int fd = GET_DUMMY_FD();
   if (fd < 0) {
     DSIO_LOG_DEBUG("create_dataset_fd: ERROR - GET_DUMMY_FD failed, errno=%d\n", errno);
+    set_entry_error(dentry, DSIO_ERR_INTERNAL_ERROR, "Failed to allocate file descriptor");
     fclose(dd);
     free(dentry);
+    errno = map_dsio_error_to_errno(DSIO_ERR_INTERNAL_ERROR);
     return -1;
   }
   DSIO_LOG_DEBUG("create_dataset_fd: Assigned dummy fd %d\n", fd);
@@ -296,6 +306,10 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   }
 
   DatasetEntry* dentry = (DatasetEntry*) (dd);
+  
+  /* Clear any previous errors */
+  dentry->last_error = DSIO_SUCCESS;
+  
   FILE* fp = dentry->file_ptr;
 
   DSIO_LOG_DEBUG("In Write, File ccsid: %d\n", dentry->file_ccsid);
@@ -338,6 +352,8 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
         }
 
         if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
+          set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Failed to write record to dataset");
+          errno = map_dsio_error_to_errno(DSIO_ERR_WRITE_FAILED);
           return total_written > 0 ? (ssize_t) total_written : -1;
         }
         dentry->rec_buf_pos = 0;
@@ -369,6 +385,8 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
         }
 
         if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
+          set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Failed to write full record to dataset");
+          errno = map_dsio_error_to_errno(DSIO_ERR_WRITE_FAILED);
           return total_written > 0 ? (ssize_t) total_written : -1;
         }
         dentry->rec_buf_pos = 0;
@@ -390,6 +408,9 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
   }
 
   DatasetEntry* dentry = (DatasetEntry*) (dd);
+  
+  /* Clear any previous errors */
+  dentry->last_error = DSIO_SUCCESS;
   FILE* fp = dentry->file_ptr;
 
   /* If there are pending writes, we should flush them before reading 
@@ -407,7 +428,11 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
       dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
                           dentry->program_ccsid, dentry->file_ccsid);
     }
-    fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
+    if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
+      set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Failed to flush write buffer before read");
+      errno = map_dsio_error_to_errno(DSIO_ERR_WRITE_FAILED);
+      return -1;
+    }
     dentry->rec_buf_pos = 0;
     dentry->dirty = 0;
   }
@@ -472,6 +497,11 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
 
     size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
     if (rc == 0) {
+      if (ferror(fp)) {
+        set_entry_error(dentry, DSIO_ERR_READ_FAILED, "Failed to read from dataset");
+        errno = map_dsio_error_to_errno(DSIO_ERR_READ_FAILED);
+        return bytes_copied > 0 ? (ssize_t)bytes_copied : -1;
+      }
       dentry->eof_reached = 1;
       dentry->newline_pending = 1;
       break; /* Will emit newline on next loop or return if bytes_copied > 0 */
@@ -496,8 +526,16 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
 int close_dataset(int fd)
 {
   void* dd = GET_DD(fd);
+  if (!dd) {
+    errno = EBADF;
+    return -1;
+  }
 
   DatasetEntry* dentry = (DatasetEntry*) (dd);
+  
+  /* Clear any previous errors */
+  dentry->last_error = DSIO_SUCCESS;
+  
   FILE* fp = dentry->file_ptr;
 
   /* Flush any partial record remaining in the write buffer */
@@ -515,6 +553,7 @@ int close_dataset(int fd)
       void* conv_result = dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
                                              dentry->program_ccsid, dentry->file_ccsid);
       if (conv_result == NULL) {
+        set_entry_error(dentry, DSIO_ERR_CCSID_CONVERSION, "CCSID conversion failed during close");
         fprintf(stderr, "WARNING: CCSID conversion failed during close\n");
         /* Continue with close despite conversion error */
       }
@@ -523,6 +562,7 @@ int close_dataset(int fd)
     /* Write final record */
     size_t rc = fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp);
     if (rc != dentry->rec_buf_pos) {
+      set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Final record write incomplete during close");
       fprintf(stderr, "WARNING: Final record write incomplete (%zu of %zu bytes)\n", 
               rc, dentry->rec_buf_pos);
       /* Continue with close despite write error */
@@ -530,15 +570,19 @@ int close_dataset(int fd)
   }
 
   int rc = fclose(fp);
-  if (!rc) {
-    close(fd);
-    /* Free record buffer and deallocate DatasetEntry */
-    if (dentry->rec_buf) {
-      free(dentry->rec_buf);
-    }
-    free(dentry);
-    CLEAR_DD(fd);
+  if (rc != 0) {
+    set_entry_error(dentry, DSIO_ERR_CLOSE_FAILED, "fclose() failed");
+    errno = map_dsio_error_to_errno(DSIO_ERR_CLOSE_FAILED);
   }
+  
+  close(fd);
+  /* Free record buffer and deallocate DatasetEntry */
+  if (dentry->rec_buf) {
+    free(dentry->rec_buf);
+  }
+  free(dentry);
+  CLEAR_DD(fd);
+  
   return rc;
 }
 
@@ -693,6 +737,9 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
+    
+    /* Clear any previous errors */
+    dentry->last_error = DSIO_SUCCESS;
     if (!dentry->file_ptr) {
         errno = EBADF;
         DSIO_LOG_DEBUG("lseek_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
@@ -715,6 +762,8 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
             /* Use dsio_get_size for accurate size calculation */
             ssize_t file_size = dsio_get_size(fd);
             if (file_size < 0) {
+                set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "Failed to get file size for SEEK_END");
+                errno = map_dsio_error_to_errno(DSIO_ERR_FSEEK_FAILED);
                 return (off_t)-1;
             }
             target = (off_t)file_size + offset;
@@ -763,14 +812,16 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
         /* Calculate native file position */
         long current_native = ftell(fp);
         if (current_native < 0) {
-            errno = EIO;
+            set_entry_error(dentry, DSIO_ERR_FTELL_FAILED, "ftell() failed during lseek");
+            errno = map_dsio_error_to_errno(DSIO_ERR_FTELL_FAILED);
             return (off_t)-1;
         }
         
         long target_native = current_native + (records_to_skip * dentry->reclen) + byte_in_record;
         
         if (fseek(fp, target_native, SEEK_SET) != 0) {
-            errno = EIO;
+            set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "fseek() failed during lseek");
+            errno = map_dsio_error_to_errno(DSIO_ERR_FSEEK_FAILED);
             return (off_t)-1;
         }
         
@@ -821,6 +872,9 @@ int fstat_dataset(int fd, struct stat *buf) {
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
+    
+    /* Clear any previous errors */
+    dentry->last_error = DSIO_SUCCESS;
     if (!dentry->file_ptr) {
         errno = EBADF;
         DSIO_LOG_DEBUG("fstat_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
@@ -865,7 +919,8 @@ int fstat_dataset(int fd, struct stat *buf) {
     /* Use dsio_get_size helper to calculate emulated stream size */
     ssize_t size = dsio_get_size(fd);
     if (size < 0) {
-        /* Error already set by dsio_get_size */
+        set_entry_error(dentry, DSIO_ERR_FLDATA_FAILED, "Failed to get dataset size for fstat");
+        errno = map_dsio_error_to_errno(DSIO_ERR_FLDATA_FAILED);
         return -1;
     }
     
@@ -972,6 +1027,44 @@ void dsio_clear_error(int fd) {
     DatasetEntry* entry = ENTRY_TO(dd);
     entry->last_error = DSIO_SUCCESS;
     entry->error_message[0] = '\0';
+}
+
+/* Map DSIO error codes to POSIX errno values */
+static int map_dsio_error_to_errno(dsio_error_t dsio_err) {
+    switch (dsio_err) {
+        case DSIO_SUCCESS:
+            return 0;
+        case DSIO_ERR_INVALID_NAME:
+        case DSIO_ERR_INVALID_RECFM:
+        case DSIO_ERR_INVALID_DSORG:
+        case DSIO_ERR_INVALID_FD:
+            return EINVAL;
+        case DSIO_ERR_NAME_TOO_LONG:
+            return ENAMETOOLONG;
+        case DSIO_ERR_OPEN_FAILED:
+        case DSIO_ERR_READ_FAILED:
+        case DSIO_ERR_WRITE_FAILED:
+        case DSIO_ERR_CLOSE_FAILED:
+        case DSIO_ERR_FLDATA_FAILED:
+        case DSIO_ERR_FSEEK_FAILED:
+        case DSIO_ERR_FTELL_FAILED:
+            return EIO;
+        case DSIO_ERR_ALLOC_FAILED:
+            return ENOMEM;
+        case DSIO_ERR_MEMBER_NOT_FOUND:
+        case DSIO_ERR_NOT_A_DATASET:
+            return ENOENT;
+        case DSIO_ERR_CCSID_CONVERSION:
+            return EILSEQ;
+        case DSIO_ERR_BUFFER_OVERFLOW:
+        case DSIO_ERR_RECORD_TOO_LONG:
+            return EOVERFLOW;
+        case DSIO_ERR_UNSUPPORTED_OPERATION:
+            return ENOTSUP;
+        case DSIO_ERR_INTERNAL_ERROR:
+        default:
+            return EIO;
+    }
 }
 
 void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* message) {
@@ -1779,11 +1872,13 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
         /* VB/U: Already in type=record mode, save and restore position */
         fpos_t saved_pos;
         if (fgetpos(fp, &saved_pos) != 0) {
+            set_entry_error(entry, DSIO_ERR_FTELL_FAILED, "fgetpos() failed in calculate_vb_emulated_size");
             DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fgetpos failed) %d\n", 1);
             return -1;
         }
         
         if (fseek(fp, 0, SEEK_SET) != 0) {
+            set_entry_error(entry, DSIO_ERR_FSEEK_FAILED, "fseek() failed in calculate_vb_emulated_size");
             fsetpos(fp, &saved_pos);
             DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fseek failed) %d\n", 1);
             return -1;
@@ -1798,6 +1893,7 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
             
             /* Validate VB record length doesn't exceed buffer */
             if (rc > entry->rec_buf_size) {
+                set_entry_error(entry, DSIO_ERR_RECORD_TOO_LONG, "VB record length exceeds buffer size");
                 fprintf(stderr, "ERROR: VB record length %zu exceeds buffer size %zu\n",
                         rc, entry->rec_buf_size);
                 fsetpos(fp, &saved_pos);
