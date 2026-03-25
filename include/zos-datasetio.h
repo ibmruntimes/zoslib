@@ -398,12 +398,23 @@ typedef struct DatasetDir {
 #define GET_DUMMY_FD()   (open("/dev/null", O_WRONLY, 0))
 #define IS_DATASET(name) ((name) && ((name)[0] == '/') && ((name)[1] == '/'))
 
-#if 1
-  #define DEBUG_PRINT0(str) dsio_debug_print(str)
-  #define DEBUG_PRINT1(fmt, ...) dsio_debug_printf(fmt, __VA_ARGS__)
+/* Enable/disable logging - set to 1 to enable log_* calls */
+#ifndef ZOSLIB_DATASET_LOGGING
+  #define ZOSLIB_DATASET_LOGGING 0
+#endif
+
+#if ZOSLIB_DATASET_LOGGING
+  #define DSIO_LOG_ERROR(fmt, ...) log_error(fmt, ##__VA_ARGS__)
+  #define DSIO_LOG_WARN(fmt, ...) log_warn(fmt, ##__VA_ARGS__)
+  #define DSIO_LOG_INFO(fmt, ...) log_info(fmt, ##__VA_ARGS__)
+  #define DSIO_LOG_DEBUG(fmt, ...) log_debug(fmt, ##__VA_ARGS__)
+  #define DSIO_LOG_TRACE(fmt, ...) log_trace(fmt, ##__VA_ARGS__)
 #else
-  #define DEBUG_PRINT0(str)
-  #define DEBUG_PRINT1(fmt, ...)
+  #define DSIO_LOG_ERROR(fmt, ...) ((void)0)
+  #define DSIO_LOG_WARN(fmt, ...) ((void)0)
+  #define DSIO_LOG_INFO(fmt, ...) ((void)0)
+  #define DSIO_LOG_DEBUG(fmt, ...) ((void)0)
+  #define DSIO_LOG_TRACE(fmt, ...) ((void)0)
 #endif
 
 /* ========================================================================

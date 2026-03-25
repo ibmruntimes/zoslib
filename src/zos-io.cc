@@ -914,16 +914,16 @@ int __open_ds_file(const char *filename, int opts, ...) {
   va_start(ap, opts);
   int perms = va_arg(ap, int);
 
-  DEBUG_PRINT1("calling __open_ds_file file %s\n", filename);
+  DSIO_LOG_DEBUG("calling __open_ds_file file %s\n", filename);
   if (IS_DATASET(filename)) {
     fd = open_dataset(filename, opts, perms);
-    DEBUG_PRINT1("calling open-dataset fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling open-dataset fd %d\n", fd);
   } else {
     fd = __open_ascii(filename, opts, perms);
     if (fd >= 0) {
       ADD_FD(fd);
     }
-    DEBUG_PRINT1("calling open-file fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling open-file fd %d\n", fd);
   }
   va_end(ap);
   return fd;
@@ -1015,10 +1015,10 @@ int __mkstemp_ascii(char * tmpl) {
 int __mkstemp_ds_file(char * tmpl) {
   int fd;
   if (IS_DATASET(tmpl)) {
-    DEBUG_PRINT0("calling mkstemp-dataset\n");
+    DSIO_LOG_DEBUG("calling mkstemp-dataset\n");
     fd = mkstemp_dataset(tmpl);
   } else {
-    DEBUG_PRINT0("calling mkstemp-file\n");
+    DSIO_LOG_DEBUG("calling mkstemp-file\n");
     fd = __mkstemp_ascii(tmpl);
     if (fd >= 0) {
       ADD_FD(fd);
@@ -1029,33 +1029,33 @@ int __mkstemp_ds_file(char * tmpl) {
 
 ssize_t __write_ds_file(int fd, const void *buf, size_t count) {
   if (IS_DD(fd)) {
-    DEBUG_PRINT1("calling write-dataset fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling write-dataset fd %d\n", fd);
     return write_dataset(fd, buf, count);
   } 
   else if (IS_FD(fd)) {
-    DEBUG_PRINT1("calling write-file fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling write-file fd %d\n", fd);
     return __write_orig(fd, buf, count);
   }
 }
 
 ssize_t __read_ds_file(int fd, void *buf, size_t count) {
   if (IS_DD(fd)) {
-    DEBUG_PRINT1("calling read-dataset fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling read-dataset fd %d\n", fd);
     return read_dataset(fd, buf, count);
   } 
   else if (IS_FD(fd)) {
-    DEBUG_PRINT1("calling read-file fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling read-file fd %d\n", fd);
     return __read_orig(fd, buf, count);
   }
 }
 
 int __close(int fd) {
   if (IS_DD(fd)) {
-    DEBUG_PRINT1("calling close-dataset fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling close-dataset fd %d\n", fd);
     return close_dataset(fd);
   } 
   else if (IS_FD(fd)) {
-    DEBUG_PRINT1("calling close-file fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling close-file fd %d\n", fd);
     int ret = __close_orig(fd);
     if (ret >= 0)
       __fd_close(fd);
@@ -1065,31 +1065,31 @@ int __close(int fd) {
 
 off_t __lseek_ds_file(int fd, off_t offset, int whence) {
   if (IS_DD(fd)) {
-    DEBUG_PRINT1("calling lseek-dataset fd %d offset %d whence %d\n", fd, offset, whence);
+    DSIO_LOG_DEBUG("calling lseek-dataset fd %d offset %d whence %d\n", fd, offset, whence);
     return lseek_dataset(fd, offset, whence);
   }
   else if (IS_FD(fd)) {
-    DEBUG_PRINT1("calling lseek-file fd %d offset %d whence %d\n", fd, offset, whence);
+    DSIO_LOG_DEBUG("calling lseek-file fd %d offset %d whence %d\n", fd, offset, whence);
     return __lseek_orig(fd, offset, whence);
   }
 }
 
 int __stat_ds_file(const char *pathname, struct stat *statbuf) {
   if (IS_DATASET(pathname)) {
-	  DEBUG_PRINT1("calling stat-dataset path %s\n", pathname);
+	  DSIO_LOG_DEBUG("calling stat-dataset path %s\n", pathname);
     return stat_dataset(pathname, statbuf);
   } else {
-	  DEBUG_PRINT1("calling stat-file path %s\n", pathname);
+	  DSIO_LOG_DEBUG("calling stat-file path %s\n", pathname);
     return __stat_orig(pathname, statbuf);
   }
 }
 
 int __fstat_ds_file(int fd, struct stat *statbuf) {
   if (IS_DD(fd)) {
-	  DEBUG_PRINT1("calling fstat-dataset11111111111111111111111 fd %d\n", fd);
+	  DSIO_LOG_DEBUG("calling fstat-dataset fd %d\n", fd);
     return fstat_dataset(fd, statbuf);
   } else {
-	  DEBUG_PRINT1("calling fstat-file22222222222222222222 fd %d\n", fd);
+	  DSIO_LOG_DEBUG("calling fstat-file fd %d\n", fd);
     return __fstat_orig(fd, statbuf);
   }
 }

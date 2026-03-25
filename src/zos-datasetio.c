@@ -101,7 +101,7 @@ int mkstemp_dataset(char* tmplate)
   fd = GET_DUMMY_FD();
   ADD_DD(fd, dentry);
   
-  log_info("Created temporary dataset: %s (fd=%d)", tmplate, fd);
+
   
   return fd;
 }
@@ -134,7 +134,7 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     fopen_mode = "rb,type=record,recfm=+";
   }
 
-  DEBUG_PRINT1("Open with mode %s\n", fopen_mode);
+  DSIO_LOG_DEBUG("Open with mode %s\n", fopen_mode);
   FILE* dd = fopen(name, fopen_mode);
   if (!dd) {
     perror("dataset open failed");
@@ -189,7 +189,7 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     } else {
       reopen_mode = "rb,recfm=+";
     }
-    DEBUG_PRINT1("FB optimization: reopening with mode %s\n", reopen_mode);
+    DSIO_LOG_DEBUG("FB optimization: reopening with mode %s\n", reopen_mode);
     dd = fopen(name, reopen_mode);
     if (!dd) {
       free(dentry);
@@ -220,12 +220,12 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
 
   int fd = GET_DUMMY_FD();
   if (fd < 0) {
-    DEBUG_PRINT1("create_dataset_fd: ERROR - GET_DUMMY_FD failed, errno=%d\n", errno);
+    DSIO_LOG_DEBUG("create_dataset_fd: ERROR - GET_DUMMY_FD failed, errno=%d\n", errno);
     fclose(dd);
     free(dentry);
     return -1;
   }
-  DEBUG_PRINT1("create_dataset_fd: Assigned dummy fd %d\n", fd);
+  DSIO_LOG_DEBUG("create_dataset_fd: Assigned dummy fd %d\n", fd);
   ADD_DD(fd, dentry);
   return fd;
 }
@@ -249,22 +249,22 @@ int open_dataset(const char* name, int flags, mode_t mode)
    * which handles opening, attribute detection, and registration.
    */
   bool pds_member = strchr(name, '(');
-  DEBUG_PRINT1("open_dataset: name %s, flags %d, mode %d\n", name, flags, mode);
+  DSIO_LOG_DEBUG("open_dataset: name %s, flags %d, mode %d\n", name, flags, mode);
 
   if ((flags & O_APPEND) && (pds_member)) {
-    DEBUG_PRINT1("open_dataset: O_APPEND not supported for PDS member %s\n", name);
+    DSIO_LOG_DEBUG("open_dataset: O_APPEND not supported for PDS member %s\n", name);
     errno = EINVAL;
     return -1;
   }
 
   if (!(flags & (O_RDONLY | O_WRONLY | O_RDWR))) {
-    DEBUG_PRINT1("open_dataset: Missing access mode in flags %d\n", flags);
+    DSIO_LOG_DEBUG("open_dataset: Missing access mode in flags %d\n", flags);
     errno = EINVAL;
     return -1;
   }
 
   if ((flags & O_LARGEFILE) || (flags & O_NONBLOCK)) {
-    DEBUG_PRINT1("open_dataset: Unsupported flags in %d\n", flags);
+    DSIO_LOG_DEBUG("open_dataset: Unsupported flags in %d\n", flags);
     errno = EACCES;
     return -1;
   }
@@ -279,14 +279,14 @@ int open_dataset(const char* name, int flags, mode_t mode)
       /* No support for sequential datasets or DDNames being created through open
        * of a dataset at this point
        */
-      DEBUG_PRINT1("open_dataset: O_CREAT not supported for non-PDS member %s\n", name);
+      DSIO_LOG_DEBUG("open_dataset: O_CREAT not supported for non-PDS member %s\n", name);
       errno = EINVAL;
       return -1;
     }
   }
 
   int fd = create_dataset_fd(name, 1047, flags);
-  DEBUG_PRINT1("open_dataset: create_dataset_fd returned fd %d\n", fd);
+  DSIO_LOG_DEBUG("open_dataset: create_dataset_fd returned fd %d\n", fd);
   return fd;
 }
 
@@ -301,9 +301,9 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   DatasetEntry* dentry = (DatasetEntry*) (dd);
   FILE* fp = dentry->file_ptr;
 
-  DEBUG_PRINT1("In Write, File ccsid: %d\n", dentry->file_ccsid);
-  DEBUG_PRINT1("In Write, Program ccsid: %d\n", dentry->program_ccsid);
-  DEBUG_PRINT1("In Write, Conversion state %d\n", dentry->conversion_state);
+  DSIO_LOG_DEBUG("In Write, File ccsid: %d\n", dentry->file_ccsid);
+  DSIO_LOG_DEBUG("In Write, Program ccsid: %d\n", dentry->program_ccsid);
+  DSIO_LOG_DEBUG("In Write, Conversion state %d\n", dentry->conversion_state);
 
   const char* src = (const char*) buf;
   size_t total_written = 0;
@@ -425,7 +425,7 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
     dentry->dirty = 0;
   }
 
-  DEBUG_PRINT1("read_dataset: fd=%d count=%zu offset=%zu recfm=%s\n", 
+  DSIO_LOG_DEBUG("read_dataset: fd=%d count=%zu offset=%zu recfm=%s\n",
             fd, count, dentry->stream_offset, 
             dsio_recfm_to_string(dentry->recfm));
 
@@ -589,7 +589,7 @@ int allocate_dataset(const char* dataset)
   memcpy(mvs_style_dataset, &dataset[3], dataset_len-4);
   mvs_style_dataset[dataset_len-4] = '\0';
 
-  DEBUG_PRINT1("Allocate dataset: %s\n", mvs_style_dataset);
+  DSIO_LOG_DEBUG("Allocate dataset: %s\n", mvs_style_dataset);
 
   ip.__ddname = sysdd;
   ip.__dsname = mvs_style_dataset;
@@ -685,20 +685,20 @@ DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
  * ======================================================================== */
 
 off_t lseek_dataset(int fd, off_t offset, int whence) {
-    DEBUG_PRINT1("lseek_dataset: ENTER fd=%d, offset=%lld, whence=%d\n", fd, (long long)offset, whence);
+  DSIO_LOG_DEBUG("lseek_dataset: ENTER fd=%d, offset=%lld, whence=%d\n", fd, (long long)offset, whence);
     
     /* Validate fd */
     void* dd = GET_DD(fd);
     if (!dd) {
         errno = EBADF;
-        DEBUG_PRINT1("lseek_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
+        DSIO_LOG_DEBUG("lseek_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
         return (off_t)-1;
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
-        DEBUG_PRINT1("lseek_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
+        DSIO_LOG_DEBUG("lseek_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
         return (off_t)-1;
     }
     FILE* fp = dentry->file_ptr;
@@ -795,7 +795,7 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
         }
     }
     
-    DEBUG_PRINT1("lseek_dataset: fd=%d target=%lld final=%zu\n",
+  DSIO_LOG_DEBUG("lseek_dataset: fd=%d target=%lld final=%zu\n",
                  fd, (long long)target, dentry->stream_offset);
     
     return (off_t)dentry->stream_offset;
@@ -837,26 +837,26 @@ static int read_ispf_stats(FILE* fp, struct ispf_stats* stats) {
 #endif
 
 int fstat_dataset(int fd, struct stat *buf) {
-    DEBUG_PRINT1("fstat_dataset: ENTER fd=%d\n", fd);
+    DSIO_LOG_DEBUG("fstat_dataset: ENTER fd=%d\n", fd);
     
     /* Validate parameters */
     if (!buf) {
         errno = EINVAL;
-        DEBUG_PRINT1("fstat_dataset: ERROR - NULL buffer for fd %d\n", fd);
+        DSIO_LOG_DEBUG("fstat_dataset: ERROR - NULL buffer for fd %d\n", fd);
         return -1;
     }
     
     void* dd = GET_DD(fd);
     if (!dd) {
         errno = EBADF;
-        DEBUG_PRINT1("fstat_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
+        DSIO_LOG_DEBUG("fstat_dataset: ERROR - EBADF (NULL dd) for fd %d\n", fd);
         return -1;
     }
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
     if (!dentry->file_ptr) {
         errno = EBADF;
-        DEBUG_PRINT1("fstat_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
+        DSIO_LOG_DEBUG("fstat_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
         return -1;
     }
 
@@ -904,12 +904,13 @@ int fstat_dataset(int fd, struct stat *buf) {
     
     buf->st_size = (off_t)size;
     
-    DEBUG_PRINT1("fstat_dataset: fd=%d size=%lld\n", fd, (long long)buf->st_size);
+  DSIO_LOG_DEBUG("fstat_dataset: fd=%d size=%lld\n", fd, (long long)buf->st_size);
     
     return 0;
 }
 
 int stat_dataset(const char *pathname, struct stat *statbuf) {
+    DSIO_LOG_DEBUG("stat_dataset: ENTER path=%s\n", pathname);
     if (!pathname || !statbuf) {
         errno = EINVAL;
         return -1;
@@ -918,12 +919,14 @@ int stat_dataset(const char *pathname, struct stat *statbuf) {
     /* Open the dataset temporarily to get stats */
     int fd = open_dataset(pathname, O_RDONLY, 0);
     if (fd < 0) {
+        DSIO_LOG_DEBUG("stat_dataset: open_dataset failed for %s, errno=%d\n", pathname, errno);
         return -1;
     }
     
     int result = fstat_dataset(fd, statbuf);
     close_dataset(fd);
     
+    DSIO_LOG_DEBUG("stat_dataset: RETURN %d for %s\n", result, pathname);
     return result;
 }
 
@@ -949,7 +952,7 @@ static int read_pds_directory(const char* dataset_name, char*** member_list, int
     /* In z/OS, we can list members by opening the PDS and reading directory blocks */
     /* This is a placeholder - real implementation would use BPAM or ISPF services */
     
-    log_warn("PDS directory reading not fully implemented yet for: %s", dataset_name);
+    DSIO_LOG_WARN("PDS directory reading not fully implemented yet for: %s", dataset_name);
     
     /* For now, return empty directory */
     /* TODO: Implement actual BPAM directory reading */
@@ -967,7 +970,7 @@ static DIR* opendir_dataset(const char *name) {
     if (strchr(name, '(') != NULL) {
         /* Member specified - not a directory */
         errno = ENOTDIR;
-        log_error("opendir: Cannot open PDS member as directory: %s", name);
+        DSIO_LOG_ERROR("opendir: Cannot open PDS member as directory: %s", name);
         return NULL;
     }
     
@@ -986,21 +989,21 @@ static DIR* opendir_dataset(const char *name) {
     if (read_pds_directory(name, &dir->member_list, &dir->member_count) != 0) {
         free(dir);
         errno = EIO;
-        log_error("opendir: Failed to read PDS directory: %s", name);
+        DSIO_LOG_ERROR("opendir: Failed to read PDS directory: %s", name);
         return NULL;
     }
     
-    log_info("opendir: Opened PDS directory: %s (%d members)", name, dir->member_count);
+
     
     return (DIR*)dir;
 }
 
 DIR* opendir_zos(const char *name) {
     if (IS_DATASET(name)) {
-        DEBUG_PRINT0("calling opendir-dataset\n");
+        DSIO_LOG_DEBUG("calling opendir-dataset\n");
         return opendir_dataset(name);
     } else {
-        DEBUG_PRINT0("calling opendir-file\n");
+        DSIO_LOG_DEBUG("calling opendir-file\n");
         return opendir(name);
     }
 }
@@ -1027,7 +1030,7 @@ static struct dirent* readdir_dataset(DIR *dirp) {
     
     dir->current_index++;
     
-    log_trace("readdir: Read member: %s", entry.d_name);
+
     
     return &entry;
 }
@@ -1040,10 +1043,10 @@ struct dirent* readdir_zos(DIR *dirp) {
     /* Check if this is a dataset directory */
     DatasetDir* dir = (DatasetDir*)dirp;
     if (dir->is_dataset_dir) {
-        DEBUG_PRINT0("calling readdir-dataset\n");
+        DSIO_LOG_DEBUG("calling readdir-dataset\n");
         return readdir_dataset(dirp);
     } else {
-        DEBUG_PRINT0("calling readdir-file\n");
+        DSIO_LOG_DEBUG("calling readdir-file\n");
         return readdir(dirp);
     }
 }
@@ -1064,7 +1067,7 @@ static int closedir_dataset(DIR *dirp) {
         free(dir->member_list);
     }
     
-    log_info("closedir: Closed PDS directory: %s", dir->dataset_name);
+
     
     free(dir);
     return 0;
@@ -1078,10 +1081,10 @@ int closedir_zos(DIR *dirp) {
     /* Check if this is a dataset directory */
     DatasetDir* dir = (DatasetDir*)dirp;
     if (dir->is_dataset_dir) {
-        DEBUG_PRINT0("calling closedir-dataset\n");
+        DSIO_LOG_DEBUG("calling closedir-dataset\n");
         return closedir_dataset(dirp);
     } else {
-        DEBUG_PRINT0("calling closedir-file\n");
+        DSIO_LOG_DEBUG("calling closedir-file\n");
         return closedir(dirp);
     }
 }
@@ -1174,7 +1177,7 @@ void set_entry_error(DatasetEntry* entry, dsio_error_t error, const char* messag
         entry->error_message[DSIO_MAX_ERROR_MSG - 1] = '\0';
     }
     
-    log_error("Error %d: %s", error, entry->error_message);
+    DSIO_LOG_ERROR("Error %d: %s", error, entry->error_message);
     update_global_stats_error();
 }
 
@@ -1411,7 +1414,7 @@ void* dsio_convert_buffer(void* buf, size_t len,
         return convert_ascii_to_ebcdic(buf, len);
     }
     
-    log_warn("Unsupported CCSID conversion: %d -> %d", from_ccsid, to_ccsid);
+    DSIO_LOG_WARN("Unsupported CCSID conversion: %d -> %d", from_ccsid, to_ccsid);
     return buf;
 }
 
@@ -1703,10 +1706,7 @@ int load_metadata_from_file(DatasetEntry* entry) {
     
     entry->metadata_loaded = 1;
     
-    log_debug("Loaded metadata: RECFM=%s, LRECL=%d, BLKSIZE=%d",
-              dsio_recfm_to_string(entry->recfm),
-              entry->lrecl,
-              entry->blksize);
+
     
     return 0;
 }
@@ -1768,7 +1768,7 @@ static dsio_dsorg_t detect_dsorg_from_fldata(const fldata_t* fdata) {
 DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid) {
     DatasetEntry* entry = calloc(1, sizeof(DatasetEntry));
     if (!entry) {
-        log_error("Failed to allocate DatasetEntry");
+        DSIO_LOG_ERROR("Failed to allocate DatasetEntry");
         return NULL;
     }
     
@@ -2060,19 +2060,19 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
     size_t total_size = 0;
     size_t rec_count = 0;
     
-    DEBUG_PRINT1("calculate_vb_emulated_size: ENTER rec_buf_size=%zu\n", entry->rec_buf_size);
+    DSIO_LOG_DEBUG("calculate_vb_emulated_size: ENTER rec_buf_size=%zu\n", entry->rec_buf_size);
     
     if (!entry->is_fixed_recfm) {
         /* VB/U: Already in type=record mode, save and restore position */
         fpos_t saved_pos;
         if (fgetpos(fp, &saved_pos) != 0) {
-            DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (fgetpos failed) %d\n", 1);
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fgetpos failed) %d\n", 1);
             return -1;
         }
         
         if (fseek(fp, 0, SEEK_SET) != 0) {
             fsetpos(fp, &saved_pos);
-            DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (fseek failed) %d\n", 1);
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fseek failed) %d\n", 1);
             return -1;
         }
         
@@ -2081,7 +2081,7 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
             size_t rc = fread(entry->rec_buf, 1, entry->rec_buf_size, fp);
             if (rc == 0) break;  /* EOF */
             
-            DEBUG_PRINT1("calculate_vb_emulated_size: Read record #%zu, raw_length=%zu\n", rec_count + 1, rc);
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Read record #%zu, raw_length=%zu\n", rec_count + 1, rc);
             
             /* Validate VB record length doesn't exceed buffer */
             if (rc > entry->rec_buf_size) {
@@ -2089,7 +2089,7 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
                         rc, entry->rec_buf_size);
                 fsetpos(fp, &saved_pos);
                 errno = EFBIG;
-                DEBUG_PRINT1("calculate_vb_emulated_size: RETURN -1 (record too large) %d\n", 1);
+                DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (record too large) %d\n", 1);
                 return -1;
             }
             
@@ -2099,42 +2099,42 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
                 rc--;
             }
             
-            DEBUG_PRINT1("calculate_vb_emulated_size: Record #%zu stripped from %zu to %zu bytes\n",
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Record #%zu stripped from %zu to %zu bytes\n",
                          rec_count + 1, original_rc, rc);
             
             total_size += rc + 1;  /* +1 for newline */
             rec_count++;
             
-            DEBUG_PRINT1("calculate_vb_emulated_size: Running total=%zu bytes, rec_count=%zu\n",
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Running total=%zu bytes, rec_count=%zu\n",
                          total_size, rec_count);
         }
         
         /* Restore position */
         if (fsetpos(fp, &saved_pos) != 0) {
-            DEBUG_PRINT1("WARNING: Failed to restore file position after size calculation %d\n", 1);
+            DSIO_LOG_DEBUG("WARNING: Failed to restore file position after size calculation %d\n", 1);
         }
     }
     
-    DEBUG_PRINT1("calculate_vb_emulated_size: RETURN %zu bytes (%zu records) for %s dataset\n", 
+    DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN %zu bytes (%zu records) for %s dataset\n", 
                  total_size, rec_count, entry->is_fixed_recfm ? "FB" : "VB");
     
     return (ssize_t)total_size;
 }
 
 ssize_t dsio_get_size(int fd) {
-    DEBUG_PRINT1("dsio_get_size: ENTER fd=%d\n", fd);
+    DSIO_LOG_DEBUG("dsio_get_size: ENTER fd=%d\n", fd);
     
     void* dd = GET_DD(fd);
     if (!dd || IS_FD(fd)) {
         errno = EBADF;
-        DEBUG_PRINT1("dsio_get_size: RETURN -1 (invalid fd) %d\n", 1);
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (invalid fd) %d\n", 1);
         return -1;
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
         errno = EBADF;
-        DEBUG_PRINT1("dsio_get_size: RETURN -1 (no file_ptr) %d\n", 1);
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (no file_ptr) %d\n", 1);
         return -1;
     }
     
@@ -2142,7 +2142,7 @@ ssize_t dsio_get_size(int fd) {
     
     /* For VB datasets, check if we have cached size */
     if (!entry->is_fixed_recfm && entry->vb_size_calculated) {
-        DEBUG_PRINT1("dsio_get_size: RETURN %zu (cached VB size)\n", entry->vb_cached_size);
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached VB size)\n", entry->vb_cached_size);
         return (ssize_t)entry->vb_cached_size;
     }
     
@@ -2160,15 +2160,15 @@ ssize_t dsio_get_size(int fd) {
     long native_size = ftell(fp);
     if (native_size < 0) {
         fsetpos(fp, &pos);
-        DEBUG_PRINT1("dsio_get_size: RETURN -1 (ftell failed) %d\n", 1);
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (ftell failed) %d\n", 1);
         return -1;
     }
     
-    DEBUG_PRINT1("dsio_get_size: native_size=%ld, is_fixed_recfm=%d, reclen=%zu\n",
+    DSIO_LOG_DEBUG("dsio_get_size: native_size=%ld, is_fixed_recfm=%d, reclen=%zu\n",
                  native_size, entry->is_fixed_recfm, entry->reclen);
     
     if (fsetpos(fp, &pos) != 0) {
-        DEBUG_PRINT1("WARNING: fsetpos() failed in dsio_get_size %d\n", 1);
+        DSIO_LOG_DEBUG("WARNING: fsetpos() failed in dsio_get_size %d\n", 1);
     }
     
     /* Calculate emulated stream size based on record format */
@@ -2178,23 +2178,23 @@ ssize_t dsio_get_size(int fd) {
         /* FB: native_size is total bytes, add newlines */
         size_t num_records = native_size / entry->reclen;
         emulated_size = (ssize_t)(native_size + num_records);
-        DEBUG_PRINT1("dsio_get_size: FB calculation - native=%ld, reclen=%zu, num_records=%zu, emulated=%zd\n",
+        DSIO_LOG_DEBUG("dsio_get_size: FB calculation - native=%ld, reclen=%zu, num_records=%zu, emulated=%zd\n",
                      native_size, entry->reclen, num_records, emulated_size);
     } else {
         /* VB/U: Calculate by reading all records (one-time cost) */
-        DEBUG_PRINT1("dsio_get_size: Calculating VB emulated size...%d\n", 1);
+        DSIO_LOG_DEBUG("dsio_get_size: Calculating VB emulated size...%d\n", 1);
         emulated_size = calculate_vb_emulated_size(fp, entry);
         if (emulated_size >= 0) {
             /* Cache the result for future calls */
             entry->vb_cached_size = (size_t)emulated_size;
             entry->vb_size_calculated = 1;
-            DEBUG_PRINT1("dsio_get_size: VB size calculated and cached: %zd\n", emulated_size);
+            DSIO_LOG_DEBUG("dsio_get_size: VB size calculated and cached: %zd\n", emulated_size);
         } else {
-            DEBUG_PRINT1("dsio_get_size: VB size calculation failed %d\n", 1);
+            DSIO_LOG_DEBUG("dsio_get_size: VB size calculation failed %d\n", 1);
         }
     }
     
-    DEBUG_PRINT1("dsio_get_size: RETURN %zd (fd=%d, native=%ld, emulated=%zd)\n", 
+    DSIO_LOG_DEBUG("dsio_get_size: RETURN %zd (fd=%d, native=%ld, emulated=%zd)\n", 
                  emulated_size, fd, native_size, emulated_size);
     
     return emulated_size;
@@ -2234,8 +2234,7 @@ int dsio_set_ccsid_config(int fd, const dsio_ccsid_config_t* config) {
     entry->program_ccsid = config->target_ccsid;
     entry->conversion_state = config->conversion_enabled ? 1 : 0;
     
-    log_debug("Set CCSID config: source=%d, target=%d, enabled=%d",
-              config->source_ccsid, config->target_ccsid, config->conversion_enabled);
+
     
     return 0;
 }
