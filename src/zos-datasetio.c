@@ -159,15 +159,17 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
    */
   fldata_t fld;
   if (fldata(dd, NULL, &fld) == 0) {
-    dentry->recfm = fld.__recfmF ? 2 /* F */ :
-                    fld.__recfmV ? 1 /* V */ :
-                    fld.__recfmU ? 3 /* U */ : 0;
+    dentry->recfm = fld.__recfmF ? (fld.__recfmB ? DSIO_RECFM_FB : DSIO_RECFM_F) :
+                    fld.__recfmV ? (fld.__recfmB ? DSIO_RECFM_VB : DSIO_RECFM_V) :
+                    fld.__recfmU ? DSIO_RECFM_U : DSIO_RECFM_UNKNOWN;
     dentry->reclen = fld.__maxreclen > 0 ? fld.__maxreclen : 80;
     dentry->blksize = fld.__blksize > 0 ? fld.__blksize : dentry->reclen;
     dentry->is_fixed_recfm = (fld.__recfmF && !fld.__recfmV && !fld.__recfmU) ? 1 : 0;
+    DSIO_LOG_DEBUG("open_dataset: fldata attributes - recfm=%s, reclen=%zu, blksize=%zu, is_fixed=%d\n",
+                  dsio_recfm_to_string(dentry->recfm), dentry->reclen, dentry->blksize, dentry->is_fixed_recfm);
   } else {
     /* Default to FB80 if fldata fails */
-    dentry->recfm = 2;
+    dentry->recfm = DSIO_RECFM_FB;
     dentry->reclen = 80;
     dentry->blksize = 80;
     dentry->is_fixed_recfm = 1;
@@ -493,9 +495,14 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
     }
 
     /* Slow-path: Read next block/record from dataset */
-    if (dentry->eof_reached) break;
+    if (dentry->eof_reached) {
+      if (dentry->newline_pending) continue;
+      break;
+    }
 
     size_t rc = fread(dentry->rec_buf, 1, dentry->rec_buf_size, fp);
+    DSIO_LOG_DEBUG("read_dataset: fread returned %zu, buf_size=%zu, feof=%d, ferror=%d\n", 
+                  rc, dentry->rec_buf_size, feof(fp), ferror(fp));
     if (rc == 0) {
       if (ferror(fp)) {
         set_entry_error(dentry, DSIO_ERR_READ_FAILED, "Failed to read from dataset");
@@ -738,8 +745,9 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
     
     DatasetEntry* dentry = (DatasetEntry*) dd;
     
-    /* Clear any previous errors */
+    /* Clear any previous errors and EOF state */
     dentry->last_error = DSIO_SUCCESS;
+    dentry->eof_reached = 0;
     if (!dentry->file_ptr) {
         errno = EBADF;
         DSIO_LOG_DEBUG("lseek_dataset: ERROR - EBADF (NULL file_ptr) for fd %d\n", fd);
@@ -798,27 +806,23 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
     /* Handle forward seek */
     if (dentry->is_fixed_recfm && dentry->reclen > 0) {
         /* FB: Optimize by calculating native position directly */
-        size_t delta = (size_t)target - dentry->stream_offset;
-        size_t records_to_skip = delta / (dentry->reclen + 1);
-        size_t byte_in_record = delta % (dentry->reclen + 1);
+        size_t total_records = (size_t)target / (dentry->reclen + 1);
+        size_t byte_in_record = (size_t)target % (dentry->reclen + 1);
         
         /* Handle seeking to newline position */
         if (byte_in_record == dentry->reclen) {
             dentry->newline_pending = 1;
             byte_in_record = 0;
-            records_to_skip++;
+            total_records++;
+        } else {
+            dentry->newline_pending = 0;
         }
         
-        /* Calculate native file position */
-        long current_native = ftell(fp);
-        if (current_native < 0) {
-            set_entry_error(dentry, DSIO_ERR_FTELL_FAILED, "ftell() failed during lseek");
-            errno = map_dsio_error_to_errno(DSIO_ERR_FTELL_FAILED);
-            return (off_t)-1;
-        }
+        long target_native = (long)(total_records * dentry->reclen + byte_in_record);
         
-        long target_native = current_native + (records_to_skip * dentry->reclen) + byte_in_record;
-        
+        DSIO_LOG_DEBUG("lseek_dataset: FB target=%zu, records=%zu, byte=%zu, native=%ld, newline=%d\n",
+                      (size_t)target, total_records, byte_in_record, target_native, dentry->newline_pending);
+
         if (fseek(fp, target_native, SEEK_SET) != 0) {
             set_entry_error(dentry, DSIO_ERR_FSEEK_FAILED, "fseek() failed during lseek");
             errno = map_dsio_error_to_errno(DSIO_ERR_FSEEK_FAILED);
@@ -1345,8 +1349,19 @@ void dsio_set_log_stream(FILE* stream) {
 
 void dsio_enable_debug(int enable) {
     g_debug_enabled = enable;
-    if (enable && g_log_level < DSIO_LOG_DEBUG) {
-        g_log_level = DSIO_LOG_DEBUG;
+    if (enable) {
+        if (g_log_level < DSIO_LOG_DEBUG) {
+            g_log_level = DSIO_LOG_DEBUG;
+        }
+        /* Auto-create temp log file if not already set */
+        if (!g_log_stream) {
+            char logpath[256];
+            snprintf(logpath, sizeof(logpath), "/tmp/zoslib_dsio_%d.log", getpid());
+            g_log_stream = fopen(logpath, "a");
+            if (g_log_stream) {
+                fprintf(stderr, "DSIO: Logging to %s\n", logpath);
+            }
+        }
     }
 }
 
@@ -1949,9 +1964,9 @@ ssize_t dsio_get_size(int fd) {
     
     FILE* fp = entry->file_ptr;
     
-    /* For VB datasets, check if we have cached size */
-    if (!entry->is_fixed_recfm && entry->vb_size_calculated) {
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached VB size)\n", entry->vb_cached_size);
+    /* Check if we already have the cached size */
+    if (entry->vb_size_calculated) {
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached size)\n", entry->vb_cached_size);
         return (ssize_t)entry->vb_cached_size;
     }
     
@@ -1989,6 +2004,10 @@ ssize_t dsio_get_size(int fd) {
         emulated_size = (ssize_t)(native_size + num_records);
         DSIO_LOG_DEBUG("dsio_get_size: FB calculation - native=%ld, reclen=%zu, num_records=%zu, emulated=%zd\n",
                      native_size, entry->reclen, num_records, emulated_size);
+        
+        /* Cache the result */
+        entry->vb_cached_size = (size_t)emulated_size;
+        entry->vb_size_calculated = 1;
     } else {
         /* VB/U: Calculate by reading all records (one-time cost) */
         DSIO_LOG_DEBUG("dsio_get_size: Calculating VB emulated size...%d\n", 1);

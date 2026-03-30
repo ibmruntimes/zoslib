@@ -360,7 +360,7 @@ typedef struct DatasetEntry {
 
 /* Enable/disable logging - set to 1 to enable log_* calls */
 #ifndef ZOSLIB_DATASET_LOGGING
-  #define ZOSLIB_DATASET_LOGGING 0
+  #define ZOSLIB_DATASET_LOGGING 1
 #endif
 
 #if ZOSLIB_DATASET_LOGGING
