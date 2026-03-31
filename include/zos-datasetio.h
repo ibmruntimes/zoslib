@@ -118,8 +118,8 @@ typedef enum {
 typedef struct {
     dsio_recfm_t recfm;           /* Record format */
     dsio_dsorg_t dsorg;           /* Dataset organization */
-    uint16_t lrecl;               /* Logical record length */
-    uint32_t blksize;             /* Block size */
+    size_t reclen;                /* Logical record length */
+    size_t blksize;               /* Block size */
     uint16_t file_ccsid;          /* File CCSID */
     uint16_t program_ccsid;       /* Program CCSID */
     char member_name[9];          /* Member name (if PDS/PDSE) */
@@ -134,7 +134,7 @@ int dsio_get_metadata(int fd, dsio_metadata_t* metadata);
 
 /* Get specific metadata fields */
 int dsio_get_recfm(int fd, dsio_recfm_t* recfm);
-int dsio_get_lrecl(int fd, uint16_t* lrecl);
+int dsio_get_lrecl(int fd, size_t* reclen);
 int dsio_get_dsorg(int fd, dsio_dsorg_t* dsorg);
 int dsio_get_ccsid(int fd, uint16_t* file_ccsid, uint16_t* program_ccsid);
 int dsio_get_member_name(int fd, char* member, size_t len);
@@ -310,7 +310,6 @@ typedef struct DatasetEntry {
     /* Original fields */
     FILE* file_ptr;
     unsigned short file_ccsid;
-    unsigned short process_ccsid;
     unsigned short program_ccsid;
     unsigned char conversion_state;
     
@@ -321,8 +320,8 @@ typedef struct DatasetEntry {
     /* Dataset metadata */
     dsio_recfm_t recfm;
     dsio_dsorg_t dsorg;
-    uint16_t lrecl;
-    uint32_t blksize;
+    size_t reclen;
+    size_t blksize;
     
     /* Dataset name components */
     char full_path[DSIO_MAX_DATASET_NAME + 1];
@@ -332,9 +331,6 @@ typedef struct DatasetEntry {
     int is_pds_member;
     int readonly;
     
-    /* State flags */
-    int metadata_loaded;
-    
     /* Record buffer for stream emulation */
     char*   rec_buf;          /* internal record I/O buffer */
     size_t  rec_buf_size;     /* allocated size (= blksize or reclen) */
@@ -342,15 +338,14 @@ typedef struct DatasetEntry {
     size_t  rec_buf_pos;      /* current read position within buffer */
     size_t  stream_offset;    /* virtual byte offset for lseek */
     int     newline_pending;  /* 1 if we need to emit \n before next record */
-    size_t  reclen;           /* logical record length from fldata */
     int     is_fixed_recfm;   /* 1 if FB/FBS - use binary I/O, not type=record */
     int     open_flags;       /* original O_RDONLY/O_WRONLY/O_RDWR flags */
     int     dirty;            /* 1 if buffer has pending writes */
     int     eof_reached;      /* 1 if we reached physical EOF */
     
-    /* VB size caching */
-    int     vb_size_calculated; /* 1 if VB size has been calculated */
-    size_t  vb_cached_size;     /* Cached emulated size for VB datasets */
+    /* Size caching */
+    int     size_calculated;  /* 1 if emulated size has been calculated */
+    size_t  cached_size;      /* Cached emulated size */
 } DatasetEntry;
 
 
@@ -400,9 +395,6 @@ DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid);
 /* Free dataset entry */
 void free_entry(DatasetEntry* entry);
 
-/* Load metadata from FILE* using fldata() */
-int load_metadata_from_file(DatasetEntry* entry);
-
 /* Parse dataset name and extract components */
 int parse_and_store_name(DatasetEntry* entry, const char* dataset_name);
 
@@ -416,11 +408,6 @@ void log_warn(const char* format, ...);
 void log_info(const char* format, ...);
 void log_debug(const char* format, ...);
 void log_trace(const char* format, ...);
-
-void dsio_debug_print(const char* str);
-void dsio_debug_printf(const char* format, ...);
-
-/* CCSID conversion helpers */
 void* convert_ebcdic_to_ascii(void* buf, size_t len);
 void* convert_ascii_to_ebcdic(void* buf, size_t len);
 void* convert_buffer_ccsid(void* buf, size_t len, uint16_t from, uint16_t to);
@@ -432,7 +419,6 @@ int extract_qualifiers(const char* name, char* hlq, char* llq, size_t len);
 
 /* Utility macros */
 #define ENTRY_TO(entry) ((DatasetEntry*)(entry))
-#define IS_ENTRY(entry) ((entry) && ((DatasetEntry*)(entry))->metadata_loaded >= 0)
 
 /* Error message templates */
 #define ERR_MSG_INVALID_NAME "Invalid dataset name: %s"

@@ -29,10 +29,6 @@ static dsio_dsorg_t detect_dsorg_from_fldata(const fldata_t* fdata);
 
 static const char DATASET_CHAR[] = "ABCDEFGHIJKLMNOPQRSTUVWYZ$#@";
 
-//TODO: add to header
-void* convertBuffer(void* buf, unsigned short from_ccsid, unsigned short to_ccsid);
-DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid);
-
 #define DATASET_CHAR_LEN (sizeof(DATASET_CHAR)-1)
 
 static char* generate_name(char* tmplate)
@@ -672,25 +668,6 @@ int delete_dataset(const char* dataset)
   return rc;
 }
 
-void* convertBuffer(void* buf, unsigned short from_ccsid, unsigned short to_ccsid)
-{
-  if (from_ccsid == 1047 && to_ccsid == 819) {
-    __e2a_s(buf);
-  } else if (from_ccsid == 819 && to_ccsid == 1047) {
-    __a2e_s(buf);
-  } else {
-    fprintf(stderr, "from_ccsid: %d to to_ccsid: %d not supported\n", from_ccsid, to_ccsid);
-  }
-  return buf;
-}
-
-int zos_fcntl(int fd, int cmd, struct f_cnvrt* req);
-
-int fcntl_zos(int fd, int cmd, struct f_cnvrt* req)
-{
-  return zos_fcntl(fd, cmd, req);
-}
-
 int zos_fcntl(int fd, int cmd, struct f_cnvrt* req)
 {
   //TODO: Only has support for F_CONTROL_CVT for now
@@ -715,16 +692,6 @@ int zos_fcntl(int fd, int cmd, struct f_cnvrt* req)
     }
   }
   return 0;
-}
-
-DatasetEntry* createDatasetEntry(FILE* dd, unsigned short file_ccsid)
-{
-  DatasetEntry* dentry = malloc(sizeof(DatasetEntry));
-  dentry->file_ptr = dd;
-  dentry->file_ccsid = file_ccsid;
-  dentry->program_ccsid = 819;
-  dentry->conversion_state = SETCVTON;
-  return dentry;
 }
 
 
@@ -1395,44 +1362,6 @@ void dsio_log(dsio_log_level_t level, const char* format, ...) {
 
 extern void __console(const void *p_in, int len_i);
 
-void dsio_debug_print(const char* str) {
-    if (g_debug_enabled <= 0) return;
-    
-    if (g_log_stream == NULL) {
-        g_log_stream = fopen("zoslib.debug.log", "a");
-        if (g_log_stream == NULL) {
-            __console(str, strlen(str));
-            return;
-        }
-    }
-    if (g_log_stream) {
-        fprintf(g_log_stream, "%s", str);
-        fflush(g_log_stream);
-    }
-}
-
-void dsio_debug_printf(const char* format, ...) {
-    if (g_debug_enabled <= 0) return;
-
-    char buf[1024];
-    va_list args;
-    va_start(args, format);
-    int len = vsnprintf(buf, sizeof(buf), format, args);
-    va_end(args);
-
-    if (g_log_stream == NULL) {
-        g_log_stream = fopen("zoslib.debug.log", "a");
-        if (g_log_stream == NULL) {
-            __console(buf, len);
-            return;
-        }
-    }
-    if (g_log_stream) {
-        fprintf(g_log_stream, "%s", buf);
-        fflush(g_log_stream);
-    }
-}
-
 void log_error(const char* format, ...) {
     if (DSIO_LOG_ERROR > g_log_level) return;
     
@@ -1508,37 +1437,6 @@ void log_trace(const char* format, ...) {
  * This would use fldata() to get actual dataset attributes
  * ======================================================================== */
 
-int load_metadata_from_file(DatasetEntry* entry) {
-    if (!entry || !entry->file_ptr) {
-        return -1;
-    }
-    
-    /* Use fldata() to get file information */
-    fldata_t fdata;
-    if (fldata(entry->file_ptr, NULL, &fdata) != 0) {
-        set_entry_error(entry, DSIO_ERR_FLDATA_FAILED, "fldata() failed");
-        return -1;
-    }
-    
-    /* Extract metadata from fldata */
-    entry->recfm = detect_recfm_from_fldata(&fdata);
-    entry->dsorg = detect_dsorg_from_fldata(&fdata);
-    entry->lrecl = fdata.__maxreclen;
-    entry->blksize = fdata.__blksize;
-    
-    entry->metadata_loaded = 1;
-    
-
-    
-    return 0;
-}
-
-/* Additional functions would be implemented here... */
-/* This is a partial implementation showing the key patterns */
-
-// Made with Bob
-
-
 /* ========================================================================
  * HELPER FUNCTIONS IMPLEMENTATION
  * ======================================================================== */
@@ -1599,11 +1497,16 @@ DatasetEntry* create_entry(FILE* fp, unsigned short file_ccsid) {
     entry->program_ccsid = 819; /* ASCII */
     entry->conversion_state = 1; /* SETCVTON */
     entry->last_error = DSIO_SUCCESS;
-    entry->metadata_loaded = 0;
     
     /* Try to load metadata */
     if (fp) {
-        load_metadata_from_file(entry);
+        fldata_t fdata;
+        if (fldata(fp, NULL, &fdata) == 0) {
+            entry->recfm = detect_recfm_from_fldata(&fdata);
+            entry->dsorg = detect_dsorg_from_fldata(&fdata);
+            entry->reclen = fdata.__maxreclen;
+            entry->blksize = fdata.__blksize;
+        }
     }
     
     return entry;
@@ -1662,17 +1565,10 @@ int dsio_get_metadata(int fd, dsio_metadata_t* metadata) {
     
     DatasetEntry* entry = ENTRY_TO(dd);
     
-    /* Ensure metadata is loaded */
-    if (!entry->metadata_loaded) {
-        if (load_metadata_from_file(entry) != 0) {
-            return -1;
-        }
-    }
-    
     /* Copy metadata */
     metadata->recfm = entry->recfm;
     metadata->dsorg = entry->dsorg;
-    metadata->lrecl = entry->lrecl;
+    metadata->reclen = entry->reclen;
     metadata->blksize = entry->blksize;
     metadata->file_ccsid = entry->file_ccsid;
     metadata->program_ccsid = entry->program_ccsid;
@@ -1695,17 +1591,11 @@ int dsio_get_recfm(int fd, dsio_recfm_t* recfm) {
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
-    if (!entry->metadata_loaded) {
-        if (load_metadata_from_file(entry) != 0) {
-            return -1;
-        }
-    }
-    
     *recfm = entry->recfm;
     return 0;
 }
 
-int dsio_get_lrecl(int fd, uint16_t* lrecl) {
+int dsio_get_lrecl(int fd, size_t* lrecl) {
     if (!lrecl) return -1;
     
     void* dd = GET_DD(fd);
@@ -1714,13 +1604,7 @@ int dsio_get_lrecl(int fd, uint16_t* lrecl) {
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
-    if (!entry->metadata_loaded) {
-        if (load_metadata_from_file(entry) != 0) {
-            return -1;
-        }
-    }
-    
-    *lrecl = entry->lrecl;
+    *lrecl = entry->reclen;
     return 0;
 }
 
@@ -1733,12 +1617,6 @@ int dsio_get_dsorg(int fd, dsio_dsorg_t* dsorg) {
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
-    if (!entry->metadata_loaded) {
-        if (load_metadata_from_file(entry) != 0) {
-            return -1;
-        }
-    }
-    
     *dsorg = entry->dsorg;
     return 0;
 }
@@ -1859,7 +1737,7 @@ int dsio_is_readonly(int fd) {
  * ======================================================================== */
 
 int dsio_get_max_reclen(int fd) {
-    uint16_t lrecl;
+    size_t lrecl;
     if (dsio_get_lrecl(fd, &lrecl) != 0) {
         return -1;
     }
@@ -1965,9 +1843,9 @@ ssize_t dsio_get_size(int fd) {
     FILE* fp = entry->file_ptr;
     
     /* Check if we already have the cached size */
-    if (entry->vb_size_calculated) {
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached size)\n", entry->vb_cached_size);
-        return (ssize_t)entry->vb_cached_size;
+    if (entry->size_calculated) {
+        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached size)\n", entry->cached_size);
+        return (ssize_t)entry->cached_size;
     }
     
     /* Calculate emulated stream size from native file size */
@@ -2006,16 +1884,16 @@ ssize_t dsio_get_size(int fd) {
                      native_size, entry->reclen, num_records, emulated_size);
         
         /* Cache the result */
-        entry->vb_cached_size = (size_t)emulated_size;
-        entry->vb_size_calculated = 1;
+        entry->cached_size = (size_t)emulated_size;
+        entry->size_calculated = 1;
     } else {
         /* VB/U: Calculate by reading all records (one-time cost) */
         DSIO_LOG_DEBUG("dsio_get_size: Calculating VB emulated size...%d\n", 1);
         emulated_size = calculate_vb_emulated_size(fp, entry);
         if (emulated_size >= 0) {
             /* Cache the result for future calls */
-            entry->vb_cached_size = (size_t)emulated_size;
-            entry->vb_size_calculated = 1;
+            entry->cached_size = (size_t)emulated_size;
+            entry->size_calculated = 1;
             DSIO_LOG_DEBUG("dsio_get_size: VB size calculated and cached: %zd\n", emulated_size);
         } else {
             DSIO_LOG_DEBUG("dsio_get_size: VB size calculation failed %d\n", 1);

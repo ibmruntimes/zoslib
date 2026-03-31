@@ -1032,10 +1032,8 @@ ssize_t __write_ds_file(int fd, const void *buf, size_t count) {
     DSIO_LOG_DEBUG("calling write-dataset fd %d\n", fd);
     return write_dataset(fd, buf, count);
   } 
-  else if (IS_FD(fd)) {
-    DSIO_LOG_DEBUG("calling write-file fd %d\n", fd);
-    return __write_orig(fd, buf, count);
-  }
+  DSIO_LOG_DEBUG("calling write-file fd %d\n", fd);
+  return __write_orig(fd, buf, count);
 }
 
 ssize_t __read_ds_file(int fd, void *buf, size_t count) {
@@ -1043,10 +1041,8 @@ ssize_t __read_ds_file(int fd, void *buf, size_t count) {
     DSIO_LOG_DEBUG("calling read-dataset fd %d\n", fd);
     return read_dataset(fd, buf, count);
   } 
-  else if (IS_FD(fd)) {
-    DSIO_LOG_DEBUG("calling read-file fd %d\n", fd);
-    return __read_orig(fd, buf, count);
-  }
+  DSIO_LOG_DEBUG("calling read-file fd %d\n", fd);
+  return __read_orig(fd, buf, count);
 }
 
 int __close(int fd) {
@@ -1054,13 +1050,11 @@ int __close(int fd) {
     DSIO_LOG_DEBUG("calling close-dataset fd %d\n", fd);
     return close_dataset(fd);
   } 
-  else if (IS_FD(fd)) {
-    DSIO_LOG_DEBUG("calling close-file fd %d\n", fd);
-    int ret = __close_orig(fd);
-    if (ret >= 0)
-      __fd_close(fd);
-    return ret;
-  }
+  DSIO_LOG_DEBUG("calling close-file fd %d\n", fd);
+  int ret = __close_orig(fd);
+  if (ret >= 0)
+    __fd_close(fd);
+  return ret;
 }
 
 off_t __lseek_ds_file(int fd, off_t offset, int whence) {
@@ -1068,10 +1062,8 @@ off_t __lseek_ds_file(int fd, off_t offset, int whence) {
     DSIO_LOG_DEBUG("calling lseek-dataset fd %d offset %d whence %d\n", fd, offset, whence);
     return lseek_dataset(fd, offset, whence);
   }
-  else if (IS_FD(fd)) {
-    DSIO_LOG_DEBUG("calling lseek-file fd %d offset %d whence %d\n", fd, offset, whence);
-    return __lseek_orig(fd, offset, whence);
-  }
+  DSIO_LOG_DEBUG("calling lseek-file fd %d offset %d whence %d\n", fd, offset, whence);
+  return __lseek_orig(fd, offset, whence);
 }
 
 int __stat_ds_file(const char *pathname, struct stat *statbuf) {
