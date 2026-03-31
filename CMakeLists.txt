@@ -55,6 +55,11 @@ if(ZOSLIB_QUICK_STARTUP)
        ZOSLIB_QUICK_STARTUP)
 endif()
 
+if(ZOSLIB_ENABLE_DATASETIO)
+  list(APPEND zoslib_defines
+       ZOSLIB_ENABLE_DATASETIO=1)
+endif()
+
 if(DEFINED ENV{BUILD_VERSION})
   list(APPEND zoslib_defines BUILD_VERSION="$ENV{BUILD_VERSION}")
 endif()

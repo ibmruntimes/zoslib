@@ -13,6 +13,7 @@ $0
 Builds zoslib, uses xlclang/xlclang++ by default, unless CC is set.
 Options:
 -c    Clean build
+-d    Enable dataset I/O support (default is Disabled)
 -h    Display this message
 -r    Release build (default is Debug)
 -t    Build and run tests
@@ -26,6 +27,7 @@ BLD_TYPE="Debug"
 IS_CLEAN=0
 RUN_TESTS="OFF"
 BLD_TESTS=
+BLD_DSIO=
 
 if test -z "$CC"; then
   export CC=xlclang && export CXX=xlclang++ && export LINK=xlclang++
@@ -33,9 +35,12 @@ if test -z "$CC"; then
 fi
 
 nargs=0
-while getopts "chrt" o; do
+while getopts "cdhrt" o; do
   case "${o}" in
     c) IS_CLEAN=1
+       ((nargs++))
+       ;;
+    d) BLD_DSIO="-DZOSLIB_ENABLE_DATASETIO=ON"
        ((nargs++))
        ;;
     r) BLD_TYPE="Release"
@@ -65,7 +70,7 @@ pushd build
 export MAKEFLAGS='-j4'
 
 if((IS_CLEAN==1)) || ! test -s CMakeCache.txt; then
-  cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} ${BLD_TESTS} -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DCMAKE_INSTALL_PREFIX=${SCRIPT_DIR}/install
+  cmake .. -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_ASM_COMPILER=${CC} ${BLD_TESTS} ${BLD_DSIO} -DCMAKE_BUILD_TYPE=${BLD_TYPE} -DCMAKE_INSTALL_PREFIX=${SCRIPT_DIR}/install
 fi
 cmake --build . --target install
 
