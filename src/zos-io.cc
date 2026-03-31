@@ -38,6 +38,12 @@ bool __gLogMemoryAll = false;
 bool __gLogMemoryWarning = false;
 bool __gLogMemoryShowPid = true;
 FILE *fp_memprintf = nullptr;
+
+#if ZOSLIB_ENABLE_DATASETIO
+static bool is_dataset_supported(const char* name) {
+  return IS_DATASET(name) && __get_instance()->get_ds_support_mode() != DS_SUPPORT_NO;
+}
+#endif
 }
 
 #ifdef __cplusplus
@@ -915,10 +921,13 @@ int __open_ds_file(const char *filename, int opts, ...) {
   int perms = va_arg(ap, int);
 
   DSIO_LOG_DEBUG("calling __open_ds_file file %s\n", filename);
-  if (IS_DATASET(filename)) {
+#if ZOSLIB_ENABLE_DATASETIO
+  if (is_dataset_supported(filename)) {
     fd = open_dataset(filename, opts, perms);
     DSIO_LOG_DEBUG("calling open-dataset fd %d\n", fd);
-  } else {
+  } else 
+#endif
+  {
     fd = __open_ascii(filename, opts, perms);
     if (fd >= 0) {
       ADD_FD(fd);
@@ -973,10 +982,13 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
 }
 
 FILE *__fopen_ds_file(const char *filename, const char *mode) {
-  if (IS_DATASET(filename)) {
+#if ZOSLIB_ENABLE_DATASETIO
+  if (is_dataset_supported(filename)) {
     return __fopen_orig(filename, mode);
   }
-  else {
+  else 
+#endif
+  {
     return __fopen_ascii(filename, mode);
   }
 }
@@ -1014,10 +1026,13 @@ int __mkstemp_ascii(char * tmpl) {
 
 int __mkstemp_ds_file(char * tmpl) {
   int fd;
-  if (IS_DATASET(tmpl)) {
+#if ZOSLIB_ENABLE_DATASETIO
+  if (is_dataset_supported(tmpl)) {
     DSIO_LOG_DEBUG("calling mkstemp-dataset\n");
     fd = mkstemp_dataset(tmpl);
-  } else {
+  } else 
+#endif
+  {
     DSIO_LOG_DEBUG("calling mkstemp-file\n");
     fd = __mkstemp_ascii(tmpl);
     if (fd >= 0) {
@@ -1028,28 +1043,34 @@ int __mkstemp_ds_file(char * tmpl) {
 }
 
 ssize_t __write_ds_file(int fd, const void *buf, size_t count) {
+#if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
     DSIO_LOG_DEBUG("calling write-dataset fd %d\n", fd);
     return write_dataset(fd, buf, count);
   } 
+#endif
   DSIO_LOG_DEBUG("calling write-file fd %d\n", fd);
   return __write_orig(fd, buf, count);
 }
 
 ssize_t __read_ds_file(int fd, void *buf, size_t count) {
+#if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
     DSIO_LOG_DEBUG("calling read-dataset fd %d\n", fd);
     return read_dataset(fd, buf, count);
   } 
+#endif
   DSIO_LOG_DEBUG("calling read-file fd %d\n", fd);
   return __read_orig(fd, buf, count);
 }
 
 int __close(int fd) {
+#if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
     DSIO_LOG_DEBUG("calling close-dataset fd %d\n", fd);
     return close_dataset(fd);
   } 
+#endif
   DSIO_LOG_DEBUG("calling close-file fd %d\n", fd);
   int ret = __close_orig(fd);
   if (ret >= 0)
@@ -1058,29 +1079,37 @@ int __close(int fd) {
 }
 
 off_t __lseek_ds_file(int fd, off_t offset, int whence) {
+#if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
     DSIO_LOG_DEBUG("calling lseek-dataset fd %d offset %d whence %d\n", fd, offset, whence);
     return lseek_dataset(fd, offset, whence);
   }
+#endif
   DSIO_LOG_DEBUG("calling lseek-file fd %d offset %d whence %d\n", fd, offset, whence);
   return __lseek_orig(fd, offset, whence);
 }
 
 int __stat_ds_file(const char *pathname, struct stat *statbuf) {
-  if (IS_DATASET(pathname)) {
+#if ZOSLIB_ENABLE_DATASETIO
+  if (is_dataset_supported(pathname)) {
 	  DSIO_LOG_DEBUG("calling stat-dataset path %s\n", pathname);
     return stat_dataset(pathname, statbuf);
-  } else {
+  } else 
+#endif
+  {
 	  DSIO_LOG_DEBUG("calling stat-file path %s\n", pathname);
     return __stat_orig(pathname, statbuf);
   }
 }
 
 int __fstat_ds_file(int fd, struct stat *statbuf) {
+#if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
 	  DSIO_LOG_DEBUG("calling fstat-dataset fd %d\n", fd);
     return fstat_dataset(fd, statbuf);
-  } else {
+  } else 
+#endif
+  {
 	  DSIO_LOG_DEBUG("calling fstat-file fd %d\n", fd);
     return __fstat_orig(fd, statbuf);
   }

@@ -20,6 +20,8 @@
 
 #include "zos-datasetio.h"
 
+#if ZOSLIB_ENABLE_DATASETIO
+
 void* descriptor_table[MAX_FDS] = { 0 };
 
 static dsio_recfm_t detect_recfm_from_fldata(const fldata_t* fdata);
@@ -924,7 +926,6 @@ int stat_dataset(const char *pathname, struct stat *statbuf) {
 }
 
 
-// Made with Bob - Phase 1 System Calls
  
 
 /* Global state */
@@ -1963,6 +1964,5 @@ int dsio_get_ccsid_config(int fd, dsio_ccsid_config_t* config) {
     return 0;
 }
 
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 
-
-// Made with Bob

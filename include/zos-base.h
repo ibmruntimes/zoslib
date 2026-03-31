@@ -66,6 +66,7 @@ extern "builtin" void *_gdsa();
 #define MEMORY_USAGE_LOG_FILE_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_FILE"
 #define MEMORY_USAGE_LOG_LEVEL_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_LEVEL"
 #define MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT "__MEMORY_USAGE_LOG_INC"
+#define DATASET_SUPPORT_ENVAR_DEFAULT "__DATASET_SUPPORT"
 
 typedef enum {
   __NO_TAG_READ_DEFAULT = 0,
@@ -73,6 +74,11 @@ typedef enum {
   __NO_TAG_READ_V6 = 2,
   __NO_TAG_READ_STRICT = 3
 } notagread_t;
+
+typedef enum {
+  DS_SUPPORT_YES = 0,
+  DS_SUPPORT_NO = 1
+} ds_support_mode_t;
 
 struct timespec;
 
@@ -506,6 +512,10 @@ typedef struct __Z_EXPORT zoslib_config {
    * allocated, in bytes, after which logging occurs.
    */
   const char *MEMORY_USAGE_LOG_INC_ENVAR = MEMORY_USAGE_LOG_INC_ENVAR_DEFAULT;
+  /**
+   * String to indicate the envar to be used to toggle the dataset support mode.
+   */
+  const char *DATASET_SUPPORT_ENVAR = DATASET_SUPPORT_ENVAR_DEFAULT;
 
 } zoslib_config_t;
 
@@ -553,6 +563,15 @@ typedef struct __Z_EXPORT zoslib_config {
    * to display when memory is allocated or freed.
    */
   const char *MEMORY_USAGE_LOG_LEVEL_ENVAR;
+  /**
+   * String to indicate the envar to be used to specify the increase in memory
+   * allocated, in bytes, after which logging occurs.
+   */
+  const char *MEMORY_USAGE_LOG_INC_ENVAR;
+  /**
+   * String to indicate the envar to be used to toggle the dataset support mode.
+   */
+  const char *DATASET_SUPPORT_ENVAR;
 } zoslib_config_t;
 
 /**
@@ -667,6 +686,7 @@ struct zoslibEnvar {
 class __zinit {
   int mode;
   int cvstate;
+  ds_support_mode_t ds_support_mode;
   std::terminate_handler _th;
 
 public:
@@ -678,6 +698,7 @@ public:
   ~__zinit();
 
   int initialize(const zoslib_config_t &config);
+  ds_support_mode_t get_ds_support_mode(void) const { return ds_support_mode; }
   bool isValidZOSLIBEnvar(std::string envar);
   int setEnvarHelpMap(void);
   void populateLEFunctionPointers(void);

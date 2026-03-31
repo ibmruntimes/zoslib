@@ -1,6 +1,16 @@
 #ifndef __DATASET_IO__
 #define __DATASET_IO__ 1
 
+#ifndef ZOSLIB_ENABLE_DATASETIO
+  #define ZOSLIB_ENABLE_DATASETIO 0
+#endif /* ZOSLIB_ENABLE_DATASETIO */
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* ZOSLIB_ENABLE_DATASETIO */
+
+#if ZOSLIB_ENABLE_DATASETIO
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,22 +18,18 @@
 #include <dirent.h>
 #include <fcntl.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #ifndef __ssize_t
   #define __ssize_t 1
   typedef signed long ssize_t;
-#endif
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 #ifndef __size_t
   #define __size_t 1
   typedef unsigned long size_t;
-#endif
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 #ifndef __mode_t
   #define __mode_t  1
   typedef int mode_t ;
-#endif
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 
 int open_dataset(const char* name, int flags, mode_t mode);
 int close_dataset(int fd);
@@ -356,7 +362,7 @@ typedef struct DatasetEntry {
 /* Enable/disable logging - set to 1 to enable log_* calls */
 #ifndef ZOSLIB_DATASET_LOGGING
   #define ZOSLIB_DATASET_LOGGING 1
-#endif
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 
 #if ZOSLIB_DATASET_LOGGING
   #define DSIO_LOG_ERROR(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_ERROR) log_error(fmt, ##__VA_ARGS__); } while(0)
@@ -364,13 +370,13 @@ typedef struct DatasetEntry {
   #define DSIO_LOG_INFO(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_INFO) log_info(fmt, ##__VA_ARGS__); } while(0)
   #define DSIO_LOG_DEBUG(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_DEBUG) log_debug(fmt, ##__VA_ARGS__); } while(0)
   #define DSIO_LOG_TRACE(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_TRACE) log_trace(fmt, ##__VA_ARGS__); } while(0)
-#else
+#else /* ZOSLIB_ENABLE_DATASETIO == 0 */
   #define DSIO_LOG_ERROR(fmt, ...) ((void)0)
   #define DSIO_LOG_WARN(fmt, ...) ((void)0)
   #define DSIO_LOG_INFO(fmt, ...) ((void)0)
   #define DSIO_LOG_DEBUG(fmt, ...) ((void)0)
   #define DSIO_LOG_TRACE(fmt, ...) ((void)0)
-#endif
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 
 /* ========================================================================
  * ENHANCED INTERNAL STRUCTURES
@@ -430,6 +436,24 @@ int extract_qualifiers(const char* name, char* hlq, char* llq, size_t len);
 #define ERR_MSG_INVALID_FD "Invalid file descriptor: %d"
 #define ERR_MSG_FLDATA_FAILED "fldata() failed for dataset"
 #define ERR_MSG_CCSID_CONV "CCSID conversion failed: %d -> %d"
+
+#else /* ZOSLIB_ENABLE_DATASETIO == 0 */
+
+#define IS_DATASET(name) (0)
+#define DSIO_LOG_ERROR(fmt, ...) ((void)0)
+#define DSIO_LOG_WARN(fmt, ...)  ((void)0)
+#define DSIO_LOG_INFO(fmt, ...)  ((void)0)
+#define DSIO_LOG_DEBUG(fmt, ...) ((void)0)
+#define DSIO_LOG_TRACE(fmt, ...) ((void)0)
+
+#define ADD_FD(fd)    ((void)0)
+#define ADD_DD(fd,dd) ((void)0)
+#define GET_DD(fd)    (NULL)
+#define CLEAR_DD(fd)  ((void)0)
+#define IS_FD(fd)     (1)
+#define IS_DD(fd)     (0)
+
+#endif /* ZOSLIB_ENABLE_DATASETIO */
 
 #if defined(__cplusplus)
 }
