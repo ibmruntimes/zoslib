@@ -2695,6 +2695,8 @@ int __zinit::initialize(const zoslib_config_t &aconfig) {
   char* ds_env = getenv(config.DATASET_SUPPORT_ENVAR);
   if (ds_env && (strcasecmp(ds_env, "YES") == 0 || strcmp(ds_env, "1") == 0)) {
     ds_support_mode = DS_SUPPORT_YES;
+  } else if (ds_env && (strcasecmp(ds_env, "NO") == 0 || strcmp(ds_env, "0") == 0)) {
+    ds_support_mode = DS_SUPPORT_NO;
   } else {
     ds_support_mode = DS_SUPPORT_NO;
   }

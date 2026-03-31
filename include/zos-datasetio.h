@@ -7,7 +7,7 @@
 
 #if defined(__cplusplus)
 extern "C" {
-#endif /* ZOSLIB_ENABLE_DATASETIO */
+#endif
 
 #if ZOSLIB_ENABLE_DATASETIO
 
@@ -21,15 +21,15 @@ extern "C" {
 #ifndef __ssize_t
   #define __ssize_t 1
   typedef signed long ssize_t;
-#endif /* ZOSLIB_ENABLE_DATASETIO */
+#endif
 #ifndef __size_t
   #define __size_t 1
   typedef unsigned long size_t;
-#endif /* ZOSLIB_ENABLE_DATASETIO */
+#endif
 #ifndef __mode_t
   #define __mode_t  1
   typedef int mode_t ;
-#endif /* ZOSLIB_ENABLE_DATASETIO */
+#endif
 
 int open_dataset(const char* name, int flags, mode_t mode);
 int close_dataset(int fd);
@@ -296,10 +296,11 @@ int dsio_flush(int fd);
 #define MAX_FDS 1024
 #define INV_ADDR_BIT  (0x0000000080000000ULL)
 
-#define ADD_FD(fd)    (descriptor_table[(fd)] = ((void*)(((unsigned long long) fd) | INV_ADDR_BIT)))
-#define ADD_DD(fd,dd) (descriptor_table[(fd)] = (dd))
-#define GET_DD(fd)    (descriptor_table[(fd)])
-#define CLEAR_DD(fd)  (descriptor_table[(fd)] = 0)
+/* Bounds-checked accessors to prevent out-of-bounds when fd >= MAX_FDS */
+#define ADD_FD(fd)    do { if ((fd) >= 0 && (fd) < MAX_FDS) descriptor_table[(fd)] = ((void*)(((unsigned long long)(fd)) | INV_ADDR_BIT)); } while(0)
+#define ADD_DD(fd,dd) do { if ((fd) >= 0 && (fd) < MAX_FDS) descriptor_table[(fd)] = (dd); } while(0)
+#define GET_DD(fd)    (((fd) >= 0 && (fd) < MAX_FDS) ? descriptor_table[(fd)] : NULL)
+#define CLEAR_DD(fd)  do { if ((fd) >= 0 && (fd) < MAX_FDS) descriptor_table[(fd)] = 0; } while(0)
 
 /* Validate descriptor slot is within bounds and occupied */
 #define IS_VALID_SLOT(slot)  ((slot) >= 0 && (slot) < MAX_FDS && descriptor_table[(slot)] != NULL)
@@ -362,7 +363,7 @@ typedef struct DatasetEntry {
 /* Enable/disable logging - set to 1 to enable log_* calls */
 #ifndef ZOSLIB_DATASET_LOGGING
   #define ZOSLIB_DATASET_LOGGING 1
-#endif /* ZOSLIB_ENABLE_DATASETIO */
+#endif
 
 #if ZOSLIB_DATASET_LOGGING
   #define DSIO_LOG_ERROR(fmt, ...) do { if (g_debug_enabled && g_log_level >= DSIO_LOG_ERROR) log_error(fmt, ##__VA_ARGS__); } while(0)
@@ -416,7 +417,6 @@ void log_debug(const char* format, ...);
 void log_trace(const char* format, ...);
 void* convert_ebcdic_to_ascii(void* buf, size_t len);
 void* convert_ascii_to_ebcdic(void* buf, size_t len);
-void* convert_buffer_ccsid(void* buf, size_t len, uint16_t from, uint16_t to);
 
 /* Dataset name validation */
 int validate_dataset_name_internal(const char* name);

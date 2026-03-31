@@ -22,6 +22,12 @@
 
 #if ZOSLIB_ENABLE_DATASETIO
 
+/* __close_orig is defined in zos-io.cc as the original close() syscall.
+ * We need it in close_dataset to close the dummy /dev/null fd without
+ * routing through our __close() override (which would cause reentrancy).
+ */
+extern int __close_orig(int) __asm("close");
+
 void* descriptor_table[MAX_FDS] = { 0 };
 
 static dsio_recfm_t detect_recfm_from_fldata(const fldata_t* fdata);
@@ -53,7 +59,8 @@ static char* generate_name(char* tmplate)
     --end;
   }
   if (end - start + 1 < 3) { /* at least 3 X's required in the tmplate */
-    return NULL;            /* TBD: need to set proper errno's */
+    errno = EINVAL;
+    return NULL;
   }
 
   gettimeofday(&tv, NULL);
@@ -65,42 +72,6 @@ static char* generate_name(char* tmplate)
     tmplate[index] = DATASET_CHAR[entry];
   }
   return tmplate;
-}
-
-int mkstemp_dataset(char* tmplate)
-{
-  void* dd;
-  int fd = -1;
-
-  /* Without fopen(...,"wx" support, there is a race condition that can only be fixed by coding (maybe) in assembler */
-  /* So... this code could overwrite another (probably temporary) file name */
-  char* name = generate_name(tmplate);
-  if (!name) {
-    return -1;
-  }
-
-  /* Current just have 'dd' be the FILE pointer - may want something more substantial */
-  dd = fopen(tmplate, "w");
-  if (!dd) {
-    return -1;
-  }
-
-  /* Use enhanced entry creation */
-  DatasetEntry* dentry = create_entry(dd, 1047);
-  if (!dentry) {
-    fclose(dd);
-    return -1;
-  }
-  
-  parse_and_store_name(dentry, tmplate);
-
-
-  fd = GET_DUMMY_FD();
-  ADD_DD(fd, dentry);
-  
-
-  
-  return fd;
 }
 
 /*
@@ -120,12 +91,13 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
    * For FB/FBS datasets, we then reopen in plain binary mode for
    * multi-record I/O. For V/U, we keep type=record.
    */
+  int accmode = flags & O_ACCMODE;
   const char* fopen_mode;
-  if (flags & O_RDONLY) {
+  if (accmode == O_RDONLY) {
     fopen_mode = "rb,type=record,recfm=+";
-  } else if (flags & O_WRONLY) {
+  } else if (accmode == O_WRONLY) {
     fopen_mode = (flags & O_APPEND) ? "ab,type=record,recfm=+,noseek" : "wb,type=record,recfm=+,noseek";
-  } else if (flags & O_RDWR) {
+  } else if (accmode == O_RDWR) {
     fopen_mode = (flags & O_APPEND) ? "ab+,type=record,recfm=+" : "rb+,type=record,recfm=+";
   } else {
     fopen_mode = "rb,type=record,recfm=+";
@@ -157,9 +129,7 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
    */
   fldata_t fld;
   if (fldata(dd, NULL, &fld) == 0) {
-    dentry->recfm = fld.__recfmF ? (fld.__recfmB ? DSIO_RECFM_FB : DSIO_RECFM_F) :
-                    fld.__recfmV ? (fld.__recfmB ? DSIO_RECFM_VB : DSIO_RECFM_V) :
-                    fld.__recfmU ? DSIO_RECFM_U : DSIO_RECFM_UNKNOWN;
+    dentry->recfm = detect_recfm_from_fldata(&fld);
     dentry->reclen = fld.__maxreclen > 0 ? fld.__maxreclen : 80;
     dentry->blksize = fld.__blksize > 0 ? fld.__blksize : dentry->reclen;
     dentry->is_fixed_recfm = (fld.__recfmF && !fld.__recfmV && !fld.__recfmU) ? 1 : 0;
@@ -181,11 +151,11 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
     fclose(dd);
     dd = NULL;
     const char* reopen_mode;
-    if (flags & O_RDONLY) {
+    if (accmode == O_RDONLY) {
       reopen_mode = "rb,recfm=+";
-    } else if (flags & O_WRONLY) {
+    } else if (accmode == O_WRONLY) {
       reopen_mode = (flags & O_APPEND) ? "ab,recfm=+,noseek" : "wb,recfm=+,noseek";
-    } else if (flags & O_RDWR) {
+    } else if (accmode == O_RDWR) {
       reopen_mode = (flags & O_APPEND) ? "ab+,recfm=+" : "rb+,recfm=+";
     } else {
       reopen_mode = "rb,recfm=+";
@@ -237,6 +207,21 @@ int create_dataset_fd(const char* name, unsigned short file_ccsid, int flags)
   return fd;
 }
 
+int mkstemp_dataset(char* tmplate)
+{
+  /* Without fopen(...,"wx" support, there is a race condition that can only be fixed by coding (maybe) in assembler */
+  /* So... this code could overwrite another (probably temporary) file name */
+  char* name = generate_name(tmplate);
+  if (!name) {
+    return -1;
+  }
+
+  /* Delegate to create_dataset_fd which handles the full lifecycle:
+   * fopen, fldata query, FB reopen, buffer allocation, and DD registration.
+   */
+  return create_dataset_fd(tmplate, 1047, O_RDWR);
+}
+
 int open_dataset(const char* name, int flags, mode_t mode) 
 {
   /* Start with support for the following 'access mode' flags:
@@ -256,6 +241,7 @@ int open_dataset(const char* name, int flags, mode_t mode)
    * which handles opening, attribute detection, and registration.
    */
   bool pds_member = strchr(name, '(');
+  int accmode = flags & O_ACCMODE;
   DSIO_LOG_DEBUG("open_dataset: name %s, flags %d, mode %d\n", name, flags, mode);
 
   if ((flags & O_APPEND) && (pds_member)) {
@@ -264,17 +250,15 @@ int open_dataset(const char* name, int flags, mode_t mode)
     return -1;
   }
 
-  if (!(flags & (O_RDONLY | O_WRONLY | O_RDWR))) {
-    DSIO_LOG_DEBUG("open_dataset: Missing access mode in flags %d\n", flags);
+  /* O_ACCMODE check: O_RDONLY is 0, O_WRONLY is 1, O_RDWR is 2 */
+  if (accmode != O_RDONLY && accmode != O_WRONLY && accmode != O_RDWR) {
+    DSIO_LOG_DEBUG("open_dataset: Invalid access mode in flags %d\n", flags);
     errno = EINVAL;
     return -1;
   }
 
-  if ((flags & O_LARGEFILE) || (flags & O_NONBLOCK)) {
-    DSIO_LOG_DEBUG("open_dataset: Unsupported flags in %d\n", flags);
-    errno = EACCES;
-    return -1;
-  }
+  /* Strip flags that we don't support but shouldn't fail on */
+  flags &= ~(O_LARGEFILE | O_NONBLOCK);
 
   if (flags & O_CREAT) {
     if (pds_member) {
@@ -312,9 +296,8 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   
   FILE* fp = dentry->file_ptr;
 
-  DSIO_LOG_DEBUG("In Write, File ccsid: %d\n", dentry->file_ccsid);
-  DSIO_LOG_DEBUG("In Write, Program ccsid: %d\n", dentry->program_ccsid);
-  DSIO_LOG_DEBUG("In Write, Conversion state %d\n", dentry->conversion_state);
+  DSIO_LOG_DEBUG("write_dataset: fd=%d count=%zu ccsid=%d->%d conv=%d\n",
+                 fd, count, dentry->program_ccsid, dentry->file_ccsid, dentry->conversion_state);
 
   const char* src = (const char*) buf;
   size_t total_written = 0;
@@ -364,7 +347,6 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
       
       pos += to_copy + 1; /* skip the data and the newline */
       total_written += to_copy + 1;
-      dentry->dirty = 1;
     } else {
       /* No newline found in this record's space - copy what we can */
       size_t to_copy = scan_len;
@@ -396,6 +378,10 @@ ssize_t write_dataset(int fd, const void* buf, size_t count)
   }
 
   dentry->stream_offset += total_written;
+  /* Invalidate cached size since content has changed */
+  if (total_written > 0) {
+    dentry->size_calculated = 0;
+  }
   return (ssize_t) total_written;
 }
 
@@ -413,37 +399,30 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
   dentry->last_error = DSIO_SUCCESS;
   FILE* fp = dentry->file_ptr;
 
-  /* If there are pending writes, we should flush them before reading 
-   * However, for FB binary mode, the C runtime should handle it if it was opened with ab+ or rb+
-   * But we are bypassing C runtime buffering with _IONBF and doing our own buffering in rec_buf.
-   */
-  if (dentry->dirty && dentry->rec_buf_pos > 0) {
-    /* Flush pending write buffer */
-    if (dentry->is_fixed_recfm) {
-      while (dentry->rec_buf_pos < dentry->reclen) {
-        dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
-      }
-    }
-    if (dentry->conversion_state == SETCVTON) {
-      dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
-                          dentry->program_ccsid, dentry->file_ccsid);
-    }
-    if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
-      set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Failed to flush write buffer before read");
-      errno = map_dsio_error_to_errno(DSIO_ERR_WRITE_FAILED);
-      return -1;
-    }
-    dentry->rec_buf_pos = 0;
-    dentry->dirty = 0;
-  }
-  
-  /* If the buffer currently contains data that was read, we don't clear it yet.
-   * If it was used for writing (and just flushed), dentry->rec_buf_pos is 0.
-   * If we are switching from write to read, we might need to reset rec_buf_len.
+  /* If there are pending writes, flush them before reading.
+   * We bypass C runtime buffering with _IONBF and do our own buffering in rec_buf.
    */
   if (dentry->dirty) {
-    dentry->rec_buf_len = 0;
+    if (dentry->rec_buf_pos > 0) {
+      /* Flush pending write buffer */
+      if (dentry->is_fixed_recfm) {
+        while (dentry->rec_buf_pos < dentry->reclen) {
+          dentry->rec_buf[dentry->rec_buf_pos++] = ' ';
+        }
+      }
+      if (dentry->conversion_state == SETCVTON) {
+        dsio_convert_buffer(dentry->rec_buf, dentry->rec_buf_pos, 
+                            dentry->program_ccsid, dentry->file_ccsid);
+      }
+      if (fwrite(dentry->rec_buf, 1, dentry->rec_buf_pos, fp) != dentry->rec_buf_pos) {
+        set_entry_error(dentry, DSIO_ERR_WRITE_FAILED, "Failed to flush write buffer before read");
+        errno = map_dsio_error_to_errno(DSIO_ERR_WRITE_FAILED);
+        return -1;
+      }
+    }
+    /* Reset buffer state for switch to read mode */
     dentry->rec_buf_pos = 0;
+    dentry->rec_buf_len = 0;
     dentry->dirty = 0;
   }
 
@@ -508,8 +487,13 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
         return bytes_copied > 0 ? (ssize_t)bytes_copied : -1;
       }
       dentry->eof_reached = 1;
-      dentry->newline_pending = 1;
-      break; /* Will emit newline on next loop or return if bytes_copied > 0 */
+      /* Only set newline_pending if we actually read data from this dataset.
+       * Without this guard, an empty dataset would return '\n' instead of 0.
+       */
+      if (bytes_copied > 0) {
+        dentry->newline_pending = 1;
+      }
+      break; /* Will emit newline on next call or return if bytes_copied > 0 */
     }
     
     /* Convert CCSID of the newly read data in-place */
@@ -519,10 +503,6 @@ ssize_t read_dataset(int fd, void* buf, size_t count)
 
     dentry->rec_buf_len = rc;
     dentry->rec_buf_pos = 0;
-  }
-
-  if (bytes_copied > 0) {
-
   }
 
   return (bytes_copied == 0 && count > 0) ? 0 : (ssize_t) bytes_copied;
@@ -545,7 +525,7 @@ int close_dataset(int fd)
 
   /* Flush any partial record remaining in the write buffer */
   if (dentry->dirty && dentry->rec_buf_pos > 0 &&
-      (dentry->open_flags & (O_WRONLY | O_RDWR))) {
+      ((dentry->open_flags & O_ACCMODE) != O_RDONLY)) {
     /* For FB datasets, pad final record to reclen with spaces */
     if (dentry->is_fixed_recfm) {
       while (dentry->rec_buf_pos < dentry->reclen) {
@@ -580,13 +560,17 @@ int close_dataset(int fd)
     errno = map_dsio_error_to_errno(DSIO_ERR_CLOSE_FAILED);
   }
   
-  close(fd);
   /* Free record buffer and deallocate DatasetEntry */
   if (dentry->rec_buf) {
     free(dentry->rec_buf);
   }
   free(dentry);
+  /* Clear the DD entry BEFORE closing the dummy fd to avoid reentrancy:
+   * close(fd) routes through __close() which would call close_dataset()
+   * again if CLEAR_DD hasn't been called yet.
+   */
   CLEAR_DD(fd);
+  __close_orig(fd);
   
   return rc;
 }
@@ -597,7 +581,10 @@ char* temp_dataset_name(char* result)
   char temp[L_tmpnam+1];
   setenv("__POSIX_TMPNAM", "NO", 1);
   tmpnam(temp);
-  setenv("__POSIX_TMPNAM", orig, 1);
+  if (orig)
+    setenv("__POSIX_TMPNAM", orig, 1);
+  else
+    unsetenv("__POSIX_TMPNAM");
   sprintf(result, "//'%s'", temp);
   return result;
 }
@@ -607,7 +594,10 @@ char* temp_file_name(char* result)
   char* orig = getenv("__POSIX_TMPNAM");
   setenv("__POSIX_TMPNAM", "YES", 1);
   tmpnam(result);
-  setenv("__POSIX_TMPNAM", orig, 1);
+  if (orig)
+    setenv("__POSIX_TMPNAM", orig, 1);
+  else
+    unsetenv("__POSIX_TMPNAM");
   return result;
 }
 
@@ -672,16 +662,17 @@ int delete_dataset(const char* dataset)
 
 int zos_fcntl(int fd, int cmd, struct f_cnvrt* req)
 {
-  //TODO: Only has support for F_CONTROL_CVT for now
+  /* Only F_CONTROL_CVT is supported for dataset fds */
   if (cmd == F_CONTROL_CVT) {
-    if (!req) 
+    if (!req || fd < 0)
       return -1;
 
-    if (fd < 0)
+    if (!IS_DD(fd)) {
+      errno = EBADF;
       return -1;
+    }
 
-    void* dd = GET_DD(fd);
-    DatasetEntry* dentry = (DatasetEntry*) (dd);
+    DatasetEntry* dentry = (DatasetEntry*) GET_DD(fd);
 
     if (req->cvtcmd == QUERYCVT) {
       req->pccsid = dentry->program_ccsid;
@@ -702,7 +693,7 @@ int zos_fcntl(int fd, int cmd, struct f_cnvrt* req)
  * ======================================================================== */
 
 off_t lseek_dataset(int fd, off_t offset, int whence) {
-  DSIO_LOG_DEBUG("lseek_dataset: ENTER fd=%d, offset=%lld, whence=%d\n", fd, (long long)offset, whence);
+    DSIO_LOG_DEBUG("lseek_dataset: ENTER fd=%d, offset=%lld, whence=%d\n", fd, (long long)offset, whence);
     
     /* Validate fd */
     void* dd = GET_DD(fd);
@@ -816,8 +807,8 @@ off_t lseek_dataset(int fd, off_t offset, int whence) {
         }
     }
     
-  DSIO_LOG_DEBUG("lseek_dataset: fd=%d target=%lld final=%zu\n",
-                 fd, (long long)target, dentry->stream_offset);
+    DSIO_LOG_DEBUG("lseek_dataset: fd=%d target=%lld final=%zu\n",
+                   fd, (long long)target, dentry->stream_offset);
     
     return (off_t)dentry->stream_offset;
 }
@@ -889,17 +880,21 @@ int fstat_dataset(int fd, struct stat *buf) {
     buf->st_mtime = now;
     buf->st_ctime = now;
 
-    /* Use dsio_get_size helper to calculate emulated stream size */
+    /* Calculate emulated stream size. For VB/U datasets, this requires
+     * reading all records (one-time cost, cached afterward). If size
+     * cannot be determined (e.g. U-format with no seek support), return
+     * st_size=0 so callers like `tail` can fall back to sequential reading
+     * rather than failing entirely.
+     */
     ssize_t size = dsio_get_size(fd);
     if (size < 0) {
-        set_entry_error(dentry, DSIO_ERR_FLDATA_FAILED, "Failed to get dataset size for fstat");
-        errno = map_dsio_error_to_errno(DSIO_ERR_FLDATA_FAILED);
-        return -1;
+        DSIO_LOG_DEBUG("fstat_dataset: dsio_get_size failed (fd=%d), returning st_size=0\n", fd);
+        size = 0;
     }
     
     buf->st_size = (off_t)size;
     
-  DSIO_LOG_DEBUG("fstat_dataset: fd=%d size=%lld\n", fd, (long long)buf->st_size);
+    DSIO_LOG_DEBUG("fstat_dataset: fd=%d size=%lld\n", fd, (long long)buf->st_size);
     
     return 0;
 }
@@ -1087,6 +1082,8 @@ const char* dsio_recfm_to_string(dsio_recfm_t recfm) {
         case DSIO_RECFM_VB:  return "VB";
         case DSIO_RECFM_FBA: return "FBA";
         case DSIO_RECFM_VBA: return "VBA";
+        case DSIO_RECFM_FA:  return "FA";
+        case DSIO_RECFM_VA:  return "VA";
         default:             return "UNKNOWN";
     }
 }
@@ -1357,7 +1354,6 @@ void dsio_log(dsio_log_level_t level, const char* format, ...) {
     vfprintf(stream, format, args);
     va_end(args);
     
-    fprintf(stream, "\n");
     fflush(stream);
 }
 
@@ -1371,7 +1367,6 @@ void log_error(const char* format, ...) {
     FILE* stream = g_log_stream ? g_log_stream : stderr;
     fprintf(stream, "[ERROR] ");
     vfprintf(stream, format, args);
-    fprintf(stream, "\n");
     fflush(stream);
     va_end(args);
 }
@@ -1384,7 +1379,6 @@ void log_warn(const char* format, ...) {
     FILE* stream = g_log_stream ? g_log_stream : stderr;
     fprintf(stream, "[WARN ] ");
     vfprintf(stream, format, args);
-    fprintf(stream, "\n");
     fflush(stream);
     va_end(args);
 }
@@ -1397,7 +1391,6 @@ void log_info(const char* format, ...) {
     FILE* stream = g_log_stream ? g_log_stream : stderr;
     fprintf(stream, "[INFO ] ");
     vfprintf(stream, format, args);
-    fprintf(stream, "\n");
     fflush(stream);
     va_end(args);
 }
@@ -1410,7 +1403,6 @@ void log_debug(const char* format, ...) {
     FILE* stream = g_log_stream ? g_log_stream : stderr;
     fprintf(stream, "[DEBUG] ");
     vfprintf(stream, format, args);
-    fprintf(stream, "\n");
     fflush(stream);
     va_end(args);
 }
@@ -1423,7 +1415,6 @@ void log_trace(const char* format, ...) {
     FILE* stream = g_log_stream ? g_log_stream : stderr;
     fprintf(stream, "[TRACE] ");
     vfprintf(stream, format, args);
-    fprintf(stream, "\n");
     fflush(stream);
     va_end(args);
 }
@@ -1760,149 +1751,106 @@ static ssize_t calculate_vb_emulated_size(FILE* fp, DatasetEntry* entry) {
     size_t total_size = 0;
     size_t rec_count = 0;
     
-    DSIO_LOG_DEBUG("calculate_vb_emulated_size: ENTER rec_buf_size=%zu\n", entry->rec_buf_size);
-    
     if (!entry->is_fixed_recfm) {
         /* VB/U: Already in type=record mode, save and restore position */
         fpos_t saved_pos;
         if (fgetpos(fp, &saved_pos) != 0) {
             set_entry_error(entry, DSIO_ERR_FTELL_FAILED, "fgetpos() failed in calculate_vb_emulated_size");
-            DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fgetpos failed) %d\n", 1);
             return -1;
         }
         
-        if (fseek(fp, 0, SEEK_SET) != 0) {
-            set_entry_error(entry, DSIO_ERR_FSEEK_FAILED, "fseek() failed in calculate_vb_emulated_size");
+        /* rewind() == fseek(0,SEEK_SET) + clearerr(), more robust for record-mode files */
+        rewind(fp);
+        if (ferror(fp)) {
+            set_entry_error(entry, DSIO_ERR_FSEEK_FAILED, "rewind() failed in calculate_vb_emulated_size");
             fsetpos(fp, &saved_pos);
-            DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (fseek failed) %d\n", 1);
             return -1;
         }
         
-        /* Read each record */
+        /* Read each record, stripping trailing spaces, counting bytes+newline */
         while (1) {
             size_t rc = fread(entry->rec_buf, 1, entry->rec_buf_size, fp);
             if (rc == 0) break;  /* EOF */
             
-            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Read record #%zu, raw_length=%zu\n", rec_count + 1, rc);
-            
-            /* Validate VB record length doesn't exceed buffer */
-            if (rc > entry->rec_buf_size) {
-                set_entry_error(entry, DSIO_ERR_RECORD_TOO_LONG, "VB record length exceeds buffer size");
-                fprintf(stderr, "ERROR: VB record length %zu exceeds buffer size %zu\n",
-                        rc, entry->rec_buf_size);
-                fsetpos(fp, &saved_pos);
-                errno = EFBIG;
-                DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN -1 (record too large) %d\n", 1);
-                return -1;
-            }
-            
-            size_t original_rc = rc;
             /* Strip trailing spaces */
             while (rc > 0 && entry->rec_buf[rc - 1] == ' ') {
                 rc--;
             }
-            
-            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Record #%zu stripped from %zu to %zu bytes\n",
-                         rec_count + 1, original_rc, rc);
-            
             total_size += rc + 1;  /* +1 for newline */
             rec_count++;
-            
-            DSIO_LOG_DEBUG("calculate_vb_emulated_size: Running total=%zu bytes, rec_count=%zu\n",
-                         total_size, rec_count);
         }
         
         /* Restore position */
         if (fsetpos(fp, &saved_pos) != 0) {
-            DSIO_LOG_DEBUG("WARNING: Failed to restore file position after size calculation %d\n", 1);
+            DSIO_LOG_DEBUG("calculate_vb_emulated_size: WARNING - failed to restore file position\n");
         }
     }
     
-    DSIO_LOG_DEBUG("calculate_vb_emulated_size: RETURN %zu bytes (%zu records) for %s dataset\n", 
-                 total_size, rec_count, entry->is_fixed_recfm ? "FB" : "VB");
+    DSIO_LOG_DEBUG("calculate_vb_emulated_size: %zu bytes (%zu records)\n", total_size, rec_count);
     
     return (ssize_t)total_size;
 }
 
 ssize_t dsio_get_size(int fd) {
-    DSIO_LOG_DEBUG("dsio_get_size: ENTER fd=%d\n", fd);
-    
     void* dd = GET_DD(fd);
     if (!dd || IS_FD(fd)) {
         errno = EBADF;
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (invalid fd) %d\n", 1);
         return -1;
     }
     
     DatasetEntry* entry = ENTRY_TO(dd);
     if (!entry->file_ptr) {
         errno = EBADF;
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (no file_ptr) %d\n", 1);
         return -1;
     }
     
-    FILE* fp = entry->file_ptr;
-    
-    /* Check if we already have the cached size */
+    /* Return cached size if available */
     if (entry->size_calculated) {
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN %zu (cached size)\n", entry->cached_size);
         return (ssize_t)entry->cached_size;
     }
     
-    /* Calculate emulated stream size from native file size */
-    fpos_t pos;
-    if (fgetpos(fp, &pos) != 0) {
-        return -1;
-    }
-    
-    if (fseek(fp, 0, SEEK_END) != 0) {
-        fsetpos(fp, &pos);
-        return -1;
-    }
-    
-    long native_size = ftell(fp);
-    if (native_size < 0) {
-        fsetpos(fp, &pos);
-        DSIO_LOG_DEBUG("dsio_get_size: RETURN -1 (ftell failed) %d\n", 1);
-        return -1;
-    }
-    
-    DSIO_LOG_DEBUG("dsio_get_size: native_size=%ld, is_fixed_recfm=%d, reclen=%zu\n",
-                 native_size, entry->is_fixed_recfm, entry->reclen);
-    
-    if (fsetpos(fp, &pos) != 0) {
-        DSIO_LOG_DEBUG("WARNING: fsetpos() failed in dsio_get_size %d\n", 1);
-    }
-    
-    /* Calculate emulated stream size based on record format */
+    FILE* fp = entry->file_ptr;
     ssize_t emulated_size;
-    
+
     if (entry->is_fixed_recfm && entry->reclen > 0) {
-        /* FB: native_size is total bytes, add newlines */
-        size_t num_records = native_size / entry->reclen;
+        /*
+         * FB (binary mode): fseek(SEEK_END) is supported.
+         * Native size in bytes divided by reclen gives record count;
+         * add one newline per record for the emulated stream size.
+         */
+        fpos_t pos;
+        if (fgetpos(fp, &pos) != 0) {
+            return -1;
+        }
+        if (fseek(fp, 0, SEEK_END) != 0) {
+            fsetpos(fp, &pos);
+            return -1;
+        }
+        long native_size = ftell(fp);
+        if (fsetpos(fp, &pos) != 0) {
+            DSIO_LOG_DEBUG("dsio_get_size: WARNING - fsetpos() failed\n");
+        }
+        if (native_size < 0) {
+            return -1;
+        }
+        size_t num_records = (size_t)native_size / entry->reclen;
         emulated_size = (ssize_t)(native_size + num_records);
-        DSIO_LOG_DEBUG("dsio_get_size: FB calculation - native=%ld, reclen=%zu, num_records=%zu, emulated=%zd\n",
-                     native_size, entry->reclen, num_records, emulated_size);
-        
-        /* Cache the result */
+        DSIO_LOG_DEBUG("dsio_get_size: fd=%d FB native=%ld reclen=%zu emulated=%zd\n",
+                     fd, native_size, entry->reclen, emulated_size);
+    } else {
+        /*
+         * VB/U (type=record mode): fseek(SEEK_END) is NOT supported by the
+         * z/OS C runtime for variable-length record files.
+         * calculate_vb_emulated_size() handles its own fgetpos/fread/fsetpos.
+         */
+        emulated_size = calculate_vb_emulated_size(fp, entry);
+        DSIO_LOG_DEBUG("dsio_get_size: fd=%d VB/U emulated=%zd\n", fd, emulated_size);
+    }
+    
+    if (emulated_size >= 0) {
         entry->cached_size = (size_t)emulated_size;
         entry->size_calculated = 1;
-    } else {
-        /* VB/U: Calculate by reading all records (one-time cost) */
-        DSIO_LOG_DEBUG("dsio_get_size: Calculating VB emulated size...%d\n", 1);
-        emulated_size = calculate_vb_emulated_size(fp, entry);
-        if (emulated_size >= 0) {
-            /* Cache the result for future calls */
-            entry->cached_size = (size_t)emulated_size;
-            entry->size_calculated = 1;
-            DSIO_LOG_DEBUG("dsio_get_size: VB size calculated and cached: %zd\n", emulated_size);
-        } else {
-            DSIO_LOG_DEBUG("dsio_get_size: VB size calculation failed %d\n", 1);
-        }
     }
-    
-    DSIO_LOG_DEBUG("dsio_get_size: RETURN %zd (fd=%d, native=%ld, emulated=%zd)\n", 
-                 emulated_size, fd, native_size, emulated_size);
     
     return emulated_size;
 }

@@ -1092,12 +1092,12 @@ off_t __lseek_ds_file(int fd, off_t offset, int whence) {
 int __stat_ds_file(const char *pathname, struct stat *statbuf) {
 #if ZOSLIB_ENABLE_DATASETIO
   if (is_dataset_supported(pathname)) {
-	  DSIO_LOG_DEBUG("calling stat-dataset path %s\n", pathname);
+    DSIO_LOG_DEBUG("calling stat-dataset path %s\n", pathname);
     return stat_dataset(pathname, statbuf);
   } else 
 #endif
   {
-	  DSIO_LOG_DEBUG("calling stat-file path %s\n", pathname);
+    DSIO_LOG_DEBUG("calling stat-file path %s\n", pathname);
     return __stat_orig(pathname, statbuf);
   }
 }
@@ -1105,12 +1105,12 @@ int __stat_ds_file(const char *pathname, struct stat *statbuf) {
 int __fstat_ds_file(int fd, struct stat *statbuf) {
 #if ZOSLIB_ENABLE_DATASETIO
   if (IS_DD(fd)) {
-	  DSIO_LOG_DEBUG("calling fstat-dataset fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling fstat-dataset fd %d\n", fd);
     return fstat_dataset(fd, statbuf);
   } else 
 #endif
   {
-	  DSIO_LOG_DEBUG("calling fstat-file fd %d\n", fd);
+    DSIO_LOG_DEBUG("calling fstat-file fd %d\n", fd);
     return __fstat_orig(fd, statbuf);
   }
 }
