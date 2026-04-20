@@ -1377,27 +1377,18 @@ public:
                   "freed)\n", it->first, it->second);
     }
   }
-  ~__Cache() {
-    // This should never be called as we deliberately don't destroy it.
-    // See ~__zinit()
-    assert(0);
-  }
 };
 
-static __Cache* __galloc_info = nullptr;
-
-static __Cache * __get_galloc_info() {
-  assert(__galloc_info != nullptr);
-  return __galloc_info;
-}
+[[clang::no_destroy]]
+static __Cache __galloc_info;
 
 extern "C" void *__zalloc(size_t len, size_t alignment) {
   if (len % kMegaByte == 0) {
     size_t request_size = len / kMegaByte;
-    return __get_galloc_info()->alloc_seg(request_size);
+    return __galloc_info.alloc_seg(request_size);
   } else if (len > (2UL * kGigaByte)) {
     size_t request_size = __round_up(len, kMegaByte) / kMegaByte;
-    return __get_galloc_info()->alloc_seg(request_size);
+    return __galloc_info.alloc_seg(request_size);
   } else {
     void *p;
     // The following solution allocates memory 2gb below the bar whose length
@@ -1415,11 +1406,11 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
         __memprintf("ERROR: size=%zu: malloc31 failed, errno=%d " \
                    "(current=%zu), will try to allocate from virtual storage\n",
                    len + extra_size, errno,
-                   __get_galloc_info()->getCurrentMem31());
+                   __galloc_info.getCurrentMem31());
       }
       size_t up_size = __round_up(len + extra_size, kMegaByte);
       size_t request_size = up_size / kMegaByte;
-      return __get_galloc_info()->alloc_seg(request_size);
+      return __galloc_info.alloc_seg(request_size);
     }
 
     void **mem_aligned = (void **)(((size_t)(mem_default) +
@@ -1427,7 +1418,7 @@ extern "C" void *__zalloc(size_t len, size_t alignment) {
     mem_aligned[-1] = mem_default;
 
     p = (void *)mem_aligned;
-    __get_galloc_info()->addptr31(p, len);
+    __galloc_info.addptr31(p, len);
     memset(p, 0, len);
     return p;
   }
@@ -1439,13 +1430,13 @@ void *anon_mmap(void *_, size_t len) {
 }
 
 extern "C" int __zfree(void *addr, int len) {
-  if (__get_galloc_info()->is_rmode64(addr)) {
-    return __get_galloc_info()->free_seg(addr, len);
+  if (__galloc_info.is_rmode64(addr)) {
+    return __galloc_info.free_seg(addr, len);
   }
   // Free the original unaligned memory returned by __malloc31. Since free()
   // doesn't return a value, simply return 0.
   free(((void **)addr)[-1]);
-  __get_galloc_info()->freeptr31(addr, len);
+  __galloc_info.freeptr31(addr, len);
   return 0;
 }
 
@@ -2511,12 +2502,9 @@ __zinit::__zinit() {
 __zinit:: ~__zinit() {
   ::__cleanupipc(0);
 
-  // Don't delete __galloc_info (__Cache), as during exit-time a process may
-  // still be allocating memory using __zalloc(), which call its alloc_seg().
-
   if (__doLogMemoryUsage()) {
     if (__gMainTerminating && __doLogMemoryWarning())
-      __get_galloc_info()->displayDebris();
+      __galloc_info.displayDebris();
     int ppid = getppid();
     char childInfo[32] = "";
     // Include <parent-name>(parent-pid) in the termination message:
@@ -2532,17 +2520,17 @@ __zinit:: ~__zinit() {
     if (argv != nullptr)
       free((char*)argv);
     const char *leak = __gMainTerminating &&
-                       (__get_galloc_info()->getCurrentMem31() != 0 ||
-                        __get_galloc_info()->getCurrentMem64() != 0) ?
+                       (__galloc_info.getCurrentMem31() != 0 ||
+                        __galloc_info.getCurrentMem64() != 0) ?
                         "LEAK: " : "";
      
     __memprintf("%s%sPROCESS TERMINATING (current31=%zu, max31=%zu, " \
                 "current64=%zu, max64=%zu): %s\n",
                 leak, childInfo,
-                __get_galloc_info()->getCurrentMem31(),
-                __get_galloc_info()->getMaxMem31(),
-                __get_galloc_info()->getCurrentMem64(),
-                __get_galloc_info()->getMaxMem64(),
+                __galloc_info.getCurrentMem31(),
+                __galloc_info.getMaxMem31(),
+                __galloc_info.getCurrentMem64(),
+                __galloc_info.getMaxMem64(),
                 __gArgsStr);
   }
   __zoslib_terminated = true;
@@ -2604,7 +2592,6 @@ static void setProcessEnvars() {
 
 int __zinit::initialize(const zoslib_config_t &aconfig) {
   memcpy(&config, &aconfig, sizeof(config));
-  __galloc_info = new __Cache;
 
   mode = __ae_thread_swapmode(__AE_ASCII_MODE);
   cvstate = __ae_autoconvert_state(_CVTSTATE_QUERY);
