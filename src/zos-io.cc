@@ -731,6 +731,20 @@ int __tag_new_file(int fd) {
   return __chgfdccsid(fd, ccsid);
 }
 
+int __tag_existing_file(int fd) {
+  char* encode_file_existing = getenv("_ENCODE_FILE_EXISTING");
+
+  if (!encode_file_existing) {
+    return 0;
+  }
+
+  if (strcmp(encode_file_existing, "BINARY") == 0) {
+    return __setfdbinary(fd);
+  }
+
+  return __chgfdcodeset(fd, encode_file_existing);
+}
+
 int __chgfdcodeset(int fd, char* codeset) {
   unsigned short ccsid = __toCcsid(codeset);
   if (!ccsid)
@@ -843,6 +857,8 @@ int __open_ascii(const char *filename, int opts, ...) {
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
+      __tag_existing_file(fd);
+      errno = old_errno;
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
           (opts & O_RDONLY) != 0) {
@@ -886,6 +902,8 @@ FILE *__fopen_ascii(const char *filename, const char *mode) {
     }
     // Enable auto-conversion of untagged files
     else if (S_ISREG(sb.st_mode)) {
+      __tag_existing_file(fd);
+      errno = old_errno;
       struct file_tag *t = &sb.st_tag;
       if (t->ft_txtflag == 0 && (t->ft_ccsid == 0 || t->ft_ccsid == 1047) &&
           strcmp(mode, "r") == 0) {
